@@ -1,0 +1,88 @@
+{% extends '@twigs/layouts/base.html.twig' %}
+
+{% block content %}
+    <div class="page-header">
+        <h1>{% if wp.get_post_meta(post.ID, '_property_title', true) %}
+            {{ wp.get_post_meta(post.ID, '_property_title', true) }},
+            {% endif %}{{ post.post_title }}{% if wp.get_post_meta(post.ID, 'locations', true) %},
+                    &nbsp;<small>{{ wp.wp_get_post_terms(post.ID, 'locations').0.name }}{% endif %}</small>
+                </h1>
+            </div>
+
+            <div class="property-detail">
+
+                <div class="row">
+                    {% set slides = wp.get_post_meta(post.ID, '_property_slides', true) %}
+                        {% if slides|length > 0 and slides is iterable  %}
+                            <div class="col-xs-8 gallery">
+                                <div class="preview">
+                                    <img src="{{ wp.get_post_meta(post.ID, '_property_slides', true)[0].imgurl }}" alt="">
+                                </div>
+
+                                <div class="content">
+                                    <ul>
+                                        {% for slide in slides %}
+                                            {% if loop.first %}
+                                                <li class="active">
+                                                {% else %}
+                                                <li>
+                                                {% endif %}
+                                                <div class="thumb">
+                                                    <a href="#"><img src="{{ slide.imgurl }}" alt=""></a>
+                                                </div>
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                </div><!-- /.content -->
+                            </div>
+                        {% endif %}
+
+                        <div class="overview col-xs-4">
+                            {% include 'PropertyBundle:Property:overview.html.twig' %}
+                        </div>
+                    </div>
+
+                    <h2>{{ 'About Property'|translate }}</h2>
+
+                    {{ wp.do_shortcode(wp.apply_filters('the_content', post.post_content))|raw }}
+
+                    <div class="row">
+                        {% include 'PropertyBundle:Property:amenities.html.twig' %}
+                        {# include 'PropertyBundle:Property:property-map.html.twig' #}
+
+
+                    </div>
+                    <div class="row" id="property-walkscore">
+                        <style type='text/css'>#ws-walkscore-tile{position:relative;text-align:left}
+                            #ws-walkscore-tile *{float:none;}#ws-footer a,
+                            #ws-footer a:link{font:11px/14px Verdana,Arial,Helvetica,sans-serif;margin-right:6px;
+                                              white-space:nowrap;padding:0;color:#000;font-weight:bold;text-decoration:none}
+                            #ws-footer a:hover{color:#777;text-decoration:none}#ws-footer a:active{color:#b14900}</style>
+                        <div id='ws-walkscore-tile'></div>
+                        <script>
+                            var ws_wsid = '--Your-WSID-Here--';
+                            var ws_lat = "{{ wp.get_post_meta(post.ID, '_property_latitude').0 }}";
+                            var ws_lon = "{{ wp.get_post_meta(post.ID, '_property_longitude').0 }}";
+                            var ws_width = '600';
+                            var ws_height = '444';
+                            var ws_layout = 'horizontal';
+                            var ws_commute = 'true';
+                            var ws_industry_type = 'commercial';
+                            var ws_transit_score = 'true';
+                            var ws_map_modules = 'all';
+                            jQuery(document).ready(function() {
+                                (function($) {
+                                    var ws_container = $('#property-walkscore.row');
+                                    window.ws_width = ws_container.width();
+                                    ws_container.resize(function() {
+                                        window.ws_width = ws_container.width();
+                                    });
+                                    $.getScript("http://www.walkscore.com/tile/show-walkscore-tile.php", function(data, textStatus, jqxhr) {
+                                    });
+                                })(jQuery);
+                            });
+
+                        </script>
+                    </div>
+                </div>
+                {% endblock %}

@@ -1,0 +1,33 @@
+{% extends '@twigs/layouts/base.html.twig' %}
+
+{% block content %}
+    <div class="page-header">
+        {% if wp.r_get_config('property', 'properties', 'display_sort_bar') %}
+            <div class="navbar-right">
+                {% include 'developer/sort.twig' %}
+            </div>
+        {% endif %}
+        <h1>
+            {% if not title %}
+                {{ 'Developers'|translate }}
+            {% else %}
+                {{ title }}
+            {% endif %}
+        </h1>
+    </div>
+
+    {% if wp_query.posts|length > 0 %}
+        {{ wp_query.the_post() }}
+        <div class="developers">
+            {% for developer in developers %}
+                {{ wp.get_template_part('content-developer', wp.get_post_format()) }}
+            {% endfor %}
+        </div><!-- /.developers -->
+        {{ im_paging_nav() }}
+    {% else %}
+        <div class="developers">
+            {{ 'No developers found.'|translate }}
+        </div><!-- /.developers -->
+    {% endif %}
+
+{% endblock %}

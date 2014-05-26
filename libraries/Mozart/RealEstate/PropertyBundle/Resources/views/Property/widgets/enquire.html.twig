@@ -1,0 +1,138 @@
+{{ before_widget|raw }}
+
+{% if title %}
+    {{ before_title|raw }}{{ title }}{{ after_title|raw }}
+{% endif %}
+
+<div class="content pam">
+    <form method="post" action="{{ wp.admin_url( 'admin-ajax.php') }}" id="enquire-form" role="form" class="pas">
+        {% if not wp.parameter('property', 'fields', 'hide_name') %}
+            <div class="form-group">
+                <label for="inputName">
+                    {{ 'Name'|translate }}
+                    <span class="form-required" title="This field is required.">*</span>
+                </label>
+                <input class="form-control" type="text" id="inputName" name="name" required="required">
+
+            </div><!-- /.form-group -->
+        {% endif %}
+
+        {% if not wp.parameter('property', 'fields', 'hide_phone') %}
+            <div class="form-group">
+                <label for="inputPhone">
+                    {{ 'Phone'|translate }}
+                    <span class="form-required" title="This field is required.">*</span>
+                </label>
+
+                <input class="form-control"  type="text" id="inputPhone" name="phone" required="required">
+
+            </div><!-- /.form-group -->
+        {% endif %}
+
+        {% if not wp.parameter('property', 'fields', 'hide_date') %}
+            <div class="form-group">
+                <label for="inputDate">
+                    {{ 'Date'|translate }}
+                    <span class="form-required" title="This field is required.">*</span>
+                </label>
+
+
+                <input class="form-control"  type="date" id="inputDate" name="date" required="required">
+
+            </div><!-- /.form-group -->
+        {% endif %}
+
+        {% if not wp.parameter('property', 'fields', 'hide_date_from') %}
+            <div class="form-group">
+                <label for="inputDate">
+                    {{ 'Date From'|translate }}
+                </label>
+
+
+                <input class="form-control"  type="date" id="inputDate" name="date_from">
+
+            </div><!-- /.form-group -->
+        {% endif %}
+
+        {% if not wp.parameter('property', 'fields', 'hide_date_to') %}
+            <div class="form-group">
+                <label for="inputDate">
+                    {{ 'Date To'|translate }}
+                </label>
+
+
+                <input class="form-control"  type="date" id="inputDate" name="date_to" >
+
+            </div><!-- /.form-group -->
+        {% endif %}
+
+        {% if not wp.parameter('property', 'fields', 'hide_email') %}
+            <div class="form-group">
+                <label for="inputEmail">
+                    {{ 'Email'|translate }}
+                    <span class="form-required" title="This field is required.">*</span>
+                </label>
+
+
+                <input class="form-control"  type="email" id="inputEmail" name="email" required="required">
+
+            </div><!-- /.form-group -->
+        {% endif %}
+
+        {% if not wp.parameter('property', 'fields', 'hide_message') %}
+            <div class="form-group">
+                <label for="inputMessage">
+                    {{ 'Message'|translate }}
+                    <span class="form-required" title="This field is required.">*</span>
+                </label>
+
+
+                <textarea class="form-control" id="inputMessage" name="message" required="required"></textarea>
+
+            </div><!-- /.form-group -->
+        {% endif %}
+
+        <div class="form-group mbn">
+            <input type="hidden" name="post_id" value="{{ post_id }}">
+            <input type="hidden" name="action" value="property_enquire">
+            <button type="submit" class="btn btn-secondary btn-block">{{ 'Send'|translate }}</button>
+            <div class="alert mtm mbn hide">
+            </div>
+        </div>
+        <!-- /.form-actions -->
+    </form>
+</div><!-- /.content -->
+<script>
+    (function($) {
+        function createAlert(data) {
+            var html = '';
+
+
+        }
+        $('#enquire-form').submit(function(e) {
+            e.preventDefault();
+            var form = $(this);
+            var action = $(this).attr('action');
+
+            $.ajax({
+                type: 'POST',
+                url: action,
+                data: form.serialize(),
+                dataType: "json",
+                success: function(data) {
+                    var alert = form.find('.alert');
+                    alert.removeClass('hide');
+                    if (data.success === true) {
+                        form.reset();
+                        alert.addClass('alert-success');
+                    } else {
+                        alert.addClass('alert-danger');
+                    }
+                    alert.html(data.message);
+                }
+            });
+        });
+    })(jQuery);
+
+</script>
+{{ after_widget|raw }}

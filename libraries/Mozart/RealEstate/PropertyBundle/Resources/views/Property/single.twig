@@ -1,0 +1,52 @@
+{% extends 'layouts/base.twig' %}
+
+{% block content %}
+    <h1 class="page-header">{% if wp.get_post_meta(post.ID, '_property_title', TRUE) %}{{ wp.get_post_meta(post.ID, '_property_title', TRUE) }}, {% endif %}{{ post.post_title }},</h1>
+    <span>{{ wp.wp_get_post_terms(post.ID, 'locations').0.name }}</span>
+
+    <div class="property-detail">
+
+    <div class="row">
+        <div class="col-xs-8 gallery">
+            <div class="preview">
+                <img src="{{ wp.get_post_meta(post.ID, '_property_slides', TRUE).0.imgurl }}" alt="">
+            </div>
+
+            <div class="content">
+                <ul>
+                    {% for slide in wp.get_post_meta(post.ID, '_property_slides', TRUE) %}
+                        {% if loop.first %}
+                            <li class="active">
+                        {% else %}
+                            <li>
+                        {% endif %}
+                            <div class="thumb">
+                                <a href="#"><img src="{{ slide.imgurl }}" alt=""></a>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div><!-- /.content -->
+        </div>
+
+        <div class="overview col-xs-4">
+            {% include '@root/property/overview.twig' %}
+        </div>
+    </div>
+
+        <h2>{{ 'About Property'|translate }}</h2>
+
+        {{ wp.do_shortcode(wp.apply_filters('the_content', post.post_content))|raw }}
+
+        <div class="row">
+            <div class="col-xs-6">
+                {% include '@root/property/amenities.twig' %}
+            </div>
+
+            <div class="col-xs-6">
+                {% include '@root/property/property-map.twig' %}
+            </div>
+
+        </div>
+    </div>
+{% endblock %}

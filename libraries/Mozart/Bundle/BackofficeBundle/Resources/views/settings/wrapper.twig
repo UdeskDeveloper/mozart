@@ -1,0 +1,52 @@
+<form method="post" action="options.php" enctype="multipart/form-data">
+    <div class="mozart">
+        <div class="mozart-wrapper clear">
+            <h2 class="page-title">
+                {{ title }}
+
+                {% if page_title %}
+                    / {{ page_title }}
+                {% endif %}
+
+                {% if active_tab_title %}
+                    / {{ active_tab_title }}
+                {% endif %}
+            </h2>
+
+            <div class="mozart-actions">
+                {{ submit|raw }}
+            </div>
+
+            <div class="mozart-main">
+                <div class="mozart-inner">
+                    {% if tabs %}
+                        <div class="mozart-sidebar">
+                            {{ settings_tabs }}
+                            {{ tabs|raw }}
+                        </div><!-- /.mozart-tabs -->
+                    {% endif %}
+
+                    <div class="mozart-content">
+                        {{ wp.settings_errors }}
+
+                        {% for form in forms %}
+                            {{ wp.settings_fields(form) }}
+                            {{ wp.do_settings_sections(form) }}
+                        {% endfor %}
+
+                    </div>
+                    <!-- /.mozart-content -->
+                </div>
+                <!-- /.mozart-inner -->
+            </div>
+            <!-- /.mozart-main -->
+
+            <div class="mozart-actions bottom">
+                {{ submit|raw }}
+            </div>
+
+        </div>
+        <!-- /.mozart-wrapper -->
+    </div>
+    <!-- /.mozart -->
+</form>

@@ -1,0 +1,86 @@
+<div class="box thumbnail mtm">
+    <div class="image">
+        <div class="content">
+            <a href="{{ wp.get_permalink(property.ID) }}">
+                {% if im_get_post_teaser(property.ID) %}
+                    <div class="description"><p>{{ im_get_post_teaser(property.ID) }}</p></div>
+                        {% endif %}
+                        {% if wp.get_the_post_thumbnail(property.ID) %}
+                            {# @todo add | imagine_filter('small_box') to the attachment #}
+                    <img src="{{ wp.wp_get_attachment_url(wp.get_post_thumbnail_id(property.ID), 'full') }}"
+                         alt="{{ property.post_title }}">
+                {% else %}
+                    <img src="{{ wp.get_template_directory_uri() }}/assets/img/property-tmp-small.png"
+                         alt="{{ property.post_title }}">
+                {% endif %}
+            </a>
+        </div><!-- /.content -->
+
+
+        {% if wp.parameter('property', 'common', 'disable_contract_type_label') != 'on' %}
+            {% if wp.wp_get_post_terms(property.ID, 'property_contracts') %}
+                <div class="rent-sale">
+                    {{ wp.wp_get_post_terms(property.ID, 'property_contracts').0.name }}
+                </div><!-- /.rent-sale -->
+            {% endif %}
+        {% endif %}
+
+        <div class="price">
+            {% if property.meta._property_custom_text is defined %}
+                {{ property.meta._property_custom_text.0 }}
+            {% else %}
+                {{ property.meta._property_price.0|price_format }}
+                {% if property.meta._property_price_suffix is defined %} <span class="suffix">{{ property.meta._property_price_suffix.0 }}</span>{% endif %}
+            {% endif %}
+        </div><!-- /.price -->
+
+        {% if property.meta._property_reduced is defined %}
+            <div class="reduced">
+                {{ 'Reduced'|translate }}
+            </div><!-- /.reduced -->
+        {% endif %}
+    </div><!-- /.image -->
+
+    <div class="info caption">
+        <header>
+            <h3 class="man"><a href="{{ wp.get_permalink(property.ID) }}">
+                    {% if property.meta._property_title is defined %}
+                        {{ property.meta._property_title.0 }}
+                    {% else %}
+                        {{ property.post_title }}
+                    {% endif %}
+                </a>
+            </h3>
+            {% if property.location.0 is defined %}
+                <h5 class="location mts mbs">{{ property.location.0.name }}</h5><!-- /.location -->
+            {% endif %}
+        </header>
+        <footer class="property-info">
+            {% if property.meta._property_area is defined %}
+                <div class="area">
+                    <i class="icon icon-normal-cursor-scale-up"></i>
+                    {{ property.meta._property_area.0 }}{{ wp.parameter('property', 'units', 'area')|raw }}
+                </div><!-- /.area -->
+            {% endif %}
+
+            {% if property.meta._property_hide_beds is defined and property.meta._property_hide_beds.0 != 1 %}
+                {% if property.meta._property_bedrooms.0 %}
+                    <div class="bedrooms">
+                        <i class="icon icon-normal-bed"></i>
+                        {{ property.meta._property_bedrooms.0 }}
+                    </div><!-- /.bedrooms -->
+                {% endif %}
+            {% endif %}
+
+            {% if property.meta._property_hide_baths is not defined %}
+                {% if property.meta._property_bathrooms.0 %}
+                    <div class="bathrooms">
+                        <i class="icon icon-normal-shower"></i>
+                        {{ property.meta._property_bathrooms.0 }}
+                    </div><!-- /.bathrooms -->
+                {% endif %}
+            {% endif %}
+        </footer><!-- /.property-info -->
+    </div><!-- /.info -->
+
+</div><!-- /.property -->

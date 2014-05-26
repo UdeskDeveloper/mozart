@@ -1,0 +1,5 @@
+/backstage/bootstrap.php.cache
+/backstage/config/parameters.yml
+/vendor/
+/binaries/
+/composer.phar

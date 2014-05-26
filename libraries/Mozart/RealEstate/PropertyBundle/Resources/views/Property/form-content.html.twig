@@ -1,0 +1,125 @@
+<div class="col-xs-12 col-sm-4 form-column">
+    <div class="form-column-inner">
+        <input type="hidden" name="post_type">
+
+        <div class="form-group">
+            <label for="address">
+                {{ 'Featured image'|translate }}
+            </label>
+            {% if wp.has_post_thumbnail(post.ID) %}
+                {{ wp.get_the_post_thumbnail(post.ID, 'admin-thumb')|raw }}
+                <a href="?action=delete-thumbnail&id={{ post.ID }}">{{ 'Remove'|translate }}</a>
+            {% else %}
+                <div class="featured-image">
+                    <input type="file" name="featured_image">
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="address">
+                {{ 'Gallery'|translate }}
+            </label>
+            <script>
+                jQuery('document').ready(function() {
+
+                    jQuery('#add-more-featured-image').click(function() {
+                        var wrapper = jQuery('#add-more-wrapper-order');
+                        var count = jQuery('li', wrapper).size();
+                        var context = jQuery('#add-more-wrapper-order').append('<li><input type="file" name="_property_meta_slides_' + count + '"><input class="order-value" type="hidden" name="_property_meta_slides_weight_' + count + '" value="' + count + '"><div class="actions"><div class="drag"></div><div class="remove"></div></div></li>');
+                        jQuery('.remove', context).click(function() {
+                            jQuery(this).parent().parent().remove();
+                        });
+                    });
+
+                    jQuery('.remove').click(function() {
+                        jQuery(this).parent().parent().remove();
+                    });
+
+                    jQuery('#add-more-wrapper-order').sortable({
+                        update: function(event, ui) {
+                            var position = 0;
+                            jQuery('#add-more-wrapper-order > li').each(function(index) {
+                                jQuery('.order-value', this).attr('value', position);
+                                position += 1;
+                            })
+                        }
+                    });
+                });
+
+            </script>
+
+            <div id="add-more-wrapper">
+                <ul id="add-more-wrapper-order">
+                    {% set count = 0 %}{% for slide in slides %}
+                            <li class="img-container">
+                                <img width="80" height="80" src={{ slide.imgurl }}>
+                                <input type="hidden" name="_property_meta_slides_id_{{ count }}"
+                                       value="{{ slide.imgurl }}">
+                                <input class="order-value" type="hidden"
+                                       name="_property_meta_slides_weight_{{ count }}" value="{{ count }}">
+                                <div class="actions"><div class="drag"></div><div class="remove"></div>
+
+                                </div>
+                            </li>
+                            {% set count = count + 1 %}{% endfor %}
+                                </ul>
+
+                                <div class="button-wrapper">
+                                    <button class="btn btn-primary" id="add-more-featured-image"
+                                            type="button">{{ 'Add more'|translate }}</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="address">
+                                {{ 'Address'|translate }}
+                            </label>
+                            <input type="text" name="post_title" size="30"
+                                   class="form-control"
+                                   value="{% if post.post_title is defined %}{{ post.post_title }}{% endif %}" id="address" autocomplete="off"
+                                   required="required">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="description">
+                                {{ 'Description'|translate }}
+                            </label>
+                            <textarea id="description" class="form-control wp-editor-area"
+                                      rows="10" name="content"
+                                      required="required">{% if post.post_content is defined %}{{ post.post_content }}{% endif %}</textarea>
+
+                        </div>
+
+                        <div class="form-group">
+                            <label>{{ 'Type'|translate }} </label>
+
+                            {{ property_types|raw }}
+                        </div>
+
+                        <div class="form-group">
+                            <label>{{ 'Contract Type'|translate }}</label>
+                            {{ property_contracts|raw }}
+                        </div>
+
+                        <div class="form-group">
+                            <label>{{ 'Location'|translate }}</label>
+                            {{ property_locations|raw }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-12 col-sm-4 form-column">
+                    <div class="form-column-inner">
+                        <div class="form-group">
+                            <label>
+                                {{ 'Amenities'|translate }}
+                            </label>
+
+                            <ul class="list-unstyled">
+                                {{ amenities|raw }}
+                            </ul>
+                        </div>
+                    </div>
+                </div>

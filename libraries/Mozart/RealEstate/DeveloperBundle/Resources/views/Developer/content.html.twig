@@ -1,0 +1,38 @@
+<div class="developer">
+    <div class="row">
+        <div class="col-xs-3">
+            <a href="{{ wp.get_permalink(wp.get_the_ID()) }}">
+                {% if wp.get_the_post_thumbnail(wp.get_the_ID()) %}
+                    {{ wp.get_the_post_thumbnail(wp.get_the_ID(), 'post-thumbnail','class=img-thumbnail img-responsive')|raw }}
+                {% else %}
+                    <img src="{{ wp.get_template_directory_uri() }}/assets/img/developer-tmp.png"
+                         alt="{{ wp.the_title() }}" class="img-thumbnail img-responsive">
+                {% endif %}
+            </a>
+        </div><!-- /.image -->
+
+        <div class="body col-xs-6">
+            <h3>
+                <a href="{{ wp.get_permalink(wp.get_the_ID()) }}">{{ wp.the_title() }}</a>
+            </h3>
+
+            <p>{{ im_get_post_teaser(wp.get_the_ID()) }}</p>
+        </div><!-- /.body -->
+
+        <div class="info col-xs-3">
+            <div class="box">
+                <div class="address">
+                    {{ wp.get_post_meta(wp.get_the_ID(), '_developer_address', true)|nl2br  }}
+                </div><!-- /.address -->
+
+                <div class="email">
+                    <a href="mailto:{{ wp.get_post_meta(wp.get_the_ID(), '_developer_email', true)  }}">{{ wp.get_post_meta(wp.get_the_ID(), '_developer_email', true)  }}</a>
+                </div><!-- /.email -->
+
+                <div class="phone">
+                    {{ wp.get_post_meta(wp.get_the_ID(), '_developer_phone', true)  }}
+                </div><!-- /.phone -->
+            </div><!-- /.box -->
+        </div><!-- /.info -->
+    </div><!-- /.row -->
+</div><!-- /.developer -->

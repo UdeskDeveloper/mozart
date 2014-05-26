@@ -1,0 +1,67 @@
+<div class="page-header nav">
+    <h1 class="navbar-left">{{ wp.get_the_title() }}</h1>
+    <div class="navbar-right">
+        <a href="?action=add" class="btn btn-primary arrow-right add-submission">
+            {{ 'Add new submission'|translate }}
+        </a>
+    </div>
+</div><!-- /.clearfix -->
+
+{% if wp.have_posts() %}
+    <table class="table submissions-table">
+        <thead>
+            <tr>
+                <th>{{ 'Image'|translate }}</th>
+                <th>{{ 'Title'|translate }}</th>
+                <th>{{ 'Created'|translate }}</th>
+                <th>{{ 'Status'|translate }}</th>
+                <th>{{ 'Actions'|translate }}</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for post in posts %}{{ wp_query.the_post() }}
+                <tr>
+                    <td class="img-thumbnail">
+                        {% if wp.has_post_thumbnail(post.ID) %}
+                            <a href="{{ wp.get_permalink(post.ID) }}">
+                                {{ wp.get_the_post_thumbnail(post.ID, 'admin-thumb')|raw }}
+                            </a>
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+
+                    <td class="title">
+                        <a href="{{ wp.get_permalink(post.ID) }}">{{ post.post_title }}</a>
+                    </td>
+
+                    <td class="post-date">
+                        {{ wp.mysql2date(wp.get_option('date_format'), post.post_date) }}
+                    </td>
+
+                    <td class="status">
+                        <strong class="{{ wp.get_post_status(post.ID) }}">{{ wp.get_post_statuses[wp.get_post_status(post.ID)] }}</strong>
+                    </td>
+
+                    <td class="actions">
+
+                        {% set links = get_property_action_links(post.ID) %}
+                            {% for link in links %}
+                                {{ link|raw }}
+                            {% endfor %}
+                        </td>
+                    </tr>
+                    <tr class="sep">
+                        <td colspan="5"></td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+
+                {{ im_paging_nav() }}
+                {% else %}
+                    <p>
+                        {{ 'No submisssions found.'|translate }}
+                    </p>
+                    {% endif %}

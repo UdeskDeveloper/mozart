@@ -1,0 +1,58 @@
+<div class="map-wrapper">
+    <div class="map">
+
+        {% if show_filter %}
+            {% if horizontal_filter %}
+            {% else %}
+                <div class="container">
+                    <div class="row">
+                        <div class="col-xs-3">
+                            {% include '@root/property/filter.twig' %}
+                        </div>
+                        <!-- /.col-xs-3 -->
+                    </div>
+                    <!-- /.row -->
+                </div><!-- /.container -->
+            {% endif %}
+        {% endif %}
+
+        <script type="text/javascript">
+            jQuery(document).ready(function ($) {
+                var map = $('#map').iMap({
+                    locations              : {% include '@root/property/sections/locations.twig' %},
+                    types                  : {% include '@root/property/sections/types.twig' %},
+                    contents               : {% include '@root/property/sections/contents.twig' %},
+                    transparentMarkerImage : '{{ wp.get_template_directory_uri() }}/Resources/public/img/marker-transparent.png',
+                    transparentClusterImage: '{{ wp.get_template_directory_uri() }}/Resources/public/img/markers/cluster-transparent.png',
+                    zoom                   : {{ zoom }},
+                    center                 : {
+                        latitude : {{ latitude }},
+                        longitude: {{ longitude }}
+                    },
+                    filterForm             : '.map-filtering',
+                    enableGeolocation      : '{{ enable_geolocation }}',
+                    pixelOffsetX           : -75,
+                    pixelOffsetY           : -200
+                });
+            });
+        </script>
+
+        <div id="map" class="map-inner" style="height: {{ height }}"></div>
+        <!-- /.map-inner -->
+
+        {% if show_filter %}
+            {% if horizontal_filter %}
+                <div class="container">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            {% include '@root/property/filter-horizontal.twig' %}
+                        </div>
+                        <!-- /.col-xs-12 -->
+                    </div>
+                    <!-- /.row -->
+                </div><!-- /.container -->
+            {% endif %}
+        {% endif %}
+    </div>
+    <!-- /.map -->
+</div><!-- /.map-wrapper -->

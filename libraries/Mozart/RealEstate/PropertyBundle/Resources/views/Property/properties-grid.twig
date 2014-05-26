@@ -1,0 +1,20 @@
+{% if wp.r_get_config('property', 'homepage', 'title') %}
+    <h1 class="page-header">{{ wp.r_get_config('property', 'homepage', 'title') }}</h1>
+{% else %}
+    <h1>&nbsp;</h1>
+{% endif %}
+
+<div class="properties-grid">
+    <div class="{% if wp.r_get_config('property', 'homepage', 'cols') > 3 %}row-fluid{% else %}row{% endif %}">
+        {% for post in posts %}
+            <div class="col-xs-3">
+                {% include '@root/property/property-box-small.twig' with {'property': post} %}
+            </div>
+
+            {% if loop.index % wp.r_get_config('property', 'homepage', 'cols')  == 0 %}
+                </div>
+                <div class="{% if wp.r_get_config('property', 'homepage', 'cols') > 3 %}row-fluid{% else %}row{% endif %}">
+            {% endif %}
+        {% endfor %}
+    </div><!-- /.row -->
+</div><!-- /.properties-grid -->

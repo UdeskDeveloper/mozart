@@ -1,0 +1,84 @@
+{
+    "name": "rhetina/mozart",
+    "description": "The framework that brings the awesomeness of Symfony into Wordpress",
+    "type": "wordpress-framework",
+    "authors": [
+        {
+            "name": "Alexandru Furculita",
+            "email": "alex@rhetina.com"
+        }
+    ],
+    "autoload": {
+        "psr-0": {
+            "": "libraries/"
+        },
+        "files": [
+            "backstage/functions.php",
+            "libraries/Mozart/Mozart.php"
+        ]
+    },
+    "require": {
+        "php": ">=5.3.3",
+
+        "twig/twig": "~1.12",
+        "twig/extensions": "~1.0",
+        "asm89/twig-cache-extension": "0.1.*@dev",
+        "jms/twig-js": "1.0.*@dev",
+        "jms/twig-js-bundle": "dev-master",
+
+        "symfony/symfony": "~2.4",
+        "symfony/monolog-bundle": "~2.4",
+
+        "incenteev/composer-parameter-handler": "2.1.*@dev",
+        "sensio/framework-extra-bundle": "~3.0",
+
+        "doctrine/orm": "~2.2,>=2.2.3",
+        "doctrine/doctrine-bundle": "~1.2",
+
+        "leafo/scssphp-compass": "dev-master",
+        "leafo/scssphp": "dev-master",
+
+        "mopa/bootstrap-bundle": "3.*@dev",
+        "twbs/bootstrap": "3.1.*@dev",
+        "twbs/bootstrap-sass": "3.1.*@dev",
+        "craue/formflow-bundle": "3.0.*@dev",
+
+        "liip/imagine-bundle": "dev-master",
+
+        "egeloen/google-map-bundle": "2.2.*@dev"
+    },
+    "require-dev": {
+        "sensio/generator-bundle": "~2.3"
+    },
+    "config": {
+        "autoloader-suffix": "Mozart",
+        "bin-dir": "binaries",
+        "vendor-dir": "vendor"
+    },
+    "scripts": {
+        "post-install-cmd": [
+            "Incenteev\\ParameterHandler\\ScriptHandler::buildParameters",
+            "Rhetina\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::buildBootstrap",
+            "Rhetina\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::clearCache",
+            "Mopa\\Bundle\\BootstrapBundle\\Composer\\ScriptHandler::postInstallMirrorTwitterBootstrapSass",
+            "Rhetina\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installAssets",
+            "Rhetina\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::removeSymfonyStandardFiles"
+        ],
+        "post-update-cmd": [
+            "Incenteev\\ParameterHandler\\ScriptHandler::buildParameters",
+            "Rhetina\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::buildBootstrap",
+            "Rhetina\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::clearCache",
+            "Mopa\\Bundle\\BootstrapBundle\\Composer\\ScriptHandler::postInstallMirrorTwitterBootstrapSass",
+            "Rhetina\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installAssets",
+            "Rhetina\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::removeSymfonyStandardFiles"
+        ]
+    },
+    "extra": {
+        "incenteev-parameters": {
+            "file": "backstage/config/parameters.yml"
+        },
+        "branch-alias": {
+            "dev-master": "2.4-dev"
+        }
+    }
+}

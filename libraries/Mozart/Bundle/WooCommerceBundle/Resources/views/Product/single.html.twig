@@ -1,0 +1,46 @@
+{% extends '@twigs/layouts/base.html.twig' %}
+
+{% block leftsidebar %}
+{% endblock %}
+
+{% block content %}
+
+    {% if wp.have_posts() %}
+
+        {# woocommerce_before_shop_loop hook
+        #  @hooked woocommerce_result_count - 20
+        #  @hooked woocommerce_catalog_ordering - 30
+        #}
+        {{ wp.do_action('woocommerce_before_shop_loop') }}
+
+        {{ wp.woocommerce_product_loop_start() }}
+
+        {{ wp.woocommerce_product_subcategories() }}
+
+        {% for post in posts %}
+            {{ wp_query.the_post() }}
+            {{ wp.wc_get_template_part('content', 'product') }}
+        {% endfor %}
+
+        {{ wp.woocommerce_product_loop_end() }}
+
+        {# woocommerce_after_shop_loop hook
+        #  @hooked woocommerce_pagination - 10
+        #}
+        {{ wp.do_action('woocommerce_after_shop_loop') }}
+
+    {% elseif (no_products) %}
+
+        {{ wp.wc_get_template('loop/no-products-found.php') }}
+
+    {% endif %}
+
+{% endblock %}
+
+{% block rightsidebar %}
+    {% if wp.is_active_sidebar('shop') %}
+        <div class="sidebar col-xs-3">
+            {{ wp.do_action('woocommerce_sidebar') }}
+        </div><!-- /#sidebar -->
+    {% endif %}
+{% endblock %}

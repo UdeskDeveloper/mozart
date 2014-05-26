@@ -1,0 +1,23 @@
+mozart_nucleus:
+    wp:
+        home:
+            dir: /home/rhetina/public_html/dev/projects/AmirAssignmentListings/
+            uri: 'http://amirassl.dev.rhetina.com'
+        site:
+            uri: 'http://amirassl.dev.rhetina.com'
+        plugin:
+            dir: /home/rhetina/public_html/dev/projects/AmirAssignmentListings/wp-content/plugins
+            uri: 'http://amirassl.dev.rhetina.com/wp-content/plugins'
+        theme:
+            name: Immobilier
+            dir: /home/rhetina/public_html/dev/projects/AmirAssignmentListings/wp-content/themes/immobilier
+            uri: 'http://amirassl.dev.rhetina.com/wp-content/themes/immobilier'
+        stylesheet:
+            dir: /home/rhetina/public_html/dev/projects/AmirAssignmentListings/wp-content/themes/immobilier
+            uri: 'http://amirassl.dev.rhetina.com/wp-content/themes/immobilier'
+        content:
+            dir: /home/rhetina/public_html/dev/projects/AmirAssignmentListings/wp-content
+            uri: 'http://amirassl.dev.rhetina.com/wp-content'
+        includes:
+            dir: wp-includes
+            uri: 'http://amirassl.dev.rhetina.com/wp-includes/'

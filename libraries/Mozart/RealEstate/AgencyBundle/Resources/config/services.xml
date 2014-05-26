@@ -1,0 +1,20 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <parameters>
+        <parameter key="realestate.agency.model.class">Mozart\RealEstate\AgencyBundle\Model\Agency</parameter>
+    </parameters>
+
+    <services>
+        <service id="realestate.agency.model"
+                 class="%realestate.agency.model.class%">
+        </service>
+
+        <service id="mozart_backoffice.options.section.realestate_agency" class="Mozart\RealEstate\AgencyBundle\Backoffice\OptionSection">
+            <tag name="mozart_backoffice.options.section" alias="realestate_agency" />
+        </service>
+    </services>
+</container>

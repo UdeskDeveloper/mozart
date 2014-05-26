@@ -1,0 +1,36 @@
+{% if developers %}
+    {{ before_widget|raw }}
+
+    {% if title %}
+        {{ before_title|raw }}{{ title }}{{ after_title|raw }}
+    {% endif %}
+
+    <div class="content">
+        {% for developer in developers %}
+            <div class="developer clearfix">
+                <div class="image">
+                    <a href="{{ wp.get_permalink(developer.ID) }}">
+                        {% if wp.get_the_post_thumbnail(developer.ID) %}
+                            {{ wp.get_the_post_thumbnail(developer.ID)|raw }}
+                        {% else %}
+                            <img src="{{ wp.content_url() }}/mozart/public/bundles/immobiliertheme/img/developer-tmp.png" alt="{{ developer.post_title }}">
+                        {% endif %}
+                    </a>
+                </div>
+                <!-- /.image -->
+
+                <div class="name">
+                    <a href="{{ wp.get_permalink(developer.ID) }}">{{ developer.post_title }}</a>
+                </div>
+                <!-- /.name -->
+                <div class="phone">{{ developer.meta._developer_mobile.0 }}</div>
+                <!-- /.phone -->
+                <div class="email"><a href="mailto:{{ developer.meta._developer_email.0 }}">{{ developer.meta._developer_email.0 }}</a>
+                </div>
+                <!-- /.email -->
+            </div><!-- /.developer -->
+        {% endfor %}
+    </div><!-- /.content -->
+
+    {{ after_widget|raw }}
+{% endif %}

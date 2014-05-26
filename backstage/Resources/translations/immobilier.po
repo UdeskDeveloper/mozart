@@ -1,0 +1,1963 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: immobilier\n"
+"POT-Creation-Date: 2013-12-18 09:23+0100\n"
+"PO-Revision-Date: 2013-12-18 09:23+0100\n"
+"Last-Translator: \n"
+"Language-Team: Rhetina <info@rhetina.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.5.5\n"
+"X-Poedit-KeywordsList: __;_e;wp.__\n"
+"X-Poedit-Basepath: .\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-SearchPath-0: ..\n"
+
+#: ../comments.php:5
+#, php-format
+msgid "One thought on &ldquo;%2$s&rdquo;"
+msgstr ""
+
+#: ../functions.php:109
+msgid "Main"
+msgstr ""
+
+#: ../functions.php:110
+msgid "Anonymous user"
+msgstr ""
+
+#: ../functions.php:111
+msgid "Authenticated user"
+msgstr ""
+
+#: ../functions.php:146
+msgid "Primary"
+msgstr ""
+
+#: ../functions.php:151
+msgid "Top"
+msgstr ""
+
+#: ../functions.php:156
+msgid "Bottom"
+msgstr ""
+
+#: ../functions.php:161
+msgid "Content Top"
+msgstr ""
+
+#: ../functions.php:166
+msgid "Content Bottom"
+msgstr ""
+
+#: ../functions.php:171
+msgid "Footer One"
+msgstr ""
+
+#: ../functions.php:176
+msgid "Footer Two"
+msgstr ""
+
+#: ../functions.php:181
+msgid "Footer Three"
+msgstr ""
+
+#: ../functions.php:186
+msgid "Footer Four"
+msgstr ""
+
+#: ../functions.php:191
+msgid "Footer Bottom Left"
+msgstr ""
+
+#: ../functions.php:196
+msgid "Footer Bottom Right"
+msgstr ""
+
+#: ../functions.php:206
+msgid "Sticky"
+msgstr ""
+
+#: ../functions.php:220
+msgid ", "
+msgstr ""
+
+#: ../functions.php:227
+msgid "Posted by"
+msgstr ""
+
+#: ../functions.php:227
+msgid "on"
+msgstr ""
+
+#: ../functions.php:229
+#, php-format
+msgid "View all posts by %s"
+msgstr ""
+
+#: ../functions.php:236
+msgid "Pages:"
+msgstr ""
+
+#: ../functions.php:248
+msgid "Continue reading"
+msgstr ""
+
+#: ../functions.php:260
+#, php-format
+msgid "%1$s on %2$s"
+msgstr ""
+
+#: ../functions.php:264
+#, php-format
+msgid "Permalink to %s"
+msgstr ""
+
+#: ../functions.php:293
+#, php-format
+msgid "Page %s"
+msgstr ""
+
+#: ../functions.php:323
+msgid "First"
+msgstr ""
+
+#: ../functions.php:324
+#: ../backstage/plugins/properties/templates/properties/carousel.twig:10
+#: ../backstage/plugins/properties/templates/properties/slider.twig:23
+#: ../templates/properties/slider.twig:20
+msgid "Previous"
+msgstr ""
+
+#: ../functions.php:332
+#: ../backstage/plugins/properties/templates/properties/carousel.twig:11
+#: ../backstage/plugins/properties/templates/properties/slider.twig:24
+#: ../templates/properties/slider.twig:21
+msgid "Next"
+msgstr ""
+
+#: ../functions.php:333
+msgid "Last"
+msgstr ""
+
+#: ../functions.php:417
+#: ../backstage/libraries/class-tgm-plugin-activation.php:164
+msgid "Install Required Plugins"
+msgstr ""
+
+#: ../functions.php:418
+#: ../backstage/libraries/class-tgm-plugin-activation.php:165
+msgid "Install Plugins"
+msgstr ""
+
+#: ../functions.php:419
+#: ../backstage/libraries/class-tgm-plugin-activation.php:166
+#, php-format
+msgid "Installing Plugin: %s"
+msgstr ""
+
+#: ../functions.php:420
+msgid "Something went wrong with the plugin API."
+msgstr ""
+
+#: ../functions.php:431
+#: ../backstage/libraries/class-tgm-plugin-activation.php:178
+#: ../backstage/libraries/class-tgm-plugin-activation.php:490
+msgid "Return to Required Plugins Installer"
+msgstr ""
+
+#: ../functions.php:432
+#: ../backstage/libraries/class-tgm-plugin-activation.php:179
+#: ../backstage/libraries/class-tgm-plugin-activation.php:1846
+msgid "Plugin activated successfully."
+msgstr ""
+
+#: ../functions.php:433
+#, php-format
+msgid "All plugins installed and activated successfully. %s"
+msgstr ""
+
+#: ../page-login.php:7 ../page-register.php:7
+msgid "You are already logged in."
+msgstr ""
+
+#: ../page-submission-index.php:14
+#: ../backstage/plugins/submission/renderers.php:55
+#: ../backstage/plugins/submission/renderers.php:89
+msgid "You must be logged in to access this page."
+msgstr ""
+
+#: ../pricing.php:5 ../pricing.php:17
+#: ../backstage/plugins/pricing/pricing.php:5
+#: ../backstage/plugins/pricing/pricing.php:17
+msgid "Pricings"
+msgstr ""
+
+#: ../pricing.php:6 ../backstage/plugins/pricing/pricing.php:6
+msgid "Pricing"
+msgstr ""
+
+#: ../pricing.php:7 ../backstage/plugins/agencies/agencies.php:16
+#: ../backstage/plugins/agents/agents.php:13 ../backstage/plugins/faq/faq.php:10
+#: ../backstage/plugins/landlords/landlords.php:26
+#: ../backstage/plugins/partners/partners.php:14
+#: ../backstage/plugins/pricing/pricing.php:7
+#: ../backstage/plugins/properties/properties.php:45
+#: ../backstage/plugins/submission/submission.php:27
+msgid "Add New"
+msgstr ""
+
+#: ../pricing.php:8 ../backstage/plugins/pricing/pricing.php:8
+msgid "Add New Pricing"
+msgstr ""
+
+#: ../pricing.php:9 ../backstage/plugins/pricing/pricing.php:9
+msgid "Edit Pricing"
+msgstr ""
+
+#: ../pricing.php:10 ../backstage/plugins/pricing/pricing.php:10
+msgid "New Pricing"
+msgstr ""
+
+#: ../pricing.php:11 ../backstage/plugins/pricing/pricing.php:11
+msgid "All Pricings"
+msgstr ""
+
+#: ../pricing.php:12 ../backstage/plugins/pricing/pricing.php:12
+msgid "View Pricing"
+msgstr ""
+
+#: ../pricing.php:13 ../backstage/plugins/pricing/pricing.php:13
+msgid "Search Pricing"
+msgstr ""
+
+#: ../pricing.php:14 ../backstage/plugins/pricing/pricing.php:14
+msgid "No Pricings found"
+msgstr ""
+
+#: ../pricing.php:15 ../backstage/plugins/pricing/pricing.php:15
+msgid "No Pricings found in Trash"
+msgstr ""
+
+#: ../backstage/core/plugins/settings/renderers.php:32
+#: ../backstage/core/plugins/settings/settings.php:67
+msgid "Settings"
+msgstr ""
+
+#: ../backstage/libraries/class-tgm-plugin-activation.php:167
+msgid "Something went wrong."
+msgstr ""
+
+#: ../backstage/libraries/class-tgm-plugin-activation.php:180
+#, php-format
+msgid "All plugins installed and activated successfully. %1$s"
+msgstr ""
+
+#: ../backstage/libraries/class-tgm-plugin-activation.php:517
+#: ../backstage/libraries/class-tgm-plugin-activation.php:2058
+msgid "Return to the Dashboard"
+msgstr ""
+
+#: ../backstage/libraries/class-tgm-plugin-activation.php:545
+#, php-format
+msgid "The following plugin was activated successfully: %s."
+msgstr ""
+
+#: ../backstage/libraries/class-tgm-plugin-activation.php:704
+msgid "Dismiss this notice"
+msgstr ""
+
+#: ../backstage/libraries/class-tgm-plugin-activation.php:1091
+msgid "External Link"
+msgstr ""
+
+#: ../backstage/libraries/class-tgm-plugin-activation.php:1096
+msgid "Private Repository"
+msgstr ""
+
+#: ../backstage/libraries/class-tgm-plugin-activation.php:1099
+msgid "Pre-Packaged"
+msgstr ""
+
+#: ../backstage/libraries/class-tgm-plugin-activation.php:1103
+msgid "WordPress Repository"
+msgstr ""
+
+#: ../backstage/libraries/class-tgm-plugin-activation.php:1106
+msgid "Required"
+msgstr ""
+
+#: ../backstage/libraries/class-tgm-plugin-activation.php:1106
+msgid "Recommended"
+msgstr ""
+
+#: ../backstage/libraries/class-tgm-plugin-activation.php:1109
+msgid "Not Installed"
+msgstr ""
+
+#: ../backstage/libraries/class-tgm-plugin-activation.php:1111
+msgid "Installed But Not Activated"
+msgstr ""
+
+#: ../backstage/libraries/class-tgm-plugin-activation.php:1281
+#, php-format
+msgid ""
+"No plugins to install or activate. <a href=\"%1$s\" title=\"Return to the "
+"Dashboard\">Return to the Dashboard</a>"
+msgstr ""
+
+#: ../backstage/libraries/class-tgm-plugin-activation.php:1297
+msgid "Plugin"
+msgstr ""
+
+#: ../backstage/libraries/class-tgm-plugin-activation.php:1298
+msgid "Source"
+msgstr ""
+
+#: ../backstage/libraries/class-tgm-plugin-activation.php:1299
+#: ../backstage/plugins/properties/widgets/carousel_properties.php:52
+#: ../backstage/plugins/properties/templates/properties/filter.twig:29
+#: ../backstage/plugins/properties/templates/properties/form-content.twig:107
+#: ../backstage/plugins/properties/templates/properties/overview.twig:33
+#: ../templates/properties/form-content.twig:97
+#: ../templates/properties/overview.twig:33
+msgid "Type"
+msgstr ""
+
+#: ../backstage/libraries/class-tgm-plugin-activation.php:1300
+#: ../backstage/plugins/submission/meta.php:15
+#: ../backstage/plugins/submission/templates/submission/index.twig:20
+msgid "Status"
+msgstr ""
+
+#: ../backstage/libraries/class-tgm-plugin-activation.php:1318
+msgid "Install"
+msgstr ""
+
+#: ../backstage/libraries/class-tgm-plugin-activation.php:1319
+msgid "Activate"
+msgstr ""
+
+#: ../backstage/libraries/class-tgm-plugin-activation.php:1829
+msgid "Install package not available."
+msgstr ""
+
+#: ../backstage/libraries/class-tgm-plugin-activation.php:1830
+#, php-format
+msgid "Downloading install package from <span class=\"code\">%s</span>&#8230;"
+msgstr ""
+
+#: ../backstage/libraries/class-tgm-plugin-activation.php:1831
+msgid "Unpacking the package&#8230;"
+msgstr ""
+
+#: ../backstage/libraries/class-tgm-plugin-activation.php:1832
+msgid "Installing the plugin&#8230;"
+msgstr ""
+
+#: ../backstage/libraries/class-tgm-plugin-activation.php:1833
+msgid "Plugin install failed."
+msgstr ""
+
+#: ../backstage/libraries/class-tgm-plugin-activation.php:1834
+msgid "Plugin installed successfully."
+msgstr ""
+
+#: ../backstage/libraries/class-tgm-plugin-activation.php:1845
+msgid "Plugin activation failed."
+msgstr ""
+
+#: ../backstage/libraries/class-tgm-plugin-activation.php:1955
+msgid ""
+"The installation and activation process is starting. This process may take a "
+"while on some hosts, so please be patient."
+msgstr ""
+
+#: ../backstage/libraries/class-tgm-plugin-activation.php:1956
+#, php-format
+msgid "%1$s installed and activated successfully."
+msgstr ""
+
+#: ../backstage/libraries/class-tgm-plugin-activation.php:1956
+#: ../backstage/libraries/class-tgm-plugin-activation.php:1965
+msgid "Show Details"
+msgstr ""
+
+#: ../backstage/libraries/class-tgm-plugin-activation.php:1956
+#: ../backstage/libraries/class-tgm-plugin-activation.php:1965
+msgid "Hide Details"
+msgstr ""
+
+#: ../backstage/libraries/class-tgm-plugin-activation.php:1957
+msgid "All installations and activations have been completed."
+msgstr ""
+
+#: ../backstage/libraries/class-tgm-plugin-activation.php:1958
+#, php-format
+msgid "Installing and Activating Plugin %1$s (%2$d/%3$d)"
+msgstr ""
+
+#: ../backstage/libraries/class-tgm-plugin-activation.php:1962
+msgid ""
+"The installation process is starting. This process may take a while on some "
+"hosts, so please be patient."
+msgstr ""
+
+#: ../backstage/libraries/class-tgm-plugin-activation.php:1963
+#, php-format
+msgid "An error occurred while installing %1$s: <strong>%2$s</strong>."
+msgstr ""
+
+#: ../backstage/libraries/class-tgm-plugin-activation.php:1964
+#, php-format
+msgid "The installation of %1$s failed."
+msgstr ""
+
+#: ../backstage/libraries/class-tgm-plugin-activation.php:1965
+#, php-format
+msgid "%1$s installed successfully."
+msgstr ""
+
+#: ../backstage/libraries/class-tgm-plugin-activation.php:1966
+msgid "All installations have been completed."
+msgstr ""
+
+#: ../backstage/libraries/class-tgm-plugin-activation.php:1967
+#, php-format
+msgid "Installing Plugin %1$s (%2$d/%3$d)"
+msgstr ""
+
+#: ../backstage/plugins/accounts/widgets.php:7
+msgid "Rhetina: Login"
+msgstr ""
+
+#: ../backstage/plugins/accounts/widgets.php:10
+#: ../backstage/plugins/accounts/widgets.php:19
+#: ../backstage/plugins/accounts/templates/accounts/login.twig:11
+#: ../templates/layout-login-register.twig:9
+#: ../templates/layout-login-register.twig:19
+#: ../templates/accounts/login.twig:11
+msgid "Login"
+msgstr ""
+
+#: ../backstage/plugins/accounts/widgets.php:24
+#: ../backstage/plugins/accounts/widgets.php:71
+#: ../backstage/plugins/agencies/widgets/agencies.php:31
+#: ../backstage/plugins/agencies/widgets/assigned_agencies.php:31
+#: ../backstage/plugins/agents/widgets.php:31
+#: ../backstage/plugins/agents/widgets.php:93
+#: ../backstage/plugins/call-to-action/widgets.php:36
+#: ../backstage/plugins/partners/widgets/partners.php:31
+#: ../backstage/plugins/properties/properties.php:181
+#: ../backstage/plugins/properties/widgets/carousel_properties.php:40
+#: ../backstage/plugins/properties/widgets/enquire_properties.php:24
+#: ../backstage/plugins/properties/widgets/featured_properties.php:38
+#: ../backstage/plugins/properties/widgets/featured_properties_large.php:38
+#: ../backstage/plugins/properties/widgets/most_recent_properties.php:38
+#: ../backstage/plugins/properties/widgets/property_filter.php:24
+#: ../backstage/plugins/properties/widgets/reduced_properties.php:38
+#: ../backstage/plugins/submission/templates/submission/index.twig:18
+msgid "Title"
+msgstr ""
+
+#: ../backstage/plugins/accounts/widgets.php:54
+msgid "Rhetina: Register"
+msgstr ""
+
+#: ../backstage/plugins/accounts/widgets.php:57
+#: ../backstage/plugins/accounts/widgets.php:66
+#: ../templates/layout-login-register.twig:10
+msgid "Register"
+msgstr ""
+
+#: ../backstage/plugins/agencies/agencies.php:14
+#: ../backstage/plugins/agencies/agencies.php:26
+#: ../backstage/plugins/agencies/widgets/agencies.php:10
+#: ../backstage/plugins/agencies/widgets/agencies.php:19
+#: ../backstage/plugins/properties/meta.php:110
+#: ../templates/archive-agency.twig:4
+msgid "Agencies"
+msgstr ""
+
+#: ../backstage/plugins/agencies/agencies.php:15
+#: ../backstage/plugins/agents/meta.php:5
+msgid "Agency"
+msgstr ""
+
+#: ../backstage/plugins/agencies/agencies.php:17
+msgid "Add New Agency"
+msgstr ""
+
+#: ../backstage/plugins/agencies/agencies.php:18
+msgid "Edit Agency"
+msgstr ""
+
+#: ../backstage/plugins/agencies/agencies.php:19
+msgid "New Agency"
+msgstr ""
+
+#: ../backstage/plugins/agencies/agencies.php:20
+msgid "All Agencies"
+msgstr ""
+
+#: ../backstage/plugins/agencies/agencies.php:21
+msgid "View Agency"
+msgstr ""
+
+#: ../backstage/plugins/agencies/agencies.php:22
+msgid "Search Agency"
+msgstr ""
+
+#: ../backstage/plugins/agencies/agencies.php:23
+msgid "No agencies found"
+msgstr ""
+
+#: ../backstage/plugins/agencies/agencies.php:24
+msgid "No agencies found in Trash"
+msgstr ""
+
+#: ../backstage/plugins/agencies/agencies.php:33
+msgid "agencies"
+msgstr ""
+
+#: ../backstage/plugins/agencies/agencies.php:52
+msgid "Agency Options"
+msgstr ""
+
+#: ../backstage/plugins/agencies/meta.php:4
+#: ../backstage/plugins/call-to-action/widgets.php:53
+#: ../backstage/plugins/landlords/meta.php:24
+#: ../backstage/plugins/properties/templates/properties/form-content.twig:75
+#: ../templates/properties/form-content.twig:75
+msgid "Address"
+msgstr ""
+
+#: ../backstage/plugins/agencies/meta.php:14
+#: ../backstage/plugins/agents/meta.php:32
+#: ../backstage/plugins/landlords/meta.php:74
+#: ../backstage/plugins/properties/enquire.php:27
+#: ../backstage/plugins/properties/templates/properties/enquire.twig:27
+msgid "Phone"
+msgstr ""
+
+#: ../backstage/plugins/agencies/meta.php:24
+#: ../backstage/plugins/agents/meta.php:42
+#: ../backstage/plugins/landlords/meta.php:84
+#: ../backstage/plugins/properties/enquire.php:43
+#: ../backstage/plugins/accounts/templates/accounts/register.twig:24
+#: ../templates/layout-login-register.twig:64
+#: ../templates/accounts/register.twig:22
+msgid "E-mail"
+msgstr ""
+
+#: ../backstage/plugins/agencies/meta.php:34
+#: ../backstage/plugins/partners/meta.php:4
+msgid "URL"
+msgstr ""
+
+#: ../backstage/plugins/agencies/widgets/agencies.php:7
+msgid "Rhetina: Agencies"
+msgstr ""
+
+#: ../backstage/plugins/agencies/widgets/agencies.php:36
+#: ../backstage/plugins/agencies/widgets/assigned_agencies.php:36
+#: ../backstage/plugins/agents/widgets.php:36
+#: ../backstage/plugins/agents/widgets.php:98
+#: ../backstage/plugins/partners/widgets/partners.php:36
+#: ../backstage/plugins/properties/widgets/carousel_properties.php:46
+#: ../backstage/plugins/properties/widgets/featured_properties.php:43
+#: ../backstage/plugins/properties/widgets/most_recent_properties.php:43
+#: ../backstage/plugins/properties/widgets/reduced_properties.php:43
+msgid "Count"
+msgstr ""
+
+#: ../backstage/plugins/agencies/widgets/assigned_agencies.php:7
+msgid "Rhetina: Assigned Agencies"
+msgstr ""
+
+#: ../backstage/plugins/agencies/widgets/assigned_agencies.php:10
+#: ../backstage/plugins/agencies/widgets/assigned_agencies.php:19
+msgid "Assigned Agencies"
+msgstr ""
+
+#: ../backstage/plugins/agents/agents.php:11
+#: ../backstage/plugins/agents/agents.php:23
+#: ../backstage/plugins/agents/widgets.php:10
+#: ../backstage/plugins/agents/widgets.php:19
+#: ../backstage/plugins/agents/widgets.php:81
+#: ../backstage/plugins/properties/meta.php:127
+#: ../backstage/plugins/properties/properties.php:191
+#: ../templates/archive-agent.twig:4
+msgid "Agents"
+msgstr ""
+
+#: ../backstage/plugins/agents/agents.php:12
+msgid "Agent"
+msgstr ""
+
+#: ../backstage/plugins/agents/agents.php:14
+msgid "Add New Agent"
+msgstr ""
+
+#: ../backstage/plugins/agents/agents.php:15
+msgid "Edit Agent"
+msgstr ""
+
+#: ../backstage/plugins/agents/agents.php:16
+msgid "New Agent"
+msgstr ""
+
+#: ../backstage/plugins/agents/agents.php:17
+msgid "All Agents"
+msgstr ""
+
+#: ../backstage/plugins/agents/agents.php:18
+msgid "View Agent"
+msgstr ""
+
+#: ../backstage/plugins/agents/agents.php:19
+msgid "Search Agent"
+msgstr ""
+
+#: ../backstage/plugins/agents/agents.php:20
+msgid "No agents found"
+msgstr ""
+
+#: ../backstage/plugins/agents/agents.php:21
+msgid "No agents found in Trash"
+msgstr ""
+
+#: ../backstage/plugins/agents/agents.php:30
+msgid "agents"
+msgstr ""
+
+#: ../backstage/plugins/agents/agents.php:50
+msgid "Agent Options"
+msgstr ""
+
+#: ../backstage/plugins/agents/meta.php:22
+#: ../backstage/plugins/landlords/meta.php:64
+msgid "Mobile"
+msgstr ""
+
+#: ../backstage/plugins/agents/widgets.php:7
+msgid "Rhetina: Agents"
+msgstr ""
+
+#: ../backstage/plugins/agents/widgets.php:69
+msgid "Rhetina: Assigned Agents"
+msgstr ""
+
+#: ../backstage/plugins/agents/widgets.php:72
+msgid "Displayable only on property detail page."
+msgstr ""
+
+#: ../backstage/plugins/call-to-action/widgets.php:7
+msgid "Rhetina: Call to Action"
+msgstr ""
+
+#: ../backstage/plugins/call-to-action/widgets.php:10
+msgid "Call to Action"
+msgstr ""
+
+#: ../backstage/plugins/call-to-action/widgets.php:19
+msgid "Call to action"
+msgstr ""
+
+#: ../backstage/plugins/call-to-action/widgets.php:41
+msgid "Text"
+msgstr ""
+
+#: ../backstage/plugins/call-to-action/widgets.php:46
+msgid "Link"
+msgstr ""
+
+#: ../backstage/plugins/call-to-action/widgets.php:51
+msgid "Class"
+msgstr ""
+
+#: ../backstage/plugins/call-to-action/widgets.php:54
+#: ../backstage/plugins/properties/meta-submission.php:54
+#: ../backstage/plugins/properties/meta.php:226
+#: ../backstage/plugins/properties/properties.php:187
+msgid "GPS"
+msgstr ""
+
+#: ../backstage/plugins/call-to-action/widgets.php:55
+msgid "Key"
+msgstr ""
+
+#: ../backstage/plugins/faq/faq.php:8 ../backstage/plugins/faq/faq.php:20
+msgid "FAQs"
+msgstr ""
+
+#: ../backstage/plugins/faq/faq.php:9
+msgid "FAQ"
+msgstr ""
+
+#: ../backstage/plugins/faq/faq.php:11
+msgid "Add New FAQ"
+msgstr ""
+
+#: ../backstage/plugins/faq/faq.php:12
+msgid "Edit FAQ"
+msgstr ""
+
+#: ../backstage/plugins/faq/faq.php:13
+msgid "New FAQ"
+msgstr ""
+
+#: ../backstage/plugins/faq/faq.php:14
+msgid "All FAQs"
+msgstr ""
+
+#: ../backstage/plugins/faq/faq.php:15
+msgid "View FAQ"
+msgstr ""
+
+#: ../backstage/plugins/faq/faq.php:16
+msgid "Search FAQ"
+msgstr ""
+
+#: ../backstage/plugins/faq/faq.php:17
+msgid "No FAQs found"
+msgstr ""
+
+#: ../backstage/plugins/faq/faq.php:18
+msgid "No FAQs found in Trash"
+msgstr ""
+
+#: ../backstage/plugins/faq/faq.php:45
+msgid "Categories"
+msgstr ""
+
+#: ../backstage/plugins/faq/faq.php:46 ../backstage/plugins/faq/faq.php:55
+msgid "Category"
+msgstr ""
+
+#: ../backstage/plugins/faq/faq.php:47
+msgid "Search Category"
+msgstr ""
+
+#: ../backstage/plugins/faq/faq.php:48
+msgid "All Categories"
+msgstr ""
+
+#: ../backstage/plugins/faq/faq.php:49
+msgid "Parent Category"
+msgstr ""
+
+#: ../backstage/plugins/faq/faq.php:50
+msgid "Parent Category:"
+msgstr ""
+
+#: ../backstage/plugins/faq/faq.php:51
+msgid "Edit Category"
+msgstr ""
+
+#: ../backstage/plugins/faq/faq.php:52
+msgid "Update Category"
+msgstr ""
+
+#: ../backstage/plugins/faq/faq.php:53
+msgid "Add New Category"
+msgstr ""
+
+#: ../backstage/plugins/faq/faq.php:54
+msgid "New Category"
+msgstr ""
+
+#: ../backstage/plugins/landlords/landlords.php:11
+#: ../backstage/plugins/landlords/landlords.php:25
+#: ../backstage/plugins/properties/meta.php:92
+msgid "Landlord"
+msgstr ""
+
+#: ../backstage/plugins/landlords/landlords.php:24
+#: ../backstage/plugins/landlords/landlords.php:36
+msgid "Landlords"
+msgstr ""
+
+#: ../backstage/plugins/landlords/landlords.php:27
+msgid "Add New Landlord"
+msgstr ""
+
+#: ../backstage/plugins/landlords/landlords.php:28
+msgid "Edit Landlord"
+msgstr ""
+
+#: ../backstage/plugins/landlords/landlords.php:29
+msgid "New Landlord"
+msgstr ""
+
+#: ../backstage/plugins/landlords/landlords.php:30
+msgid "All Landlords"
+msgstr ""
+
+#: ../backstage/plugins/landlords/landlords.php:31
+msgid "View Landlord"
+msgstr ""
+
+#: ../backstage/plugins/landlords/landlords.php:32
+msgid "Search Landlord"
+msgstr ""
+
+#: ../backstage/plugins/landlords/landlords.php:33
+msgid "No landlords found"
+msgstr ""
+
+#: ../backstage/plugins/landlords/landlords.php:34
+msgid "No landlords found in Trash"
+msgstr ""
+
+#: ../backstage/plugins/landlords/meta.php:4
+msgid "First Name"
+msgstr ""
+
+#: ../backstage/plugins/landlords/meta.php:14
+msgid "Last Name"
+msgstr ""
+
+#: ../backstage/plugins/landlords/meta.php:34
+msgid "City"
+msgstr ""
+
+#: ../backstage/plugins/landlords/meta.php:44
+msgid "ZIP"
+msgstr ""
+
+#: ../backstage/plugins/landlords/meta.php:54
+msgid "Country"
+msgstr ""
+
+#: ../backstage/plugins/landlords/meta.php:94
+msgid "Owned Properties"
+msgstr ""
+
+#: ../backstage/plugins/landlords/meta.php:105
+msgid "View on front end"
+msgstr ""
+
+#: ../backstage/plugins/landlords/meta.php:111
+msgid "Nothing"
+msgstr ""
+
+#: ../backstage/plugins/partners/partners.php:12
+#: ../backstage/plugins/partners/partners.php:24
+#: ../backstage/plugins/partners/widgets/partners.php:10
+#: ../backstage/plugins/partners/widgets/partners.php:19
+msgid "Partners"
+msgstr ""
+
+#: ../backstage/plugins/partners/partners.php:13
+msgid "Partner"
+msgstr ""
+
+#: ../backstage/plugins/partners/partners.php:15
+msgid "Add New Partner"
+msgstr ""
+
+#: ../backstage/plugins/partners/partners.php:16
+msgid "Edit Partner"
+msgstr ""
+
+#: ../backstage/plugins/partners/partners.php:17
+msgid "New Partner"
+msgstr ""
+
+#: ../backstage/plugins/partners/partners.php:18
+msgid "All Partners"
+msgstr ""
+
+#: ../backstage/plugins/partners/partners.php:19
+msgid "View Partner"
+msgstr ""
+
+#: ../backstage/plugins/partners/partners.php:20
+msgid "Search Partner"
+msgstr ""
+
+#: ../backstage/plugins/partners/partners.php:21
+msgid "No Partners found"
+msgstr ""
+
+#: ../backstage/plugins/partners/partners.php:22
+msgid "No Partners found in Trash"
+msgstr ""
+
+#: ../backstage/plugins/partners/partners.php:48
+msgid "Partner Options"
+msgstr ""
+
+#: ../backstage/plugins/partners/widgets/partners.php:7
+msgid "Rhetina: Partners"
+msgstr ""
+
+#: ../backstage/plugins/properties/enquire.php:19
+msgid "Link to property"
+msgstr ""
+
+#: ../backstage/plugins/properties/enquire.php:23
+#: ../backstage/plugins/properties/templates/properties/enquire.twig:13
+#: ../backstage/plugins/properties/templates/properties/sort.twig:37
+msgid "Name"
+msgstr ""
+
+#: ../backstage/plugins/properties/enquire.php:31
+#: ../backstage/plugins/properties/templates/properties/enquire.twig:41
+#: ../backstage/plugins/properties/templates/properties/sort.twig:38
+msgid "Date"
+msgstr ""
+
+#: ../backstage/plugins/properties/enquire.php:35
+#: ../backstage/plugins/properties/templates/properties/enquire.twig:55
+msgid "Date From"
+msgstr ""
+
+#: ../backstage/plugins/properties/enquire.php:39
+#: ../backstage/plugins/properties/templates/properties/enquire.twig:68
+msgid "Date To"
+msgstr ""
+
+#: ../backstage/plugins/properties/enquire.php:47
+#: ../backstage/plugins/properties/templates/properties/enquire.twig:95
+msgid "Message"
+msgstr ""
+
+#: ../backstage/plugins/properties/enquire.php:50
+#: ../backstage/plugins/properties/properties.php:126
+#: ../backstage/plugins/properties/properties.php:135
+#: ../backstage/plugins/properties/properties.php:185
+#: ../backstage/plugins/properties/templates/properties/filter-horizontal.twig:28
+#: ../backstage/plugins/properties/templates/properties/filter.twig:11
+#: ../backstage/plugins/properties/templates/properties/form-content.twig:127
+#: ../backstage/plugins/properties/templates/properties/overview.twig:45
+#: ../templates/properties/form-content.twig:117
+#: ../templates/properties/overview.twig:45
+msgid "Location"
+msgstr ""
+
+#: ../backstage/plugins/properties/enquire.php:67
+msgid "Your enquire was successfully sent."
+msgstr ""
+
+#: ../backstage/plugins/properties/enquire.php:70
+msgid "An error occured. Your enquire can not be sent."
+msgstr ""
+
+#: ../backstage/plugins/properties/meta-submission.php:4
+#: ../backstage/plugins/properties/meta.php:155
+#: ../backstage/plugins/properties/properties.php:184
+#: ../backstage/plugins/properties/templates/properties/overview.twig:17
+#: ../backstage/plugins/properties/templates/properties/sort.twig:39
+#: ../templates/properties/overview.twig:17
+#: ../templates/properties/sort.twig:43
+msgid "Price"
+msgstr ""
+
+#: ../backstage/plugins/properties/meta-submission.php:18
+#: ../backstage/plugins/properties/meta.php:175
+#: ../backstage/plugins/properties/templates/properties/overview.twig:52
+#: ../backstage/plugins/properties/templates/properties/sort.twig:46
+#: ../templates/properties/overview.twig:52
+msgid "Bathrooms"
+msgstr ""
+
+#: ../backstage/plugins/properties/meta-submission.php:29
+#: ../backstage/plugins/properties/meta.php:195
+#: ../backstage/plugins/properties/templates/properties/overview.twig:61
+#: ../backstage/plugins/properties/templates/properties/sort.twig:42
+#: ../templates/properties/overview.twig:61
+msgid "Bedrooms"
+msgstr ""
+
+#: ../backstage/plugins/properties/meta-submission.php:40
+#: ../backstage/plugins/properties/meta.php:215
+#: ../backstage/plugins/properties/templates/properties/map-infobox.twig:18
+#: ../backstage/plugins/properties/templates/properties/overview.twig:69
+#: ../backstage/plugins/properties/templates/properties/property-box-small.html.twig:53
+#: ../backstage/plugins/properties/templates/properties/property-row.twig:40
+#: ../templates/properties/overview.twig:69
+msgid "Area"
+msgstr ""
+
+#: ../backstage/plugins/properties/meta-submission.php:62
+#: ../backstage/plugins/properties/meta.php:232
+msgid "Location search"
+msgstr ""
+
+#: ../backstage/plugins/properties/meta-submission.php:64
+#: ../backstage/plugins/properties/meta.php:234
+msgid "Search location"
+msgstr ""
+
+#: ../backstage/plugins/properties/meta-submission.php:69
+#: ../backstage/plugins/properties/meta-submission.php:70
+#: ../backstage/plugins/properties/meta.php:239
+#: ../backstage/plugins/properties/meta.php:240
+#: ../backstage/plugins/properties/widgets/map_properties.php:74
+#: ../backstage/plugins/properties/widgets/map_simple_properties.php:74
+msgid "Latitude"
+msgstr ""
+
+#: ../backstage/plugins/properties/meta-submission.php:75
+#: ../backstage/plugins/properties/meta-submission.php:76
+#: ../backstage/plugins/properties/meta.php:245
+#: ../backstage/plugins/properties/meta.php:246
+#: ../backstage/plugins/properties/widgets/map_properties.php:79
+#: ../backstage/plugins/properties/widgets/map_simple_properties.php:79
+msgid "Longitude"
+msgstr ""
+
+#: ../backstage/plugins/properties/meta.php:28
+msgid "Please fill the address (Title field)."
+msgstr ""
+
+#: ../backstage/plugins/properties/meta.php:35
+msgid "Please check the location (Locations checkboxes)."
+msgstr ""
+
+#: ../backstage/plugins/properties/meta.php:40
+msgid "Please check just one location (Locations checkbox)."
+msgstr ""
+
+#: ../backstage/plugins/properties/meta.php:52
+msgid "Geocode was not successful for the following reason: "
+msgstr ""
+
+#: ../backstage/plugins/properties/meta.php:63
+#: ../backstage/plugins/properties/templates/properties/overview.twig:9
+#: ../templates/properties/overview.twig:9
+msgid "ID"
+msgstr ""
+
+#: ../backstage/plugins/properties/meta.php:70
+msgid "Leave empty for default ID."
+msgstr ""
+
+#: ../backstage/plugins/properties/meta.php:77
+#: ../backstage/plugins/properties/properties.php:183
+msgid "Optional Title"
+msgstr ""
+
+#: ../backstage/plugins/properties/meta.php:84
+msgid "It will be used in widgets and properties grid & rows layout."
+msgstr ""
+
+#: ../backstage/plugins/properties/meta.php:144
+msgid "Custom text instead of price"
+msgstr ""
+
+#: ../backstage/plugins/properties/meta.php:165
+msgid "Price suffix"
+msgstr ""
+
+#: ../backstage/plugins/properties/meta.php:185
+msgid "Hide baths"
+msgstr ""
+
+#: ../backstage/plugins/properties/meta.php:205
+msgid "Hide beds"
+msgstr ""
+
+#: ../backstage/plugins/properties/meta.php:256
+#: ../backstage/plugins/properties/properties.php:189
+#: ../backstage/plugins/properties/widgets/carousel_properties.php:66
+msgid "Featured"
+msgstr ""
+
+#: ../backstage/plugins/properties/meta.php:266
+#: ../backstage/plugins/properties/properties.php:190
+#: ../backstage/plugins/properties/widgets/carousel_properties.php:80
+#: ../backstage/plugins/properties/templates/properties/property-box-small.html.twig:32
+#: ../templates/properties/property-box-small.html.twig:35
+msgid "Reduced"
+msgstr ""
+
+#: ../backstage/plugins/properties/meta.php:275
+msgid "Slider image"
+msgstr ""
+
+#: ../backstage/plugins/properties/meta.php:286
+msgid "Images"
+msgstr ""
+
+#: ../backstage/plugins/properties/meta.php:296
+msgid "Insert"
+msgstr ""
+
+#: ../backstage/plugins/properties/meta.php:301
+#: ../backstage/plugins/properties/templates/properties/form-content.twig:13
+#: ../templates/properties/form-content.twig:13
+msgid "Remove"
+msgstr ""
+
+#: ../backstage/plugins/properties/meta.php:308
+msgid "Add"
+msgstr ""
+
+#: ../backstage/plugins/properties/properties.php:18
+#: ../backstage/plugins/properties/properties.php:322
+msgid "Property Options"
+msgstr ""
+
+#: ../backstage/plugins/properties/properties.php:43
+#: ../backstage/plugins/properties/properties.php:55
+#: ../templates/archive-property.twig:5
+msgid "Properties"
+msgstr ""
+
+#: ../backstage/plugins/properties/properties.php:44
+msgid "Property"
+msgstr ""
+
+#: ../backstage/plugins/properties/properties.php:46
+msgid "Add New Property"
+msgstr ""
+
+#: ../backstage/plugins/properties/properties.php:47
+msgid "Edit Property"
+msgstr ""
+
+#: ../backstage/plugins/properties/properties.php:48
+msgid "New Property"
+msgstr ""
+
+#: ../backstage/plugins/properties/properties.php:49
+msgid "All Properties"
+msgstr ""
+
+#: ../backstage/plugins/properties/properties.php:50
+msgid "View Property"
+msgstr ""
+
+#: ../backstage/plugins/properties/properties.php:51
+msgid "Search Property"
+msgstr ""
+
+#: ../backstage/plugins/properties/properties.php:52
+msgid "No properties found"
+msgstr ""
+
+#: ../backstage/plugins/properties/properties.php:53
+msgid "No properties found in Trash"
+msgstr ""
+
+#: ../backstage/plugins/properties/properties.php:64
+#: ../backstage/plugins/agencies/templates/agencies/widget.twig:27
+#: ../templates/agencies/widget.twig:27
+msgid "properties"
+msgstr ""
+
+#: ../backstage/plugins/properties/properties.php:79
+msgid "Contract Types"
+msgstr ""
+
+#: ../backstage/plugins/properties/properties.php:80
+#: ../backstage/plugins/properties/properties.php:89
+#: ../backstage/plugins/properties/properties.php:188
+#: ../backstage/plugins/properties/templates/properties/form-content.twig:97
+#: ../backstage/plugins/properties/templates/properties/form-content.twig:117
+#: ../templates/properties/form-content.twig:107
+msgid "Contract Type"
+msgstr ""
+
+#: ../backstage/plugins/properties/properties.php:81
+msgid "Search Contract Types"
+msgstr ""
+
+#: ../backstage/plugins/properties/properties.php:82
+msgid "All Contract Types"
+msgstr ""
+
+#: ../backstage/plugins/properties/properties.php:83
+msgid "Parent Contract Type"
+msgstr ""
+
+#: ../backstage/plugins/properties/properties.php:84
+msgid "Parent Contract Type:"
+msgstr ""
+
+#: ../backstage/plugins/properties/properties.php:85
+msgid "Edit Contract Type"
+msgstr ""
+
+#: ../backstage/plugins/properties/properties.php:86
+msgid "Update Contract Type"
+msgstr ""
+
+#: ../backstage/plugins/properties/properties.php:87
+msgid "Add New Contract Type"
+msgstr ""
+
+#: ../backstage/plugins/properties/properties.php:88
+msgid "New Contract Type"
+msgstr ""
+
+#: ../backstage/plugins/properties/properties.php:96
+msgid "property-contract"
+msgstr ""
+
+#: ../backstage/plugins/properties/properties.php:102
+msgid "Property Types"
+msgstr ""
+
+#: ../backstage/plugins/properties/properties.php:103
+#: ../backstage/plugins/properties/properties.php:112
+#: ../backstage/plugins/properties/properties.php:186
+msgid "Property Type"
+msgstr ""
+
+#: ../backstage/plugins/properties/properties.php:104
+msgid "Search Property Types"
+msgstr ""
+
+#: ../backstage/plugins/properties/properties.php:105
+msgid "All Property Types"
+msgstr ""
+
+#: ../backstage/plugins/properties/properties.php:106
+msgid "Parent Property Type"
+msgstr ""
+
+#: ../backstage/plugins/properties/properties.php:107
+msgid "Parent Property Type:"
+msgstr ""
+
+#: ../backstage/plugins/properties/properties.php:108
+msgid "Edit Property Type"
+msgstr ""
+
+#: ../backstage/plugins/properties/properties.php:109
+msgid "Update Property Type"
+msgstr ""
+
+#: ../backstage/plugins/properties/properties.php:110
+msgid "Add New Property Type"
+msgstr ""
+
+#: ../backstage/plugins/properties/properties.php:111
+msgid "New Property Type"
+msgstr ""
+
+#: ../backstage/plugins/properties/properties.php:119
+msgid "property-type"
+msgstr ""
+
+#: ../backstage/plugins/properties/properties.php:125
+msgid "Locations"
+msgstr ""
+
+#: ../backstage/plugins/properties/properties.php:127
+msgid "Search Location"
+msgstr ""
+
+#: ../backstage/plugins/properties/properties.php:128
+msgid "All Locations"
+msgstr ""
+
+#: ../backstage/plugins/properties/properties.php:129
+msgid "Parent Location"
+msgstr ""
+
+#: ../backstage/plugins/properties/properties.php:130
+msgid "Parent Location:"
+msgstr ""
+
+#: ../backstage/plugins/properties/properties.php:131
+msgid "Edit Location"
+msgstr ""
+
+#: ../backstage/plugins/properties/properties.php:132
+msgid "Update Location"
+msgstr ""
+
+#: ../backstage/plugins/properties/properties.php:133
+msgid "Add New Location"
+msgstr ""
+
+#: ../backstage/plugins/properties/properties.php:134
+msgid "New Location"
+msgstr ""
+
+#: ../backstage/plugins/properties/properties.php:141
+msgid "location"
+msgstr ""
+
+#: ../backstage/plugins/properties/properties.php:148
+#: ../backstage/plugins/properties/templates/properties/form-content.twig:139
+#: ../templates/helpers/progress.twig:11
+#: ../templates/properties/form-content.twig:129
+msgid "Amenities"
+msgstr ""
+
+#: ../backstage/plugins/properties/properties.php:149
+#: ../backstage/plugins/properties/properties.php:158
+msgid "Amenity"
+msgstr ""
+
+#: ../backstage/plugins/properties/properties.php:150
+msgid "Search Amenity"
+msgstr ""
+
+#: ../backstage/plugins/properties/properties.php:151
+msgid "All Amenities"
+msgstr ""
+
+#: ../backstage/plugins/properties/properties.php:152
+msgid "Parent Amenity"
+msgstr ""
+
+#: ../backstage/plugins/properties/properties.php:153
+msgid "Parent Amenity:"
+msgstr ""
+
+#: ../backstage/plugins/properties/properties.php:154
+msgid "Edit Amenity"
+msgstr ""
+
+#: ../backstage/plugins/properties/properties.php:155
+msgid "Update Amenity"
+msgstr ""
+
+#: ../backstage/plugins/properties/properties.php:156
+msgid "Add New Amenity"
+msgstr ""
+
+#: ../backstage/plugins/properties/properties.php:157
+msgid "New Amenity"
+msgstr ""
+
+#: ../backstage/plugins/properties/properties.php:165
+msgid "amenity"
+msgstr ""
+
+#: ../backstage/plugins/properties/properties.php:182
+msgid "Thumbnail"
+msgstr ""
+
+#: ../backstage/plugins/properties/properties.php:216
+#: ../backstage/plugins/properties/properties.php:222
+#: ../backstage/plugins/properties/properties.php:230
+#: ../backstage/plugins/properties/properties.php:240
+#: ../backstage/plugins/properties/properties.php:278
+msgid "Undefined"
+msgstr ""
+
+#: ../backstage/plugins/properties/properties.php:251
+#: ../backstage/plugins/properties/properties.php:270
+msgid "On"
+msgstr ""
+
+#: ../backstage/plugins/properties/properties.php:254
+#: ../backstage/plugins/properties/properties.php:273
+msgid "Off"
+msgstr ""
+
+#: ../backstage/plugins/properties/properties.php:261
+msgid "Missing"
+msgstr ""
+
+#: ../backstage/plugins/properties/properties.php:289
+msgid "Not assigned"
+msgstr ""
+
+#: ../backstage/plugins/properties/properties.php:370
+msgid "Edit"
+msgstr ""
+
+#: ../backstage/plugins/properties/properties.php:375
+msgid "Delete"
+msgstr ""
+
+#: ../backstage/plugins/properties/properties.php:380
+msgid "View"
+msgstr ""
+
+#: ../backstage/plugins/properties/properties.php:385
+msgid "Publish"
+msgstr ""
+
+#: ../backstage/plugins/properties/properties.php:395
+msgid "Unpublish"
+msgstr ""
+
+#: ../backstage/plugins/properties/properties.php:442
+#: ../backstage/plugins/submission/renderers.php:60
+msgid "You are not post owner."
+msgstr ""
+
+#: ../backstage/plugins/properties/properties.php:459
+msgid "You need to pay for submission item in order to publish it"
+msgstr ""
+
+#: ../backstage/plugins/properties/properties.php:467
+msgid "Administrator approval is required to publish the post"
+msgstr ""
+
+#: ../backstage/plugins/properties/properties.php:556
+msgid "Post has been successfully updated."
+msgstr ""
+
+#: ../backstage/plugins/properties/properties.php:560
+msgid "Post has been successfully created."
+msgstr ""
+
+#: ../backstage/plugins/properties/properties.php:592
+#: ../backstage/plugins/properties/properties.php:662
+msgid "Image can not be uploaded"
+msgstr ""
+
+#: ../backstage/plugins/properties/properties.php:705
+msgid "Post has been successfully deleted."
+msgstr ""
+
+#: ../backstage/plugins/properties/properties.php:758
+msgid "Post's thumbnail has been successfully removed."
+msgstr ""
+
+#: ../backstage/plugins/properties/properties.php:774
+msgid "Post has been successfully unpublished."
+msgstr ""
+
+#: ../backstage/plugins/properties/properties.php:778
+msgid "Post is pending admin review."
+msgstr ""
+
+#: ../backstage/plugins/properties/properties.php:782
+msgid "Post has been successfully published."
+msgstr ""
+
+#: ../backstage/plugins/properties/widgets/carousel_properties.php:7
+msgid "Rhetina: Carousel Properties"
+msgstr ""
+
+#: ../backstage/plugins/properties/widgets/carousel_properties.php:10
+#: ../backstage/plugins/properties/widgets/carousel_properties.php:20
+msgid "Carousel Properties"
+msgstr ""
+
+#: ../backstage/plugins/properties/widgets/carousel_properties.php:60
+msgid "New"
+msgstr ""
+
+#: ../backstage/plugins/properties/widgets/carousel_properties.php:73
+msgid "Random"
+msgstr ""
+
+#: ../backstage/plugins/properties/widgets/enquire_properties.php:7
+msgid "Rhetina: Enquire Property"
+msgstr ""
+
+#: ../backstage/plugins/properties/widgets/enquire_properties.php:10
+msgid "Enquire"
+msgstr ""
+
+#: ../backstage/plugins/properties/widgets/enquire_properties.php:19
+msgid "Enquire Now"
+msgstr ""
+
+#: ../backstage/plugins/properties/widgets/featured_properties.php:7
+msgid "Rhetina: Featured Properties"
+msgstr ""
+
+#: ../backstage/plugins/properties/widgets/featured_properties.php:10
+#: ../backstage/plugins/properties/widgets/featured_properties.php:19
+#: ../backstage/plugins/properties/widgets/featured_properties_large.php:19
+msgid "Featured Properties"
+msgstr ""
+
+#: ../backstage/plugins/properties/widgets/featured_properties.php:48
+#: ../backstage/plugins/properties/widgets/featured_properties_large.php:44
+#: ../backstage/plugins/properties/widgets/most_recent_properties.php:48
+#: ../backstage/plugins/properties/widgets/reduced_properties.php:48
+msgid "Shuffle"
+msgstr ""
+
+#: ../backstage/plugins/properties/widgets/featured_properties_large.php:7
+msgid "Rhetina: Featured Properties Large"
+msgstr ""
+
+#: ../backstage/plugins/properties/widgets/featured_properties_large.php:10
+msgid "Featured Properties Large"
+msgstr ""
+
+#: ../backstage/plugins/properties/widgets/map_properties.php:7
+#: ../backstage/plugins/properties/widgets/map_simple_properties.php:7
+msgid "Rhetina: Map Properties"
+msgstr ""
+
+#: ../backstage/plugins/properties/widgets/map_properties.php:10
+#: ../backstage/plugins/properties/widgets/map_simple_properties.php:10
+msgid "Map Properties"
+msgstr ""
+
+#: ../backstage/plugins/properties/widgets/map_properties.php:84
+#: ../backstage/plugins/properties/widgets/map_simple_properties.php:84
+msgid "Zoom"
+msgstr ""
+
+#: ../backstage/plugins/properties/widgets/map_properties.php:89
+#: ../backstage/plugins/properties/widgets/map_simple_properties.php:89
+msgid "Height"
+msgstr ""
+
+#: ../backstage/plugins/properties/widgets/map_properties.php:93
+#: ../backstage/plugins/properties/widgets/map_simple_properties.php:94
+msgid "Show filter"
+msgstr ""
+
+#: ../backstage/plugins/properties/widgets/map_properties.php:98
+msgid "Horizontal filter"
+msgstr ""
+
+#: ../backstage/plugins/properties/widgets/map_properties.php:103
+#: ../backstage/plugins/properties/widgets/map_simple_properties.php:99
+msgid "Enable geolocation"
+msgstr ""
+
+#: ../backstage/plugins/properties/widgets/map_properties.php:108
+msgid "Map filtering"
+msgstr ""
+
+#: ../backstage/plugins/properties/widgets/most_recent_properties.php:7
+msgid "Rhetina: Most Recent Properties"
+msgstr ""
+
+#: ../backstage/plugins/properties/widgets/most_recent_properties.php:10
+#: ../backstage/plugins/properties/widgets/most_recent_properties.php:19
+msgid "Most Recent Properties"
+msgstr ""
+
+#: ../backstage/plugins/properties/widgets/property_filter.php:7
+msgid "Rhetina:Property Filter"
+msgstr ""
+
+#: ../backstage/plugins/properties/widgets/property_filter.php:10
+#: ../backstage/plugins/properties/widgets/property_filter.php:19
+msgid "Property Filter"
+msgstr ""
+
+#: ../backstage/plugins/properties/widgets/reduced_properties.php:7
+msgid "Rhetina: Reduced Properties"
+msgstr ""
+
+#: ../backstage/plugins/properties/widgets/reduced_properties.php:10
+#: ../backstage/plugins/properties/widgets/reduced_properties.php:19
+msgid "Reduced Properties"
+msgstr ""
+
+#: ../backstage/plugins/properties/widgets/slider_properties.php:7
+msgid "Rhetina: Property Slider"
+msgstr ""
+
+#: ../backstage/plugins/properties/widgets/slider_properties.php:10
+msgid "Property slider"
+msgstr ""
+
+#: ../backstage/plugins/properties/widgets/slider_properties.php:28
+msgid "Properties - property IDs (eg. 11,25,36)"
+msgstr ""
+
+#: ../backstage/plugins/submission/meta.php:4
+msgid "User ID"
+msgstr ""
+
+#: ../backstage/plugins/submission/meta.php:26
+msgid "Cost"
+msgstr ""
+
+#: ../backstage/plugins/submission/meta.php:37
+msgid "Post ID"
+msgstr ""
+
+#: ../backstage/plugins/submission/meta.php:48
+msgid "Payer ID"
+msgstr ""
+
+#: ../backstage/plugins/submission/meta.php:59
+msgid "Token"
+msgstr ""
+
+#: ../backstage/plugins/submission/properties.php:12
+msgid "You need to login to access this page."
+msgstr ""
+
+#: ../backstage/plugins/submission/renderers.php:34
+#: ../backstage/plugins/submission/renderers.php:67
+#: ../backstage/plugins/submission/renderers.php:96
+#: ../backstage/plugins/submission/utils.php:22
+msgid "There are no defined custom post types for submission system."
+msgstr ""
+
+#: ../backstage/plugins/submission/return.php:40
+msgid "Submission has been successfully published. Thanks!"
+msgstr ""
+
+#: ../backstage/plugins/submission/return.php:44
+msgid "Submission has not been paid yet."
+msgstr ""
+
+#: ../backstage/plugins/submission/submission.php:12
+#: ../backstage/plugins/submission/submission.php:26
+msgid "Transaction"
+msgstr ""
+
+#: ../backstage/plugins/submission/submission.php:25
+#: ../backstage/plugins/submission/submission.php:37
+msgid "Transactions"
+msgstr ""
+
+#: ../backstage/plugins/submission/submission.php:28
+msgid "Add New Transaction"
+msgstr ""
+
+#: ../backstage/plugins/submission/submission.php:29
+msgid "Edit Transaction"
+msgstr ""
+
+#: ../backstage/plugins/submission/submission.php:30
+msgid "New Transaction"
+msgstr ""
+
+#: ../backstage/plugins/submission/submission.php:31
+msgid "All Transactions"
+msgstr ""
+
+#: ../backstage/plugins/submission/submission.php:32
+msgid "View Transaction"
+msgstr ""
+
+#: ../backstage/plugins/submission/submission.php:33
+msgid "Search Transaction"
+msgstr ""
+
+#: ../backstage/plugins/submission/submission.php:34
+msgid "No transactions found"
+msgstr ""
+
+#: ../backstage/plugins/submission/submission.php:35
+msgid "No Transaction found in Trash"
+msgstr ""
+
+#: ../settings/customization.php:9
+msgid "General"
+msgstr ""
+
+#: ../settings/customization.php:16
+msgid "Primary color (HEX value)"
+msgstr ""
+
+#: ../settings/customization.php:23
+msgid "Secondary color (HEX value)"
+msgstr ""
+
+#: ../settings/customization.php:28
+msgid "Header"
+msgstr ""
+
+#: ../settings/customization.php:33
+msgid "Logo"
+msgstr ""
+
+#: ../settings/customization.php:39
+msgid "Hide title"
+msgstr ""
+
+#: ../settings/customization.php:46
+msgid "Hide call to action button"
+msgstr ""
+
+#: ../settings/customization.php:51
+msgid "Call to action URL"
+msgstr ""
+
+#: ../settings/customization.php:56
+msgid "Call to action text"
+msgstr ""
+
+#: ../backstage/core/plugins/settings/templates/settings/fields/image.twig:4
+msgid "Select Media"
+msgstr ""
+
+#: ../backstage/plugins/accounts/templates/accounts/login.twig:24
+#: ../templates/layout-login-register.twig:32
+#: ../templates/accounts/login.twig:24
+msgid "Password"
+msgstr ""
+
+#: ../backstage/plugins/accounts/templates/accounts/register.twig:11
+#: ../templates/layout-login-register.twig:53
+#: ../templates/accounts/register.twig:11
+msgid "Username"
+msgstr ""
+
+#: ../backstage/plugins/agencies/templates/agencies/widget.twig:31
+#: ../templates/agencies/widget.twig:31
+msgid "View profile"
+msgstr ""
+
+#: ../backstage/plugins/call-to-action/templates/call-to-action/widget.twig:14
+msgid "Read more"
+msgstr ""
+
+#: ../backstage/plugins/properties/templates/properties/amenities.twig:4
+#: ../templates/properties/amenities.twig:4
+msgid "General amenities"
+msgstr ""
+
+#: ../backstage/plugins/properties/templates/properties/enquire.twig:81
+msgid "Email"
+msgstr ""
+
+#: ../backstage/plugins/properties/templates/properties/enquire.twig:108
+msgid "Send"
+msgstr ""
+
+#: ../backstage/plugins/properties/templates/properties/filter-horizontal.twig:37
+#: ../backstage/plugins/properties/templates/properties/filter.twig:48
+msgid "Beds"
+msgstr ""
+
+#: ../backstage/plugins/properties/templates/properties/filter-horizontal.twig:46
+#: ../backstage/plugins/properties/templates/properties/filter.twig:67
+msgid "Baths"
+msgstr ""
+
+#: ../backstage/plugins/properties/templates/properties/filter-horizontal.twig:55
+#: ../backstage/plugins/properties/templates/properties/filter.twig:105
+msgid "Price From"
+msgstr ""
+
+#: ../backstage/plugins/properties/templates/properties/filter-horizontal.twig:64
+#: ../backstage/plugins/properties/templates/properties/filter.twig:124
+msgid "Price To"
+msgstr ""
+
+#: ../backstage/plugins/properties/templates/properties/filter-horizontal.twig:79
+#: ../backstage/plugins/properties/templates/properties/filter.twig:165
+msgid "Filter now!"
+msgstr ""
+
+#: ../backstage/plugins/properties/templates/properties/filter.twig:86
+#: ../backstage/plugins/properties/templates/properties/overview.twig:39
+#: ../templates/properties/overview.twig:39
+msgid "Contract"
+msgstr ""
+
+#: ../backstage/plugins/properties/templates/properties/filter.twig:143
+msgid "Area From"
+msgstr ""
+
+#: ../backstage/plugins/properties/templates/properties/filter.twig:155
+msgid "Area To"
+msgstr ""
+
+#: ../backstage/plugins/properties/templates/properties/form-content.twig:7
+#: ../templates/properties/form-content.twig:7
+msgid "Featured image"
+msgstr ""
+
+#: ../backstage/plugins/properties/templates/properties/form-content.twig:24
+#: ../templates/properties/form-content.twig:24
+msgid "Gallery"
+msgstr ""
+
+#: ../backstage/plugins/properties/templates/properties/form-content.twig:67
+#: ../templates/properties/form-content.twig:67
+msgid "Add more"
+msgstr ""
+
+#: ../backstage/plugins/properties/templates/properties/form-content.twig:86
+#: ../templates/properties/form-content.twig:86
+msgid "Description"
+msgstr ""
+
+#: ../backstage/plugins/properties/templates/properties/map-infobox.twig:26
+#: ../templates/properties/map-infobox.twig:46
+msgid "View more"
+msgstr ""
+
+#: ../backstage/plugins/properties/templates/properties/overview.twig:4
+#: ../templates/properties/overview.twig:4
+msgid "Overview"
+msgstr ""
+
+#: ../backstage/plugins/properties/templates/properties/overview.twig:77
+#: ../templates/properties/overview.twig:77
+msgid "Rating"
+msgstr ""
+
+#: ../backstage/plugins/properties/templates/properties/property-map.twig:2
+msgid "Map"
+msgstr ""
+
+#: ../backstage/plugins/properties/templates/properties/slider-large.twig:20
+msgid "More"
+msgstr ""
+
+#: ../backstage/plugins/properties/templates/properties/sort.twig:32
+msgid "Sort by"
+msgstr ""
+
+#: ../backstage/plugins/properties/templates/properties/sort.twig:56
+msgid "Order"
+msgstr ""
+
+#: ../backstage/plugins/properties/templates/properties/sort.twig:61
+msgid "DESC"
+msgstr ""
+
+#: ../backstage/plugins/properties/templates/properties/sort.twig:62
+msgid "ASC"
+msgstr ""
+
+#: ../backstage/plugins/properties/templates/properties/widget-large.twig:20
+#: ../templates/page-properties-grid.twig:6
+#: ../templates/properties/widget-large.twig:21
+msgid "Show all"
+msgstr ""
+
+#: ../backstage/plugins/properties/templates/properties/widget.twig:51
+#: ../templates/properties/widget.twig:73
+msgid "No featured properties found."
+msgstr ""
+
+#: ../backstage/plugins/submission/templates/submission/add.twig:1
+#: ../templates/submission/add.twig:1 ../templates/submission/edit.twig:1
+msgid "Add submission"
+msgstr ""
+
+#: ../backstage/plugins/submission/templates/submission/add.twig:16
+#: ../backstage/plugins/submission/templates/submission/edit.twig:13
+msgid "Save"
+msgstr ""
+
+#: ../backstage/plugins/submission/templates/submission/index.twig:8
+msgid "Add new submission"
+msgstr ""
+
+#: ../backstage/plugins/submission/templates/submission/index.twig:17
+msgid "Image"
+msgstr ""
+
+#: ../backstage/plugins/submission/templates/submission/index.twig:19
+msgid "Created"
+msgstr ""
+
+#: ../backstage/plugins/submission/templates/submission/index.twig:21
+msgid "Actions"
+msgstr ""
+
+#: ../backstage/plugins/submission/templates/submission/index.twig:68
+msgid "No submisssions found."
+msgstr ""
+
+#: ../templates/404.twig:9
+msgid "The page cannot be found"
+msgstr ""
+
+#: ../templates/archive-agency.twig:13
+msgid "No agencies found."
+msgstr ""
+
+#: ../templates/archive-property.twig:36
+msgid "No posts found."
+msgstr ""
+
+#: ../templates/archive.twig:8
+#, python-format
+msgid "Daily Archives: %s"
+msgstr ""
+
+#: ../templates/archive.twig:10
+#, python-format
+msgid "Monthly Archives: %s"
+msgstr ""
+
+#: ../templates/archive.twig:10
+msgid "F Y"
+msgstr ""
+
+#: ../templates/archive.twig:12
+#, python-format
+msgid "Yearly Archives: %s"
+msgstr ""
+
+#: ../templates/archive.twig:12
+msgid "Y"
+msgstr ""
+
+#: ../templates/archive.twig:14
+msgid "Archives"
+msgstr ""
+
+#: ../templates/comments.twig:12
+msgid "Comment navigation"
+msgstr ""
+
+#: ../templates/comments.twig:13
+msgid "&larr; Older Comments"
+msgstr ""
+
+#: ../templates/comments.twig:14
+msgid "Newer Comments &rarr;"
+msgstr ""
+
+#: ../templates/comments.twig:19
+msgid "Comments are closed."
+msgstr ""
+
+#: ../templates/layout-login-register.twig:5
+msgid "Login or Register"
+msgstr ""
+
+#: ../templates/search.twig:4
+msgid "Search Results for"
+msgstr ""
+
+#: ../templates/single-agency.twig:37
+msgid "About Agency"
+msgstr ""
+
+#: ../templates/single-agency.twig:47 ../templates/single-agent.twig:47
+msgid "Assigned Properties"
+msgstr ""
+
+#: ../templates/single-property.twig:37
+msgid "About Property"
+msgstr ""
+
+#: ../templates/agencies/widget.twig:45
+msgid "Contact"
+msgstr ""
+
+#: ../templates/helpers/progress.twig:6
+msgid "Info"
+msgstr ""
+
+#: ../templates/helpers/progress.twig:16
+msgid "Details"
+msgstr ""
+
+#: ../templates/helpers/searchform.twig:5
+#: ../templates/helpers/searchform.twig:6
+msgid "Search"
+msgstr ""
+
+#: ../templates/properties/property-row.twig:65
+msgid "More Info"
+msgstr ""
+
+#: ../templates/properties/sort.twig:44
+msgid "Published"
+msgstr ""
+
+#: ../templates/properties/sort.twig:52
+msgid "Descending"
+msgstr ""
+
+#: ../templates/properties/sort.twig:53
+msgid "Ascending"
+msgstr ""

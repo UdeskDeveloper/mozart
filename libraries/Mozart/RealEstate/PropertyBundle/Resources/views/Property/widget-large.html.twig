@@ -1,0 +1,23 @@
+
+{% if title %}
+    {{ before_title|raw }}{{ title }}{{ after_title|raw }}
+{% endif %}
+
+<div class="content">
+    {% if properties %}
+        <div class="properties-grid featured">
+            <div class="row">
+                {% for property in properties %}
+                   <div class="col-xs-3">
+                    {% include 'PropertyBundle:Property:property-box-small.html.twig' %}
+                   </div><!-- /.col-xs-4 -->
+                {% endfor %}
+            </div>
+        </div><!-- /.properties-grid -->
+    {% endif %}
+</div><!-- /.content -->
+
+<div class="show-all">
+    <a href="{{ wp.get_post_type_archive_link('property') }}">{{ 'Show all'|translate }}</a>
+    <hr>
+</div>

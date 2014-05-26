@@ -1,0 +1,21 @@
+{{ before_widget|raw }}
+
+{% if properties %}
+
+    {% if title %}
+        {{ before_title|raw }}{{ title }}{{ after_title|raw }}
+    {% endif %}
+
+    <div class="carousel">
+        <ul class="bxslider properties-grid unstyled">
+            {% for property in properties %}
+                <li>
+                    {% include '@root/property/property-box-small.twig' %}
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+{% endif %}
+
+{{ after_widget|raw }}

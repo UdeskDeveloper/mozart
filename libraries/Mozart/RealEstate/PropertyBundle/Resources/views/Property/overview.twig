@@ -1,0 +1,83 @@
+<h2>{{ 'Overview'|translate }}</h2>
+
+<table>
+    <tbody>
+        <tr>
+            <th>{{ 'ID'|translate }}:</th>
+            <td>
+                <strong>#{% if wp.get_post_meta(post.ID, '_property_id').0 %}{{ wp.get_post_meta(post.ID, '_property_id').0 }}{% else %}{{ post.ID }}{% endif %}</strong
+            </td>
+        </tr>
+
+        {% if wp.get_post_meta(post.ID, '_property_price').0 %}
+            <tr>
+                <th>{{ 'Price'|translate }}:</th>
+                <td>
+                    {% if wp.get_post_meta(post.ID, '_property_custom_text').0 %}
+                        {{ wp.get_post_meta(post.ID, '_property_custom_text').0 }}
+                    {% else %}
+                        {{ wp.get_post_meta(post.ID, '_property_price').0|price_format }}
+
+                        {% if wp.get_post_meta(post.ID, '_property_price_suffix').0 %}
+                            <span class="suffix">{{ wp.get_post_meta(post.ID, '_property_price_suffix').0 }}</span>
+                        {% endif %}
+                    {% endif %}
+                </td>
+            </tr>
+        {% endif %}
+
+        <tr>
+            <th>{{ 'Type'|translate }}:</th>
+            <td>{{ wp.wp_get_post_terms(post.ID, 'property_types').0.name }}</td>
+        </tr>
+
+        {% if wp.wp_get_post_terms(post.ID, 'property_contracts').0 %}
+            <tr>
+                <th>{{ 'Contract'|translate }}:</th>
+                <td>{{ wp.wp_get_post_terms(post.ID, 'property_contracts').0.name }}</td>
+            </tr>
+        {% endif %}
+
+        <tr>
+            <th>{{ 'Location'|translate }}:</th>
+            <td>{{ wp.wp_get_post_terms(post.ID, 'locations').0.name }}</td>
+        </tr>
+
+        {% if wp.get_post_meta(post.ID, '_property_hide_baths').0 != '1' %}
+            {% if wp.get_post_meta(post.ID, '_property_bathrooms').0 %}
+                <tr>
+                    <th>{{ 'Bathrooms'|translate }}:</th>
+                    <td>{{ wp.get_post_meta(post.ID, '_property_bathrooms').0 }}</td>
+                </tr>
+            {% endif %}
+        {% endif %}
+
+        {% if wp.get_post_meta(post.ID, '_property_hide_beds').0 != '1' %}
+            {% if wp.get_post_meta(post.ID, '_property_bedrooms').0 %}
+                <tr>
+                    <th>{{ 'Bedrooms'|translate }}:</th>
+                    <td>{{ wp.get_post_meta(post.ID, '_property_bedrooms').0 }}</td>
+                </tr>
+            {% endif %}
+        {% endif %}
+
+        {% if wp.get_post_meta(post.ID, '_property_area').0 %}
+            <tr>
+                <th>{{ 'Area'|translate }}:</th>
+                <td>{{ wp.get_post_meta(post.ID, '_property_area').0 }}{{ wp.r_get_config('property', 'units', 'area')|raw }}</td>
+            </tr>
+        {% endif %}
+
+        {% if (wp.r_get_config('property', 'common', 'enable_rating')) %}
+            <tr>
+                <th>
+                    {{ 'Rating'|translate }}:
+                </th>
+                <td>
+                    {{  kk_star_ratings(post.ID)|raw }}
+                </td>
+            </tr>
+        {% endif %}
+
+    </tbody>
+</table>

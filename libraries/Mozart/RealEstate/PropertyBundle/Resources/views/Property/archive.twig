@@ -1,0 +1,39 @@
+{% extends 'layouts/base.twig' %}
+
+{% block content %}
+    {% if not title %}
+        <h1 class="page-header">{{ 'Properties'|translate }}</h1>
+    {% else %}
+        <h1 class="page-header">{{ title }}</h1>
+    {% endif %}
+
+    {% if wp.r_get_config('property', 'properties', 'display_sort_bar') %}
+        <div class="clearfix">
+            {% include '@root/property/sort.twig' %}
+        </div>
+    {% endif %}
+
+    {% if wp_query.posts|length > 0 %}
+        {{ wp_query.the_post() }}
+
+        <div class="properties-{% if wp.r_get_config('property', 'properties', 'type') == 'row' %}rows{% else %}grid{% endif %}">
+            <div class="row">
+                {% for property in properties %}
+                    {% if wp.r_get_config('property', 'properties', 'type') == 'row' %}
+                        {% include '@root/property/property-row.twig' %}
+                    {% else %}
+                        <div class="col-xs-3">
+                            {% include '@root/property/property-box-small.twig' %}
+                        </div><!-- /.col-xs-3 -->
+                    {% endif %}
+                {% endfor %}
+            </div><!-- /.row -->
+        </div><!-- /.properties-grid -->
+
+        {{ im_paging_nav('', 2, wp_query) }}
+    {% else %}
+        <div class="clearfix">
+            <p>{{ 'No properties found.'|translate }}</p>
+        </div>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends '@twigs/layouts/base.html.twig' %}
+
+{% block content %}
+    <h1 class="page-header">{{ 'Agencies'|translate }}</h1>
+
+    <div class="agencies">
+        {% if wp.have_posts() %}
+            {% for post in posts %}
+                {{ wp_query.the_post() }}
+                {{ wp.get_template_part('content-agency', wp.get_post_format()) }}
+            {% endfor %}
+        {% else %}
+            {{ 'No agencies found.'|translate }}
+        {% endif %}
+    </div><!-- /.agencies -->
+
+    {{ im_paging_nav() }}
+{% endblock %}
