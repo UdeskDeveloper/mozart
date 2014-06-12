@@ -18,12 +18,12 @@
         <script type="text/javascript">
             jQuery(document).ready(function ($) {
             var map = $('#map').iMap({
-                    locations              : {% include 'PropertyBundle:Property:sections/locations.html.twig' %},
-                    types                  : {% include 'PropertyBundle:Property:sections/types.html.twig' %},
+            locations              :{% include 'PropertyBundle:Property:sections/locations.html.twig' %},
+                    types                  :{% include 'PropertyBundle:Property:sections/types.html.twig' %},
                     contents               : new Array({% for property in properties
-        %}'{% include 'PropertyBundle:Property:map-infobox.html.twig' with {'property': property} %}'{%
-if not loop.last %},{% endif %}{% endfor %})
-,
+            %}'{% include 'PropertyBundle:Property:map-infobox.html.twig' with {'property': property} %}'{%
+    if not loop.last %},{% endif %}{% endfor %} )
+                    ,
                     transparentMarkerImage : '{{ wp.get_template_directory_uri() }}/assets/img/marker-transparent.png',
                     transparentClusterImage: '{{ wp.get_template_directory_uri() }}/assets/img/markers/cluster-transparent.png',
                     zoom                   :{{ zoom }},
@@ -34,7 +34,18 @@ if not loop.last %},{% endif %}{% endfor %})
                     filterForm             : '.map-filtering',
                     enableGeolocation      : '{{ enable_geolocation }}',
                     pixelOffsetX           : - 75,
-                    pixelOffsetY           : - 200
+                    pixelOffsetY           : - 200,
+                    styles : [{
+                        "featureType":"administrative",
+                        "stylers":[{"visibility":"on"}]
+                    },
+                    {
+                        "featureType":"road",
+                        "stylers":[{"visibility":"on"},{"hue":"#58728a"}]
+                    },
+                    {
+                        "stylers":[{"visibility":"on"}, {"hue":"#58728a"}, {"saturation": - 30}]
+                    }]
             });
             });
         </script>

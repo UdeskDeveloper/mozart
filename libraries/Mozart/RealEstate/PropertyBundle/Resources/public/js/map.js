@@ -14,7 +14,8 @@
             var defaults = $.extend({
                 enableGeolocation: false,
                 pixelOffsetX: -145,
-                pixelOffsetY: -200
+                pixelOffsetY: -200,
+                styles: []
             });
 
             settings = $.extend({}, defaults, options);
@@ -108,6 +109,7 @@
     function loadMap() {
         var mapOptions = {
             zoom: settings.zoom,
+            styles: settings.styles,
             mapTypeId: google.maps.MapTypeId.ROADMAP,
             scrollwheel: false,
             draggable: true,
