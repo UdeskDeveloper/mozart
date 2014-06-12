@@ -64,14 +64,6 @@ class AppKernel extends Kernel
         // load UI components
         $bundles[] = new \Mozart\UI\WebIconBundle\MozartWebIconBundle();
 
-        // load real estate components
-  //      $bundles[] = new Mozart\RealEstate\AgencyBundle\AgencyBundle();
-        $bundles[] = new Mozart\RealEstate\AgentBundle\AgentBundle();
-        $bundles[] = new Mozart\RealEstate\DeveloperBundle\DeveloperBundle();
-        $bundles[] = new Mozart\RealEstate\LandlordBundle\LandlordBundle();
-        $bundles[] = new Mozart\RealEstate\PropertyBundle\PropertyBundle();
-        $bundles[] = new Mozart\RealEstate\PartnerBundle\PartnerBundle();
-
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {
             $bundles[] = new Symfony\Bundle\WebProfilerBundle\WebProfilerBundle();
             $bundles[] = new Sensio\Bundle\DistributionBundle\SensioDistributionBundle();
