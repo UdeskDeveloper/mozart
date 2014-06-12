@@ -43,7 +43,9 @@
         "twbs/bootstrap-sass"  : "3.1.*@dev",
         "craue/formflow-bundle": "3.0.*@dev",
 
-        "liip/imagine-bundle": "dev-master"
+        "liip/imagine-bundle": "dev-master",
+
+        "tgm/plugin-activation": "*"
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3"
