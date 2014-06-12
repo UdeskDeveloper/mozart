@@ -29,6 +29,7 @@ framework:
 twig:
     paths:
         "%kernel.theme_dir%/twigs": twigs
+        "%kernel.theme_dir%/twigs/Note": Note
 
 mopa_bootstrap:
     form:
