@@ -3,9 +3,16 @@
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Config\Loader\LoaderInterface;
 
+/**
+ * Class AppKernel
+ */
 class AppKernel extends Kernel
 {
 
+    /**
+     * @param string $environment
+     * @param bool   $debug
+     */
     public function __construct($environment, $debug)
     {
         parent::__construct($environment, $debug);
@@ -16,11 +23,17 @@ class AppKernel extends Kernel
         $_SERVER['SYMFONY__KERNEL__THEME_DIR_URI'] = 'http://amirassl.dev.rhetina.com/wp-content/themes/immobilier';
     }
 
+    /**
+     * @return string
+     */
     public function getName()
     {
         return 'mozart';
     }
 
+    /**
+     * @return array|mixed|void
+     */
     public function registerBundles()
     {
         $bundles = array(
@@ -32,11 +45,12 @@ class AppKernel extends Kernel
             // load core modules
             new Mozart\Bundle\NucleusBundle\MozartNucleusBundle(),
             new Mopa\Bundle\BootstrapBundle\MopaBootstrapBundle(),
-            new Ivory\GoogleMapBundle\IvoryGoogleMapBundle(),
             // load admin modules
             new Mozart\Bundle\BackofficeBundle\MozartBackofficeBundle(),
             new Liip\ImagineBundle\LiipImagineBundle(),
         );
+
+        $bundles = apply_filters('register_mozart_bundle', $bundles);
 
         $bundles[] = new Immobilier\ThemeBundle\ImmobilierThemeBundle();
 
@@ -49,9 +63,6 @@ class AppKernel extends Kernel
 
         // load UI components
         $bundles[] = new \Mozart\UI\WebIconBundle\MozartWebIconBundle();
-
-        // load the compatibilizers
-        $bundles[] = new Mozart\Bundle\WooCommerceBundle\MozartWooCommerceBundle();
 
         // load real estate components
   //      $bundles[] = new Mozart\RealEstate\AgencyBundle\AgencyBundle();
@@ -70,11 +81,17 @@ class AppKernel extends Kernel
         return $bundles;
     }
 
+    /**
+     * @param LoaderInterface $loader
+     */
     public function registerContainerConfiguration(LoaderInterface $loader)
     {
         $loader->load(__DIR__ . '/config/config_' . $this->getEnvironment() . '.yml');
     }
 
+    /**
+     * @return string
+     */
     public function getCacheDir()
     {
         if (\Mozart::isWpRunning() === true) {
@@ -84,6 +101,9 @@ class AppKernel extends Kernel
         }
     }
 
+    /**
+     * @return string
+     */
     public function getLogDir()
     {
         if (\Mozart::isWpRunning() === true) {
@@ -93,6 +113,9 @@ class AppKernel extends Kernel
         }
     }
 
+    /**
+     * @return string|void
+     */
     public function getRootDirUri()
     {
         if (\Mozart::isWpRunning() === true) {
@@ -107,6 +130,9 @@ class AppKernel extends Kernel
         return '';
     }
 
+    /**
+     *
+     */
     public static function onActivation()
     {
         define('WP_USE_THEMES', false);
