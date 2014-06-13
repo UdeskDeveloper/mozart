@@ -16,11 +16,6 @@ class AppKernel extends Kernel
     public function __construct( $environment, $debug )
     {
         parent::__construct( $environment, $debug );
-
-        // $_SERVER['SYMFONY__KERNEL__THEME_DIR'] = get_template_directory();
-        $_SERVER['SYMFONY__KERNEL__THEME_DIR'] = __DIR__ . '/../../../themes/immobilier';
-        // $_SERVER['SYMFONY__KERNEL__THEME_DIR_URI'] = get_template_directory_uri();
-        $_SERVER['SYMFONY__KERNEL__THEME_DIR_URI'] = 'http://amirassl.dev.rhetina.com/wp-content/themes/immobilier';
     }
 
     /**
@@ -122,7 +117,7 @@ class AppKernel extends Kernel
     }
 
     /**
-     *
+     * TODO: move this one from here to ShortcodeBundle
      */
     public function onWordpressInit()
     {
@@ -138,72 +133,4 @@ class AppKernel extends Kernel
             add_shortcode( $name, array( $shortcode, 'process' ) );
         }
     }
-
-    /**
-     *
-     */
-    public static function onActivation()
-    {
-        define( 'WP_USE_THEMES', false );
-
-        $finder = new Symfony\Component\Finder\Finder();
-
-        $finder->files()
-            ->name( 'wp-load.php' )
-            ->ignoreUnreadableDirs()
-            ->depth( '== 0' )
-            ->in( __DIR__ . '/../../' )
-            ->in( __DIR__ . '/../../../' )
-            ->in( __DIR__ . '/../../../../' )
-            ->in( __DIR__ . '/../../../../../' )
-            ->in( __DIR__ . '/../../../../../../' )
-            ->in( __DIR__ . '/../../../../../../../' )
-            ->in( __DIR__ . '/../../../../../../../../' );
-
-        foreach ($finder as $file) {
-            require_once( $file->getRealpath() );
-            require_once ABSPATH . 'wp-admin/includes/file.php';
-        }
-
-        $wordressInfo = array(
-            'rhetina_nucleus' => array(
-                'wp' => array(
-                    'home'       => array(
-                        'dir' => get_home_path(),
-                        'uri' => get_home_url()
-                    ),
-                    'site'       => array(
-                        'uri' => get_site_url()
-                    ),
-                    'plugin'     => array(
-                        'dir' => WP_PLUGIN_DIR,
-                        'uri' => plugins_url()
-                    ),
-                    'theme'      => array(
-                        'name' => (string)wp_get_theme(),
-                        'dir'  => get_template_directory(),
-                        'uri'  => get_template_directory_uri()
-                    ),
-                    'stylesheet' => array(
-                        'dir' => get_stylesheet_directory(),
-                        'uri' => get_stylesheet_directory_uri()
-                    ),
-                    'content'    => array(
-                        'dir' => WP_CONTENT_DIR,
-                        'uri' => content_url()
-                    ),
-                    'includes'   => array(
-                        'dir' => WPINC,
-                        'uri' => includes_url()
-                    )
-                )
-            )
-        );
-
-        $dumper = new \Symfony\Component\Yaml\Dumper();
-        $yaml   = $dumper->dump( $wordressInfo, 5 );
-
-        file_put_contents( __DIR__ . '/config/wordpress.yml', $yaml );
-    }
-
 }
