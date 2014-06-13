@@ -1,6 +1,6 @@
 imports:
-    - { resource: wordpress.yml }
-    - { resource: parameters.yml }
+    - { resource: parameters.php }
+    - { resource: mozart/wordpress.php }
     - { resource: security.yml }
 
 framework:
@@ -28,8 +28,8 @@ framework:
 # Twig Configuration
 twig:
     paths:
-        "%kernel.theme_dir%/twigs": twigs
-        "%kernel.theme_dir%/twigs/Note": Note
+        "%wp.theme.dir%/twigs": twigs
+        "%wp.theme.dir%/twigs/Note": Note
 
 mopa_bootstrap:
     form:
