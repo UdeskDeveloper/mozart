@@ -2,10 +2,8 @@
 
 // use Symfony\Component\ClassLoader\ApcClassLoader;
 
-require_once __DIR__ . '/../libraries/Redux/class.redux-plugin.php';
 require_once __DIR__ . '/../libraries/wpalchemy/MetaBox.php';
 require_once __DIR__ . '/../libraries/wpalchemy/MediaAccess.php';
-ReduxFrameworkPlugin::instance();
 
 $loader = require_once __DIR__ . '/bootstrap.php.cache';
 
@@ -58,6 +56,8 @@ if (count($matches) == 4) {
     $context->setScheme($matches[1]);
     $context->setBaseUrl($matches[3]);
 }
+
+add_action('init', array($kernel, 'onWordpressInit'), 0);
 
 ############################## SYMFONY 2 DEV ######################################
 //$kernel = new AppKernel('dev', true);

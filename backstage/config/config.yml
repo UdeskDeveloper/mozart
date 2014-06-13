@@ -38,37 +38,37 @@ mopa_bootstrap:
         error_type: inline # or block (default is inline)
     # menu: ~
         # template: MyBundles:Menu:template.html.twig
-
-liip_imagine:
-    loaders:
-        default:
-            filesystem:
-                data_root: %wp.content.dir%
-    resolvers:
-        default:
-            web_path:
-                web_root: %kernel.root_dir%/public
-                cache_prefix: files/cache
-
-    cache: default
-    data_loader: default
-    filter_sets:
-        small_box:
-            quality: 75
-            filters:
-                thumbnail: { size: [270, 200], mode: outbound }
-        my_heighten:
-            filters:
-                relative_resize: { heighten: 60 } # Transforms 50x40 to 75x60
-        infobox_widen:
-            filters:
-                relative_resize: { widen: 130 }    # Transforms 65x60 to 130x120
-        my_increase:
-            filters:
-                relative_resize: { increase: 10 } # Transforms 50x40 to 60x50
-        my_widen:
-            filters:
-                relative_resize: { scale: 2.5 }   # Transforms 50x40 to 125x100
+#
+#liip_imagine:
+#    loaders:
+#        default:
+#            filesystem:
+#                data_root: %wp.content.dir%
+#    resolvers:
+#        default:
+#            web_path:
+#                web_root: %kernel.root_dir%/public
+#                cache_prefix: files/cache
+#
+#    cache: default
+#    data_loader: default
+#    filter_sets:
+#        small_box:
+#            quality: 75
+#            filters:
+#                thumbnail: { size: [270, 200], mode: outbound }
+#        my_heighten:
+#            filters:
+#                relative_resize: { heighten: 60 } # Transforms 50x40 to 75x60
+#        infobox_widen:
+#            filters:
+#                relative_resize: { widen: 130 }    # Transforms 65x60 to 130x120
+#        my_increase:
+#            filters:
+#                relative_resize: { increase: 10 } # Transforms 50x40 to 60x50
+#        my_widen:
+#            filters:
+#                relative_resize: { scale: 2.5 }   # Transforms 50x40 to 125x100
 
 # Assetic Configuration
 #assetic:

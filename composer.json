@@ -22,14 +22,10 @@
 
         "twig/twig"                 : "~1.12",
         "twig/extensions"           : "~1.0",
-        "asm89/twig-cache-extension": "0.1.*@dev",
-        "jms/twig-js"               : "1.0.*@dev",
-        "jms/twig-js-bundle"        : "dev-master",
 
         "symfony/symfony"       : "~2.4",
         "symfony/monolog-bundle": "~2.4",
 
-        "incenteev/composer-parameter-handler": "2.1.*@dev",
         "sensio/framework-extra-bundle"       : "~3.0",
 
         "doctrine/orm"            : "~2.2,>=2.2.3",
@@ -41,9 +37,6 @@
         "mopa/bootstrap-bundle": "3.*@dev",
         "twbs/bootstrap"       : "3.1.*@dev",
         "twbs/bootstrap-sass"  : "3.1.*@dev",
-        "craue/formflow-bundle": "3.0.*@dev",
-
-        "liip/imagine-bundle": "dev-master",
 
         "tgm/plugin-activation": "*"
     },
@@ -62,7 +55,6 @@
     },
     "scripts"    : {
         "post-install-cmd": [
-            "Incenteev\\ParameterHandler\\ScriptHandler::buildParameters",
             "Rhetina\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::buildBootstrap",
             "Rhetina\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::clearCache",
             "Mopa\\Bundle\\BootstrapBundle\\Composer\\ScriptHandler::postInstallMirrorTwitterBootstrapSass",
@@ -70,7 +62,6 @@
             "Rhetina\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::removeSymfonyStandardFiles"
         ],
         "post-update-cmd" : [
-            "Incenteev\\ParameterHandler\\ScriptHandler::buildParameters",
             "Rhetina\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::buildBootstrap",
             "Rhetina\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::clearCache",
             "Mopa\\Bundle\\BootstrapBundle\\Composer\\ScriptHandler::postInstallMirrorTwitterBootstrapSass",
@@ -79,9 +70,6 @@
         ]
     },
     "extra"      : {
-        "incenteev-parameters": {
-            "file": "backstage/config/parameters.yml"
-        },
         "branch-alias"        : {
             "dev-master": "2.4-dev"
         }

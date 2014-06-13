@@ -6,14 +6,25 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Mozart\Bundle\BackofficeBundle\DependencyInjection\Compiler\OptionSectionsCompilerPass;
 
+/**
+ * Class MozartBackofficeBundle
+ *
+ * @package Mozart\Bundle\BackofficeBundle
+ */
 class MozartBackofficeBundle extends Bundle
 {
+    /**
+     * @param ContainerBuilder $container
+     */
     public function build(ContainerBuilder $container)
     {
         parent::build($container);
         $container->addCompilerPass(new OptionSectionsCompilerPass);
     }
 
+    /**
+     *
+     */
     public function boot()
     {
         if (\Mozart::isWpRunning() === false) {
@@ -33,6 +44,9 @@ class MozartBackofficeBundle extends Bundle
         }
     }
 
+    /**
+     *
+     */
     public function login_head()
     {
         if (parameter('admin', 'login_screen', 'default') != 'on') {
@@ -56,6 +70,9 @@ class MozartBackofficeBundle extends Bundle
         }
     }
 
+    /**
+     *
+     */
     public function load_styles()
     {
         if (is_admin()) {
@@ -65,6 +82,9 @@ class MozartBackofficeBundle extends Bundle
         }
     }
 
+    /**
+     * @param $position
+     */
     public function add_admin_menu_separator($position)
     {
         global $menu;
@@ -82,6 +102,9 @@ class MozartBackofficeBundle extends Bundle
         ksort($menu);
     }
 
+    /**
+     *
+     */
     public function admin_menu_separator()
     {
         $this->add_admin_menu_separator(30);
