@@ -3,31 +3,6 @@
  * Copyright 2014 Alexandru Furculita <alex@rhetina.com>
  */
 
-// what if we are not in WordPress mode
-if (false === defined( 'ABSPATH' )) {
-
-    define( 'WP_USE_THEMES', false );
-
-    // let's find wp-load.php
-    $finder = new Symfony\Component\Finder\Finder();
-
-    $finder->files()
-        ->name( 'wp-load.php' )
-        ->ignoreUnreadableDirs()
-        ->depth( '== 0' )
-        ->in( __DIR__ . '/../../' )
-        ->in( __DIR__ . '/../../../' )
-        ->in( __DIR__ . '/../../../../' )
-        ->in( __DIR__ . '/../../../../../' )
-        ->in( __DIR__ . '/../../../../../../' )
-        ->in( __DIR__ . '/../../../../../../../' )
-        ->in( __DIR__ . '/../../../../../../../../' );
-
-    foreach ($finder as $file) {
-        require_once( $file->getRealpath() );
-        require_once ABSPATH . 'wp-admin/includes/file.php';
-    }
-}
 
 $container->setParameter( 'database_driver', 'pdo_mysql' );
 $container->setParameter( 'database_host', DB_HOST );
