@@ -2,6 +2,7 @@
 
 /**
  * @file
+ * TODO: delete this file
  * Functions that need to be loaded on every Rhetina request.
  */
 function parameter($plugin_slug, $section_id, $option_id, $default = false)
