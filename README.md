@@ -1,3 +1,5 @@
+[<img src="https://farm3.staticflickr.com/2931/14413709205_e4005d0de1_o_d.png" alt="WP Mozart from Rhetina">](http://www.rhetina.com/)
+
 Mozart
 ======
 
