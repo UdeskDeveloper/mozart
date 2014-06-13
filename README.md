@@ -7,5 +7,7 @@ It brings OOP, PHP 3 features and modern practices to Wordress
 #### Under heavy development. Not ready for production
 
 ## License ##
+
 Copyright © 2014 [Furculita Alexandru @afurculita](http://twitter.com/rhetina)
-Licensed under the MIT license.
+
+Licensed under the GPLv3 license.
