@@ -1,5 +1,6 @@
 <?php
 
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Config\Loader\LoaderInterface;
 
@@ -31,6 +32,8 @@ class AppKernel extends Kernel
      */
     public function registerBundles()
     {
+        $this->registerThemeMozartBundles();
+
         $bundles = array(
             new Symfony\Bundle\FrameworkBundle\FrameworkBundle(),
             new Symfony\Bundle\SecurityBundle\SecurityBundle(),
@@ -41,17 +44,15 @@ class AppKernel extends Kernel
             new Mozart\Bundle\NucleusBundle\MozartNucleusBundle(),
             new Mozart\Bundle\ShortcodeBundle\MozartShortcodeBundle(),
             new Mozart\Bundle\UserBundle\MozartUserBundle(),
-            new Mopa\Bundle\BootstrapBundle\MopaBootstrapBundle(),
             // load admin modules
-            new Mozart\Bundle\BackofficeBundle\MozartBackofficeBundle()
+            new Mozart\Bundle\BackofficeBundle\MozartBackofficeBundle(),
+
+            // load UI components
+            new Mopa\Bundle\BootstrapBundle\MopaBootstrapBundle(),
+            new Mozart\UI\WebIconBundle\MozartWebIconBundle()
         );
 
         $bundles = apply_filters( 'register_mozart_bundle', $bundles );
-
-        $bundles[] = new Immobilier\ThemeBundle\ImmobilierThemeBundle();
-
-        // load UI components
-        $bundles[] = new \Mozart\UI\WebIconBundle\MozartWebIconBundle();
 
         if (in_array( $this->getEnvironment(), array( 'dev', 'test' ) )) {
             $bundles[] = new Symfony\Bundle\WebProfilerBundle\WebProfilerBundle();
@@ -60,6 +61,24 @@ class AppKernel extends Kernel
         }
 
         return $bundles;
+    }
+
+    /**
+     * )
+     */
+    public function registerThemeMozartBundles()
+    {
+        // TODO: what if /themedir/vendor/autoload.php does not exist
+        include_once get_template_directory() . '/vendor/autoload.php';
+
+        // TODO: what if /themedir/composer.json does not exist
+        $themeConfig = json_decode( file_get_contents( get_template_directory() . '/composer.json' ), true );
+
+        if (isset( $themeConfig['scripts']['pre-initialize-mozart-bundles'] )) {
+            foreach ((array)$themeConfig['scripts']['pre-initialize-mozart-bundles'] as $script) {
+                call_user_func($script);
+            }
+        }
     }
 
     /**
