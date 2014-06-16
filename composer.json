@@ -43,11 +43,6 @@
     "require-dev": {
         "sensio/generator-bundle": "~2.3"
     },
-    "notes": {
-        "to-be-added": {
-            "egeloen/google-map-bundle": "2.2.*@dev"
-        }
-    },
     "config"     : {
         "autoloader-suffix": "Mozart",
         "bin-dir"          : "binaries",
@@ -68,10 +63,5 @@
             "Rhetina\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installAssets",
             "Rhetina\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::removeSymfonyStandardFiles"
         ]
-    },
-    "extra"      : {
-        "branch-alias"        : {
-            "dev-master": "2.4-dev"
-        }
     }
 }
