@@ -4,7 +4,7 @@ namespace Mozart\Bundle\BackofficeBundle;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Mozart\Bundle\BackofficeBundle\DependencyInjection\Compiler\OptionSectionsCompilerPass;
+use Mozart\Bundle\BackofficeBundle\DependencyInjection\Compiler\ReduxSectionsCompilerPass;
 
 /**
  * Class MozartBackofficeBundle
@@ -13,13 +13,14 @@ use Mozart\Bundle\BackofficeBundle\DependencyInjection\Compiler\OptionSectionsCo
  */
 class MozartBackofficeBundle extends Bundle
 {
+    protected $optionsManager;
     /**
      * @param ContainerBuilder $container
      */
     public function build(ContainerBuilder $container)
     {
         parent::build($container);
-        $container->addCompilerPass(new OptionSectionsCompilerPass);
+        $container->addCompilerPass(new ReduxSectionsCompilerPass);
     }
 
     /**
@@ -35,14 +36,15 @@ class MozartBackofficeBundle extends Bundle
         add_action('admin_head', array(&$this, 'load_styles'));
         add_action('admin_menu', array(&$this, 'admin_menu_separator'));
 
-        $settingsClass = new Options();
+        $this->optionsManager = new Redux\Configuration();
+        $this->optionsManager->init(array(), $this->container);
 
-        if (defined('TEMPLATEPATH') && strpos(\Redux_Helpers::cleanFilePath(__FILE__), \Redux_Helpers::cleanFilePath(TEMPLATEPATH)) !== false) {
-            $settingsClass->initSettings();
-        } else {
-            add_action('plugins_loaded', array($settingsClass, 'initSettings'), 10);
-        }
+        $this->optionsExtensionManager = new Redux\Extensions\Configuration();
+        $this->optionsExtensionManager->init();
+
+        $this->redux = new Redux\Redux();
     }
+
 
     /**
      *

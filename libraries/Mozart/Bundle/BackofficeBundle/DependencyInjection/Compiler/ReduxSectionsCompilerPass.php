@@ -6,21 +6,21 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\Reference;
 
-class OptionSectionsCompilerPass implements CompilerPassInterface
+class ReduxSectionsCompilerPass implements CompilerPassInterface
 {
 
     public function process(ContainerBuilder $container)
     {
-        if (!$container->hasDefinition('mozart_backoffice.options.sectionmanager')) {
+        if (!$container->hasDefinition('redux.sectionmanager')) {
             return;
         }
 
         $definition = $container->getDefinition(
-                'mozart_backoffice.options.sectionmanager'
+                'redux.sectionmanager'
         );
 
         $taggedServices = $container->findTaggedServiceIds(
-                'mozart_backoffice.options.section'
+                'redux.section'
         );
         foreach ($taggedServices as $id => $tagAttributes) {
             foreach ($tagAttributes as $attributes) {

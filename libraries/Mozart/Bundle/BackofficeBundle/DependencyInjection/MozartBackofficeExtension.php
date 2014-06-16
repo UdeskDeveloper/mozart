@@ -7,6 +7,11 @@ use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
 
+/**
+ * Class MozartBackofficeExtension
+ *
+ * @package Mozart\Bundle\BackofficeBundle\DependencyInjection
+ */
 class MozartBackofficeExtension extends Extension
 {
     /**
@@ -15,10 +20,10 @@ class MozartBackofficeExtension extends Extension
      * @param array            $config
      * @param ContainerBuilder $container
      */
-    public function load(array $config, ContainerBuilder $container)
+    public function load( array $config, ContainerBuilder $container )
     {
-        $loader = new XmlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
-        $loader->load('services.xml');
+        $loader = new XmlFileLoader( $container, new FileLocator( __DIR__ . '/../Resources/config' ) );
+        $loader->load( 'services.xml' );
     }
 
 }
