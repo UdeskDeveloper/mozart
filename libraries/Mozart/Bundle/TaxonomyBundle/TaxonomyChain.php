@@ -37,7 +37,7 @@ class TaxonomyChain
     /**
      * @param TaxonomyInterface $taxonomy
      */
-    public function addTaxonomy( TaxonomyInterface $taxonomy )
+    public function registerTaxonomy( TaxonomyInterface $taxonomy )
     {
         $this->taxonomies[$taxonomy->getName()] = $taxonomy;
     }
