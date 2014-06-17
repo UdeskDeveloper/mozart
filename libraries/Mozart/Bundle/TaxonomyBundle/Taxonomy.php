@@ -5,6 +5,9 @@
 
 namespace Mozart\Bundle\TaxonomyBundle;
 
+use Symfony\Component\DependencyInjection\Container;
+use Symfony\Component\DependencyInjection\Exception\BadMethodCallException;
+
 
 /**
  * Class Taxonomy
@@ -13,6 +16,16 @@ namespace Mozart\Bundle\TaxonomyBundle;
  */
 class Taxonomy implements TaxonomyInterface
 {
+    public function getArguments() {
+        return array(
+            'hierarchical'      => $this->isHierarchical(),
+            'labels'            => $this->getLabels(),
+            'show_ui'           => $this->showUI(),
+            'show_admin_column' => $this->showAdminColumn(),
+            'query_var'         => $this->getQueryVariable(),
+            'rewrite'           => $this->getRewriteOptions()
+        );
+    }
 
     /**
      *
@@ -25,7 +38,13 @@ class Taxonomy implements TaxonomyInterface
      */
     public function getName()
     {
-        return '';
+        $className = get_class($this);
+        if (substr($className, -8) != 'Taxonomy') {
+            throw new BadMethodCallException('This taxonomy class does not follow the naming convention; you must overwrite the getName() method.');
+        }
+        $classBaseName = substr(strrchr($className, '\\'), 1, -8);
+
+        return Container::underscore($classBaseName);
     }
 
     public function getObjectTypes()
@@ -33,27 +52,40 @@ class Taxonomy implements TaxonomyInterface
         return array();
     }
 
+    public function getLabel() {
+        return ucfirst( $this->getName() );
+    }
+
+    public function getLabelPlural() {
+        return $this->getLabel() . 's';
+    }
+
     public function getLabels()
     {
-        $name = ucfirst( $this->getName() );
+        $singular = $this->getLabel();
+        $plural = $this->getLabelPlural();
 
         return array(
-            'name'              => _x( $name . 's', 'taxonomy general name' ),
-            'singular_name'     => _x( $name, 'taxonomy singular name' ),
-            'search_items'      => __( "Search {$name}s" ),
-            'all_items'         => __( "All {$name}s" ),
-            'parent_item'       => __( "Parent {$name}" ),
-            'parent_item_colon' => __( "Parent {$name}:" ),
-            'edit_item'         => __( "Edit {$name}" ),
-            'update_item'       => __( "Update {$name}" ),
-            'add_new_item'      => __( "Add New {$name}" ),
-            'new_item_name'     => __( "New {$name} Name" ),
-            'menu_name'         => __( $name ),
+            'name'              => _x( $plural, 'taxonomy general name' ),
+            'singular_name'     => _x( $singular, 'taxonomy singular name' ),
+            'search_items'      => __( "Search {$plural}" ),
+            'all_items'         => __( "All {$plural}" ),
+            'parent_item'       => __( "Parent {$singular}" ),
+            'parent_item_colon' => __( "Parent {$singular}:" ),
+            'edit_item'         => __( "Edit {$singular}" ),
+            'update_item'       => __( "Update {$singular}" ),
+            'add_new_item'      => __( "Add New {$singular}" ),
+            'new_item_name'     => __( "New {$singular} Name" ),
+            'menu_name'         => __( $plural ),
         );
     }
 
     /**
      * If the taxonomy should be publicly queryable.
+     *
+     * @default true
+     *
+     * @return boolean
      */
     public function isPublic()
     {
@@ -62,6 +94,10 @@ class Taxonomy implements TaxonomyInterface
 
     /**
      * Whether to generate a default UI for managing this taxonomy.
+     *
+     * @default true
+     *
+     * @return boolean
      */
     public function showUI()
     {
@@ -70,6 +106,10 @@ class Taxonomy implements TaxonomyInterface
 
     /**
      * true makes this taxonomy available for selection in navigation menus.
+     *
+     * @default true
+     *
+     * @return boolean
      */
     public function showInNavMenus()
     {
