@@ -1,0 +1,5 @@
+services:
+    mozart_user.meta.manager:
+        class: Mozart\Bundle\UserBundle\Model\UserMetaManager
+        arguments:
+            - @service_container
