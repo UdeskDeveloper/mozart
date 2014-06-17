@@ -26,4 +26,27 @@ class MozartTaxonomyBundle extends Bundle
         $container->addCompilerPass( new TaxonomiesCompilerPass );
     }
 
+    /**
+     *
+     */
+    public function boot() {
+        add_action( 'init', array($this, 'registerTaxonomies'), 0 );
+    }
+
+    /**
+     *
+     */
+    public function registerTaxonomies() {
+        if (!$this->container->has( 'mozart_taxonomy.taxonomy_chain' )) {
+            return;
+        }
+
+        $taxonomies = $this->container->get( 'mozart_taxonomy.taxonomy_chain' )
+            ->getTaxonomies();
+
+        foreach ($taxonomies as $name => $taxonomy) {
+            register_taxonomy( $name, $taxonomy->getObjectTypes(), $taxonomy->getArguments() );
+        }
+    }
+
 } 
