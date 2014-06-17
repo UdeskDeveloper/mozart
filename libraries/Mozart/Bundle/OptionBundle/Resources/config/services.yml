@@ -1,0 +1,5 @@
+services:
+    mozart_option.manager:
+        class: Mozart\Bundle\OptionBundle\Model\OptionManager
+        arguments:
+            - @service_container
