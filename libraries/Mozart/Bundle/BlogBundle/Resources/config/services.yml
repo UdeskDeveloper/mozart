@@ -1,0 +1,12 @@
+services:
+    mozart_blog.manager:
+        class: Mozart\Bundle\BlogBundle\Model\BlogManager
+        arguments:
+            - @service_container
+
+    mozart_blog.event_listener.switch_blog:
+        class: Mozart\Bundle\BlogBundle\EventListener\SwitchBlogListener
+        arguments:
+            - @service_container
+        tags:
+            - { name: kernel.event_listener, event: wordpress.blog.switch_blog, method: onSwitchBlog }
