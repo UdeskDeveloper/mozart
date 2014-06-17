@@ -81,8 +81,6 @@ if (count( $matches ) == 4) {
     $context->setBaseUrl( $matches[3] );
 }
 
-add_action( 'init', array( $kernel, 'onWordpressInit' ), 0 );
-
 ############################## SYMFONY 2 DEV ######################################
 //$kernel = new AppKernel('dev', true);
 //$kernel->loadClassCache();
