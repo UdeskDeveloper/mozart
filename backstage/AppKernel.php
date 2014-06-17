@@ -1,6 +1,5 @@
 <?php
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Config\Loader\LoaderInterface;
 
@@ -43,6 +42,7 @@ class AppKernel extends Kernel
             // load core modules
             new Mozart\Bundle\NucleusBundle\MozartNucleusBundle(),
             new Mozart\Bundle\ShortcodeBundle\MozartShortcodeBundle(),
+            new Mozart\Bundle\TaxonomyBundle\MozartTaxonomyBundle(),
             new Mozart\Bundle\UserBundle\MozartUserBundle(),
             // load admin modules
             new Mozart\Bundle\BackofficeBundle\MozartBackofficeBundle(),
