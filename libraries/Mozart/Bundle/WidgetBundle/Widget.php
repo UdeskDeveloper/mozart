@@ -50,6 +50,7 @@ class Widget extends \WP_Widget implements WidgetInterface, ContainerAwareInterf
     {
         $alias = $this->getAlias();
         $alias = str_replace('_mozart', ' | mozart', $alias);
+        $alias = str_replace('_', ' ', $alias);
 
         return ucfirst($alias);
     }
