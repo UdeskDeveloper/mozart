@@ -5,7 +5,6 @@
 
 namespace Mozart\Bundle\WidgetBundle;
 
-use MyProject\Proxies\__CG__\OtherProject\Proxies\__CG__\stdClass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 use Mozart\Bundle\WidgetBundle\DependencyInjection\Compiler\WidgetsCompilerPass;
@@ -45,13 +44,8 @@ class MozartWidgetBundle extends Bundle
         }
         global $wp_widget_factory;
 
-        $widgets = $this->container->get('mozart_widget.widget_chain')->getWidgets();
+        $widgets = (array)$this->container->get('mozart_widget.widget_chain')->getWidgets();
 
-        foreach ($widgets as $name => $widget) {
-            $wp_widget_factory->widgets[get_class($widget)] = $widget;
-            // register_widget($widgetClass);
-        }
+        $wp_widget_factory->widgets = array_merge($wp_widget_factory->widgets, $widgets);
     }
-
-
 } 
