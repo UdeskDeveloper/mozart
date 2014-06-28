@@ -1,9 +1,11 @@
 <?php
 
-namespace  Mozart\Bundle\PostBundle\Entity;
+namespace Mozart\Bundle\PostBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\EntityNotFoundException;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Proxy\Proxy;
 use  Mozart\Bundle\NucleusBundle\Annotation as Mozart;
 use  Mozart\Bundle\PostBundle\Model\Post as ModelPost;
 use Symfony\Component\Validator\Constraints as Constraints;
@@ -193,21 +195,21 @@ class Post extends ModelPost
     /**
      * {@inheritdoc}
      *
-     * @ORM\OneToMany(targetEntity=" Mozart\Bundle\PostBundle\Entity\PostMeta", mappedBy="post", cascade={"persist"})
+     * @ORM\OneToMany(targetEntity="PostMeta", mappedBy="post", cascade={"persist"})
      */
     protected $metas;
 
     /**
      * {@inheritdoc}
      *
-     * @ORM\OneToMany(targetEntity=" Mozart\Bundle\PostBundle\Entity\Comment", mappedBy="post", cascade={"persist"})
+     * @ORM\OneToMany(targetEntity="Mozart\Bundle\CommentBundle\Entity\Comment", mappedBy="post", cascade={"persist"})
      */
     protected $comments;
 
     /**
      * {@inheritdoc}
      *
-     * @ORM\ManyToOne(targetEntity=" Mozart\Bundle\PostBundle\Entity\User", inversedBy="posts")
+     * @ORM\ManyToOne(targetEntity="Mozart\Bundle\UserBundle\Entity\User", inversedBy="posts")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="post_author", referencedColumnName="ID")
      * })
@@ -217,7 +219,7 @@ class Post extends ModelPost
     /**
      * {@inheritdoc}
      *
-     * @ORM\ManyToMany(targetEntity=" Mozart\Bundle\PostBundle\Entity\Taxonomy", inversedBy="posts")
+     * @ORM\ManyToMany(targetEntity="Mozart\Bundle\TaxonomyBundle\Entity\Taxonomy", inversedBy="posts")
      * @ORM\JoinTable(name="term_relationships",
      *   joinColumns={
      *     @ORM\JoinColumn(name="object_id", referencedColumnName="ID")
@@ -242,10 +244,10 @@ class Post extends ModelPost
      */
     public function onPrePersist()
     {
-        $this->date            = new \DateTime('now');
-        $this->dateGmt         = new \DateTime('now', new \DateTimeZone('GMT'));
-        $this->modifiedDate    = new \DateTime('now');
-        $this->modifiedDateGmt = new \DateTime('now', new \DateTimeZone('GMT'));
+        $this->date            = new \DateTime( 'now' );
+        $this->dateGmt         = new \DateTime( 'now', new \DateTimeZone( 'GMT' ) );
+        $this->modifiedDate    = new \DateTime( 'now' );
+        $this->modifiedDateGmt = new \DateTime( 'now', new \DateTimeZone( 'GMT' ) );
     }
 
     /**
@@ -253,22 +255,22 @@ class Post extends ModelPost
      */
     public function onPreUpdate()
     {
-        $this->modifiedDate     = new \DateTime('now');
-        $this->modifiedDateGmt  = new \DateTime('now', new \DateTimeZone('GMT'));
+        $this->modifiedDate    = new \DateTime( 'now' );
+        $this->modifiedDateGmt = new \DateTime( 'now', new \DateTimeZone( 'GMT' ) );
     }
 
     /**
      * {@inheritdoc}
      *
-     * @return \ Mozart\Bundle\PostBundle\Model\UserInterface|null
+     * @return \Mozart\Bundle\UserBundle\Model\UserInterface|null
      */
     public function getUser()
     {
-        if ($this->user instanceof \Doctrine\ORM\Proxy\Proxy) {
+        if ( $this->user instanceof Proxy ) {
             try {
                 // prevent lazy loading the user entity because it might not exist
                 $this->user->__load();
-            } catch (\Doctrine\ORM\EntityNotFoundException $e) {
+            } catch ( EntityNotFoundException $e ) {
                 // return null if user does not exist
                 $this->user = null;
             }
