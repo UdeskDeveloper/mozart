@@ -26,9 +26,6 @@ if (false === defined( 'ABSPATH' )) {
     }
 }
 
-require_once __DIR__ . '/../libraries/wpalchemy/MetaBox.php';
-require_once __DIR__ . '/../libraries/wpalchemy/MediaAccess.php';
-
 $loader = require_once __DIR__ . '/bootstrap.php.cache';
 
 // Use APC for autoloading to improve performance.
