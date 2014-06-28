@@ -1,6 +1,6 @@
 <?php
 
-namespace  Mozart\Bundle\CommentBundle\Model;
+namespace Mozart\Bundle\CommentBundle\Model;
 
 use Mozart\Bundle\PostBundle\Model\PostInterface;
 use Mozart\Bundle\UserBundle\Model\UserInterface;
@@ -109,7 +109,7 @@ class Comment implements CommentInterface
      *
      * @param string $author
      */
-    public function setAuthor($author)
+    public function setAuthor( $author )
     {
         $this->author = $author;
     }
@@ -129,7 +129,7 @@ class Comment implements CommentInterface
      *
      * @param string $authorEmail
      */
-    public function setAuthorEmail($authorEmail)
+    public function setAuthorEmail( $authorEmail )
     {
         $this->authorEmail = $authorEmail;
     }
@@ -149,7 +149,7 @@ class Comment implements CommentInterface
      *
      * @param string $authorUrl
      */
-    public function setAuthorUrl($authorUrl)
+    public function setAuthorUrl( $authorUrl )
     {
         $this->authorUrl = $authorUrl;
     }
@@ -169,7 +169,7 @@ class Comment implements CommentInterface
      *
      * @param string $authorIp
      */
-    public function setAuthorIp($authorIp)
+    public function setAuthorIp( $authorIp )
     {
         $this->authorIp = $authorIp;
     }
@@ -189,7 +189,7 @@ class Comment implements CommentInterface
      *
      * @param \DateTime $date
      */
-    public function setDate($date)
+    public function setDate( $date )
     {
         $this->date = $date;
     }
@@ -209,7 +209,7 @@ class Comment implements CommentInterface
      *
      * @param \DateTime $dateGmt
      */
-    public function setDateGmt($dateGmt)
+    public function setDateGmt( $dateGmt )
     {
         $this->dateGmt = $dateGmt;
     }
@@ -229,7 +229,7 @@ class Comment implements CommentInterface
      *
      * @param string $commentContent
      */
-    public function setContent($commentContent)
+    public function setContent( $commentContent )
     {
         $this->content = $commentContent;
     }
@@ -249,7 +249,7 @@ class Comment implements CommentInterface
      *
      * @param integer $karma
      */
-    public function setKarma($karma)
+    public function setKarma( $karma )
     {
         $this->karma = $karma;
     }
@@ -269,9 +269,9 @@ class Comment implements CommentInterface
      *
      * @param string $approved
      */
-    public function setApproved($approved)
+    public function setApproved( $approved )
     {
-        if (is_bool($approved)) {
+        if ( is_bool( $approved ) ) {
             $this->approved = $approved ? 1 : 0;
         }
 
@@ -293,7 +293,7 @@ class Comment implements CommentInterface
      *
      * @param string $agent
      */
-    public function setAgent($agent)
+    public function setAgent( $agent )
     {
         $this->agent = $agent;
     }
@@ -313,7 +313,7 @@ class Comment implements CommentInterface
      *
      * @param string $commentType
      */
-    public function setType($commentType)
+    public function setType( $commentType )
     {
         $this->type = $commentType;
     }
@@ -333,7 +333,7 @@ class Comment implements CommentInterface
      *
      * @param Comment $comment
      */
-    public function setParent(Comment $comment)
+    public function setParent( Comment $comment )
     {
         $this->parent = $comment;
     }
@@ -353,7 +353,7 @@ class Comment implements CommentInterface
      *
      * @param CommentMeta $meta
      */
-    public function addMeta(CommentMeta $meta)
+    public function addMeta( CommentMeta $meta )
     {
         $this->metas[] = $meta;
     }
@@ -373,7 +373,7 @@ class Comment implements CommentInterface
      *
      * @param PostInterface $post
      */
-    public function setPost(PostInterface $post)
+    public function setPost( PostInterface $post )
     {
         $this->post = $post;
     }
@@ -393,9 +393,9 @@ class Comment implements CommentInterface
      *
      * @param UserInterface $user
      */
-    public function setUser(UserInterface $user)
+    public function setUser( UserInterface $user )
     {
-        $this->user = $user;
+        $this->user        = $user;
         $this->author      = $user->getDisplayName();
         $this->authorUrl   = $user->getUrl();
         $this->authorEmail = $user->getEmail();
