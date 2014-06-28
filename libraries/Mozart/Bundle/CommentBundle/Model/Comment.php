@@ -2,6 +2,9 @@
 
 namespace  Mozart\Bundle\CommentBundle\Model;
 
+use Mozart\Bundle\PostBundle\Model\PostInterface;
+use Mozart\Bundle\UserBundle\Model\UserInterface;
+
 class Comment implements CommentInterface
 {
     /**
@@ -77,7 +80,7 @@ class Comment implements CommentInterface
     protected $metas;
 
     /**
-     * @var Post
+     * @var PostInterface
      */
     protected $post;
 
@@ -368,9 +371,9 @@ class Comment implements CommentInterface
     /**
      * Set post
      *
-     * @param Post $post
+     * @param PostInterface $post
      */
-    public function setPost(Post $post)
+    public function setPost(PostInterface $post)
     {
         $this->post = $post;
     }
@@ -378,7 +381,7 @@ class Comment implements CommentInterface
     /**
      * Get post
      *
-     * @return Post
+     * @return PostInterface
      */
     public function getPost()
     {
