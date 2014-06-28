@@ -1,6 +1,10 @@
 <?php
 
-namespace  Mozart\Bundle\PostBundle\Model;
+namespace Mozart\Bundle\PostBundle\Model;
+
+use Mozart\Bundle\CommentBundle\Model\Comment;
+use Mozart\Bundle\TaxonomyBundle\Model\Taxonomy;
+use Mozart\Bundle\UserBundle\Model\UserInterface;
 
 class Post implements PostInterface
 {
@@ -159,7 +163,7 @@ class Post implements PostInterface
      *
      * @param \DateTime $date
      */
-    public function setDate($date)
+    public function setDate( $date )
     {
         $this->date = $date;
     }
@@ -179,7 +183,7 @@ class Post implements PostInterface
      *
      * @param \DateTime $dateGmt
      */
-    public function setDateGmt($dateGmt)
+    public function setDateGmt( $dateGmt )
     {
         $this->dateGmt = $dateGmt;
     }
@@ -199,33 +203,34 @@ class Post implements PostInterface
      *
      * @param string $content
      */
-    public function setContent($content)
+    public function setContent( $content )
     {
         $this->content = $content;
-        $this->excerpt = $this->trimContent($content);
+        $this->excerpt = $this->trimContent( $content );
     }
 
     /**
      * Cut string to n symbols and add delim but do not break words.
      *
      * @param string string we are operating with
+     *
      * @return string processed string
      **/
-    public function trimContent($content)
+    public function trimContent( $content )
     {
-        $content = strip_tags($content);
-        $length = $this->getExcerptLength();
+        $content = strip_tags( $content );
+        $length  = $this->getExcerptLength();
 
-        if (strlen($content) <= $length) {
+        if ( strlen( $content ) <= $length ) {
             // return origin content if not needed
             return $content;
         }
 
-        $content = substr($content, 0, $length);
-        $pos = strrpos($content, " ");
+        $content = substr( $content, 0, $length );
+        $pos     = strrpos( $content, " " );
 
-        if ($pos > 0) {
-            $content = substr($content, 0, $pos);
+        if ( $pos > 0 ) {
+            $content = substr( $content, 0, $pos );
         }
 
         return $content;
@@ -246,7 +251,7 @@ class Post implements PostInterface
      *
      * @param string $title
      */
-    public function setTitle($title)
+    public function setTitle( $title )
     {
         $this->title = $title;
     }
@@ -266,7 +271,7 @@ class Post implements PostInterface
      *
      * @param string $excerpt
      */
-    public function setExcerpt($excerpt)
+    public function setExcerpt( $excerpt )
     {
         $this->excerpt = $excerpt;
     }
@@ -286,9 +291,9 @@ class Post implements PostInterface
      *
      * @param int $excerptLength
      */
-    public function setExcerptLength($excerptLength)
+    public function setExcerptLength( $excerptLength )
     {
-        $this->excerptLength = (int) $excerptLength;
+        $this->excerptLength = (int)$excerptLength;
     }
 
     /**
@@ -306,7 +311,7 @@ class Post implements PostInterface
      *
      * @param string $status
      */
-    public function setStatus($status)
+    public function setStatus( $status )
     {
         $this->status = $status;
     }
@@ -326,7 +331,7 @@ class Post implements PostInterface
      *
      * @param string $commentStatus
      */
-    public function setCommentStatus($commentStatus)
+    public function setCommentStatus( $commentStatus )
     {
         $this->commentStatus = $commentStatus;
     }
@@ -346,7 +351,7 @@ class Post implements PostInterface
      *
      * @param string $pingStatus
      */
-    public function setPingStatus($pingStatus)
+    public function setPingStatus( $pingStatus )
     {
         $this->pingStatus = $pingStatus;
     }
@@ -366,7 +371,7 @@ class Post implements PostInterface
      *
      * @param string $password
      */
-    public function setPassword($password)
+    public function setPassword( $password )
     {
         $this->password = $password;
     }
@@ -386,7 +391,7 @@ class Post implements PostInterface
      *
      * @param string $slug
      */
-    public function setSlug($slug)
+    public function setSlug( $slug )
     {
         $this->slug = $slug;
     }
@@ -406,7 +411,7 @@ class Post implements PostInterface
      *
      * @param string $toPing
      */
-    public function setToPing($toPing)
+    public function setToPing( $toPing )
     {
         $this->toPing = $toPing;
     }
@@ -426,7 +431,7 @@ class Post implements PostInterface
      *
      * @param string $pinged
      */
-    public function setPinged($pinged)
+    public function setPinged( $pinged )
     {
         $this->pinged = $pinged;
     }
@@ -446,7 +451,7 @@ class Post implements PostInterface
      *
      * @param \DateTime $modifiedDate
      */
-    public function setModifiedDate($modifiedDate)
+    public function setModifiedDate( $modifiedDate )
     {
         $this->modifiedDate = $modifiedDate;
     }
@@ -466,7 +471,7 @@ class Post implements PostInterface
      *
      * @param \DateTime $modifiedDateGmt
      */
-    public function setModifiedDateGmt($modifiedDateGmt)
+    public function setModifiedDateGmt( $modifiedDateGmt )
     {
         $this->modifiedDateGmt = $modifiedDateGmt;
     }
@@ -486,7 +491,7 @@ class Post implements PostInterface
      *
      * @param string $contentFiltered
      */
-    public function setContentFiltered($contentFiltered)
+    public function setContentFiltered( $contentFiltered )
     {
         $this->contentFiltered = $contentFiltered;
     }
@@ -504,9 +509,9 @@ class Post implements PostInterface
     /**
      * Set parent
      *
-     * @param \ Mozart\Bundle\PostBundle\Entity\Post $parent
+     * @param \Mozart\Bundle\PostBundle\Entity\Post $parent
      */
-    public function setParent($parent)
+    public function setParent( $parent )
     {
         $this->parent = $parent;
     }
@@ -514,7 +519,7 @@ class Post implements PostInterface
     /**
      * Get parent
      *
-     * @return \ Mozart\Bundle\PostBundle\Entity\Post
+     * @return \Mozart\Bundle\PostBundle\Entity\Post
      */
     public function getParent()
     {
@@ -524,7 +529,7 @@ class Post implements PostInterface
     /**
      * Get parent
      *
-     * @return \ Mozart\Bundle\PostBundle\Entity\Post
+     * @return \Mozart\Bundle\PostBundle\Entity\Post
      */
     public function getChildren()
     {
@@ -536,9 +541,9 @@ class Post implements PostInterface
      *
      * @param Post $child
      */
-    public function addChild(Post $child)
+    public function addChild( Post $child )
     {
-        $child->setParent($this);
+        $child->setParent( $this );
         $this->children[] = $child;
     }
 
@@ -547,7 +552,7 @@ class Post implements PostInterface
      *
      * @param string $guid
      */
-    public function setGuid($guid)
+    public function setGuid( $guid )
     {
         $this->guid = $guid;
     }
@@ -567,7 +572,7 @@ class Post implements PostInterface
      *
      * @param integer $menuOrder
      */
-    public function setMenuOrder($menuOrder)
+    public function setMenuOrder( $menuOrder )
     {
         $this->menuOrder = $menuOrder;
     }
@@ -587,7 +592,7 @@ class Post implements PostInterface
      *
      * @param string $type
      */
-    public function setType($type)
+    public function setType( $type )
     {
         $this->type = $type;
     }
@@ -607,7 +612,7 @@ class Post implements PostInterface
      *
      * @param string $mimeType
      */
-    public function setMimeType($mimeType)
+    public function setMimeType( $mimeType )
     {
         $this->mimeType = $mimeType;
     }
@@ -627,7 +632,7 @@ class Post implements PostInterface
      *
      * @param int $commentCount
      */
-    public function setCommentCount($commentCount)
+    public function setCommentCount( $commentCount )
     {
         $this->commentCount = $commentCount;
     }
@@ -647,9 +652,9 @@ class Post implements PostInterface
      *
      * @param PostMeta $meta
      */
-    public function addMeta(PostMeta $meta)
+    public function addMeta( PostMeta $meta )
     {
-        $meta->setPost($this);
+        $meta->setPost( $this );
         $this->metas[] = $meta;
     }
 
@@ -668,10 +673,10 @@ class Post implements PostInterface
      *
      * @param Comment $comment
      */
-    public function addComment(Comment $comment)
+    public function addComment( Comment $comment )
     {
-        $comment->setPost($this);
-        $this->comments[] = $comment;
+        $comment->setPost( $this );
+        $this->comments[]   = $comment;
         $this->commentCount = $this->getComments()->count();
     }
 
@@ -690,7 +695,7 @@ class Post implements PostInterface
      *
      * @param UserInterface $user
      */
-    public function setUser(UserInterface $user)
+    public function setUser( UserInterface $user )
     {
         $this->user = $user;
     }
@@ -710,7 +715,7 @@ class Post implements PostInterface
      *
      * @param Taxonomy $taxonomy
      */
-    public function addTaxonomy(Taxonomy $taxonomy)
+    public function addTaxonomy( Taxonomy $taxonomy )
     {
         $this->taxonomies[] = $taxonomy;
     }
