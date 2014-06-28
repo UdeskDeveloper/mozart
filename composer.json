@@ -13,20 +13,21 @@
             "": "libraries/"
         },
         "files": [
-            "backstage/functions.php",
+            "libraries/Redux/framework.php",
+            "libraries/ACF/acf.php",
             "libraries/Mozart/Mozart.php"
         ]
     },
     "require"    : {
         "php": ">=5.3.3",
 
-        "twig/twig"                 : "~1.12",
-        "twig/extensions"           : "~1.0",
+        "twig/twig"      : "~1.12",
+        "twig/extensions": "~1.0",
 
         "symfony/symfony"       : "~2.4",
         "symfony/monolog-bundle": "~2.4",
 
-        "sensio/framework-extra-bundle"       : "~3.0",
+        "sensio/framework-extra-bundle": "~3.0",
 
         "doctrine/orm"            : "~2.2,>=2.2.3",
         "doctrine/doctrine-bundle": "~1.2",
@@ -52,14 +53,12 @@
         "post-install-cmd": [
             "Rhetina\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::buildBootstrap",
             "Rhetina\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::clearCache",
-            "Mopa\\Bundle\\BootstrapBundle\\Composer\\ScriptHandler::postInstallMirrorTwitterBootstrapSass",
             "Rhetina\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installAssets",
             "Rhetina\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::removeSymfonyStandardFiles"
         ],
         "post-update-cmd" : [
             "Rhetina\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::buildBootstrap",
             "Rhetina\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::clearCache",
-            "Mopa\\Bundle\\BootstrapBundle\\Composer\\ScriptHandler::postInstallMirrorTwitterBootstrapSass",
             "Rhetina\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installAssets",
             "Rhetina\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::removeSymfonyStandardFiles"
         ]
