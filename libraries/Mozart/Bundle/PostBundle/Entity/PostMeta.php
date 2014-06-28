@@ -1,6 +1,6 @@
 <?php
 
-namespace  Mozart\Bundle\PostBundle\Entity;
+namespace Mozart\Bundle\PostBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use  Mozart\Bundle\NucleusBundle\Annotation as Mozart;
