@@ -1,5 +1,0 @@
-services:
-    mozart_attachment.manager:
-        class: Mozart\Bundle\AttachmentBundle\Model\AttachmentManager
-        arguments:
-            - @service_container
