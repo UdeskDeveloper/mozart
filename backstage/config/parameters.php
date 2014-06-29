@@ -34,3 +34,6 @@ $container->setParameter( 'secret', NONCE_KEY );
 $container->setParameter( 'debug_toolbar', true );
 $container->setParameter( 'debug_redirects', false );
 $container->setParameter( 'use_assetic_controller', false );
+
+# Entity manager configuration to use (cache etc)
+$container->setParameter( 'wordpress.entity_manager', 'default' );

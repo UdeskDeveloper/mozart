@@ -46,6 +46,35 @@ $wordressInfos = array(
         'secure_auth' => SECURE_AUTH_SALT,
         'logged_in'   => LOGGED_IN_SALT,
         'nonce'       => NONCE_SALT
+    ),
+    'cookie'     => array(
+        'path'         => COOKIEPATH,
+        'domain'       => COOKIE_DOMAIN,
+        'site_path'    => SITECOOKIEPATH,
+        'admin_path'   => ADMIN_COOKIE_PATH,
+        'plugins_path' => PLUGINS_COOKIE_PATH,
+        'hash'         => COOKIEHASH,
+        'user'         => USER_COOKIE,
+        'pass'         => PASS_COOKIE,
+        'auth'         => AUTH_COOKIE,
+        'secure_auth'  => SECURE_AUTH_COOKIE,
+        'logged_in'    => LOGGED_IN_COOKIE,
+        'test'         => TEST_COOKIE
+    ),
+    'env'        => array(
+        'memory_limit'     => WP_MEMORY_LIMIT,
+        'max_memory_limit' => WP_MAX_MEMORY_LIMIT,
+        'debug'            => WP_DEBUG,
+        'debug_display'    => WP_DEBUG_DISPLAY,
+        'debug_log'        => WP_DEBUG_LOG,
+        'debug_queries'    => SAVEQUERIES,
+        'cache'            => WP_CACHE,
+        'media_trash'      => MEDIA_TRASH,
+        'shortinit'        => SHORTINIT
+    ),
+    'ssl'        => array(
+        'force_admin' => FORCE_SSL_ADMIN,
+        'force_login' => FORCE_SSL_LOGIN
     )
 );
 /*
@@ -53,6 +82,7 @@ $wordressInfos = array(
  * Symfony will interpret this as being a reference to another parameter
  * To avoid that, we need to escape those values
  * We use the escapeValue() method offered by Symfony\Component\DependencyInjection\ParameterBag\ParameterBag
+ * It is easy to escape such strings, but let's use something that is there already
  */
 $parameterBag = new ParameterBag();
 
