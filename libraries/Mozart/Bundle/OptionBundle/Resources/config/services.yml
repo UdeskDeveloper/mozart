@@ -1,5 +1,20 @@
+parameters:
+    redux.sectionmanager.class: Mozart\Bundle\OptionBundle\Redux\SectionManager
+    mozart.option.redux.section.class: Mozart\Bundle\OptionBundle\Redux\Section\MozartSection
 services:
-    mozart_option.manager:
+    mozart.option.manager:
         class: Mozart\Bundle\OptionBundle\Model\OptionManager
         arguments:
             - @service_container
+    redux.sectionmanager:
+        class: %redux.sectionmanager.class%
+    redux:
+        class: Mozart\Bundle\OptionBundle\Redux\Redux
+    redux.configuration:
+        class: Mozart\Bundle\OptionBundle\Redux\Configuration
+    redux.extensions.configuration:
+        class: Mozart\Bundle\OptionBundle\Redux\Extensions\Configuration
+    mozart.backoffice.redux.section:
+        class: %mozart.option.redux.section.class%
+        tags:
+            - {name: redux.section, alias: mozart}
