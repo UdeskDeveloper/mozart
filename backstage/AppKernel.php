@@ -38,15 +38,20 @@ class AppKernel extends Kernel
             new Symfony\Bundle\SecurityBundle\SecurityBundle(),
             new Symfony\Bundle\TwigBundle\TwigBundle(),
             new Symfony\Bundle\MonologBundle\MonologBundle(),
+            new Doctrine\Bundle\DoctrineBundle\DoctrineBundle(),
             new Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
             // load core modules
             new Mozart\Bundle\NucleusBundle\MozartNucleusBundle(),
+            // load core modules responsible for WordPress entities
+            new Mozart\Bundle\BlogBundle\MozartBlogBundle(),
+            new Mozart\Bundle\CommentBundle\MozartCommentBundle(),
+            new Mozart\Bundle\OptionBundle\MozartOptionBundle(),
+            new Mozart\Bundle\PostBundle\MozartPostBundle(),
             new Mozart\Bundle\ShortcodeBundle\MozartShortcodeBundle(),
             new Mozart\Bundle\TaxonomyBundle\MozartTaxonomyBundle(),
+            new Mozart\Bundle\ThemeBundle\MozartThemeBundle(),
             new Mozart\Bundle\UserBundle\MozartUserBundle(),
-            // load admin modules
-            new Mozart\Bundle\BackofficeBundle\MozartBackofficeBundle(),
-
+            new Mozart\Bundle\WidgetBundle\MozartWidgetBundle(),
             // load UI components
             new Mopa\Bundle\BootstrapBundle\MopaBootstrapBundle(),
             new Mozart\UI\WebIconBundle\MozartWebIconBundle()
@@ -54,9 +59,9 @@ class AppKernel extends Kernel
 
         $bundles = apply_filters( 'register_mozart_bundle', $bundles );
 
-        if (in_array( $this->getEnvironment(), array( 'dev', 'test' ) )) {
+        if ( in_array( $this->getEnvironment(), array( 'dev', 'test' ) ) ) {
             $bundles[] = new Symfony\Bundle\WebProfilerBundle\WebProfilerBundle();
-            $bundles[] = new Sensio\Bundle\DistributionBundle\SensioDistributionBundle();
+        //    $bundles[] = new Sensio\Bundle\DistributionBundle\SensioDistributionBundle();
             $bundles[] = new Sensio\Bundle\GeneratorBundle\SensioGeneratorBundle();
         }
 
@@ -74,9 +79,9 @@ class AppKernel extends Kernel
         // TODO: what if /themedir/composer.json does not exist
         $themeConfig = json_decode( file_get_contents( get_template_directory() . '/composer.json' ), true );
 
-        if (isset( $themeConfig['scripts']['pre-initialize-mozart-bundles'] )) {
-            foreach ((array)$themeConfig['scripts']['pre-initialize-mozart-bundles'] as $script) {
-                call_user_func($script);
+        if ( isset( $themeConfig['scripts']['pre-initialize-mozart-bundles'] ) ) {
+            foreach ( (array)$themeConfig['scripts']['pre-initialize-mozart-bundles'] as $script ) {
+                call_user_func( $script );
             }
         }
     }
@@ -94,11 +99,7 @@ class AppKernel extends Kernel
      */
     public function getCacheDir()
     {
-        if (\Mozart::isWpRunning() === true) {
-            return WP_CONTENT_DIR . '/mozart/storage/cache/' . $this->environment;
-        } else {
-            return $this->getRootDir() . '/../../../mozart/storage/cache/' . $this->environment;
-        }
+        return WP_CONTENT_DIR . '/Mozart/Cache/' . $this->environment;
     }
 
     /**
@@ -106,32 +107,6 @@ class AppKernel extends Kernel
      */
     public function getLogDir()
     {
-        if (\Mozart::isWpRunning() === true) {
-            return WP_CONTENT_DIR . '/mozart/storage/logs';
-        } else {
-            return $this->getRootDir() . '/../../../mozart/storage/logs';
-        }
-    }
-
-    /**
-     * @return string|void
-     */
-    public function getRootDirUri()
-    {
-        if (\Mozart::isWpRunning() === true) {
-            if (0 === strpos( $this->getRootDir(), WP_CONTENT_DIR )) {
-                return content_url( str_replace( WP_CONTENT_DIR, '', $this->getRootDir() ) );
-            } elseif (0 === strpos( $this->getRootDir(), ABSPATH )) {
-                return site_url( str_replace( ABSPATH, '', $this->getRootDir() ) );
-            } elseif (0 === strpos( $this->getRootDir(), WP_PLUGIN_DIR ) || 0 === strpos(
-                    $this->getRootDir(),
-                    WPMU_PLUGIN_DIR
-                )
-            ) {
-                return plugins_url( basename( $this->getRootDir() ), $this->getRootDir() );
-            }
-        }
-
-        return '';
+        return WP_CONTENT_DIR . '/Mozart/Logs';
     }
 }
