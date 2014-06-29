@@ -5,6 +5,7 @@ namespace  Mozart\Bundle\OptionBundle\Model;
 use Doctrine\Common\Cache\ArrayCache;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
+use Mozart\Bundle\NucleusBundle\Model\AbstractManager;
 use Symfony\Component\DependencyInjection\Container;
 
 class OptionManager extends AbstractManager implements OptionManagerInterface
@@ -34,7 +35,7 @@ class OptionManager extends AbstractManager implements OptionManagerInterface
         parent::__construct($container);
 
         $this->em         = $this->getEntityManager();
-        $this->repository = $this->em->getRepository('KayueWordpressBundle:Option');
+        $this->repository = $this->em->getRepository('MozartOptionBundle:Option');
         $this->cache      = new ArrayCache();
     }
 
