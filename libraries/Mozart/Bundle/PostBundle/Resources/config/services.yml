@@ -1,4 +1,7 @@
 services:
+    mozart_post.post_type_manager:
+        class: Mozart\Bundle\PostBundle\PostTypeManager
+
     mozart_post.manager:
         class: Mozart\Bundle\PostBundle\Model\PostManager
         arguments:
@@ -6,5 +9,10 @@ services:
 
     mozart_post.meta.manager:
         class: Mozart\Bundle\PostBundle\Model\PostMetaManager
+        arguments:
+            - @service_container
+
+    mozart_post.attachment_manager:
+        class: Mozart\Bundle\PostBundle\Model\AttachmentManager
         arguments:
             - @service_container

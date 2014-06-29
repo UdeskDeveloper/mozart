@@ -6,9 +6,22 @@
 namespace Mozart\Bundle\PostBundle;
 
 
+/**
+ * Interface PostTypeInterface
+ *
+ * @package Mozart\Bundle\PostBundle
+ */
 interface PostTypeInterface
 {
 
-   public function getKey();
+    /**
+     * @return mixed
+     */
+    public function getKey();
+
+    /**
+     * @return mixed
+     */
+    public function getConfiguration();
 
 } 
