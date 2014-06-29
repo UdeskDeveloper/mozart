@@ -1,6 +1,7 @@
 <?php
 
 // what if we are not in WordPress mode
+// TODO: rethink these as it does not work well in console
 if (false === defined( 'ABSPATH' )) {
 
     define( 'WP_USE_THEMES', false );
