@@ -313,7 +313,7 @@ class PostType implements PostTypeInterface
      */
     protected function excludeFromSearch()
     {
-        return $this->isPublic();
+        return !$this->isPublic();
     }
 
     /**
