@@ -52,7 +52,6 @@
                     e.preventDefault();
 
                     var url = $(this).attr('href').split('&tab=');
-
                     $('#' + url[1] + '_section_group_li_a').click();
                     return false;
                 }
@@ -283,9 +282,9 @@
     $.redux.tabCheck = function() {
         $('.redux-group-tab-link-a').click(
             function() {
-
+                var el = $(this ).parents('.redux-container:first');
                 var relid = $(this).data('rel'); // The group ID of interest
-                var oldid = $('.redux-group-tab-link-li.active .redux-group-tab-link-a').data('rel');
+                var oldid = el.find('.redux-group-tab-link-li.active .redux-group-tab-link-a').data('rel');
 
                 if (oldid === relid) {
                     return;
@@ -302,15 +301,15 @@
                     );
                 }
 
-                if ($('#' + relid + '_section_group_li').parents('.redux-group-tab-link-li').length) {
-                    var parentID = $('#' + relid + '_section_group_li').parents('.redux-group-tab-link-li').attr('id').split('_');
+                if (el.find('#' + relid + '_section_group_li').parents('.redux-group-tab-link-li').length) {
+                    var parentID = el.find('#' + relid + '_section_group_li').parents('.redux-group-tab-link-li').attr('id').split('_');
                     parentID = parentID[0];
                 }
 
-                $('#toplevel_page_' + redux.args.slug + ' .wp-submenu a.current').removeClass('current');
-                $('#toplevel_page_' + redux.args.slug + ' .wp-submenu li.current').removeClass('current');
+                el.find('#toplevel_page_' + redux.args.slug + ' .wp-submenu a.current').removeClass('current');
+                el.find('#toplevel_page_' + redux.args.slug + ' .wp-submenu li.current').removeClass('current');
 
-                $('#toplevel_page_' + redux.args.slug + ' .wp-submenu a').each(
+                el.find('#toplevel_page_' + redux.args.slug + ' .wp-submenu a').each(
                     function() {
                         var url = $(this).attr('href').split('&tab=');
                         if (url[1] == relid || url[1] == parentID) {
@@ -320,61 +319,61 @@
                     }
                 );
 
-                if ($('#' + oldid + '_section_group_li').find('#' + oldid + '_section_group_li').length) {
+                if (el.find('#' + oldid + '_section_group_li').find('#' + oldid + '_section_group_li').length) {
                     //console.log('RELID is child of oldid');
-                    $('#' + oldid + '_section_group_li').addClass('activeChild');
-                    $('#' + relid + '_section_group_li').addClass('active').removeClass('activeChild');
-                } else if ($('#' + relid + '_section_group_li').parents('#' + oldid + '_section_group_li').length || $('#' + oldid + '_section_group_li').parents('ul.subsection').find('#' + relid + '_section_group_li').length) {
+                    el.find('#' + oldid + '_section_group_li').addClass('activeChild');
+                    el.find('#' + relid + '_section_group_li').addClass('active').removeClass('activeChild');
+                } else if (el.find('#' + relid + '_section_group_li').parents('#' + oldid + '_section_group_li').length || el.find('#' + oldid + '_section_group_li').parents('ul.subsection').find('#' + relid + '_section_group_li').length) {
                     //console.log('RELID is sibling or child of OLDID');
-                    if ($('#' + relid + '_section_group_li').parents('#' + oldid + '_section_group_li').length) {
+                    if (el.find('#' + relid + '_section_group_li').parents('#' + oldid + '_section_group_li').length) {
                         //console.log('child of oldid');
-                        $('#' + oldid + '_section_group_li').addClass('activeChild').removeClass('active');
+                        el.find('#' + oldid + '_section_group_li').addClass('activeChild').removeClass('active');
                     } else {
                         //console.log('sibling');
-                        $('#' + relid + '_section_group_li').addClass('active');
-                        $('#' + oldid + '_section_group_li').removeClass('active');
+                        el.find('#' + relid + '_section_group_li').addClass('active');
+                        el.find('#' + oldid + '_section_group_li').removeClass('active');
                     }
-                    $('#' + relid + '_section_group_li').removeClass('activeChild').addClass('active');
+                    el.find('#' + relid + '_section_group_li').removeClass('activeChild').addClass('active');
                 } else {
-                    $('#' + relid + '_section_group_li').addClass('active').removeClass('activeChild').find('ul.subsection').slideDown();
+                    el.find('#' + relid + '_section_group_li').addClass('active').removeClass('activeChild').find('ul.subsection').slideDown();
 
-                    if ($('#' + oldid + '_section_group_li').find('ul.subsection').length) {
+                    if (el.find('#' + oldid + '_section_group_li').find('ul.subsection').length) {
                         //console.log('oldid is parent')
-                        $('#' + oldid + '_section_group_li').find('ul.subsection').slideUp(
+                        el.find('#' + oldid + '_section_group_li').find('ul.subsection').slideUp(
                             'fast', function() {
-                                $('#' + oldid + '_section_group_li').removeClass('active').removeClass('activeChild');
+                                el.find('#' + oldid + '_section_group_li').removeClass('active').removeClass('activeChild');
                             }
                         );
-                    } else if ($('#' + oldid + '_section_group_li').parents('ul.subsection').length) {
+                    } else if (el.find('#' + oldid + '_section_group_li').parents('ul.subsection').length) {
                         //console.log('oldid is a child');
-                        if (!$('#' + oldid + '_section_group_li').parents('#' + relid + '_section_group_li').length) {
+                        if (!el.find('#' + oldid + '_section_group_li').parents('#' + relid + '_section_group_li').length) {
                             //console.log('oldid is child, but not of relid');
-                            $('#' + oldid + '_section_group_li').parents('ul.subsection').slideUp(
+                            el.find('#' + oldid + '_section_group_li').parents('ul.subsection').slideUp(
                                 'fast', function() {
-                                    $('#' + oldid + '_section_group_li').removeClass('active');
-                                    $('#' + oldid + '_section_group_li').parents('.redux-group-tab-link-li').removeClass('active').removeClass('activeChild');
+                                    el.find('#' + oldid + '_section_group_li').removeClass('active');
+                                    el.find('#' + oldid + '_section_group_li').parents('.redux-group-tab-link-li').removeClass('active').removeClass('activeChild');
                                 }
                             );
                         } else {
-                            $('#' + oldid + '_section_group_li').removeClass('active');
+                            el.find('#' + oldid + '_section_group_li').removeClass('active');
                         }
                     } else {
                         //console.log('Normal remove active from child');
-                        $('#' + oldid + '_section_group_li').removeClass('active');
-                        if ($('#' + relid + '_section_group_li').parents('.redux-group-tab-link-li').length) {
+                        el.find('#' + oldid + '_section_group_li').removeClass('active');
+                        if (el.find('#' + relid + '_section_group_li').parents('.redux-group-tab-link-li').length) {
                             //console.log('here');
-                            $('#' + relid + '_section_group_li').parents('.redux-group-tab-link-li').addClass('activeChild').find('ul.subsection').slideDown();
-                            $('#' + relid + '_section_group_li').addClass('active');
+                            el.find('#' + relid + '_section_group_li').parents('.redux-group-tab-link-li').addClass('activeChild').find('ul.subsection').slideDown();
+                            el.find('#' + relid + '_section_group_li').addClass('active');
                         }
                     }
                 }
 
                 // Show the group
-                $('#' + oldid + '_section_group').hide();
+                el.find('#' + oldid + '_section_group').hide();
 
-                $('#' + relid + '_section_group').fadeIn(
+                el.find('#' + relid + '_section_group').fadeIn(
                     200, function() {
-                        if ($('#redux-footer').length !== 0) {
+                        if (el.find('#redux-footer').length !== 0) {
                             $.redux.stickyInfo(); // race condition fix
                         }
                         $.redux.initFields();
@@ -410,7 +409,7 @@
 
         // Tab the first item or the saved one
         if ($.cookie("redux_current_tab") === null || typeof ($.cookie("redux_current_tab")) === "undefined" || sTab.length === 0) {
-            $('.redux-group-tab-link-a:first').click();
+            $('.redux-container').find('.redux-group-tab-link-a:first').click();
         } else {
             sTab.click();
         }
@@ -514,7 +513,8 @@
 
     $.redux.devFunctions = function() {
         $('#consolePrintObject').on(
-                'click', function() {
+                'click', function(e) {
+                    e.preventDefault();
                     console.log($.parseJSON($("#redux-object-json").html()));
                 }
         );
@@ -554,6 +554,11 @@
                     if (fieldset.hasClass('redux-container-divide')) {
                         $('#divide-' + i).hide().addClass('hide');
                     }
+                    
+                    if (fieldset.hasClass('redux-container-raw')) {
+                        var rawTable = fieldset.parents().find('.redux-raw-table');
+                        rawTable.hide().addClass('hide');
+                    }                    
                 }
             }
         );
@@ -617,6 +622,11 @@
                     $('#divide-' + child).fadeIn(300).removeClass('hide');
                 }
 
+                if (childFieldset.hasClass('redux-container-raw')) {
+                    var rawTable = childFieldset.parents().find('.redux-raw-table');
+                    rawTable.fadeIn(300).removeClass('hide');
+                }                    
+
                 tr.fadeIn(
                     300, function() {
                         $(this).removeClass('hide');
@@ -668,6 +678,12 @@
                 if ($('#' + redux.args.opt_name + '-' + id).hasClass('redux-container-divide')) {
                     $('#divide-' + id).fadeOut(50).addClass('hide');
                 }
+
+                if ($('#' + redux.args.opt_name + '-' + id).hasClass('redux-container-raw')) {
+                    var rawTable = $('#' + redux.args.opt_name + '-' + id).parents().find('.redux-raw-table');
+                    
+                    rawTable.fadeOut(50).addClass('hide');
+                }                    
 
                 if (redux.required.hasOwnProperty(id)) {
                     $.each(
@@ -952,7 +968,7 @@ function redux_change(variable) {
         var warningCount = (parseInt(rContainer.find('.redux-field-warnings span').text()) - 1);
         
         if (errorCount <= 0) {
-            console.log('HERE');
+            //console.log('HERE');
             jQuery('#' + parentID + '_li .redux-menu-error').fadeOut('fast').remove();
             jQuery('#' + parentID + '_li .redux-group-tab-link-a').removeClass('hasError');
 
@@ -994,4 +1010,169 @@ function redux_change(variable) {
     if (!redux.args.disable_save_warn) {
         rContainer.find('.redux-save-warn').slideDown();
     }
+}
+
+function colorValidate(field) {
+    var value = jQuery( field ).val();
+
+    var hex = colorNameToHex( value );
+    if ( hex !== value.replace( '#', '' ) ) {
+        return hex;
+    }
+
+    return value;
+}
+
+function colorNameToHex(colour) {
+    var tcolour = colour.replace( /^\s\s*/, '' ).replace( /\s\s*$/, '' ).replace( "#", "" );
+
+    var colours = {
+        "aliceblue": "#f0f8ff",
+        "antiquewhite": "#faebd7",
+        "aqua": "#00ffff",
+        "aquamarine": "#7fffd4",
+        "azure": "#f0ffff",
+        "beige": "#f5f5dc",
+        "bisque": "#ffe4c4",
+        "black": "#000000",
+        "blanchedalmond": "#ffebcd",
+        "blue": "#0000ff",
+        "blueviolet": "#8a2be2",
+        "brown": "#a52a2a",
+        "burlywood": "#deb887",
+        "cadetblue": "#5f9ea0",
+        "chartreuse": "#7fff00",
+        "chocolate": "#d2691e",
+        "coral": "#ff7f50",
+        "cornflowerblue": "#6495ed",
+        "cornsilk": "#fff8dc",
+        "crimson": "#dc143c",
+        "cyan": "#00ffff",
+        "darkblue": "#00008b",
+        "darkcyan": "#008b8b",
+        "darkgoldenrod": "#b8860b",
+        "darkgray": "#a9a9a9",
+        "darkgreen": "#006400",
+        "darkkhaki": "#bdb76b",
+        "darkmagenta": "#8b008b",
+        "darkolivegreen": "#556b2f",
+        "darkorange": "#ff8c00",
+        "darkorchid": "#9932cc",
+        "darkred": "#8b0000",
+        "darksalmon": "#e9967a",
+        "darkseagreen": "#8fbc8f",
+        "darkslateblue": "#483d8b",
+        "darkslategray": "#2f4f4f",
+        "darkturquoise": "#00ced1",
+        "darkviolet": "#9400d3",
+        "deeppink": "#ff1493",
+        "deepskyblue": "#00bfff",
+        "dimgray": "#696969",
+        "dodgerblue": "#1e90ff",
+        "firebrick": "#b22222",
+        "floralwhite": "#fffaf0",
+        "forestgreen": "#228b22",
+        "fuchsia": "#ff00ff",
+        "gainsboro": "#dcdcdc",
+        "ghostwhite": "#f8f8ff",
+        "gold": "#ffd700",
+        "goldenrod": "#daa520",
+        "gray": "#808080",
+        "green": "#008000",
+        "greenyellow": "#adff2f",
+        "honeydew": "#f0fff0",
+        "hotpink": "#ff69b4",
+        "indianred ": "#cd5c5c",
+        "indigo ": "#4b0082",
+        "ivory": "#fffff0",
+        "khaki": "#f0e68c",
+        "lavender": "#e6e6fa",
+        "lavenderblush": "#fff0f5",
+        "lawngreen": "#7cfc00",
+        "lemonchiffon": "#fffacd",
+        "lightblue": "#add8e6",
+        "lightcoral": "#f08080",
+        "lightcyan": "#e0ffff",
+        "lightgoldenrodyellow": "#fafad2",
+        "lightgrey": "#d3d3d3",
+        "lightgreen": "#90ee90",
+        "lightpink": "#ffb6c1",
+        "lightsalmon": "#ffa07a",
+        "lightseagreen": "#20b2aa",
+        "lightskyblue": "#87cefa",
+        "lightslategray": "#778899",
+        "lightsteelblue": "#b0c4de",
+        "lightyellow": "#ffffe0",
+        "lime": "#00ff00",
+        "limegreen": "#32cd32",
+        "linen": "#faf0e6",
+        "magenta": "#ff00ff",
+        "maroon": "#800000",
+        "mediumaquamarine": "#66cdaa",
+        "mediumblue": "#0000cd",
+        "mediumorchid": "#ba55d3",
+        "mediumpurple": "#9370d8",
+        "mediumseagreen": "#3cb371",
+        "mediumslateblue": "#7b68ee",
+        "mediumspringgreen": "#00fa9a",
+        "mediumturquoise": "#48d1cc",
+        "mediumvioletred": "#c71585",
+        "midnightblue": "#191970",
+        "mintcream": "#f5fffa",
+        "mistyrose": "#ffe4e1",
+        "moccasin": "#ffe4b5",
+        "navajowhite": "#ffdead",
+        "navy": "#000080",
+        "oldlace": "#fdf5e6",
+        "olive": "#808000",
+        "olivedrab": "#6b8e23",
+        "orange": "#ffa500",
+        "orangered": "#ff4500",
+        "orchid": "#da70d6",
+        "palegoldenrod": "#eee8aa",
+        "palegreen": "#98fb98",
+        "paleturquoise": "#afeeee",
+        "palevioletred": "#d87093",
+        "papayawhip": "#ffefd5",
+        "peachpuff": "#ffdab9",
+        "peru": "#cd853f",
+        "pink": "#ffc0cb",
+        "plum": "#dda0dd",
+        "powderblue": "#b0e0e6",
+        "purple": "#800080",
+        "red": "#ff0000",
+        "redux": "#01a3e3",
+        "rosybrown": "#bc8f8f",
+        "royalblue": "#4169e1",
+        "saddlebrown": "#8b4513",
+        "salmon": "#fa8072",
+        "sandybrown": "#f4a460",
+        "seagreen": "#2e8b57",
+        "seashell": "#fff5ee",
+        "sienna": "#a0522d",
+        "silver": "#c0c0c0",
+        "skyblue": "#87ceeb",
+        "slateblue": "#6a5acd",
+        "slategray": "#708090",
+        "snow": "#fffafa",
+        "springgreen": "#00ff7f",
+        "steelblue": "#4682b4",
+        "tan": "#d2b48c",
+        "teal": "#008080",
+        "thistle": "#d8bfd8",
+        "tomato": "#ff6347",
+        "turquoise": "#40e0d0",
+        "violet": "#ee82ee",
+        "wheat": "#f5deb3",
+        "white": "#ffffff",
+        "whitesmoke": "#f5f5f5",
+        "yellow": "#ffff00",
+        "yellowgreen": "#9acd32"
+    };
+
+    if ( colours[tcolour.toLowerCase()] !== 'undefined' ) {
+        return colours[tcolour.toLowerCase()];
+    }
+
+    return colour;
 }
