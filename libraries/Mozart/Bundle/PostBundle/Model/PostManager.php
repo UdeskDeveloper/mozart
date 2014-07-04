@@ -29,7 +29,7 @@ class PostManager extends AbstractManager implements PostManagerInterface
         parent::__construct($container);
 
         $this->em         = $this->getEntityManager();
-        $this->repository = $this->em->getRepository('KayueWordpressBundle:Post');
+        $this->repository = $this->em->getRepository('MozartPostBundle:Post');
     }
 
     public function findOnePostById($id)

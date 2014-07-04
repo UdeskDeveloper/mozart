@@ -6,8 +6,6 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Component\DependencyInjection\Container;
 use Mozart\Bundle\NucleusBundle\Model\AbstractManager;
-use Mozart\Bundle\PostBundle\Model\PostMetaManager;
-use Mozart\Bundle\PostBundle\Model\Post;
 
 /**
  * Class AttachmentManager
@@ -36,7 +34,7 @@ class AttachmentManager extends AbstractManager implements AttachmentManagerInte
      *
      * @param EntityManager $em
      */
-    public function __construct( Container $container )
+    public function __construct(Container $container)
     {
         parent::__construct( $container );
 
@@ -50,7 +48,7 @@ class AttachmentManager extends AbstractManager implements AttachmentManagerInte
      *
      * @return AttachmentInterface[]
      */
-    public function findAttachmentsByPost( Post $post )
+    public function findAttachmentsByPost(Post $post)
     {
         $posts = $this->repository->findBy(
             array(
@@ -73,7 +71,7 @@ class AttachmentManager extends AbstractManager implements AttachmentManagerInte
      *
      * @return AttachmentInterface
      */
-    public function findOneAttachmentById( $id )
+    public function findOneAttachmentById($id)
     {
         $post = $this->repository->findOneBy(
             array(
@@ -91,7 +89,7 @@ class AttachmentManager extends AbstractManager implements AttachmentManagerInte
      *
      * @return mixed|null|string
      */
-    public function getAttachmentOfSize( Attachment $attachment, $size = null )
+    public function getAttachmentOfSize(Attachment $attachment, $size = null)
     {
         if ($size === 'full') {
             return $attachment->getUrl();
@@ -136,7 +134,7 @@ class AttachmentManager extends AbstractManager implements AttachmentManagerInte
      *
      * @return mixed
      */
-    public function findFeaturedImageByPost( Post $post )
+    public function findFeaturedImageByPost(Post $post)
     {
         $featuredImageId = $this->postMetaManager->findOneMetaBy(
             array(

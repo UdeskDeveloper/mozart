@@ -2,9 +2,6 @@
 
 namespace Mozart\Bundle\PostBundle\Model;
 
-use Mozart\Bundle\PostBundle\Model\Post;
-use Mozart\Bundle\PostBundle\Model\PostMeta;
-
 /**
  * Class Attachment
  *
@@ -32,11 +29,11 @@ class Attachment extends Post implements AttachmentInterface
     /**
      * @param Post $post
      */
-    public function __construct( Post $post )
+    public function __construct(Post $post)
     {
         $this->metadata = $post->getMetas()
             ->filter(
-                function ( PostMeta $meta ) {
+                function (PostMeta $meta) {
                     return '_wp_attachment_metadata' == $meta->getKey();
                 }
             )
@@ -56,7 +53,7 @@ class Attachment extends Post implements AttachmentInterface
      *
      * @return null|string
      */
-    public function getThumbnailUrl( $size = 'post-thumbnail' )
+    public function getThumbnailUrl($size = 'post-thumbnail')
     {
         $rawMetadata = $this->metadata->getValue();
 
@@ -70,7 +67,7 @@ class Attachment extends Post implements AttachmentInterface
     /**
      * @param $url
      */
-    public function setUrl( $url )
+    public function setUrl($url)
     {
         $this->url = $url;
     }

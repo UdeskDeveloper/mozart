@@ -5,7 +5,6 @@
 
 namespace Mozart\Bundle\PostBundle;
 
-
 /**
  * Interface PostTypeInterface
  *
@@ -24,4 +23,4 @@ interface PostTypeInterface
      */
     public function getConfiguration();
 
-} 
+}

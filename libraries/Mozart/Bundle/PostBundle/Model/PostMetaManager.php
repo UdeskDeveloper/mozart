@@ -4,6 +4,7 @@ namespace  Mozart\Bundle\PostBundle\Model;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
+use Mozart\Bundle\NucleusBundle\Model\AbstractManager;
 use Symfony\Component\DependencyInjection\Container;
 
 class PostMetaManager extends AbstractManager implements PostMetaManagerInterface
@@ -21,14 +22,14 @@ class PostMetaManager extends AbstractManager implements PostMetaManagerInterfac
     /**
      * Constructor.
      *
-     * @param EntityManager     $em
+     * @param EntityManager $em
      */
     public function __construct(Container $container)
     {
         parent::__construct($container);
 
         $this->em = $this->getEntityManager();
-        $this->repository = $this->em->getRepository('KayueWordpressBundle:PostMeta');
+        $this->repository = $this->em->getRepository('MozartPostBundle:PostMeta');
     }
 
     public function addMeta(Post $post, PostMeta $meta)

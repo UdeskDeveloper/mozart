@@ -5,6 +5,7 @@
 
 namespace Mozart\Bundle\PostBundle;
 
+use Mozart\Bundle\PostBundle\DependencyInjection\Compiler\UserCapabilitiesPerPostTypeCompilerPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 use Mozart\Bundle\PostBundle\DependencyInjection\Compiler\PostTypesCompilerPass;
@@ -20,10 +21,11 @@ class MozartPostBundle extends Bundle
     /**
      * @param ContainerBuilder $container
      */
-    public function build( ContainerBuilder $container )
+    public function build(ContainerBuilder $container)
     {
         parent::build( $container );
         $container->addCompilerPass( new PostTypesCompilerPass );
+        $container->addCompilerPass( new UserCapabilitiesPerPostTypeCompilerPass());
 
     }
 
@@ -40,7 +42,6 @@ class MozartPostBundle extends Bundle
      */
     public function registerPostTypes()
     {
-
         if ( false === $this->container->has( 'mozart_post.post_type_manager' ) ) {
             return;
         }
@@ -48,9 +49,17 @@ class MozartPostBundle extends Bundle
         $postTypes = $this->container->get( 'mozart_post.post_type_manager' )
             ->getPostTypes();
 
-        foreach ( $postTypes as $key => $postType ) {
+        foreach ($postTypes as $key => $postType) {
             register_post_type( $key, $postType->getConfiguration() );
+
+            if ( is_admin() && false !== ( $extensions = $this->container->get(
+                    'mozart_post.post_type_manager'
+                )->getExtensions( $key ) )
+            ) {
+                foreach ($extensions as $extension) {
+                    $extension->load( $postType );
+                }
+            }
         }
     }
-
 }

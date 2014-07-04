@@ -7,7 +7,6 @@ namespace Mozart\Bundle\PostBundle;
 
 use Symfony\Component\DependencyInjection\Container;
 
-
 /**
  * Class PostType
  *
@@ -31,7 +30,7 @@ class PostType implements PostTypeInterface
      */
     public function getConfiguration()
     {
-        if ( in_array( $this->getKey(), self::$reservedKeys ) ) {
+        if (in_array( $this->getKey(), self::$reservedKeys )) {
             // TODO: throw an error
         }
 
@@ -76,20 +75,20 @@ class PostType implements PostTypeInterface
     /**
      * @return string
      */
-    protected function getName()
+    public function getName()
     {
         $alias = $this->getKey();
         $alias = str_replace( '_', ' ', $alias );
 
-        return __( ucfirst( $alias ) );
+        return translate( ucwords( $alias ) );
     }
 
     /**
      * @return string
      */
-    protected function getPluralName()
+    public function getPluralName()
     {
-        return __( $this->getName() . 's' );
+        return translate( $this->getName() . 's' );
     }
 
     /**
@@ -109,6 +108,10 @@ class PostType implements PostTypeInterface
     }
 
     /**
+     * Sets the query_var key for this post type. Defaults to $post_type key
+     * If false, a post type cannot be loaded at ?{query_var}={post_slug}
+     * If specified as a string, the query ?{query_var_string}={post_slug} will be valid.
+     *
      * @return string
      */
     protected function getQueryVarKey()
@@ -132,7 +135,7 @@ class PostType implements PostTypeInterface
      */
     protected function getRewriteRules()
     {
-        if ( false === $this->isPublic() ) {
+        if (false === $this->isPublic()) {
             return false;
         }
 
@@ -149,7 +152,7 @@ class PostType implements PostTypeInterface
     {
         // let's name a convention:
         // if this post type has archive, let's make its permalink more suggestive
-        if ( $this->hasArchive() ) {
+        if ($this->hasArchive()) {
             return sanitize_title( $this->getPluralName() );
         }
 
@@ -191,7 +194,7 @@ class PostType implements PostTypeInterface
             'thumbnail'
         );
 
-        if ( $this->isHierarchical() ) {
+        if ($this->isHierarchical()) {
             $supports[] = 'page-attributes';
         }
 
@@ -199,6 +202,8 @@ class PostType implements PostTypeInterface
     }
 
     /**
+     * Whether to use the internal default meta capability handling
+     *
      * @return bool
      */
     protected function mapMetaCap()
@@ -207,19 +212,44 @@ class PostType implements PostTypeInterface
     }
 
     /**
+     * @see get_post_type_capabilities()
+     *
      * @return array
      */
     protected function getCapabilities()
     {
-        return array();
+        $capability_type = $this->getCapabilityType();
+
+        // Singular base for meta capabilities, plural base for primitive capabilities.
+        $singular_base = $capability_type[0];
+        $plural_base   = $capability_type[1];
+
+        return array(
+            // Meta capabilities
+            'edit_post'              => 'edit_' . $singular_base,
+            'read_post'              => 'read_' . $singular_base,
+            'delete_post'            => 'delete_' . $singular_base,
+            // Primitive capabilities used outside of map_meta_cap():
+            'edit_posts'             => 'edit_' . $plural_base,
+            'edit_others_posts'      => 'edit_others_' . $plural_base,
+            'publish_posts'          => 'publish_' . $plural_base,
+            'read_private_posts'     => 'read_private_' . $plural_base,
+            // Capabilities for mapping
+            'delete_posts'           => 'delete_' . $plural_base,
+            'delete_private_posts'   => 'delete_private_' . $plural_base,
+            'delete_published_posts' => 'delete_published_' . $plural_base,
+            'delete_others_posts'    => 'delete_others_' . $plural_base,
+            'edit_private_posts'     => 'edit_private_' . $plural_base,
+            'edit_published_posts'   => 'edit_published_' . $plural_base,
+        );
     }
 
     /**
-     * @return string
+     * @return array
      */
     protected function getCapabilityType()
     {
-        return 'post';
+        return array( 'post', 'posts' );
     }
 
     /**
@@ -257,7 +287,7 @@ class PostType implements PostTypeInterface
      */
     protected function showInAdminBar()
     {
-        return $this->showInMenu();
+        return false;
     }
 
     /**
@@ -317,7 +347,8 @@ class PostType implements PostTypeInterface
     }
 
     /**
-     * Whether the post type is hierarchical (e.g. page). Defaults to false.
+     * Whether the post type is hierarchical (e.g. page)
+     * Hierarchical causes memory issues - WP loads all records!
      *
      * @return bool
      */
@@ -372,5 +403,25 @@ class PostType implements PostTypeInterface
             'parent_item_colon'  => __( 'Parent Page:' ),
             'all_items'          => __( 'All ' . $this->getPluralName() )
         );
+    }
+
+    /**
+     * Change label for insert buttons.
+     *
+     * @access   public
+     *
+     * @param array $strings
+     *
+     * @return array
+     */
+    public function changeMediaViewStrings( $strings )
+    {
+        $strings['insertIntoPost']     = sprintf( __( 'Insert into %s', 'woocommerce' ), $this->getName() );
+        $strings['uploadedToThisPost'] = sprintf(
+            __( 'Uploaded to this %s', 'woocommerce' ),
+            $this->getName()
+        );
+
+        return $strings;
     }
 }

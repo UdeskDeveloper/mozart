@@ -266,7 +266,7 @@ class Post extends ModelPost
      */
     public function getUser()
     {
-        if ( $this->user instanceof Proxy ) {
+        if ($this->user instanceof Proxy) {
             try {
                 // prevent lazy loading the user entity because it might not exist
                 $this->user->__load();

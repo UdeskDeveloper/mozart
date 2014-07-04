@@ -2,8 +2,6 @@
 
 namespace Mozart\Bundle\PostBundle\Model;
 
-use Mozart\Bundle\PostBundle\Model\Post;
-
 /**
  * Interface AttachmentManagerInterface
  *

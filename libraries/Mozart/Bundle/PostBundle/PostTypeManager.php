@@ -5,7 +5,11 @@
 
 namespace Mozart\Bundle\PostBundle;
 
-
+    /**
+     * Class PostTypeManager
+     *
+     * @package Mozart\Bundle\PostBundle
+     */
 /**
  * Class PostTypeManager
  *
@@ -17,6 +21,10 @@ class PostTypeManager
      * @var PostTypeInterface[]
      */
     private $post_types;
+    /**
+     * @var PostTypeExtensionInterface[]
+     */
+    private $extensions;
 
     /**
      *
@@ -29,9 +37,20 @@ class PostTypeManager
     /**
      * @param PostTypeInterface $post_type
      */
-    public function registerPostType( PostTypeInterface $post_type )
+    public function registerPostType(PostTypeInterface $post_type)
     {
         $this->post_types[$post_type->getKey()] = $post_type;
+    }
+
+    /**
+     * @param PostTypeInterface $extension
+     */
+    public function registerExtension(PostTypeExtensionInterface $extension)
+    {
+        if ( false === isset( $this->post_types[$extension->getKey()] ) ) {
+            return;
+        }
+        $this->extensions[$extension->getKey()][] = $extension;
     }
 
     /**
@@ -42,4 +61,18 @@ class PostTypeManager
         return $this->post_types;
     }
 
-} 
+    /**
+     * @param $key
+     *
+     * @return bool|PostTypeExtensionInterface[]
+     */
+    public function getExtensions($key)
+    {
+        if ( true === isset( $this->extensions[$key] ) ) {
+            return $this->extensions[$key];
+        }
+
+        return false;
+    }
+
+}

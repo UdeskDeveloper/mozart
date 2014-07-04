@@ -1,8 +1,9 @@
 <?php
 
-namespace  Mozart\Bundle\PostBundle\Model;
+namespace Mozart\Bundle\PostBundle\Model;
 
-interface PostInterface 
+interface PostInterface
 {
+    public function setParent( $parent );
 
 }
