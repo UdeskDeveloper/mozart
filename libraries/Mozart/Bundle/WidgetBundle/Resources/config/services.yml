@@ -1,0 +1,5 @@
+services:
+    mozart_widget.widget_manager:
+        class: Mozart\Bundle\WidgetBundle\WidgetManager
+    mozart_widget.sidebar_manager:
+        class: Mozart\Bundle\WidgetBundle\SidebarManager

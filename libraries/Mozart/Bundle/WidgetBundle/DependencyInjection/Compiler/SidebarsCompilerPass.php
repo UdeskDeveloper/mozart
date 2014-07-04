@@ -9,24 +9,24 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\Reference;
 
-class WidgetsCompilerPass implements CompilerPassInterface
+class SidebarsCompilerPass implements CompilerPassInterface
 {
     /**
      * @param ContainerBuilder $container
      */
     public function process(ContainerBuilder $container)
     {
-        if (false === $container->hasDefinition( 'mozart_widget.widget_manager' )) {
+        if (false === $container->hasDefinition( 'mozart_widget.sidebar_manager' )) {
             return;
         }
 
         $definition = $container->getDefinition(
-            'mozart_widget.widget_manager'
+            'mozart_widget.sidebar_manager'
         );
 
-        foreach ($container->findTaggedServiceIds( 'wordpress.widget' ) as $id => $attributes) {
+        foreach ($container->findTaggedServiceIds( 'wordpress.sidebar' ) as $id => $attributes) {
             $definition->addMethodCall(
-                'registerWidget',
+                'registerSidebar',
                 array( new Reference( $id ) )
             );
         }

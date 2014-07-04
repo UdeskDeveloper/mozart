@@ -5,12 +5,12 @@
 
 namespace Mozart\Bundle\WidgetBundle;
 
-
 /**
  * Interface WidgetInterface
  * @package Mozart\Bundle\WidgetBundle
  */
-interface WidgetInterface {
+interface WidgetInterface
+{
     /**
      * @return mixed
      */

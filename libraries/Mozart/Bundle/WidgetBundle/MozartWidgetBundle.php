@@ -5,12 +5,14 @@
 
 namespace Mozart\Bundle\WidgetBundle;
 
+use Mozart\Bundle\WidgetBundle\DependencyInjection\Compiler\SidebarsCompilerPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 use Mozart\Bundle\WidgetBundle\DependencyInjection\Compiler\WidgetsCompilerPass;
 
 /**
  * Class MozartWidgetBundle
+ *
  * @package Mozart\Bundle\WidgetBundle
  */
 class MozartWidgetBundle extends Bundle
@@ -21,8 +23,9 @@ class MozartWidgetBundle extends Bundle
      */
     public function build(ContainerBuilder $container)
     {
-        parent::build($container);
-        $container->addCompilerPass(new WidgetsCompilerPass());
+        parent::build( $container );
+        $container->addCompilerPass( new WidgetsCompilerPass() );
+        $container->addCompilerPass( new SidebarsCompilerPass() );
     }
 
     /**
@@ -30,7 +33,29 @@ class MozartWidgetBundle extends Bundle
      */
     public function boot()
     {
-        add_action('widgets_init', array($this, 'registerWidgets'), 0);
+        add_action( 'widgets_init', array( $this, 'registerSidebars' ), 0 );
+        add_action( 'widgets_init', array( $this, 'registerWidgets' ), 0 );
+    }
+
+    public function registerSidebars()
+    {
+        if (false === $GLOBALS['wp_registered_sidebars'] || false === $this->container->has(
+                'mozart_widget.sidebar_manager'
+            )
+        ) {
+            return false;
+        }
+
+        add_theme_support( 'widgets' );
+
+        $sidebars = $this->container->get( 'mozart_widget.sidebar_manager' )->getSidebars();
+
+        foreach ($sidebars as $sidebar) {
+
+            $GLOBALS['wp_registered_sidebars'][$sidebar->getKey()] = $sidebar->getConfiguration();
+
+            do_action( 'register_sidebar', $sidebar->getConfiguration() );
+        }
     }
 
     /**
@@ -39,13 +64,15 @@ class MozartWidgetBundle extends Bundle
     public function registerWidgets()
     {
 
-        if (false === $this->container->has('mozart_widget.widget_chain')) {
-            return;
+        if (false === isset( $GLOBALS['wp_widget_factory'] ) || false === $this->container->has(
+                'mozart_widget.widget_manager'
+            )
+        ) {
+            return false;
         }
-        global $wp_widget_factory;
 
-        $widgets = (array)$this->container->get('mozart_widget.widget_chain')->getWidgets();
+        $widgets = $this->container->get( 'mozart_widget.widget_manager' )->getWidgets();
 
-        $wp_widget_factory->widgets = array_merge($wp_widget_factory->widgets, $widgets);
+        $GLOBALS['wp_widget_factory']->widgets = array_merge( $GLOBALS['wp_widget_factory']->widgets, $widgets );
     }
-} 
+}
