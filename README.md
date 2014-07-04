@@ -3,8 +3,9 @@
 Mozart
 ======
 
-Wordpress Framework for easy and solid plugin and theme development, based on Symfony 2 Framework. 
-It brings OOP, PHP 5.3 features and modern practices to Wordress
+Mozart is an open source framework for Wordpress, based on the Symfony2 framework. It helps you write solid code for your plugin or theme. It is designed for big Wordpress projects.
+
+Mozart is constructed from fully decoupled components (bundles in Symfony2 glossary), which means that every feature can be used in any other application.
 
 #### Under heavy development. Not ready for production
 
