@@ -7,6 +7,11 @@ namespace Mozart\Bundle\OptionBundle\Redux;
  *
  * @package Mozart\Bundle\OptionBundle\Redux
  */
+/**
+ * Class SectionManager
+ *
+ * @package Mozart\Bundle\OptionBundle\Redux
+ */
 class SectionManager
 {
     /**
@@ -23,15 +28,15 @@ class SectionManager
     }
 
     /**
-     * @param $section
-     * @param $alias
+     * @param ReduxSection $section
+     * @param null         $alias
      */
-    public function addSection( $section, $alias = null )
+    public function addSection( ReduxSection $section, $alias = null)
     {
         if (null === $alias) {
-            $this->sections[] = $section;
+            $this->sections[] = $section->getConfiguration();
         } else {
-            $this->sections[$alias] = $section;
+            $this->sections[$alias] = $section->getConfiguration();
         }
     }
 
@@ -48,7 +53,7 @@ class SectionManager
      *
      * @return mixed
      */
-    public function getSection( $alias )
+    public function getSection($alias)
     {
         if (array_key_exists( $alias, $this->sections )) {
             return $this->sections[$alias];

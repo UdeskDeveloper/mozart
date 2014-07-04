@@ -2,8 +2,6 @@
 
 namespace Mozart\Bundle\OptionBundle\Redux;
 
-use Symfony\Component\DependencyInjection\ContainerInterface;
-
 /**
  * Class Configuration
  *
@@ -49,6 +47,7 @@ class Configuration
         $this->setSections( $configs['sections'] );
 
         if (!isset( $this->args['opt_name'] )) { // No errors please
+
             return;
         }
 
@@ -68,11 +67,17 @@ class Configuration
         $this->initializeRedux();
     }
 
-    private function initializeRedux () {
+    private function initializeRedux()
+    {
         $this->builder = new \ReduxFramework( $this->sections, $this->args );
     }
 
-    public function getOptions() {
+    public function getBuilder () {
+        return $this->builder;
+    }
+
+    public function getOptions()
+    {
         return $this->builder->options;
     }
 
@@ -81,7 +86,7 @@ class Configuration
      * This is a test function that will let you see when the compiler hook occurs.
      * It only runs if a field    set with compiler=>true is changed.
      * */
-    public function compiler_action( $configs, $css, $changed_values )
+    public function compiler_action($configs, $css, $changed_values)
     {
         echo '<h1>The compiler hook has run!</h1>';
         echo "<pre>";
@@ -94,12 +99,12 @@ class Configuration
           // Demo of how to use the dynamic CSS and write your own static CSS file
           $filename = dirname(__FILE__) . '/style' . '.css';
           global $wp_filesystem;
-          if( empty( $wp_filesystem ) ) {
+          if ( empty( $wp_filesystem ) ) {
             require_once( ABSPATH .'/wp-admin/includes/file.php' );
           WP_Filesystem();
           }
 
-          if( $wp_filesystem ) {
+          if ($wp_filesystem) {
             $wp_filesystem->put_contents(
                 $filename,
                 $css,
@@ -117,7 +122,7 @@ class Configuration
      * NOTE: the defined constants for URLs, and directories will NOT be available at this point in a child theme,
      * so you must use get_template_directory_uri() if you want to use any of the built in icons
      * */
-    function dynamic_section( $sections )
+    public function dynamic_section($sections)
     {
         //$sections = array();
         $sections[] = array(
@@ -139,7 +144,7 @@ class Configuration
      * Filter hook for filtering the default value of any given field.
      * Very useful in development mode.
      * */
-    function change_defaults( $defaults )
+    public function change_defaults($defaults)
     {
         $defaults['str_replace'] = 'Testing filter hook!';
 

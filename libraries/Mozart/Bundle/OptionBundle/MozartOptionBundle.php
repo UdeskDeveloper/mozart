@@ -38,15 +38,13 @@ class MozartOptionBundle extends Bundle
      */
     protected function runRedux()
     {
-        //  var_dump($this->container->get( 'redux.sectionmanager' )->getSections());
-        $this->container->get( 'redux.configuration' )->init(
-            array(
-                'sections' => $this->container->get( 'redux.sectionmanager' )->getSections()
-            )
-        );
-
         $this->container->get( 'redux.extensions.configuration' )->init();
+
+        $sections = $this->container->get( 'redux.sectionmanager' )->getSections();
+
+        $this->container->get( 'redux.configuration' )->init( array( 'sections' => $sections ) );
+
         $this->container->get( 'redux' )->init();
     }
 
-} 
+}

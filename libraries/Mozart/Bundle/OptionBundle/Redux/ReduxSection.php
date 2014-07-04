@@ -5,12 +5,13 @@
 
 namespace Mozart\Bundle\OptionBundle\Redux;
 
+/**
+ * Class ReduxSection
+ *
+ * @package Mozart\Bundle\OptionBundle\Redux
+ */
+use Traversable;
 
-    /**
-     * Class ReduxSection
-     *
-     * @package Mozart\Bundle\OptionBundle\Redux
-     */
 /**
  * Class ReduxSection
  *
@@ -24,22 +25,28 @@ class ReduxSection implements SectionInterface, \ArrayAccess
      */
     private $section;
 
-
     /**
      * @return array
      */
     public function __construct()
     {
         $this->section               = array();
-        $this->section['icon']       = $this->getIcon();
-        $this->section['title']      = $this->getTitle();
-        $this->section['desc']       = $this->getDescription();
-        $this->section['subsection'] = false;
-        if ( $this->getParent() !== '' ) {
-            $this->section['subsection'] = true;
-        }
-        $this->section['fields'] = (array)$this->getFields();
+    }
 
+    public function getConfiguration() {
+
+        $conf = array(
+            'icon' => $this->getIcon(),
+            'title' => $this->getTitle(),
+            'desc' => $this->getDescription(),
+            'subsection' => false
+        );
+        if ($this->getParent() !== '') {
+            $conf['subsection'] = true;
+        }
+        $conf['fields'] = (array)$this->getFields();
+
+        return $conf;
     }
 
     /**
@@ -101,9 +108,9 @@ class ReduxSection implements SectionInterface, \ArrayAccess
      *                      </p>
      *
      * @return boolean true on success or false on failure.
-     * </p>
-     * <p>
-     * The return value will be casted to boolean if non-boolean was returned.
+     *                 </p>
+     *                 <p>
+     *                 The return value will be casted to boolean if non-boolean was returned.
      */
     public function offsetExists( $offset )
     {
@@ -144,7 +151,7 @@ class ReduxSection implements SectionInterface, \ArrayAccess
      */
     public function offsetSet( $offset, $value )
     {
-        if ( is_null( $offset ) ) {
+        if (is_null( $offset )) {
             $this->section[] = $value;
         } else {
             $this->section[$offset] = $value;
@@ -167,4 +174,17 @@ class ReduxSection implements SectionInterface, \ArrayAccess
     {
         unset( $this->section[$offset] );
     }
-} 
+
+    /**
+     * (PHP 5 &gt;= 5.0.0)<br/>
+     * Retrieve an external iterator
+     *
+     * @link http://php.net/manual/en/iteratoraggregate.getiterator.php
+     * @return Traversable An instance of an object implementing <b>Iterator</b> or
+     *       <b>Traversable</b>
+     */
+    public function getIterator()
+    {
+        // TODO: Implement getIterator() method.
+    }
+}

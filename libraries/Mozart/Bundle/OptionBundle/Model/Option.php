@@ -39,7 +39,7 @@ class Option
      *
      * @param string $name
      */
-    public function setName( $name )
+    public function setName($name)
     {
         $this->name = $name;
     }
@@ -59,7 +59,7 @@ class Option
      *
      * @param string $value
      */
-    public function setValue( $value )
+    public function setValue($value)
     {
         $this->value = $value;
     }
@@ -79,7 +79,7 @@ class Option
      *
      * @param string $autoload Yes or no
      */
-    public function setAutoload( $autoload )
+    public function setAutoload($autoload)
     {
         $this->autoload = $autoload;
     }

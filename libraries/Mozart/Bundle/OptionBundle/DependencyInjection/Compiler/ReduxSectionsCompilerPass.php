@@ -9,7 +9,7 @@ use Symfony\Component\DependencyInjection\Reference;
 class ReduxSectionsCompilerPass implements CompilerPassInterface
 {
 
-    public function process( ContainerBuilder $container )
+    public function process(ContainerBuilder $container)
     {
         if ( !$container->hasDefinition( 'redux.sectionmanager' ) ) {
             return;
@@ -22,8 +22,8 @@ class ReduxSectionsCompilerPass implements CompilerPassInterface
         $taggedServices = $container->findTaggedServiceIds(
             'redux.section'
         );
-        foreach ( $taggedServices as $id => $tagAttributes ) {
-            foreach ( $tagAttributes as $attributes ) {
+        foreach ($taggedServices as $id => $tagAttributes) {
+            foreach ($tagAttributes as $attributes) {
                 $definition->addMethodCall(
                     'addSection',
                     array( new Reference( $id ), $attributes["alias"] )

@@ -56,7 +56,7 @@ class Redux
      */
     public function getOptions()
     {
-        if ( empty( $this->options ) ) {
+        if (empty( $this->options )) {
             $this->setOptions();
         }
 
@@ -68,7 +68,7 @@ class Redux
      *
      * @access      public
      * @since       3.1.3
-     * @return      void
+     * @return void
      */
     public function setOptions()
     {
@@ -77,13 +77,13 @@ class Redux
         $defaults = array();
 
         // If multisite is enabled
-        if ( is_multisite() ) {
+        if (is_multisite()) {
 
             // Get network activated plugins
             $plugins = get_site_option( 'active_sitewide_plugins' );
 
-            foreach ( $plugins as $file => $plugin ) {
-                if ( strpos( $file, 'redux-framework.php' ) !== false ) {
+            foreach ($plugins as $file => $plugin) {
+                if (strpos( $file, 'redux-framework.php' ) !== false) {
                     $this->plugin_network_activated = true;
                     $this->options                  = get_site_option( 'ReduxFrameworkPlugin', $defaults );
                 }
@@ -91,7 +91,7 @@ class Redux
         }
 
         // If options aren't set, grab them now!
-        if ( empty( $this->options ) ) {
+        if (empty( $this->options )) {
             $this->options = get_option( 'ReduxFrameworkPlugin', $defaults );
         }
     }
@@ -101,7 +101,7 @@ class Redux
      *
      * @access      private
      * @since       3.1.3
-     * @return      void
+     * @return void
      */
     public function startHooks()
     {
@@ -118,14 +118,18 @@ class Redux
         do_action( 'redux/plugin/hooks', $this );
     }
 
+    public function admin_notices() {
+
+    }
+
     /**
      *
      */
     public function load_first()
     {
         $path = str_replace( WP_PLUGIN_DIR . '/', '', __FILE__ );
-        if ( $plugins = get_option( 'active_plugins' ) ) {
-            if ( $key = array_search( $path, $plugins ) ) {
+        if ($plugins = get_option( 'active_plugins' )) {
+            if ($key = array_search( $path, $plugins )) {
                 array_splice( $plugins, $key, 1 );
                 array_unshift( $plugins, $path );
                 update_option( 'active_plugins', $plugins );
@@ -139,27 +143,27 @@ class Redux
      * @access      public
      * @since       3.0.0
      *
-     * @param       boolean $network_wide True if plugin is network activated, false otherwise
+     * @param boolean $network_wide True if plugin is network activated, false otherwise
      *
-     * @return      void
+     * @return void
      */
-    public static function activate( $network_wide )
+    public function activate( $network_wide )
     {
-        if ( function_exists( 'is_multisite' ) && is_multisite() ) {
-            if ( $network_wide ) {
+        if (function_exists( 'is_multisite' ) && is_multisite()) {
+            if ($network_wide) {
                 // Get all blog IDs
                 $blog_ids = self::get_blog_ids();
 
-                foreach ( $blog_ids as $blog_id ) {
+                foreach ($blog_ids as $blog_id) {
                     switch_to_blog( $blog_id );
-                    self::single_activate();
+                    $this->single_activate();
                 }
                 restore_current_blog();
             } else {
-                self::single_activate();
+                $this->single_activate();
             }
         } else {
-            self::single_activate();
+            $this->single_activate();
         }
 
         delete_site_transient( 'update_plugins' );
@@ -171,27 +175,27 @@ class Redux
      * @access      public
      * @since       3.0.0
      *
-     * @param       boolean $network_wide True if plugin is network activated, false otherwise
+     * @param boolean $network_wide True if plugin is network activated, false otherwise
      *
-     * @return      void
+     * @return void
      */
-    public static function deactivate( $network_wide )
+    public function deactivate( $network_wide )
     {
-        if ( function_exists( 'is_multisite' ) && is_multisite() ) {
-            if ( $network_wide ) {
+        if (function_exists( 'is_multisite' ) && is_multisite()) {
+            if ($network_wide) {
                 // Get all blog IDs
                 $blog_ids = self::get_blog_ids();
 
-                foreach ( $blog_ids as $blog_id ) {
+                foreach ($blog_ids as $blog_id) {
                     switch_to_blog( $blog_id );
-                    self::single_deactivate();
+                    $this->single_deactivate();
                 }
                 restore_current_blog();
             } else {
-                self::single_deactivate();
+                $this->single_deactivate();
             }
         } else {
-            self::single_deactivate();
+            $this->single_deactivate();
         }
 
         delete_option( 'ReduxFrameworkPlugin' );
@@ -203,19 +207,29 @@ class Redux
      * @access      public
      * @since       3.0.0
      *
-     * @param       int $blog_id The ID of the new blog
+     * @param int $blog_id The ID of the new blog
      *
-     * @return      void
+     * @return void
      */
     public function activate_new_site( $blog_id )
     {
-        if ( 1 !== did_action( 'wpmu_new_blog' ) ) {
+        if (1 !== did_action( 'wpmu_new_blog' )) {
             return;
         }
 
         switch_to_blog( $blog_id );
-        self::single_activate();
+        $this->single_activate();
         restore_current_blog();
+    }
+
+    public function single_activate()
+    {
+
+    }
+
+    public function single_deactivate()
+    {
+
     }
 
     /**
@@ -224,7 +238,7 @@ class Redux
      * @access      private
      * @since       3.0.0
      * @global      object $wpdb
-     * @return      array|false Array of IDs or false if none are found
+     * @return array|false Array of IDs or false if none are found
      */
     private static function get_blog_ids()
     {
@@ -244,24 +258,24 @@ class Redux
      * @access      public
      * @since       3.0.0
      * @global      string $pagenow The current page being displayed
-     * @return      void
+     * @return void
      */
     public function options_toggle_check()
     {
         global $pagenow;
 
-        if ( $pagenow == 'plugins.php' && is_admin() && !empty( $_GET['ReduxFrameworkPlugin'] ) ) {
+        if ($pagenow == 'plugins.php' && is_admin() && !empty( $_GET['ReduxFrameworkPlugin'] )) {
             $url = './plugins.php';
 
-            if ( $_GET['ReduxFrameworkPlugin'] == 'demo' ) {
-                if ( $this->options['demo'] == false ) {
+            if ($_GET['ReduxFrameworkPlugin'] == 'demo') {
+                if ($this->options['demo'] == false) {
                     $this->options['demo'] = true;
                 } else {
                     $this->options['demo'] = false;
                 }
             }
 
-            if ( is_multisite() && is_network_admin() && $this->plugin_network_activated ) {
+            if (is_multisite() && is_network_admin() && $this->plugin_network_activated) {
                 update_site_option( 'ReduxFrameworkPlugin', $this->options );
             } else {
                 update_option( 'ReduxFrameworkPlugin', $this->options );
@@ -273,10 +287,6 @@ class Redux
 
     /**
      * Add settings action link to plugins page
-     *
-     * @access      public
-     * @since       3.0.0
-     * @return      void
      */
     public function add_action_links( $links )
     {
@@ -290,4 +300,4 @@ class Redux
          * );
          */
     }
-} 
+}

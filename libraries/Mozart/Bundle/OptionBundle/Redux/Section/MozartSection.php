@@ -6,7 +6,6 @@
 namespace Mozart\Bundle\OptionBundle\Redux\Section;
 
 use Mozart\Bundle\OptionBundle\Redux\ReduxSection;
-use ReduxFramework;
 
 /**
  * Class MozartSection
@@ -46,7 +45,6 @@ class MozartSection extends ReduxSection
     public function getFields()
     {
         return array(
-
 
         );
     }

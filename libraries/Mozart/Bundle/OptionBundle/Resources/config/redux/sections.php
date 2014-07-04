@@ -110,7 +110,6 @@ if (file_exists( dirname( __FILE__ ) . '/info-html.html' )) {
     $sampleHTML = $wp_filesystem->get_contents( dirname( __FILE__ ) . '/info-html.html' );
 }
 
-
 $sections = array();
 
 $sections[] = array(
@@ -544,7 +543,7 @@ $sections[] = array(
             'mode'      => 'javascript',
             'theme'     => 'chrome',
             'desc'      => 'Possible modes can be found at <a href="http://ace.c9.io" target="_blank">http://ace.c9.io/</a>.',
-            'default'   => "jQuery(document).ready(function(){\n\n});"
+            'default'   => "jQuery(document).ready(function () {\n\n});"
         ),
         array(
             'id'        => 'opt-ace-editor-php',

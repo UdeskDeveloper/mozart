@@ -5,10 +5,10 @@
 
 namespace Mozart\Bundle\OptionBundle\Redux;
 
-
-interface SectionInterface  {
+interface SectionInterface
+{
     public function getTitle();
     public function getIcon();
     public function getDescription();
     public function getFields();
-} 
+}

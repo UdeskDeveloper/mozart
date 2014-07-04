@@ -28,7 +28,7 @@ class OptionManager extends AbstractManager implements OptionManagerInterface
     /**
      * Constructor.
      *
-     * @param EntityManager     $em
+     * @param EntityManager $em
      */
     public function __construct(Container $container)
     {
@@ -47,7 +47,7 @@ class OptionManager extends AbstractManager implements OptionManagerInterface
                 'name' => $name
             ));
 
-            if($option !== null) {
+            if ($option !== null) {
                 $this->cacheOption($option);
             }
         }
