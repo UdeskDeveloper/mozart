@@ -14,7 +14,7 @@ class ThemesCompilerPass implements CompilerPassInterface
     /**
      * @param ContainerBuilder $container
      */
-    public function process( ContainerBuilder $container )
+    public function process(ContainerBuilder $container)
     {
         if (false === $container->hasDefinition( 'mozart_theme.theme_chain' )) {
             return;
@@ -32,4 +32,4 @@ class ThemesCompilerPass implements CompilerPassInterface
         }
     }
 
-} 
+}
