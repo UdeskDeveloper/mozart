@@ -14,14 +14,14 @@ class TaxonomiesCompilerPass implements CompilerPassInterface
     /**
      * @param ContainerBuilder $container
      */
-    public function process( ContainerBuilder $container )
+    public function process(ContainerBuilder $container)
     {
-        if (false === $container->hasDefinition( 'mozart_taxonomy.taxonomy_chain' )) {
+        if (false === $container->hasDefinition( 'mozart_taxonomy.taxonomy_manager' )) {
             return;
         }
 
         $definition = $container->getDefinition(
-            'mozart_taxonomy.taxonomy_chain'
+            'mozart_taxonomy.taxonomy_manager'
         );
 
         foreach ($container->findTaggedServiceIds( 'wordpress.taxonomy' ) as $id => $attributes) {
@@ -32,4 +32,4 @@ class TaxonomiesCompilerPass implements CompilerPassInterface
         }
     }
 
-} 
+}

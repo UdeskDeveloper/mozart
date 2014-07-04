@@ -9,7 +9,6 @@ use Mozart\Bundle\TaxonomyBundle\DependencyInjection\Compiler\TaxonomiesCompiler
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-
 /**
  * Class MozartTaxonomyBundle
  *
@@ -20,7 +19,7 @@ class MozartTaxonomyBundle extends Bundle
     /**
      * @param ContainerBuilder $container
      */
-    public function build( ContainerBuilder $container )
+    public function build(ContainerBuilder $container)
     {
         parent::build( $container );
         $container->addCompilerPass( new TaxonomiesCompilerPass );
@@ -29,19 +28,21 @@ class MozartTaxonomyBundle extends Bundle
     /**
      *
      */
-    public function boot() {
+    public function boot()
+    {
         add_action( 'init', array($this, 'registerTaxonomies'), 0 );
     }
 
     /**
      *
      */
-    public function registerTaxonomies() {
-        if (!$this->container->has( 'mozart_taxonomy.taxonomy_chain' )) {
+    public function registerTaxonomies()
+    {
+        if (!$this->container->has( 'mozart_taxonomy.taxonomy_manager' )) {
             return;
         }
 
-        $taxonomies = $this->container->get( 'mozart_taxonomy.taxonomy_chain' )
+        $taxonomies = $this->container->get( 'mozart_taxonomy.taxonomy_manager' )
             ->getTaxonomies();
 
         foreach ($taxonomies as $name => $taxonomy) {
@@ -49,4 +50,4 @@ class MozartTaxonomyBundle extends Bundle
         }
     }
 
-} 
+}

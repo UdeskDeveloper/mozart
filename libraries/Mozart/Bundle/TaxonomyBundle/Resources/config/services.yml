@@ -1,3 +1,8 @@
 services:
-    mozart_taxonomy.taxonomy_chain:
-        class: Mozart\Bundle\TaxonomyBundle\TaxonomyChain
+    mozart_taxonomy.taxonomy_manager:
+        class: Mozart\Bundle\TaxonomyBundle\TaxonomyManager
+
+    mozart_taxonomy.term.manager:
+        class: Mozart\Bundle\TaxonomyBundle\Model\TermManager
+        arguments:
+            - @service_container

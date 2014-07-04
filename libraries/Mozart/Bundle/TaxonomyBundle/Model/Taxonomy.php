@@ -59,7 +59,7 @@ class Taxonomy
      *
      * @param string $name
      */
-    public function setName( $name )
+    public function setName($name)
     {
         $this->name = $name;
     }
@@ -79,7 +79,7 @@ class Taxonomy
      *
      * @param string $description
      */
-    public function setDescription( $description )
+    public function setDescription($description)
     {
         $this->description = $description;
     }
@@ -99,7 +99,7 @@ class Taxonomy
      *
      * @param int $parent
      */
-    public function setParent( $parent )
+    public function setParent($parent)
     {
         $this->parent = $parent;
     }
@@ -119,7 +119,7 @@ class Taxonomy
      *
      * @param int $count
      */
-    public function setCount( $count )
+    public function setCount($count)
     {
         $this->count = $count;
     }
@@ -139,7 +139,7 @@ class Taxonomy
      *
      * @param Term $term
      */
-    public function setTerm( Term $term )
+    public function setTerm(Term $term)
     {
         $this->term = $term;
     }
@@ -159,7 +159,7 @@ class Taxonomy
      *
      * @param Post $post
      */
-    public function addPosts( Post $post )
+    public function addPosts(Post $post)
     {
         $this->posts[] = $post;
     }

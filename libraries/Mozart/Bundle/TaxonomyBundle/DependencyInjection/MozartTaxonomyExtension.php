@@ -24,7 +24,7 @@ class MozartTaxonomyExtension extends Extension
      * @param array            $config
      * @param ContainerBuilder $container
      */
-    public function load( array $configs, ContainerBuilder $container )
+    public function load(array $configs, ContainerBuilder $container)
     {
 
         $loader = new YamlFileLoader( $container, new FileLocator( __DIR__ . '/../Resources/config' ) );
@@ -37,4 +37,4 @@ class MozartTaxonomyExtension extends Extension
     {
         return 'mozart_taxonomy';
     }
-} 
+}

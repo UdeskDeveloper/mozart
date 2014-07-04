@@ -8,23 +8,43 @@ namespace Mozart\Bundle\TaxonomyBundle;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\DependencyInjection\Exception\BadMethodCallException;
 
-
 /**
  * Class Taxonomy
  *
  * @package Mozart\Bundle\TaxonomyBundle
  */
-class Taxonomy implements TaxonomyInterface
+abstract class Taxonomy implements TaxonomyInterface
 {
-    public function getArguments() {
+    /**
+     * @return array
+     */
+    public function getArguments()
+    {
         return array(
-            'hierarchical'      => $this->isHierarchical(),
-            'labels'            => $this->getLabels(),
-            'show_ui'           => $this->showUI(),
-            'show_admin_column' => $this->showAdminColumn(),
-            'query_var'         => $this->getQueryVariable(),
-            'rewrite'           => $this->getRewriteOptions()
+            'labels'                => $this->getLabels(),
+            'description'           => $this->getDescription(),
+            'public'                => $this->isPublic(),
+            'hierarchical'          => $this->isHierarchical(),
+            'query_var'             => $this->getQueryVariable(),
+            'rewrite'               => $this->getRewriteOptions(),
+            'meta_box_cb'           => $this->getMetaboxCallback(),
+            'capabilities'          => $this->getCapabilities(),
+            'update_count_callback' => $this->getUpdateCountCallback(),
+            // UI stuff
+            'show_ui'               => $this->showUI(),
+            'show_admin_column'     => $this->showAdminColumn(),
+            'show_in_menu'          => $this->showInMenu(),
+            'show_in_nav_menus'     => $this->showInNavMenus(),
+            'show_tagcloud'         => $this->showTagCloud()
         );
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription()
+    {
+        return '';
     }
 
     /**
@@ -38,32 +58,46 @@ class Taxonomy implements TaxonomyInterface
      */
     public function getName()
     {
-        $className = get_class($this);
-        if (substr($className, -8) != 'Taxonomy') {
-            throw new BadMethodCallException('This taxonomy class does not follow the naming convention; you must overwrite the getName() method.');
+        $className = get_class( $this );
+        if (substr( $className, -8 ) != 'Taxonomy') {
+            throw new BadMethodCallException( 'This taxonomy class does not follow the naming convention; you must overwrite the getName() method.' );
         }
-        $classBaseName = substr(strrchr($className, '\\'), 1, -8);
+        $classBaseName = substr( strrchr( $className, '\\' ), 1, -8 );
 
-        return Container::underscore($classBaseName);
+        return Container::underscore( $classBaseName );
     }
 
+    /**
+     * @return array
+     */
     public function getObjectTypes()
     {
         return array();
     }
 
-    public function getLabel() {
-        return ucfirst( $this->getName() );
+    /**
+     * @return string
+     */
+    public function getLabel()
+    {
+        return ucwords( $this->getName() );
     }
 
-    public function getLabelPlural() {
+    /**
+     * @return string
+     */
+    public function getLabelPlural()
+    {
         return $this->getLabel() . 's';
     }
 
+    /**
+     * @return array
+     */
     public function getLabels()
     {
         $singular = $this->getLabel();
-        $plural = $this->getLabelPlural();
+        $plural   = $this->getLabelPlural();
 
         return array(
             'name'              => _x( $plural, 'taxonomy general name' ),
@@ -82,8 +116,6 @@ class Taxonomy implements TaxonomyInterface
 
     /**
      * If the taxonomy should be publicly queryable.
-     *
-     * @default true
      *
      * @return boolean
      */
@@ -105,9 +137,19 @@ class Taxonomy implements TaxonomyInterface
     }
 
     /**
-     * true makes this taxonomy available for selection in navigation menus.
+     * Where to show the taxonomy in the admin menu.
+     * If true, the taxonomy is shown as a submenu of the object type menu.
+     * If false, no menu is shown.
      *
-     * @default true
+     * @return bool
+     */
+    public function showInMenu()
+    {
+        return $this->showUI();
+    }
+
+    /**
+     * true makes this taxonomy available for selection in navigation menus.
      *
      * @return boolean
      */
@@ -136,11 +178,11 @@ class Taxonomy implements TaxonomyInterface
     }
 
     /**
-     *Whether to allow automatic creation of taxonomy columns on associated post-types table.
+     *  Whether to allow automatic creation of taxonomy columns on associated post-types table.
      */
     public function showAdminColumn()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -152,7 +194,7 @@ class Taxonomy implements TaxonomyInterface
     }
 
     /**
-     *A function name that will be called when the count
+     * A function name that will be called when the count
      * of an associated $object_type, such as post, is updated. Works much like a hook.
      *
      * While the default is '', when actually performing the count update in wp_update_term_count_now(),
@@ -193,16 +235,6 @@ class Taxonomy implements TaxonomyInterface
     }
 
     /**
-     * Whether this taxonomy is a native or "built-in" taxonomy.
-     * Note: this Codex entry is for documentation -
-     * core developers recommend you don't use this when registering your own taxonomy
-     */
-    public function isBuiltin()
-    {
-        return false;
-    }
-
-    /**
      * Whether this taxonomy should remember the order in which terms are added to objects.
      */
     public function toSort()
@@ -217,7 +249,7 @@ class Taxonomy implements TaxonomyInterface
     {
         return array(
             'manage_terms' => 'manage_categories',
-            'edit_terms' => 'manage_categories',
+            'edit_terms'   => 'manage_categories',
             'delete_terms' => 'manage_categories',
             'assign_terms' => 'edit_posts'
         );
@@ -235,10 +267,10 @@ class Taxonomy implements TaxonomyInterface
     public function getRewriteOptions()
     {
         return array(
-            'slug' => $this->getName(),
-            'with_front' => true,
+            'slug'         => $this->getName(),
+            'with_front'   => true,
             'hierarchical' => false,
-            'ep_mask' => EP_NONE
+            'ep_mask'      => EP_NONE
         );
     }
 }
