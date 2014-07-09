@@ -2,7 +2,7 @@
 
 namespace  Mozart\Bundle\BlogBundle\Model;
 
-use  Mozart\Bundle\BlogBundle\Doctrine\WordpressEntityManager;
+use  Mozart\Bundle\NucleusBundle\Doctrine\WordpressEntityManager;
 
 interface BlogInterface
 {

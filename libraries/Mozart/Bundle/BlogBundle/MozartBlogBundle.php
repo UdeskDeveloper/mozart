@@ -7,6 +7,6 @@ namespace  Mozart\Bundle\BlogBundle;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
-class MozartBlogBundle extends Bundle {
-
-} 
+class MozartBlogBundle extends Bundle
+{
+}
