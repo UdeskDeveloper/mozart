@@ -2,7 +2,7 @@
 
 namespace  Mozart\Bundle\NucleusBundle\Security\Firewall;
 
-use  Mozart\Bundle\NucleusBundle\Model\UserInterface as WordpressUserInterface;
+use  Mozart\Bundle\UserBundle\Model\UserInterface as WordpressUserInterface;
 use  Mozart\Bundle\NucleusBundle\Security\Http\WordpressCookieService;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -122,7 +122,7 @@ class WordpressListener implements ListenerInterface
         $request = $event->getRequest();
         $response = $event->getResponse();
 
-        if($token !== null && true === $token->getUser() instanceof WordpressUserInterface) {
+        if ($token !== null && true === $token->getUser() instanceof WordpressUserInterface) {
             if (null !== $this->logger) {
                 $this->logger->debug('Write WordPress cookie');
             }

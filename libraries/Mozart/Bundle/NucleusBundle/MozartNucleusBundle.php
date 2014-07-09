@@ -4,36 +4,42 @@ namespace Mozart\Bundle\NucleusBundle;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Mozart\Bundle\NucleusBundle\DependencyInjection\Security\Factory\WordpressFactory;
+use Doctrine\DBAL\Types\Type;
+use Mozart\Bundle\NucleusBundle\Types\WordpressMetaType;
+use Mozart\Bundle\NucleusBundle\Types\WordpressIdType;
 
+/**
+ * Class MozartNucleusBundle
+ *
+ * @package Mozart\Bundle\NucleusBundle
+ */
 class MozartNucleusBundle extends Bundle
 {
+    /**
+     * @param ContainerBuilder $container
+     */
     public function build(ContainerBuilder $container)
     {
-        parent::build($container);
+        parent::build( $container );
+
+        // Security
+        $container->getExtension( 'security' )->addSecurityListenerFactory( new WordpressFactory() );
     }
 
+    /**
+     *
+     */
     public function boot()
     {
-        if (\Mozart::isWpRunning() === false) {
-            return;
+        parent::boot();
+
+        if (!Type::hasType( WordpressMetaType::NAME )) {
+            Type::addType( WordpressMetaType::NAME, 'Mozart\Bundle\NucleusBundle\Types\WordpressMetaType' );
         }
 
-        add_filter('template_include', array($this, 'templateInclude'), 99);
-        add_filter('404_template', array($this, 'templateInclude'), 99);
-        add_action('widgets_init', array($this, 'registerWidgets'));
+        if (!Type::hasType( WordpressIdType::NAME )) {
+            Type::addType( WordpressIdType::NAME, 'Mozart\Bundle\NucleusBundle\Types\WordpressIdType' );
+        }
     }
-
-    public function registerWidgets()
-    {
-        register_widget('\Mozart\Bundle\NucleusBundle\Widget\CallToAction');
-    }
-
-    public function templateInclude($template)
-    {
-//        $theme_name = strtolower((string) wp_get_theme());
-//        $template = str_replace('/' . $theme_name . '/', '/' . $theme_name . '/templates/', $template);
-//        echo $template;
-        return $template;
-    }
-
 }

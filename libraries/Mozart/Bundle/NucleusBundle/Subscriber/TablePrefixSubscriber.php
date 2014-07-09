@@ -23,9 +23,9 @@ class TablePrefixSubscriber implements EventSubscriber
     /**
      * @param $prefix
      */
-    public function __construct( $prefix )
+    public function __construct($prefix)
     {
-        $this->prefix = (string)$prefix;
+        $this->prefix = (string) $prefix;
     }
 
     /**
@@ -39,7 +39,7 @@ class TablePrefixSubscriber implements EventSubscriber
     /**
      * @param LoadClassMetadataEventArgs $args
      */
-    public function loadClassMetadata( LoadClassMetadataEventArgs $args )
+    public function loadClassMetadata(LoadClassMetadataEventArgs $args)
     {
         $classMetadata = $args->getClassMetadata();
 
@@ -82,12 +82,12 @@ class TablePrefixSubscriber implements EventSubscriber
     /**
      * Returns the table prefix for entity, with blog ID appened if needed
      *
-     * @param  string        $entityName fully-qualified class name of the persistent class.
-     * @param  EntityManager $em
+     * @param string        $entityName fully-qualified class name of the persistent class.
+     * @param EntityManager $em
      *
      * @return string
      */
-    private function getPrefix( $entityName, $em )
+    private function getPrefix($entityName, $em)
     {
         $prefix = $this->prefix;
 
