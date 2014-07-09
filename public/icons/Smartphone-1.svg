@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 16.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="130px" height="130px" viewBox="0 0 130 130" enable-background="new 0 0 130 130" xml:space="preserve">
+<rect fill="none" width="130" height="130"/>
+<g>
+	<g id="Up">
+		<path fill="#363D49" d="M31.582,33.794c-0.131,0.122-0.212,0.197-0.291,0.273v4.477c0.102,0.093,0.16,0.151,0.291,0.267h0.571
+			v-5.017H31.582z"/>
+	</g>
+	<g id="ring">
+		<path fill="#363D49" d="M31.582,20.265c-0.131,0.116-0.212,0.198-0.291,0.273v5.998c0.102,0.093,0.16,0.151,0.291,0.273h0.571
+			v-6.544H31.582z"/>
+	</g>
+	<g id="base">
+		<path fill="#363D49" d="M41.551,129c-5.354,0-9.714-4.349-9.714-9.69V10.696c0-5.347,4.36-9.696,9.714-9.696H89
+			c5.351,0,9.709,4.349,9.709,9.696V119.31c0,5.342-4.358,9.69-9.709,9.69H41.551z"/>
+	</g>
+	<g id="Camera_2_">
+		<circle fill="#444C56" cx="64.559" cy="9.834" r="1.669"/>
+	</g>
+	<g id="screen_1_">
+		<path fill="#576E78" d="M93.407,17.438H37.051c-0.104,0-0.191,0.093-0.191,0.203v91.014c0,0.11,0.087,0.198,0.191,0.198h56.356
+			c0.104,0,0.191-0.088,0.191-0.198V17.641C93.599,17.531,93.512,17.438,93.407,17.438z"/>
+	</g>
+	<g id="Base_4_">
+		<circle fill="#444C56" cx="65.656" cy="118.792" r="4.68"/>
+	</g>
+</g>
+</svg>
