@@ -3,5 +3,6 @@
 /vendor/
 /binaries/
 /composer.phar
+/composer.lock
 /development
 /public/bundles
