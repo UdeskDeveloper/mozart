@@ -9,8 +9,11 @@
         }
     ],
     "autoload"   : {
-        "psr-0": {
-            "": "libraries/"
+        "psr-4": {
+            "ACF\\": "libraries/ACF/",
+            "Mozart\\": "libraries/Mozart/",
+            "Rhetina\\": "libraries/Rhetina/",
+            "Redux\\": "libraries/Redux/"
         },
         "files": [
             "libraries/Redux/framework.php",
@@ -32,12 +35,7 @@
         "doctrine/orm"            : "~2.2,>=2.2.3",
         "doctrine/doctrine-bundle": "~1.2",
 
-        "leafo/scssphp-compass": "dev-master",
-        "leafo/scssphp"        : "dev-master",
-
         "mopa/bootstrap-bundle": "3.*@dev",
-        "twbs/bootstrap"       : "3.1.*@dev",
-        "twbs/bootstrap-sass"  : "3.1.*@dev",
 
         "tgm/plugin-activation": "*"
     },
