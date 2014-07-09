@@ -5,7 +5,6 @@
 
 namespace Mozart\Bundle\MenuBundle\Admin;
 
-
-class AdminMenu implements AdminMenuInterface {
-
-} 
+class AdminMenu implements AdminMenuInterface
+{
+}

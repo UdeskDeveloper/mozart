@@ -5,7 +5,6 @@
 
 namespace Mozart\Bundle\MenuBundle;
 
-
-class Menu implements MenuInterface {
-
-} 
+class Menu implements MenuInterface
+{
+}

@@ -5,7 +5,6 @@
 
 namespace Mozart\Bundle\MenuBundle;
 
-
-interface MenuInterface {
-
-} 
+interface MenuInterface
+{
+}

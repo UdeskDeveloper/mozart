@@ -5,7 +5,6 @@
 
 namespace Mozart\Bundle\MenuBundle\Admin;
 
-
 /**
  * Class AdminMenuManager
  *
@@ -30,7 +29,7 @@ class AdminMenuManager
     /**
      * @param AdminMenuInterface $menu
      */
-    public function addMenu( AdminMenuInterface $menu )
+    public function addMenu(AdminMenuInterface $menu)
     {
         $this->menus[$menu->getAlias()] = $menu;
     }
@@ -48,9 +47,9 @@ class AdminMenuManager
      *
      * @return AdminMenuInterface
      */
-    public function getMenu( $alias )
+    public function getMenu($alias)
     {
         return $this->menus[$alias];
     }
 
-} 
+}

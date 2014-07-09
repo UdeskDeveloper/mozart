@@ -5,7 +5,6 @@
 
 namespace Mozart\Bundle\MenuBundle;
 
-
-class MenuManager {
-
-} 
+class MenuManager
+{
+}
