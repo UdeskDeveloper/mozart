@@ -13,12 +13,13 @@ Version: 1.0.0
 /*
  * let's prepare our headphones and start listening to Mozart
  */
+
 function mozart_start_concert()
 {
 	require_once __DIR__ . '/backstage/bootstrap.php';
 }
 
-add_action('plugins_loaded', 'mozart_start_concert');
+add_action( 'plugins_loaded', 'mozart_start_concert' );
 
 if (is_admin()) {
 	function mozart_wordpress_activation_hook()
@@ -36,11 +37,13 @@ if (is_admin()) {
 		 */
 
 	}
-	register_activation_hook(__FILE__, 'mozart_wordpress_activation_hook');
+
+	register_activation_hook( __FILE__, 'mozart_wordpress_activation_hook' );
 
 	function mozart_wordpress_uninstall_hook()
 	{
 		// TODO: add unninstall hook
 	}
-	register_uninstall_hook(__FILE__, 'mozart_wordpress_uninstall_hook');
+
+	register_uninstall_hook( __FILE__, 'mozart_wordpress_uninstall_hook' );
 }

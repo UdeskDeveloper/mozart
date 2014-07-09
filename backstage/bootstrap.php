@@ -46,10 +46,10 @@ if (defined( 'WP_DEBUG' ) && WP_DEBUG) {
     Symfony\Component\Debug\Debug::enable( 1 );
 }
 
-require_once __DIR__ . '/AppKernel.php';
+require_once __DIR__ . '/MozartKernel.php';
 //require_once __DIR__.'/AppCache.php';
 
-$kernel = new AppKernel( $environment, $debug );
+$kernel = new MozartKernel( $environment, $debug );
 $kernel->loadClassCache();
 //$kernel = new AppCache($kernel);
 // When using the HttpCache, you need to call the method in your front controller instead of relying on the configuration parameter
@@ -80,7 +80,7 @@ if (count( $matches ) == 4) {
 }
 
 ############################## SYMFONY 2 DEV ######################################
-//$kernel = new AppKernel('dev', true);
+//$kernel = new MozartKernel('dev', true);
 //$kernel->loadClassCache();
 //$request = Request::createFromGlobals();
 //$response = $kernel->handle($request);
