@@ -17,7 +17,7 @@
 *  @return	(mixed)
 */
 
-function acf_get_value( $post_id, $field, $format = false, $format_template = false ) {
+function acf_get_value( $post_id, $field, $db_only = false ) {
 	
 	// vars
 	$value = null;
@@ -29,102 +29,132 @@ function acf_get_value( $post_id, $field, $format = false, $format_template = fa
 	
 	if( $found ) {
 	
-		$value = $cache;
+		return $cache;
 		
+	}	
+	
+	
+	// load value depending on the $type
+	if( empty($post_id) ) {
+		
+		// do nothing
+	
+	} elseif( is_numeric($post_id) ) {
+		
+		$v = get_post_meta( $post_id, $field['name'], false );
+		
+		// value is an array
+		if( isset($v[0]) ) {
+		
+		 	$value = $v[0];
+		 	
+	 	}
+
+	} elseif( strpos($post_id, 'user_') !== false ) {
+		
+		$user_id = str_replace('user_', '', $post_id);
+		$user_id = intval( $user_id );
+		
+		$v = get_user_meta( $user_id, $field['name'], false );
+		
+		// value is an array
+		if( isset($v[0]) ) {
+		
+		 	$value = $v[0];
+		 	
+	 	}
+	 	
+	} elseif( strpos($post_id, 'comment_') !== false ) {
+		
+		$comment_id = str_replace('comment_', '', $post_id);
+		$comment_id = intval( $comment_id );
+		
+		$v = get_comment_meta( $comment_id, $field['name'], false );
+		
+		// value is an array
+		if( isset($v[0]) ) {
+		
+		 	$value = $v[0];
+		 	
+	 	}
+	 	
 	} else {
-			
-		// load value depending on the $type
-		if( empty($post_id) ) {
-			
-			// do nothing
 		
-		} elseif( is_numeric($post_id) ) {
-			
-			$v = get_post_meta( $post_id, $field['name'], false );
-			
-			// value is an array
-			if( isset($v[0]) )
-			{
-			 	$value = $v[0];
-		 	}
+		$v = get_option( "{$post_id}_{$field['name']}", false );
 	
-		} elseif( strpos($post_id, 'user_') !== false ) {
+		if( ! is_null($v) ) {
+		
+			$value = $v;
 			
-			$user_id = str_replace('user_', '', $post_id);
-			$user_id = intval( $user_id );
-			
-			$v = get_user_meta( $user_id, $field['name'], false );
-			
-			// value is an array
-			if( isset($v[0]) )
-			{
-			 	$value = $v[0];
-		 	}
-		 	
-		} elseif( strpos($post_id, 'comment_') !== false ) {
-			
-			$comment_id = str_replace('comment_', '', $post_id);
-			$comment_id = intval( $comment_id );
-			
-			$v = get_comment_meta( $comment_id, $field['name'], false );
-			
-			// value is an array
-			if( isset($v[0]) )
-			{
-			 	$value = $v[0];
-		 	}
-		 	
-		} else {
-			
-			$v = get_option( "{$post_id}_{$field['name']}", false );
+	 	}
+	}
+	
+	
+	// no value? try default_value
+	if( $value === null && isset($field['default_value']) ) {
 		
-			if( ! is_null($v) )
-			{
-				$value = $v;
-		 	}
-		}
-		
-		
-		// no value? load default
-		if( $value === null )
-		{
-			if( isset($field['default_value']) )
-			{
-				$value = $field['default_value'];
-			}
-		}
-		
-		
-		// if value was duplicated, it may now be a serialized string!
-		$value = maybe_unserialize( $value );
-		
-		
-		// filter for 3rd party customization
-		$value = apply_filters( "acf/load_value", $value, $post_id, $field );
-		$value = apply_filters( "acf/load_value/type={$field['type']}", $value, $post_id, $field );
-		$value = apply_filters( "acf/load_value/name={$field['name']}", $value, $post_id, $field );
-		$value = apply_filters( "acf/load_value/key={$field['key']}", $value, $post_id, $field );
-		
-		
-		//update cache
-		wp_cache_set( "load_value/post_id={$post_id}/name={$field['name']}", $value, 'acf' );
+		$value = $field['default_value'];
 		
 	}
 	
 	
-	// format
-	if( $format ) {
+	// if value was duplicated, it may now be a serialized string!
+	$value = maybe_unserialize( $value );
 	
-		$value = apply_filters( "acf/format_value", $value, $post_id, $field, $format_template );
-		$value = apply_filters( "acf/format_value/type={$field['type']}", $value, $post_id, $field, $format_template );
+	
+	// bail early if db only value (no need to update cache)
+	if( $db_only ) {
+		
+		return $value;
 		
 	}
 	
+	
+	// filter for 3rd party customization
+	$value = apply_filters( "acf/load_value", $value, $post_id, $field );
+	$value = apply_filters( "acf/load_value/type={$field['type']}", $value, $post_id, $field );
+	$value = apply_filters( "acf/load_value/name={$field['name']}", $value, $post_id, $field );
+	$value = apply_filters( "acf/load_value/key={$field['key']}", $value, $post_id, $field );
+		
+	
+	
+	//update cache
+	wp_cache_set( "load_value/post_id={$post_id}/name={$field['name']}", $value, 'acf' );
+
 	
 	// return
 	return $value;
 	
 }
+
+
+/*
+*  acf_format_value
+*
+*  This function will format the value for front end use
+*
+*  @type	function
+*  @date	3/07/2014
+*  @since	5.0.0
+*
+*  @param	$value (mixed)
+*  @param	$post_id (mixed)
+*  @param	$field (array)
+*  @return	$value
+*/
+
+function acf_format_value( $value, $post_id, $field ) {
+	
+	// apply filters
+	$value = apply_filters( "acf/format_value", $value, $post_id, $field );
+	$value = apply_filters( "acf/format_value/type={$field['type']}", $value, $post_id, $field );
+	
+	
+	// return
+	return $value;
+	
+} 
+
 
 
 /*

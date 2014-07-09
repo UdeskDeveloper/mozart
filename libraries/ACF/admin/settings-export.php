@@ -22,7 +22,8 @@ class acf_settings_export {
 	function __construct() {
 	
 		// actions
-		add_action( 'admin_menu', 				array( $this, 'admin_menu' ) );
+		add_action('admin_menu', array($this, 'admin_menu'));
+		
 	}
 	
 	
@@ -42,9 +43,10 @@ class acf_settings_export {
 	function admin_menu() {
 		
 		// bail early if no show_admin
-		if( !acf_get_setting('show_admin') )
-		{
+		if( !acf_get_setting('show_admin') ) {
+			
 			return;
+			
 		}
 		
 		
@@ -77,20 +79,23 @@ class acf_settings_export {
 		acf_disable_local();
 		
 		
-		if( acf_verify_nonce('import') )
-		{
+		// run import / export
+		if( acf_verify_nonce('import') ) {
+			
 			$this->import();
-		}
-		elseif( acf_verify_nonce('export') )
-		{
-			if( isset($_POST['generate']) )
-			{
+		
+		} elseif( acf_verify_nonce('export') ) {
+			
+			if( isset($_POST['generate']) ) {
+				
 				$this->generate();
-			}
-			else
-			{
+			
+			} else {
+				
 				$this->export();
+			
 			}
+		
 		}
 		
 	}
@@ -110,10 +115,6 @@ class acf_settings_export {
 	*/
 	
 	function html() {
-		
-		// disable JSON to avoid conflicts between DB and JSON
-		acf_disable_local();
-		
 		
 		// load view
 		acf_get_view($this->view, $this->data);
@@ -137,23 +138,25 @@ class acf_settings_export {
 	function export() {
 		
 		// validate
-		if( empty($_POST['acf_export_keys']) )
-		{
+		if( empty($_POST['acf_export_keys']) ) {
+			
 			return;
+		
 		}
 		
 		
 		// construct JSON
-		foreach( $_POST['acf_export_keys'] as $key )
-		{
+		foreach( $_POST['acf_export_keys'] as $key ) {
+			
 			// load field group
 			$field_group = acf_get_field_group( $key );
 			
 			
 			// validate field group
-			if( empty($field_group) )
-			{
+			if( empty($field_group) ) {
+				
 				continue;
+			
 			}
 			
 			
@@ -209,10 +212,11 @@ class acf_settings_export {
 	function import() {
 		
 		// validate
-		if( empty($_FILES['acf_import_file']) )
-		{
+		if( empty($_FILES['acf_import_file']) ) {
+			
 			acf_add_admin_notice( __("No file selected", 'acf') , 'error');
 			return;
+		
 		}
 		
 		
@@ -221,10 +225,11 @@ class acf_settings_export {
 		
 		
 		// validate error
-		if( $file['error'] )
-		{
+		if( $file['error'] ) {
+			
 			acf_add_admin_notice(__('Error uploading file. Please try again', 'acf'), 'error');
 			return;
+		
 		}
 		
 		
@@ -246,10 +251,19 @@ class acf_settings_export {
 		
 		
 		// validate json
-    	if( empty($json) )
-    	{
+    	if( empty($json) ) {
+    	
     		acf_add_admin_notice(__('Import file empty', 'acf'), 'error');
 	    	return;
+    	
+    	}
+    	
+    	
+    	// if importing an auto-json, wrap field group in array
+    	if( isset($json['key']) ) {
+	    	
+	    	$json = array( $json );
+	    	
     	}
     	
     	
@@ -259,14 +273,15 @@ class acf_settings_export {
     	$ref = array();
     	$order = array();
     	
-    	foreach( $json as $field_group )
-    	{
+    	foreach( $json as $field_group ) {
+    		
 	    	// check if field group exists
-	    	if( acf_get_field_group($field_group['key']) )
-	    	{
+	    	if( acf_get_field_group($field_group['key'], true) ) {
+	    		
 	    		// append to ignored
 	    		$ignored[] = $field_group['title'];
 	    		continue;
+	    	
 	    	}
 	    	
 	    	
@@ -336,20 +351,22 @@ class acf_settings_export {
     	
     	
     	// messages
-    	if( !empty($added) )
-    	{
+    	if( !empty($added) ) {
+    		
     		$message = __('<b>Success</b>. Import tool added %s field groups: %s', 'acf');
     		$message = sprintf( $message, count($added), implode(', ', $added) );
     		
 	    	acf_add_admin_notice( $message );
+    	
     	}
     	
-    	if( !empty($ignored) )
-    	{
+    	if( !empty($ignored) ) {
+    		
     		$message = __('<b>Warning</b>. Import tool detected %s field groups already exist and have been ignored: %s', 'acf');
     		$message = sprintf( $message, count($ignored), implode(', ', $ignored) );
     		
 	    	acf_add_admin_notice( $message, 'error' );
+    	
     	}
     	
 		
@@ -372,10 +389,11 @@ class acf_settings_export {
 	function generate() {
 		
 		// validate
-		if( empty($_POST['acf_export_keys']) )
-		{
+		if( empty($_POST['acf_export_keys']) ) {
+			
 			acf_add_admin_notice( __("No field groups selected", 'acf') , 'error');
 			return;
+		
 		}
 		
 		
@@ -385,16 +403,17 @@ class acf_settings_export {
 		
 		
 		// construct JSON
-		foreach( $_POST['acf_export_keys'] as $key )
-		{
+		foreach( $_POST['acf_export_keys'] as $key ) {
+			
 			// load field group
 			$field_group = acf_get_field_group( $key );
 			
 			
 			// validate field group
-			if( empty($field_group) )
-			{
+			if( empty($field_group) ) {
+				
 				continue;
+			
 			}
 			
 			

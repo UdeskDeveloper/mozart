@@ -1,212 +1,40 @@
-<?php 
+<?php
 
-class acf_field_groups {
+/*
+*  ACF Admin Field Groups Class
+*
+*  All the logic for editing a list of field groups
+*
+*  @class 		acf_admin_field_groups
+*  @package		ACF
+*  @subpackage	Admin
+*/
 
+if( ! class_exists('acf_admin_field_groups') ) :
+
+class acf_admin_field_groups {
+	
+	
 	/*
 	*  __construct
 	*
-	*  Initialize filters, action, variables and includes
+	*  This function will setup the class functionality
 	*
 	*  @type	function
-	*  @date	23/06/12
-	*  @since	5.0.0
-	*
-	*  @param	N/A
-	*  @return	N/A
-	*/
-	
-	function __construct() {
-		
-		// actions
-		add_action('admin_menu',		array($this,'admin_menu'));
-		
-		add_action('trashed_post',		array($this,'trashed_post'));
-		add_action('untrashed_post',	array($this,'untrashed_post'));
-		add_action('deleted_post',		array($this,'deleted_post'));
-		
-	}
-	
-	
-	/*
-	*  admin_menu
-	*
-	*  This function will validate the page and setup actions & filters for the field-groups admin page
-	*
-	*  @type	function
-	*  @date	23/06/12
-	*  @since	5.0.0
-	*
-	*  @param	N/A
-	*  @return	N/A
-	*/
-	
-	function admin_menu() {
-		
-		// validate page
-		if( ! $this->validate_page() )
-		{
-			return;
-		}
-		
-		
-		// actions
-		add_action( 'admin_enqueue_scripts',						array( $this, 'admin_enqueue_scripts') );
-		add_action( 'admin_footer',									array( $this, 'admin_footer' ) );
-		
-		
-		// columns
-		add_filter( 'manage_edit-acf-field-group_columns',			array( $this,'field_group_columns' ), 10, 1 );
-		add_action( 'manage_acf-field-group_posts_custom_column',	array( $this,'field_group_columns_html' ), 10, 2 );
-		
-		
-		// duplicate
-		$this->check_duplicate();
-		
-	}
-	
-	
-	/*
-	*  trashed_post
-	*
-	*  description
-	*
-	*  @type	function
-	*  @date	8/01/2014
-	*  @since	5.0.0
-	*
-	*  @param	$post_id (int)
-	*  @return	$post_id (int)
-	*/
-	
-	function trashed_post( $post_id ) {
-		
-		// validate post type
-		if( get_post_type($post_id) != 'acf-field-group' ) {
-		
-			return;
-		
-		}
-		
-		
-		// validate action run only once
-		//remove_action('trashed_post', array($this, 'trashed_post'));
-		
-		
-		// trash field group
-		acf_trash_field_group( $post_id );
-		
-	}
-	
-	
-	/*
-	*  untrashed_post
-	*
-	*  description
-	*
-	*  @type	function
-	*  @date	8/01/2014
-	*  @since	5.0.0
-	*
-	*  @param	$post_id (int)
-	*  @return	$post_id (int)
-	*/
-	
-	function untrashed_post( $post_id ) {
-		
-		// validate post type
-		if( get_post_type($post_id) != 'acf-field-group' )
-		{
-			return;
-		}
-		
-		
-		// validate action run only once
-		//remove_action('untrashed_post', array($this, 'untrashed_post'));
-		
-		
-		// trash field group
-		acf_untrash_field_group( $post_id );
-		
-	}
-	
-	
-	/*
-	*  deleted_post
-	*
-	*  description
-	*
-	*  @type	function
-	*  @date	8/01/2014
-	*  @since	5.0.0
-	*
-	*  @param	$post_id (int)
-	*  @return	$post_id (int)
-	*/
-	
-	function deleted_post( $post_id ) {
-		
-		// validate post type
-		if( get_post_type($post_id) != 'acf-field-group' )
-		{
-			return;
-		}
-		
-		
-		// validate action run only once
-		//remove_action('deleted_post', array($this, 'deleted_post'));
-		
-		
-		// trash field group
-		acf_delete_field_group( $post_id );
-		
-	}
-	
-	
-	
-	/*
-	*  check_duplicate
-	*
-	*  This function will run a duplciate field group function if the correct $_GET parameter exists
-	*
-	*  @type	function
-	*  @date	17/10/13
+	*  @date	5/03/2014
 	*  @since	5.0.0
 	*
 	*  @param	n/a
 	*  @return	n/a
 	*/
 	
-	function check_duplicate()
-	{
-		// message
-		if( !empty($_GET['duplicate_complete']) )
-		{
-			// vars
-			$id = filter_var( $_GET['duplicate_complete'], FILTER_SANITIZE_NUMBER_INT );
-						
-			$message = __('Field group duplicated! Edit the new "%s" field group.', 'acf');
-			$message = sprintf($message, '<a href="' . get_edit_post_link( $id ) . '">' . get_the_title( $id ) . '</a>');
-
-			// message
-			acf_add_admin_notice($message);
-		}
-		
-		
-		// duplicate
-		if( !empty($_GET['duplicate']) )
-		{
-			// vars
-			$id = filter_var( $_GET['duplicate'], FILTER_SANITIZE_NUMBER_INT );
-			
-			
-			// duplciate
-			$field_group = acf_duplicate_field_group( $id );
-			
-			
-			// redirect so the $_GET param is not visible to user
-			wp_redirect( admin_url("edit.php?post_type=acf-field-group&duplicate_complete={$field_group['ID']}") );
-			exit;
-		}
+	function __construct() {
+	
+		// actions
+		add_action('admin_enqueue_scripts',	array($this, 'admin_enqueue_scripts'));
+		add_action('trashed_post',			array($this, 'trashed_post'));
+		add_action('untrashed_post',		array($this, 'untrashed_post'));
+		add_action('deleted_post',			array($this, 'deleted_post'));
 		
 	}
 	
@@ -214,18 +42,18 @@ class acf_field_groups {
 	/*
 	*  validate_page
 	*
-	*  This function will loop at the current page and return true if it is the acf-field-groups edit page
+	*  This function will check if the current page is correct for this class
 	*
 	*  @type	function
 	*  @date	23/06/12
-	*  @since	3.2.6
+	*  @since	3.1.8
 	*
-	*  @param	N/A
+	*  @param	n/a
 	*  @return	(boolean)
 	*/
 	
-	function validate_page()
-	{
+	function validate_page() {
+		
 		// global
 		global $pagenow;
 		
@@ -235,19 +63,20 @@ class acf_field_groups {
 		
 		
 		// validate page
-		if( $pagenow == 'edit.php' )
-		{
+		if( $pagenow == 'edit.php' ) {
 		
 			// validate post type
-			if( isset($_GET['post_type']) && $_GET['post_type'] == 'acf-field-group' )
-			{
+			if( isset($_GET['post_type']) && $_GET['post_type'] == 'acf-field-group' ) {
+			
 				$r = true;
+				
 			}
 			
 			
-			if( isset($_GET['page']) )
-			{
+			if( isset($_GET['page']) ) {
+			
 				$r = false;
+				
 			}
 			
 		}
@@ -261,31 +90,179 @@ class acf_field_groups {
 	/*
 	*  admin_enqueue_scripts
 	*
-	*  This function will add the already registered css & js
+	*  This action is run after post query but before any admin script / head actions. 
+	*  It is a good place to register all actions.
 	*
-	*  @type	function
-	*  @date	28/09/13
+	*  @type	action (admin_enqueue_scripts)
+	*  @date	30/06/2014
 	*  @since	5.0.0
 	*
-	*  @param	N/A
-	*  @return	N/A
+	*  @param	n/a
+	*  @return	n/a
 	*/
 	
 	function admin_enqueue_scripts() {
 		
-		// scripts
-		wp_enqueue_script(array(
-			'jquery',
-			'thickbox',
-		));
+		// validate page
+		if( ! $this->validate_page() ) {
+		
+			return;
+			
+		}
 		
 		
-		// styles
-		wp_enqueue_style(array(
-			'thickbox',
-		));
+		// duplicate
+		$this->check_duplicate();
+		
+		
+		// actions
+		add_action('admin_footer',									array($this, 'admin_footer'));
+		
+		
+		// columns
+		add_filter('manage_edit-acf-field-group_columns',			array($this,'field_group_columns'), 10, 1);
+		add_action('manage_acf-field-group_posts_custom_column',	array($this,'field_group_columns_html'), 10, 2);
+		
 	}
+	
+	
+	/*
+	*  trashed_post
+	*
+	*  This function is run when a post object is sent to the trash
+	*
+	*  @type	action (trashed_post)
+	*  @date	8/01/2014
+	*  @since	5.0.0
+	*
+	*  @param	$post_id (int)
+	*  @return	n/a
+	*/
+	
+	function trashed_post( $post_id ) {
 		
+		// validate post type
+		if( get_post_type($post_id) != 'acf-field-group' ) {
+		
+			return;
+		
+		}
+		
+		
+		// trash field group
+		acf_trash_field_group( $post_id );
+		
+	}
+	
+	
+	/*
+	*  untrashed_post
+	*
+	*  This function is run when a post object is restored from the trash
+	*
+	*  @type	action (untrashed_post)
+	*  @date	8/01/2014
+	*  @since	5.0.0
+	*
+	*  @param	$post_id (int)
+	*  @return	n/a
+	*/
+	
+	function untrashed_post( $post_id ) {
+		
+		// validate post type
+		if( get_post_type($post_id) != 'acf-field-group' ) {
+		
+			return;
+			
+		}
+		
+		
+		// trash field group
+		acf_untrash_field_group( $post_id );
+		
+	}
+	
+	
+	/*
+	*  deleted_post
+	*
+	*  This function is run when a post object is deleted from the trash
+	*
+	*  @type	action (deleted_post)
+	*  @date	8/01/2014
+	*  @since	5.0.0
+	*
+	*  @param	$post_id (int)
+	*  @return	n/a
+	*/
+	
+	function deleted_post( $post_id ) {
+		
+		// validate post type
+		if( get_post_type($post_id) != 'acf-field-group' ) {
+		
+			return;
+			
+		}
+		
+		
+		// trash field group
+		acf_delete_field_group( $post_id );
+		
+	}
+	
+	
+	
+	/*
+	*  check_duplicate
+	*
+	*  This function is run during the 'admin_enqueue_scripts' action and will duplicate any selected field groups
+	*
+	*  @type	function
+	*  @date	17/10/13
+	*  @since	5.0.0
+	*
+	*  @param	n/a
+	*  @return	n/a
+	*/
+	
+	function check_duplicate() {
+		
+		// message
+		if( !empty($_GET['duplicate_complete']) ) {
+			
+			// vars
+			$id = filter_var( $_GET['duplicate_complete'], FILTER_SANITIZE_NUMBER_INT );
+						
+			$message = __('Field group duplicated! Edit the new "%s" field group.', 'acf');
+			$message = sprintf($message, '<a href="' . get_edit_post_link( $id ) . '">' . get_the_title( $id ) . '</a>');
+
+			// message
+			acf_add_admin_notice($message);
+			
+		}
+		
+		
+		// duplicate
+		if( !empty($_GET['duplicate']) ) {
+			
+			// vars
+			$id = filter_var( $_GET['duplicate'], FILTER_SANITIZE_NUMBER_INT );
+			
+			
+			// duplciate
+			$field_group = acf_duplicate_field_group( $id );
+			
+			
+			// redirect so the $_GET param is not visible to user
+			wp_redirect( admin_url("edit.php?post_type=acf-field-group&duplicate_complete={$field_group['ID']}") );
+			exit;
+			
+		}
+		
+	}
+	
 	
 	/*
 	*  field_group_columns
@@ -300,8 +277,8 @@ class acf_field_groups {
 	*  @return	$columns (array)
 	*/
 	
-	function field_group_columns( $columns )
-	{
+	function field_group_columns( $columns ) {
+		
 		$columns = array(
 			'cb'	 	=> '<input type="checkbox" />',
 			'title' 	=> __('Title'),
@@ -317,38 +294,44 @@ class acf_field_groups {
 	*
 	*  This function will render the HTML for each table cell
 	*
-	*  @type	action (manage_posts_custom_column)
+	*  @type	action (manage_acf-field-group_posts_custom_column)
 	*  @date	28/09/13
 	*  @since	5.0.0
 	*
 	*  @param	$column (string)
 	*  @param	$post_id (int)
-	*  @return	N/A
+	*  @return	n/a
 	*/
 	
-	function field_group_columns_html( $column, $post_id )
-	{
+	function field_group_columns_html( $column, $post_id ) {
+		
 		// vars
-		if( $column == 'fields' )
-	    {
+		if( $column == 'fields' ) {
+		
             echo acf_get_field_count( $post_id );
+            
 	    }
+	    
 	}
 	
 	
 	/*
 	*  admin_footer
 	*
-	*  @description: 
-	*  @since 3.1.8
-	*  @created: 23/06/12
+	*  This function will render extra HTML onto the page
+	*
+	*  @type	action (admin_footer)
+	*  @date	23/06/12
+	*  @since	3.1.8
+	*
+	*  @param	n/a
+	*  @return	n/a
 	*/
 	
 	function admin_footer() {
-		?>
-<script type="text/html" id="tmpl-acf-col-side">
+		
+?><script type="text/html" id="tmpl-acf-col-side">
 <div id="acf-col-side">
-
 	<div class="acf-box">
 		<div class="inner">
 			<h2><?php echo acf_get_setting('name'); ?> <?php echo acf_get_setting('version'); ?></h2>
@@ -359,6 +342,7 @@ class acf_field_groups {
 			<h3><?php _e("Resources",'acf'); ?></h3>
 			<ul>
 				<li><a href="http://www.advancedcustomfields.com/resources/#getting-started" target="_blank"><?php _e("Getting Started",'acf'); ?></a></li>
+				<li><a href="http://www.advancedcustomfields.com/resources/#updates" target="_blank"><?php _e("Updates",'acf'); ?></a></li>
 				<li><a href="http://www.advancedcustomfields.com/resources/#field-types" target="_blank"><?php _e("Field Types",'acf'); ?></a></li>
 				<li><a href="http://www.advancedcustomfields.com/resources/#functions" target="_blank"><?php _e("Functions",'acf'); ?></a></li>
 				<li><a href="http://www.advancedcustomfields.com/resources/#actions" target="_blank"><?php _e("Actions",'acf'); ?></a></li>
@@ -412,12 +396,14 @@ class acf_field_groups {
 	});
 	
 })(jQuery);
-</script>
-		<?php
+</script><?php
+		
 	}
 			
 }
 
-new acf_field_groups();
+new acf_admin_field_groups();
+
+endif;
 
 ?>

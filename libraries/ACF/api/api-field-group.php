@@ -200,7 +200,7 @@ function acf_filter_field_groups( $field_groups, $args = false ) {
 *  @return	$field_group (array)
 */
 
-function acf_get_field_group( $selector = false ) {
+function acf_get_field_group( $selector = false, $search_trash = false ) {
 	
 	// vars
 	$field_group = false;
@@ -249,7 +249,7 @@ function acf_get_field_group( $selector = false ) {
 	}
 	else
 	{
-		$field_group = _acf_get_field_group_by_key( $v );
+		$field_group = _acf_get_field_group_by_key( $v, $search_trash );
 	}
 	
 	
@@ -358,15 +358,15 @@ function _acf_get_field_group_by_id( $post_id = 0 ) {
 */
 
 
-function _acf_get_field_group_by_key( $key = '' ) {
+function _acf_get_field_group_by_key( $key = '', $search_trash = false ) {
 	
 	// vars
 	$field_group = false;
 		
 	
 	// try JSON before DB to save query time
-	if( acf_is_local_field_group( $key ) )
-	{
+	if( acf_is_local_field_group( $key ) ) {
+		
 		$field_group = acf_get_local_field_group( $key );
 		
 		// validate
@@ -374,6 +374,7 @@ function _acf_get_field_group_by_key( $key = '' ) {
 	
 		// return
 		return $field_group;
+		
 	}
 
 	
@@ -388,14 +389,23 @@ function _acf_get_field_group_by_key( $key = '' ) {
 	);
 	
 	
+	// search trash?
+	if( $search_trash ) {
+		
+		$args['post_status'] = 'publish, trash';
+		
+	}
+	
+	
 	// load posts
 	$posts = get_posts( $args );
 	
 	
 	// validate
-	if( empty($posts[0]) )
-	{
-		return $field_group;	
+	if( empty($posts[0]) ) {
+	
+		return $field_group;
+			
 	}
 	
 	

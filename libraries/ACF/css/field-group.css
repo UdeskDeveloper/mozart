@@ -130,11 +130,7 @@
 }
 
 .acf-field-list .field .field-info .row-options a {
-	margin-left: 4px;
-}
-
-.acf-field-list .field .field-info .row-options a:first-child {
-	margin-left: 0;
+	margin-right: 4px;
 }
 
 .acf-field-list .field:hover > .field-info .row-options {

@@ -7,7 +7,7 @@
 			<h3><?php _e('Export Field Groups', 'acf'); ?></h3>
 		</div>
 		<div class="inner">
-			<p><?php _e('Select the field groups you would like to export and then select your export method. Use the download button to export to a .json file which you can then import to another ACF installation. Use the generate button to export to PHP code which you can place in your theme.', 'acf'); ?> <a href="#"><?php _e("Learn more about the differences here",'acf'); ?></a></p>
+			<p><?php _e('Select the field groups you would like to export and then select your export method. Use the download button to export to a .json file which you can then import to another ACF installation. Use the generate button to export to PHP code which you can place in your theme.', 'acf'); ?></p>
 			
 			<form method="post" action="">
 			<div class="acf-hidden">

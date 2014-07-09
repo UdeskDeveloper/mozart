@@ -39,7 +39,7 @@ $readonly = $active ? 1 : 0;
 							acf_render_field(array(
 								'type'		=> $input,
 								'name'		=> 'acf_pro_licence',
-								'value'		=> $license,
+								'value'		=> str_repeat('*', strlen($license)),
 								'readonly'	=> $readonly
 							));
 							
@@ -134,7 +134,7 @@ $readonly = $active ? 1 : 0;
 	
 </div>
 <style type="text/css">
-	#acf-field-acf_pro_licence {
+	#acf_pro_licence {
 		width: 75%;
 	}
 </style>

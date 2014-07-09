@@ -416,60 +416,65 @@ class acf_field_repeater extends acf_field {
 	
 	
 	/*
-	*  format_value()
+	*  load_value()
 	*
-	*  This filter is appied to the $value after it is loaded from the db and before it is passed to the render_field action
+	*  This filter is applied to the $value after it is loaded from the db
 	*
 	*  @type	filter
 	*  @since	3.6
 	*  @date	23/01/13
 	*
-	*  @param	$value (mixed) the value which was loaded from the database
+	*  @param	$value (mixed) the value found in the database
 	*  @param	$post_id (mixed) the $post_id from which the value was loaded
 	*  @param	$field (array) the field array holding all the field options
-	*  @param	$template (boolean) true if value requires formatting for front end template function
-	*
-	*  @return	$value (mixed) the modified value
+	*  @return	$value
 	*/
 	
-	function format_value( $value, $post_id, $field, $template ) {
+	function load_value( $value, $post_id, $field ) {
 		
 		// bail early if no value
-		if( empty($value) ) {
+		if( empty($value) || empty($field['sub_fields']) ) {
 			
 			return $value;
 			
 		}
 		
 		
+		// convert to int
+		$value = intval( $value );
+		
+		
 		// vars
-		$values = array();
-		$format = true;
-		$format_template = $template;
+		$rows = array();
 		
 		
+		// check number of rows
 		if( $value > 0 ) {
 			
 			// loop through rows
 			for( $i = 0; $i < $value; $i++ ) {
 				
 				// create empty array
-				$values[ $i ] = array();
+				$rows[ $i ] = array();
 				
 				
 				// loop through sub fields
-				foreach( $field['sub_fields'] as $sub_field ) {
+				foreach( array_keys($field['sub_fields']) as $j ) {
 					
-					// var
-					$k = $template ? $sub_field['name'] : $sub_field['key'];
+					// get sub field
+					$sub_field = $field['sub_fields'][ $j ];
 					
 					
-					// update full name
+					// update $sub_field name
 					$sub_field['name'] = "{$field['name']}_{$i}_{$sub_field['name']}";
 					
 					
 					// get value
-					$values[ $i ][ $k ] = acf_get_value( $post_id, $sub_field, $format, $format_template );
+					$sub_value = acf_get_value( $post_id, $sub_field );
+				
+				
+					// add value
+					$rows[ $i ][ $sub_field['key'] ] = $sub_value;
 					
 				}
 				// foreach
@@ -482,7 +487,66 @@ class acf_field_repeater extends acf_field {
 		
 		
 		// return
-		return $values;
+		return $rows;
+		
+	}
+	
+	
+	/*
+	*  format_value()
+	*
+	*  This filter is appied to the $value after it is loaded from the db and before it is returned to the template
+	*
+	*  @type	filter
+	*  @since	3.6
+	*  @date	23/01/13
+	*
+	*  @param	$value (mixed) the value which was loaded from the database
+	*  @param	$post_id (mixed) the $post_id from which the value was loaded
+	*  @param	$field (array) the field array holding all the field options
+	*
+	*  @return	$value (mixed) the modified value
+	*/
+	
+	function format_value( $value, $post_id, $field ) {
+		
+		// bail early if no value
+		if( empty($value) || empty($field['sub_fields']) ) {
+						
+			return $value;
+			
+		}
+		
+		
+		// loop over rows
+		foreach( array_keys($value) as $i ) {
+			
+			// loop through sub fields
+			foreach( array_keys($field['sub_fields']) as $j ) {
+				
+				// get sub field
+				$sub_field = $field['sub_fields'][ $j ];
+				
+				
+				// extract value
+				$sub_value = acf_extract_var( $value[ $i ], $sub_field['key'] );
+				
+				
+				// format value
+				$sub_value = acf_format_value( $sub_value, $post_id, $sub_field );
+				
+				
+				// append to $row
+				$value[ $i ][ $sub_field['name'] ] = $sub_value;
+				
+			}
+			
+		}
+		
+		
+		// return
+		return $value;
+		
 	}
 	
 	
@@ -640,8 +704,8 @@ class acf_field_repeater extends acf_field {
 		// if
 		
 		
-		// remove old data
-		$old_total = intval( acf_get_value( $post_id, $field ) );
+		// get old value (db only)
+		$old_total = intval( acf_get_value( $post_id, $field, true ) );
 		
 		if( $old_total > $total ) {
 			

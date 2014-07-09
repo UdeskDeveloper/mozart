@@ -232,6 +232,14 @@ class acf_field_google_map extends acf_field {
 	
 	function validate_value( $valid, $value, $field, $input ){
 		
+		// bail early if not required
+		if( ! $field['required'] ) {
+			
+			return $valid;
+			
+		}
+		
+		
 		if( empty($value) || empty($value['lat']) || empty($value['lng']) ) {
 			
 			return false;

@@ -286,10 +286,18 @@ class acf_settings_updates {
 	
 	function deactivate_pro_licence() {
 		
+		// validate
+		if( !acf_pro_is_license_active() ) {
+			
+			return;
+			
+		}
+		
+		
 		// connect
 		$args = array(
 			'_nonce'		=> wp_create_nonce('deactivate_pro_licence'),
-			'acf_license'	=> acf_extract_var($_POST, 'acf_pro_licence'),
+			'acf_license'	=> acf_pro_get_license(),
 			'wp_url'		=> get_bloginfo('url'),
 		);
 		
@@ -299,10 +307,11 @@ class acf_settings_updates {
 		
 		
 		// validate
-		if( empty($response) )
-		{
+		if( empty($response) ) {
+		
 			acf_add_admin_notice(__('<b>Connection Error</b>. Sorry, please try again', 'acf'), 'error');
 			return;
+			
 		}
 		
 		
@@ -316,22 +325,26 @@ class acf_settings_updates {
 		
 		
 		// action
-		if( $response['status'] == 1 )
-		{
+		if( $response['status'] == 1 ) {
+		
 			
-		}
-		else
-		{
+			
+		} else {
+			
 			$class = 'error';
+			
 		}
 		
 		
 		// show message
-		if( $response['message'] )
-		{
+		if( $response['message'] ) {
+		
 			acf_add_admin_notice($response['message'], $class);
+			
 		}
+		
 	}
+	
 }
 
 

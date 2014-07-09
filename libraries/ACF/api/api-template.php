@@ -133,6 +133,10 @@ function acf_get_valid_post_id( $post_id = 0 ) {
 		{
 			$post_id = $post_id->taxonomy . '_' . $post_id->term_id;
 		}
+		elseif( isset($post_id->comment_ID) )
+		{
+			$post_id = 'comment_' . $post_id->comment_ID;
+		}
 		elseif( isset($post_id->ID) )
 		{
 			$post_id = $post_id->ID;
@@ -226,8 +230,8 @@ function get_field( $selector, $post_id = false, $format_value = true ) {
 	
 	
 	// create dummy field
-	if( !$field )
-	{
+	if( !$field ) {
+	
 		$field = acf_get_valid_field(array(
 			'name'	=> $selector,
 			'key'	=> '',
@@ -239,7 +243,16 @@ function get_field( $selector, $post_id = false, $format_value = true ) {
 	
 	
 	// get value for field
-	$value = acf_get_value( $post_id, $field, $format_value, $format_value );
+	$value = acf_get_value( $post_id, $field );
+	
+	
+	// format value
+	if( $format_value ) {
+		
+		// get value for field
+		$value = acf_format_value( $value, $post_id, $field );
+		
+	}
 	
 	
 	// return
@@ -311,16 +324,27 @@ function get_field_object( $selector, $post_id = false, $format_value = true, $l
 	
 	// override name?
 	// This allows the $selector to be a sub field (images_0_image)
-	if( $override_name )
-	{
+	if( $override_name ) {
+	
 		$field['name'] = $override_name;	
+		
 	}
 	
 	
 	// load value
-	if( $load_value )
-	{
-		$field['value'] = acf_get_value( $post_id, $field, $format_value, $format_value );
+	if( $load_value ) {
+	
+		$field['value'] = acf_get_value( $post_id, $field );
+		
+	}
+	
+	
+	// format value
+	if( $format_value ) {
+		
+		// get value for field
+		$field['value'] = acf_format_value( $field['value'], $post_id, $field );
+		
 	}
 	
 	
@@ -1347,7 +1371,7 @@ function acf_form( $args = array() ) {
 	<!-- Submit -->
 	<div class="acf-form-submit">
 	
-		<input type="submit" class="btn btn-primary btn-large" value="<?php echo $args['submit_value']; ?>" />
+		<input type="submit" class="button button-primary button-large" value="<?php echo $args['submit_value']; ?>" />
 		
 	</div>
 	<!-- / Submit -->

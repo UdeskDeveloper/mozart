@@ -215,7 +215,9 @@ class acf_field_oembed extends acf_field {
 		</div>
 		
 		<div class="canvas-media" data-name="value-embed">
-			<?php echo $this->wp_oembed_get($field['value'], $field['width'], $field['height']); ?>
+			<?php if( !empty( $field['value'] ) ): ?>
+				<?php echo $this->wp_oembed_get($field['value'], $field['width'], $field['height']); ?>
+			<?php endif; ?>
 		</div>
 		
 		<i class="acf-sprite-media hide-if-value"></i>
@@ -268,7 +270,7 @@ class acf_field_oembed extends acf_field {
 	/*
 	*  format_value()
 	*
-	*  This filter is appied to the $value after it is loaded from the db and before it is passed to the render_field action
+	*  This filter is appied to the $value after it is loaded from the db and before it is returned to the template
 	*
 	*  @type	filter
 	*  @since	3.6
@@ -277,26 +279,17 @@ class acf_field_oembed extends acf_field {
 	*  @param	$value (mixed) the value which was loaded from the database
 	*  @param	$post_id (mixed) the $post_id from which the value was loaded
 	*  @param	$field (array) the field array holding all the field options
-	*  @param	$template (boolean) true if value requires formatting for front end template function
 	*
 	*  @return	$value (mixed) the modified value
 	*/
 	
-	function format_value( $value, $post_id, $field, $template ) {
+	function format_value( $value, $post_id, $field ) {
 		
 		// bail early if no value
 		if( empty($value) ) {
-		
-			return $value;
 			
-		}
-		
-		
-		// bail early if not formatting for template use
-		if( !$template ) {
-		
 			return $value;
-			
+		
 		}
 		
 		
@@ -306,6 +299,7 @@ class acf_field_oembed extends acf_field {
 		
 		// return
 		return $value;
+		
 	}
 	
 }

@@ -1,18 +1,31 @@
-<?php 
+<?php
 
-class acf_field_group {
+/*
+*  ACF Admin Field Group Class
+*
+*  All the logic for editing a field group
+*
+*  @class 		acf_admin_field_group
+*  @package		ACF
+*  @subpackage	Admin
+*/
 
+if( ! class_exists('acf_admin_field_group') ) :
+
+class acf_admin_field_group {
+	
+	
 	/*
 	*  __construct
 	*
-	*  Initialize filters, action, variables and includes
+	*  This function will setup the class functionality
 	*
 	*  @type	function
-	*  @date	23/06/12
+	*  @date	5/03/2014
 	*  @since	5.0.0
 	*
-	*  @param	N/A
-	*  @return	N/A
+	*  @param	n/a
+	*  @return	n/a
 	*/
 	
 	function __construct() {
@@ -21,10 +34,12 @@ class acf_field_group {
 		add_action( 'admin_enqueue_scripts',							array( $this,'admin_enqueue_scripts' ) );
 		add_action( 'save_post',										array( $this,'save_post' ) );
 		
+		
 		// ajax
 		add_action( 'wp_ajax_acf/field_group/render_field_settings',	array( $this, 'ajax_render_field_settings') );
 		add_action( 'wp_ajax_acf/field_group/render_location_value',	array( $this, 'ajax_render_location_value') );
 		add_action( 'wp_ajax_acf/field_group/move_field',				array( $this, 'ajax_move_field') );
+		
 		
 		// filters
 		add_filter( 'post_updated_messages',							array( $this, 'post_updated_messages') );
@@ -36,7 +51,7 @@ class acf_field_group {
 	*
 	*  This function will customize the message shown when editing a field group
 	*
-	*  @type	function
+	*  @type	action (post_updated_messages)
 	*  @date	30/04/2014
 	*  @since	5.0.0
 	*
@@ -70,13 +85,13 @@ class acf_field_group {
 	/*
 	*  validate_page
 	*
-	*  This function will loop at the current page and return true if it is the acf-field-groups edit page
+	*  This function will check if the current page is correct for this class
 	*
 	*  @type	function
 	*  @date	23/06/12
-	*  @since	3.2.6
+	*  @since	3.1.8
 	*
-	*  @param	N/A
+	*  @param	n/a
 	*  @return	(boolean)
 	*/
 	
@@ -91,13 +106,13 @@ class acf_field_group {
 		
 		
 		// validate page
-		if( in_array( $pagenow, array('post.php', 'post-new.php') ) )
-		{
-		
+		if( in_array( $pagenow, array('post.php', 'post-new.php') ) ) {
+			
 			// validate post type
-			if( $typenow == 'acf-field-group' )
-			{
+			if( $typenow == 'acf-field-group' ) {
+			
 				$r = true;
+				
 			}
 			
 		}
@@ -111,22 +126,24 @@ class acf_field_group {
 	/*
 	*  admin_enqueue_scripts
 	*
-	*  This function will add the already registered css
+	*  This action is run after post query but before any admin script / head actions. 
+	*  It is a good place to register all actions.
 	*
-	*  @type	function
-	*  @date	28/09/13
+	*  @type	action (admin_enqueue_scripts)
+	*  @date	30/06/2014
 	*  @since	5.0.0
 	*
-	*  @param	N/A
-	*  @return	N/A
+	*  @param	n/a
+	*  @return	n/a
 	*/
 	
 	function admin_enqueue_scripts() {
 		
 		// validate page
-		if( ! $this->validate_page() )
-		{
+		if( ! $this->validate_page() ) {
+		
 			return;
+			
 		}
 		
 		
@@ -300,23 +317,26 @@ class acf_field_group {
 	function save_post( $post_id ) {
 		
 		// do not save if this is an auto save routine
-		if( defined('DOING_AUTOSAVE') && DOING_AUTOSAVE )
-		{
+		if( defined('DOING_AUTOSAVE') && DOING_AUTOSAVE ) {
+		
 			return $post_id;
+			
 		}
 		
 		
 		// only save once! WordPress save's a revision as well.
-		if( wp_is_post_revision($post_id) )
-		{
+		if( wp_is_post_revision($post_id) ) {
+		
 	    	return $post_id;
+	    	
         }
         
         
 		// verify nonce
-		if( !acf_verify_nonce('field_group') )
-		{
+		if( !acf_verify_nonce('field_group') ) {
+		
 			return $post_id;
+			
 		}
         
         
@@ -327,10 +347,10 @@ class acf_field_group {
         // save fields
 		unset( $_POST['acf_fields']['acfcloneindex'] );
 		
-		if( !empty($_POST['acf_fields']) )
-		{
-			foreach( $_POST['acf_fields'] as $field )
-			{
+		if( !empty($_POST['acf_fields']) ) {
+			
+			foreach( $_POST['acf_fields'] as $field ) {
+				
 				// vars
 				$specific = false;
 				$save = acf_extract_var( $field, 'save' );
@@ -357,7 +377,9 @@ class acf_field_group {
 				
 				// save field
 				acf_update_field( $field, $specific );
+				
 			}
+			
 		}
 		
 		
@@ -498,14 +520,15 @@ class acf_field_group {
 		
 		
 		// some case's have the same outcome
-		if( $options['param'] == "page_parent" )
-		{
+		if( $options['param'] == "page_parent" ) {
+		
 			$options['param'] = "page";
+			
 		}
 
 		
-		switch( $options['param'] )
-		{
+		switch( $options['param'] ) {
+			
 			/*
 			*  Basic
 			*/
@@ -618,9 +641,10 @@ class acf_field_group {
 				$choices = acf_get_taxonomy_terms();
 				
 				// unset post_format
-				if( isset($choices['post_format']) )
-				{
+				if( isset($choices['post_format']) ) {
+				
 					unset( $choices['post_format']) ;
+					
 				}
 							
 				break;
@@ -695,9 +719,10 @@ class acf_field_group {
 				
 				$templates = get_page_templates();
 				
-				foreach( $templates as $k => $v )
-				{
+				foreach( $templates as $k => $v ) {
+				
 					$choices[ $v ] = $k;
+					
 				}
 				
 				break;
@@ -744,9 +769,10 @@ class acf_field_group {
 				
 								
 				// unset post_format
-				if( isset($choices['post_format']) )
-				{
-					unset( $choices['post_format']) ;
+				if( isset($choices['post_format']) ) {
+				
+					unset( $choices['post_format']);
+					
 				}
 							
 				break;
@@ -768,11 +794,12 @@ class acf_field_group {
 				);
 				
 				
-				if( !empty( $wp_widget_factory->widgets ) )
-				{
-					foreach( $wp_widget_factory->widgets as $widget )
-					{
+				if( !empty( $wp_widget_factory->widgets ) ) {
+					
+					foreach( $wp_widget_factory->widgets as $widget ) {
+					
 						$choices[ $widget->id_base ] = $widget->name;
+						
 					}
 					
 				}
@@ -813,9 +840,10 @@ class acf_field_group {
 	function ajax_render_location_value() {
 		
 		// validate
-		if( ! wp_verify_nonce($_POST['nonce'], 'acf_nonce') )
-		{
+		if( ! wp_verify_nonce($_POST['nonce'], 'acf_nonce') ) {
+		
 			die();
+			
 		}
 		
 		
@@ -859,16 +887,18 @@ class acf_field_group {
 		
 		
 		// verify nonce
-		if( ! wp_verify_nonce($options['nonce'], 'acf_nonce') )
-		{
+		if( ! wp_verify_nonce($options['nonce'], 'acf_nonce') ) {
+		
 			die(0);
+			
 		}
 		
 		
 		// required
-		if( ! $options['type'] )
-		{
+		if( ! $options['type'] ) {
+		
 			die(0);
+			
 		}
 		
 				
@@ -918,15 +948,16 @@ class acf_field_group {
 		
 		
 		// verify nonce
-		if( ! wp_verify_nonce($args['nonce'], 'acf_nonce') )
-		{
+		if( ! wp_verify_nonce($args['nonce'], 'acf_nonce') ) {
+		
 			die();
+			
 		}
 		
 		
 		// confirm?
-		if( $args['field_id'] && $args['field_group_id'] )
-		{
+		if( $args['field_id'] && $args['field_group_id'] ) {
+			
 			// vars 
 			$field = acf_get_field($args['field_id']);
 			$field_group = acf_get_field_group($args['field_group_id']);
@@ -961,16 +992,20 @@ class acf_field_group {
 		$choices = array();
 		
 		
-		if( !empty($field_groups) )
-		{
-			foreach( $field_groups as $field_group )
-			{
-				if( $field_group['ID'] )
-				{
+		if( !empty($field_groups) ) {
+			
+			foreach( $field_groups as $field_group ) {
+				
+				if( $field_group['ID'] ) {
+					
 					$choices[ $field_group['ID'] ] = $field_group['title'];
+					
 				}
+				
 			}
+			
 		}
+		
 		
 		// render options
 		$field = acf_get_valid_field(array(
@@ -997,11 +1032,11 @@ class acf_field_group {
 		
 	}
 	
-	
 }
 
-
 // initialize
-new acf_field_group();
+new acf_admin_field_group();
+
+endif;
 
 ?>

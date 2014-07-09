@@ -224,7 +224,7 @@ class acf_field_relationship extends acf_field {
 				foreach( array_keys($posts) as $post_id ) {
 					
 					// override data
-					$posts[ $post_id ] = $this->acf_get_post_title( $posts[ $post_id ], $field, $options['post_id'] );
+					$posts[ $post_id ] = $this->get_post_title( $posts[ $post_id ], $field, $options['post_id'] );
 					
 				};
 				
@@ -275,7 +275,7 @@ class acf_field_relationship extends acf_field {
 	
 	
 	/*
-	*  acf_get_post_title
+	*  get_post_title
 	*
 	*  This function returns the HTML for a result
 	*
@@ -289,7 +289,7 @@ class acf_field_relationship extends acf_field {
 	*  @return	(string)
 	*/
 	
-	function acf_get_post_title( $post, $field, $post_id = 0 ) {
+	function get_post_title( $post, $field, $post_id = 0 ) {
 		
 		// get post_id
 		if( !$post_id ) {
@@ -345,6 +345,55 @@ class acf_field_relationship extends acf_field {
 		
 		// return
 		return $title;
+	}
+	
+	
+	/*
+	*  get_posts
+	*
+	*  This function will return an array of posts for a given field value
+	*
+	*  @type	function
+	*  @date	13/06/2014
+	*  @since	5.0.0
+	*
+	*  @param	$value (array)
+	*  @return	$value
+	*/
+	
+	function get_posts( $value ) {
+		
+		// force value to array
+		$value = acf_force_type_array( $value );
+		
+		
+		// convert to int
+		$value = array_map('intval', $value);
+		
+		
+		// load posts in 1 query to save multiple DB calls from following code
+		if( count($value) > 1 ) {
+			
+			$posts = get_posts(array(
+				'posts_per_page'	=> -1,
+				'post_type'			=> acf_get_post_types(),
+				'post_status'		=> 'any',
+				'post__in'			=> $value,
+			));
+			
+		}
+		
+		
+		// update value to include $post
+		foreach( array_keys($value) as $i ) {
+			
+			$value[ $i ] = get_post( $value[ $i ] );
+			
+		}
+		
+		
+		// return
+		return $value;
 	}
 	
 	
@@ -586,33 +635,50 @@ class acf_field_relationship extends acf_field {
 	<?php endif; ?>
 	
 	<div class="selection acf-cf">
+	
 		<div class="choices">
+		
+			<ul class="acf-bl list"></ul>
+			
+		</div>
+		
+		<div class="values">
+		
 			<ul class="acf-bl list">
+			
+				<?php if( !empty($field['value']) ): 
+						
+					// get posts
+					$posts = $this->get_posts( $field['value'] );
+					
+					// set choices
+					if( !empty($posts) ):
+						
+						foreach( array_keys($posts) as $i ):
+							
+							// vars
+							$post = acf_extract_var( $posts, $i );
+							
+							
+							?><li>
+								<input type="hidden" name="<?php echo $field['name']; ?>[]" value="<?php echo $post->ID; ?>" />
+								<span data-id="<?php echo $post->ID; ?>" class="acf-relationship-item">
+									<?php echo $this->get_post_title( $post, $field ); ?>
+									<a href="#" class="acf-icon small dark"><i class="acf-sprite-remove"></i></a>
+								</span>
+							</li><?php
+							
+						endforeach;
+						
+					endif;
+				
+				endif; ?>
 				
 			</ul>
+			
 		</div>
-		<div class="values">
-			<ul class="acf-bl list">
-				<?php if( !empty($field['value']) ): ?>
-					<?php foreach( array_keys($field['value']) as $i ): 
-							
-						// vars
-						$post = acf_extract_var($field['value'], $i);
-						
-						?>
-						<li>
-							<input type="hidden" name="<?php echo $field['name']; ?>[]" value="<?php echo $post->ID; ?>" />
-							<span data-id="<?php echo $k; ?>" class="acf-relationship-item">
-								<?php echo $this->acf_get_post_title( $post, $field ); ?>
-								<a href="#" class="acf-icon small dark"><i class="acf-sprite-remove"></i></a>
-							</span>
-						</li>
-					<?php endforeach; ?>
-				<?php endif; ?>
-			</ul>
-		</div>
+		
 	</div>
-	
 	
 </div>
 		<?php
@@ -725,7 +791,7 @@ class acf_field_relationship extends acf_field {
 	/*
 	*  format_value()
 	*
-	*  This filter is appied to the $value after it is loaded from the db and before it is passed to the render_field action
+	*  This filter is appied to the $value after it is loaded from the db and before it is returned to the template
 	*
 	*  @type	filter
 	*  @since	3.6
@@ -734,12 +800,11 @@ class acf_field_relationship extends acf_field {
 	*  @param	$value (mixed) the value which was loaded from the database
 	*  @param	$post_id (mixed) the $post_id from which the value was loaded
 	*  @param	$field (array) the field array holding all the field options
-	*  @param	$template (boolean) true if value requires formatting for front end template function
 	*
 	*  @return	$value (mixed) the modified value
 	*/
 	
-	function format_value( $value, $post_id, $field, $template ) {
+	function format_value( $value, $post_id, $field ) {
 		
 		// bail early if no value
 		if( empty($value) ) {
@@ -758,27 +823,10 @@ class acf_field_relationship extends acf_field {
 		
 		
 		// load posts if needed
-		if( !$template || $field['return_format'] == 'object' ) {
+		if( $field['return_format'] == 'object' ) {
 			
-			// load posts in 1 query to save multiple DB calls from following code
-			if( count($value) > 1 ) {
-				
-				$posts = get_posts(array(
-					'posts_per_page'	=> -1,
-					'post_type'			=> acf_get_post_types(),
-					'post_status'		=> 'any',
-					'post__in'			=> $value,
-				));
-				
-			}
-			
-			
-			// update value to include $post
-			foreach( array_keys($value) as $i ) {
-				
-				$value[ $i ] = get_post( $value[ $i ] );
-				
-			}
+			// get posts
+			$value = $this->get_posts( $value );
 		
 		}
 		

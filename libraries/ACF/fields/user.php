@@ -263,9 +263,18 @@ class acf_field_user extends acf_field {
 		// populate choices
 		if( !empty($field['value']) ) {
 			
+			// force value to array
+			$value = acf_force_type_array( $value );
+			
+			
+			// convert values to int
+			$value = array_map('intval', $value);
+			
+			
 			$users = get_users(array(
 				'include' => $field['value']
 			));
+			
 			
 			if( !empty($users) ) {
 			
@@ -396,9 +405,39 @@ class acf_field_user extends acf_field {
 	
 	
 	/*
+	*  load_value()
+	*
+	*  This filter is applied to the $value after it is loaded from the db
+	*
+	*  @type	filter
+	*  @since	3.6
+	*  @date	23/01/13
+	*
+	*  @param	$value (mixed) the value found in the database
+	*  @param	$post_id (mixed) the $post_id from which the value was loaded
+	*  @param	$field (array) the field array holding all the field options
+	*  @return	$value
+	*/
+	
+	function load_value( $value, $post_id, $field ) {
+		
+		// ACF4 null
+		if( $value === 'null' ) {
+		
+			return false;
+			
+		}
+		
+		
+		// return
+		return $value;
+	}
+	
+	
+	/*
 	*  format_value()
 	*
-	*  This filter is appied to the $value after it is loaded from the db and before it is passed to the render_field action
+	*  This filter is appied to the $value after it is loaded from the db and before it is returned to the template
 	*
 	*  @type	filter
 	*  @since	3.6
@@ -407,15 +446,14 @@ class acf_field_user extends acf_field {
 	*  @param	$value (mixed) the value which was loaded from the database
 	*  @param	$post_id (mixed) the $post_id from which the value was loaded
 	*  @param	$field (array) the field array holding all the field options
-	*  @param	$template (boolean) true if value requires formatting for front end template function
 	*
 	*  @return	$value (mixed) the modified value
 	*/
 	
-	function format_value( $value, $post_id, $field, $template ) {
+	function format_value( $value, $post_id, $field ) {
 		
 		// bail early if no value
-		if( empty($value) || $value === 'null' ) {
+		if( empty($value) ) {
 		
 			return $value;
 			
@@ -430,52 +468,48 @@ class acf_field_user extends acf_field {
 		$value = array_map('intval', $value);
 		
 		
-		// load users for template
-		if( $template ) {
+		// load users	
+		foreach( array_keys($value) as $i ) {
 			
-			// load users	
-			foreach( array_keys($value) as $i ) {
-				
-				// vars
-				$user_id = $value[ $i ];
-				$user_data = get_userdata( $user_id );
-				
-				
-				//cope with deleted users by @adampope
-				if( !is_object($user_data) ) {
-				
-					unset( $value[ $i ] );
-					continue;
-					
-				}
-		
-				
-				// append to array
-				$value[ $i ] = array();
-				$value[ $i ]['ID'] = $user_id;
-				$value[ $i ]['user_firstname'] = $user_data->user_firstname;
-				$value[ $i ]['user_lastname'] = $user_data->user_lastname;
-				$value[ $i ]['nickname'] = $user_data->nickname;
-				$value[ $i ]['user_nicename'] = $user_data->user_nicename;
-				$value[ $i ]['display_name'] = $user_data->display_name;
-				$value[ $i ]['user_email'] = $user_data->user_email;
-				$value[ $i ]['user_url'] = $user_data->user_url;
-				$value[ $i ]['user_registered'] = $user_data->user_registered;
-				$value[ $i ]['user_description'] = $user_data->user_description;
-				$value[ $i ]['user_avatar'] = get_avatar( $user_id );
+			// vars
+			$user_id = $value[ $i ];
+			$user_data = get_userdata( $user_id );
+			
+			
+			//cope with deleted users by @adampope
+			if( !is_object($user_data) ) {
+			
+				unset( $value[ $i ] );
+				continue;
 				
 			}
+	
 			
+			// append to array
+			$value[ $i ] = array();
+			$value[ $i ]['ID'] = $user_id;
+			$value[ $i ]['user_firstname'] = $user_data->user_firstname;
+			$value[ $i ]['user_lastname'] = $user_data->user_lastname;
+			$value[ $i ]['nickname'] = $user_data->nickname;
+			$value[ $i ]['user_nicename'] = $user_data->user_nicename;
+			$value[ $i ]['display_name'] = $user_data->display_name;
+			$value[ $i ]['user_email'] = $user_data->user_email;
+			$value[ $i ]['user_url'] = $user_data->user_url;
+			$value[ $i ]['user_registered'] = $user_data->user_registered;
+			$value[ $i ]['user_description'] = $user_data->user_description;
+			$value[ $i ]['user_avatar'] = get_avatar( $user_id );
 			
-			// convert back from array if neccessary
-			if( !$field['multiple'] ) {
-			
-				$value = array_shift($value);
-				
-			}
-		
 		}
-
+		
+		
+		// convert back from array if neccessary
+		if( !$field['multiple'] ) {
+		
+			$value = array_shift($value);
+			
+		}
+		
+		
 		// return value
 		return $value;
 		

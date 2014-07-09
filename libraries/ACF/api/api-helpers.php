@@ -509,14 +509,14 @@ function acf_render_field_wrap( $field, $el = 'div', $instruction = 'label', $at
 
 function acf_render_fields( $post_id = 0, $fields, $el = 'div', $instruction = 'label' ) {
 		
-	if( !empty($fields) )
-	{
-		foreach( $fields as $field )
-		{
+	if( !empty($fields) ) {
+		
+		foreach( $fields as $field ) {
+			
 			// load value
 			if( $field['value'] === null ) {
-			
-				$field['value'] = acf_get_value( $post_id, $field, true );
+				
+				$field['value'] = acf_get_value( $post_id, $field );
 				
 			} 
 			
@@ -528,6 +528,7 @@ function acf_render_fields( $post_id = 0, $fields, $el = 'div', $instruction = '
 			// render
 			acf_render_field_wrap( $field, $el, $instruction );
 		}
+		
 	}
 		
 }
@@ -1495,7 +1496,7 @@ function acf_cache_get( $key, &$found ) {
 function acf_force_type_array( $var ) {
 	
 	// bail early if empty
-	if( empty($var) ) {
+	if( empty($var) && !is_numeric($var) ) {
 		
 		return array();
 	}
@@ -1919,6 +1920,21 @@ function acf_debug() {
 	
 	// echo
 	echo $o;
+}
+
+function acf_debug_start() {
+	
+	acf_update_setting( 'debug_start', memory_get_usage());
+	
+}
+
+function acf_debug_end() {
+	
+	$start = acf_get_setting( 'debug_start' );
+	$end = memory_get_usage();
+	
+	return $end - $start;
+	
 }
 
 

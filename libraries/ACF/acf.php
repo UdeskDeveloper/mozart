@@ -103,6 +103,7 @@ class acf {
 		acf_include('core/location.php');
 		acf_include('core/revisions.php');
 		acf_include('core/compatibility.php');
+		acf_include('core/third_party.php');
 		
 		
 		// forms
@@ -329,7 +330,7 @@ class acf {
 				'src'		=> acf_get_dir( 'inc/select2/select2.css' ),
 				'deps'		=> array(),
 			),
-
+			
 			array(
 				'handle'	=> 'acf-datepicker',
 				'src'		=> acf_get_dir( 'inc/datepicker/jquery-ui-1.10.4.custom.min.css' ),

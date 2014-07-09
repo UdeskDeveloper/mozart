@@ -640,28 +640,26 @@ class acf_field_flexible_content extends acf_field {
 	
 	
 	/*
-	*  format_value()
+	*  load_value()
 	*
-	*  This filter is appied to the $value after it is loaded from the db and before it is passed to the render_field action
+	*  This filter is applied to the $value after it is loaded from the db
 	*
 	*  @type	filter
 	*  @since	3.6
 	*  @date	23/01/13
 	*
-	*  @param	$value (mixed) the value which was loaded from the database
+	*  @param	$value (mixed) the value found in the database
 	*  @param	$post_id (mixed) the $post_id from which the value was loaded
 	*  @param	$field (array) the field array holding all the field options
-	*  @param	$template (boolean) true if value requires formatting for front end template function
-	*
-	*  @return	$value (mixed) the modified value
+	*  @return	$value
 	*/
 	
-	function format_value( $value, $post_id, $field, $template ) {
+	function load_value( $value, $post_id, $field ) {
 		
 		// bail early if no value
-		if( empty($value) ) {
+		if( empty($value) || empty($field['layouts']) ) {
 			
-			return false;
+			return $value;
 			
 		}
 		
@@ -671,9 +669,7 @@ class acf_field_flexible_content extends acf_field {
 		
 		
 		// vars
-		$values = array();
-		$format = true;
-		$format_template = $template;
+		$rows = array();
 		
 		
 		// populate $layouts
@@ -681,50 +677,153 @@ class acf_field_flexible_content extends acf_field {
 		
 		foreach( array_keys($field['layouts']) as $i ) {
 			
-			$layout = acf_extract_var($field['layouts'], $i);
+			// get layout
+			$layout = $field['layouts'][ $i ];
+			
 			
 			// append to $layouts
 			$layouts[ $layout['name'] ] = $layout['sub_fields'];
 			
-		}	
-			
+		}
+	
 		
 		// loop through rows
 		foreach( $value as $i => $l ) {
 			
+			// bail early if layout deosnt exist
+			if( empty($layouts[ $l ]) ) {
+				
+				continue;
+				
+			}
+			
+			
 			// append to $values
-			$values[ $i ] = array();
-			$values[ $i ]['acf_fc_layout'] = $l;
+			$rows[ $i ] = array();
+			$rows[ $i ]['acf_fc_layout'] = $l;
+			
+			
+			// get layout
+			$layout = $layouts[ $l ];
 			
 			
 			// loop through sub fields
-			if( !empty($layouts[ $l ]) ) {
+			foreach( array_keys($layout) as $j ) {
 				
-				foreach( $layouts[ $l ] as $sub_field ) {
-					
-					// var
-					$k = $template ? $sub_field['name'] : $sub_field['key'];
-					
-					
-					// update full name
-					$sub_field['name'] = "{$field['name']}_{$i}_{$sub_field['name']}";
-					
-					
-					// get value
-					$values[ $i ][ $k ] = acf_get_value( $post_id, $sub_field, $format, $format_template );
-					
-				}
-				// foreach
+				// get sub field
+				$sub_field = $layout[ $j ];
+				
+				
+				// update full name
+				$sub_field['name'] = "{$field['name']}_{$i}_{$sub_field['name']}";
+				
+				
+				// get value
+				$sub_value = acf_get_value( $post_id, $sub_field );
+				
+				
+				// add value
+				$rows[ $i ][ $sub_field['key'] ] = $sub_value;
 				
 			}
-			// if
+			// foreach
 			
 		}
 		// foreach
 		
 		
+		
 		// return
-		return $values;
+		return $rows;
+		
+	}
+	
+	
+	/*
+	*  format_value()
+	*
+	*  This filter is appied to the $value after it is loaded from the db and before it is returned to the template
+	*
+	*  @type	filter
+	*  @since	3.6
+	*  @date	23/01/13
+	*
+	*  @param	$value (mixed) the value which was loaded from the database
+	*  @param	$post_id (mixed) the $post_id from which the value was loaded
+	*  @param	$field (array) the field array holding all the field options
+	*
+	*  @return	$value (mixed) the modified value
+	*/
+	
+	function format_value( $value, $post_id, $field ) {
+		
+		// bail early if no value
+		if( empty($value) || empty($field['layouts']) ) {
+			
+			return $value;
+			
+		}
+		
+		
+		// populate $layouts
+		$layouts = array();
+		
+		foreach( array_keys($field['layouts']) as $i ) {
+			
+			// get layout
+			$layout = $field['layouts'][ $i ];
+			
+			
+			// append to $layouts
+			$layouts[ $layout['name'] ] = $layout['sub_fields'];
+			
+		}
+		
+		
+		// loop over rows
+		foreach( array_keys($value) as $i ) {
+			
+			// get layout name
+			$l = $value[ $i ]['acf_fc_layout'];
+			
+			
+			// bail early if layout deosnt exist
+			if( empty($layouts[ $l ]) ) {
+				
+				continue;
+				
+			}
+			
+			
+			// get layout
+			$layout = $layouts[ $l ];
+			
+			
+			// loop through sub fields
+			foreach( array_keys($layout) as $j ) {
+				
+				// get sub field
+				$sub_field = $layout[ $j ];
+				
+				
+				// extract value
+				$sub_value = acf_extract_var( $value[ $i ], $sub_field['key'] );
+				
+				
+				// format value
+				$sub_value = acf_format_value( $sub_value, $post_id, $sub_field );
+				
+				
+				// append to $row
+				$value[ $i ][ $sub_field['name'] ] = $sub_value;
+				
+			}
+			
+		}
+		
+		
+		// return
+		return $value;
 	}
 	
 	
@@ -924,7 +1023,7 @@ class acf_field_flexible_content extends acf_field {
 		
 		
 		// remove old data
-		$old_order = acf_get_value( $post_id, $field, false );
+		$old_order = acf_get_value( $post_id, $field, true );
 		$old_count = empty($old_order) ? 0 : count($old_order);
 		$new_count = empty($order) ? 0 : count($order);
 		

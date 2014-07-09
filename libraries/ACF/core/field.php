@@ -32,7 +32,7 @@ class acf_field {
 		// value
 		$this->add_filter("acf/load_value/type={$this->name}",			array($this, 'load_value'), 10, 3);
 		$this->add_filter("acf/update_value/type={$this->name}",		array($this, 'update_value'), 10, 3);
-		$this->add_filter("acf/format_value/type={$this->name}",		array($this, 'format_value'), 10, 4);
+		$this->add_filter("acf/format_value/type={$this->name}",		array($this, 'format_value'), 10, 3);
 		$this->add_filter("acf/validate_value/type={$this->name}",		array($this, 'validate_value'), 10, 4);
 		$this->add_action("acf/delete_value/type={$this->name}",		array($this, 'delete_value'), 10, 2);
 		

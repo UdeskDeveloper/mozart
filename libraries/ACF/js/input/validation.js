@@ -236,61 +236,86 @@ if( ! this.$trigger )
 			
 			
 			// click save
-			$(document).on('click', '#save-post', function(){
+			if( $('#save-post').exists() ) {
 				
-				self.ignore = 1;
-				self.$trigger = $(this);
+				$('#save-post').on('click', function(){
 				
-			});
+					self.ignore = 1;
+					self.$trigger = $(this);
+					
+				});
+				
+			}
+			
 			
 			
 			// click preview
-			$(document).on('click', '#post-preview', function(){
+			if( $('#post-preview').exists() ) {
 				
-				self.ignore = 1;
-				self.$trigger = $(this);
+				$('#post-preview').on('click', function(){
 				
-			});
+					self.ignore = 1;
+					self.$trigger = $(this);
+					
+				});
+				
+			}
+						
+			
+			// click submit
+			if( $('#submit').exists() ) {
+				
+				$('#submit').on('click', function(){
+				
+					self.$trigger = $(this);
+					
+				});
+				
+			}
 			
 			
 			// click publish
-			$(document).on('click', '#submit', function(){
+			if( $('#publish').exists() ) {
 				
-				self.$trigger = $(this);
+				$('#publish').on('click', function(){
 				
-			});
+					self.$trigger = $(this);
+					
+				});
+				
+			}
 			
-			
-			// click publish
-			$(document).on('click', '#publish', function(){
-				
-				self.$trigger = $(this);
-				
-			});
 			
 			
 			// submit
 			$(document).on('submit', 'form', function( e ){
 				
 				// bail early if this form does not contain ACF data
-				if( ! $(this).find('#acf-form-data').exists() )
-				{
+				if( ! $(this).find('#acf-form-data').exists() ) {
+				
 					return true;
+					
 				}
 				
 				
+				// filter for 3rd party customization
+				self.ignore = acf.apply_filters('ignore_validation', self.ignore, self.$trigger, $(this) );
+
+				
 				// ignore this submit?
-				if( self.ignore == 1 )
-				{
+				if( self.ignore == 1 ) {
+				
 					self.ignore = 0;
 					return true;
+					
 				}
 				
 				
 				// bail early if disabled
-				if( self.active == 0 )
-				{
+				if( self.active == 0 ) {
+				
 					return true;
+					
 				}
 				
 				
@@ -306,7 +331,6 @@ if( ! this.$trigger )
 		}
 		
 	};
-	
 	
 	acf.add_action('ready', function(){
 		

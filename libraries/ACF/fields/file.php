@@ -110,33 +110,29 @@ class acf_field_file extends acf_field {
 	<div class="acf-hidden">
 		<input type="hidden" <?php acf_esc_attr_e(array( 'name' => $field['name'], 'value' => $field['value'], 'data-name' => 'id' )); ?> />	
 	</div>
-	<div class="show-if-value acf-cf">
-		<ul class="file-info acf-hl acf-soh">
-			<li class="icon">
-				<img data-name="icon" src="<?php echo $o['icon']; ?>" alt=""/>
-			</li>
-			<li>
-				<p>
-					<strong data-name="title"><?php echo $o['title']; ?></strong>
-				</p>
-				<p>
-					<strong><?php _e('File Name', 'acf'); ?>:</strong>
-					<a data-name="name" href="<?php echo $o['url']; ?>" target="_blank"><?php echo $o['name']; ?></a>
-				</p>
-				<p>
-					<strong><?php _e('File Size', 'acf'); ?>:</strong>
-					<span data-name="size"><?php echo $o['size']; ?></span>
-				</p>
-				
-			</li>
-			<li>
-				<ul class="acf-hl acf-soh-target">
-					<li><a class="acf-icon" data-name="edit-button" href="#"><i class="acf-sprite-edit"></i></a></li>
-					<li><a class="acf-icon" data-name="remove-button" href="#"><i class="acf-sprite-delete"></i></a></li>
-				</ul>
-			</li>
-		</ul>
-		
+	<div class="show-if-value file-wrap acf-soh">
+		<div class="file-icon">
+			<img data-name="icon" src="<?php echo $o['icon']; ?>" alt=""/>
+		</div>
+		<div class="file-info">
+			<p>
+				<strong data-name="title"><?php echo $o['title']; ?></strong>
+			</p>
+			<p>
+				<strong><?php _e('File Name', 'acf'); ?>:</strong>
+				<a data-name="name" href="<?php echo $o['url']; ?>" target="_blank"><?php echo $o['name']; ?></a>
+			</p>
+			<p>
+				<strong><?php _e('File Size', 'acf'); ?>:</strong>
+				<span data-name="size"><?php echo $o['size']; ?></span>
+			</p>
+			
+			<ul class="acf-hl acf-soh-target">
+				<li><a class="acf-icon dark" data-name="edit-button" href="#"><i class="acf-sprite-edit"></i></a></li>
+				<li><a class="acf-icon dark" data-name="remove-button" href="#"><i class="acf-sprite-delete"></i></a></li>
+			</ul>
+			
+		</div>
 	</div>
 	<div class="hide-if-value">
 		<p><?php _e('No File selected','acf'); ?> <a data-name="add-button" class="acf-button" href="#"><?php _e('Add File','acf'); ?></a></p>
@@ -196,7 +192,7 @@ class acf_field_file extends acf_field {
 	/*
 	*  format_value()
 	*
-	*  This filter is appied to the $value after it is loaded from the db and before it is passed to the render_field action
+	*  This filter is appied to the $value after it is loaded from the db and before it is returned to the template
 	*
 	*  @type	filter
 	*  @since	3.6
@@ -205,12 +201,11 @@ class acf_field_file extends acf_field {
 	*  @param	$value (mixed) the value which was loaded from the database
 	*  @param	$post_id (mixed) the $post_id from which the value was loaded
 	*  @param	$field (array) the field array holding all the field options
-	*  @param	$template (boolean) true if value requires formatting for front end template function
 	*
 	*  @return	$value (mixed) the modified value
 	*/
 	
-	function format_value( $value, $post_id, $field, $template ) {
+	function format_value( $value, $post_id, $field ) {
 		
 		// bail early if no value
 		if( empty($value) ) {
@@ -222,15 +217,6 @@ class acf_field_file extends acf_field {
 		
 		// convert to int
 		$value = intval($value);
-		
-		
-		
-		// bail early if not formatting for template use
-		if( !$template ) {
-		
-			return $value;
-			
-		}
 		
 		
 		// format

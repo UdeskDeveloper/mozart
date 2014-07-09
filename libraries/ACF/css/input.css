@@ -695,42 +695,44 @@ ul.acf-checkbox-list li label {
 
 .acf-file-uploader {
 	position: relative;
-	
 }
 
-.acf-file-uploader .file-info {
+.acf-file-uploader .file-wrap {
 	border: #DFDFDF solid 1px;
-	float: left;
-}
-
-.acf-file-uploader .file-info li {
+	min-height: 84px;
 	position: relative;
 }
 
-.acf-file-uploader .file-info img {
-	min-height: 60px;
-	min-width: 46px;
-	display: block;
-	background: #f1f1f1;
+.acf-file-uploader .file-icon {
+	position: absolute;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	padding: 10px;
+	background: #F1F1F1;
+	border-right: #E5E5E5 solid 1px;
 }
 
-.acf-file-uploader .file-info a {
-	text-decoration: none;
+.acf-file-uploader .file-icon img {
+	display: block;
+	padding: 0;
+	margin: 0;
+}
+
+.acf-file-uploader .file-info {
+	padding: 10px;
+	margin-left: 69px;
 }
 
 .acf-file-uploader .file-info p {
 	margin: 0 0 2px;
 	font-size: 13px;
 	line-height: 1.4em;
+	word-break: break-all;
 }
 
-.acf-file-uploader .file-info > li {
-	padding: 9px;
-}
-
-.acf-file-uploader .file-info > li.icon {
-	background: #F1F1F1;
-	border-right: #E5E5E5 solid 1px;
+.acf-file-uploader .file-info a {
+	text-decoration: none;
 }
 
 .acf-file-uploader .hide-if-value p {
@@ -738,9 +740,16 @@ ul.acf-checkbox-list li label {
 	margin: 0 !important;
 }
 
+
 /*
 *  Hover
 */
+
+.acf-file-uploader .acf-soh-target {
+	position: absolute;
+	top: 5px;
+	right: 5px;	
+}
 
 .acf-file-uploader .acf-soh-target li {
 	margin: 0 0 0 4px;

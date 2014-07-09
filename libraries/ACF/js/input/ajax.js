@@ -231,10 +231,11 @@
 					page_parent = 0;
 				
 				
-				if( val != "" )
-				{
+				if( $(this).val() != "" ) {
+				
 					page_type = 'child';
 					page_parent = $(this).val();
+					
 				}
 				
 				_this.update( 'page_type', page_type ).update( 'page_parent', page_parent ).fetch();

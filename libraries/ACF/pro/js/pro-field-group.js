@@ -592,15 +592,22 @@
 			var $new_tr = $tr.clone( false );
 			
 			
+			// wipe layout
 			this.wipe_layout( $new_tr );
 			
 			
 			// vars
-			$fields = $new_tr.find('.field').not('[data-key="acfcloneindex"]');
+			var new_parent_layout = $new_tr.attr('data-key'),
+				$fields = $new_tr.find('.field').not('[data-key="acfcloneindex"]');
+				
 			$fields.each(function(){
 				
 				// wipe
 				acf.field_group.wipe_field( $(this) );
+				
+				
+				// update layput key
+				acf.field_group.update_field_meta( $(this), 'parent_layout', new_parent_layout );
 				
 				
 				// save
