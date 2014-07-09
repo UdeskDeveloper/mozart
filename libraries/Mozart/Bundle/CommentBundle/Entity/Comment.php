@@ -4,7 +4,7 @@ namespace  Mozart\Bundle\CommentBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
-use  Mozart\Bundle\CommentBundle\Annotation as Kayue;
+use  Mozart\Bundle\NucleusBundle\Annotation as Mozart;
 use  Mozart\Bundle\CommentBundle\Model\Comment as ModelComment;
 use Symfony\Component\Validator\Constraints as Constraints;
 
@@ -12,7 +12,7 @@ use Symfony\Component\Validator\Constraints as Constraints;
  * @ORM\Table(name="comments")
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
- * @Kayue\WPTable
+ * @Mozart\WPTable
  */
 class Comment extends ModelComment
 {
@@ -118,14 +118,14 @@ class Comment extends ModelComment
     /**
      * {@inheritdoc}
      *
-     * @ORM\OneToMany(targetEntity=" Mozart\Bundle\CommentBundle\Entity\CommentMeta", mappedBy="comment")
+     * @ORM\OneToMany(targetEntity="CommentMeta", mappedBy="comment")
      */
     protected $metas;
 
     /**
      * {@inheritdoc}
      *
-     * @ORM\ManyToOne(targetEntity=" Mozart\Bundle\CommentBundle\Entity\Post", inversedBy="comments")
+     * @ORM\ManyToOne(targetEntity="Mozart\Bundle\PostBundle\Entity\Post", inversedBy="comments")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="comment_post_ID", referencedColumnName="ID", nullable=false)
      * })
@@ -135,7 +135,7 @@ class Comment extends ModelComment
     /**
      * {@inheritdoc}
      *
-     * @ORM\ManyToOne(targetEntity=" Mozart\Bundle\CommentBundle\Entity\User", inversedBy="comments")
+     * @ORM\ManyToOne(targetEntity="Mozart\Bundle\UserBundle\Entity\User", inversedBy="comments")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="user_id", referencedColumnName="ID")
      * })
@@ -159,7 +159,7 @@ class Comment extends ModelComment
     /**
      * Get user
      *
-     * @return \ Mozart\Bundle\CommentBundle\Model\UserInterface|null
+     * @return \Mozart\Bundle\UserBundle\Model\UserInterface|null
      */
     public function getUser()
     {

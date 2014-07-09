@@ -2,7 +2,8 @@
 
 namespace  Mozart\Bundle\CommentBundle\Model;
 
-use Doctrine\ORM\EntityManager;
+use Mozart\Bundle\NucleusBundle\Model\AbstractManager;
+use Mozart\Bundle\PostBundle\Model\PostInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\DependencyInjection\Container;
 
@@ -12,12 +13,12 @@ class CommentManager extends AbstractManager implements CommentManagerInterface
     protected $repository;
     protected $class;
 
-    function __construct(Container $container, $class = ' Mozart\Bundle\CommentBundle\Entity\Comment')
+    public function __construct(Container $container, $class = ' Mozart\Bundle\CommentBundle\Entity\Comment')
     {
         parent::__construct($container);
 
         $this->em = $this->getEntityManager();
-        $this->repository = $this->em->getRepository('KayueWordpressBundle:Comment');
+        $this->repository = $this->em->getRepository('MozartCommentBundle:Comment');
         $this->class = $class;
     }
 
@@ -41,7 +42,7 @@ class CommentManager extends AbstractManager implements CommentManagerInterface
     {
         $this->em->remove($comment);
 
-        if($andFlush) {
+        if ($andFlush) {
             $this->em->flush();
         }
     }
@@ -50,7 +51,7 @@ class CommentManager extends AbstractManager implements CommentManagerInterface
     {
         $this->em->persist($comment);
 
-        if($andFlush) {
+        if ($andFlush) {
             $this->em->flush();
         }
     }

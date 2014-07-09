@@ -7,6 +7,6 @@ namespace  Mozart\Bundle\CommentBundle;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
-class MozartCommentBundle extends Bundle {
-
-} 
+class MozartCommentBundle extends Bundle
+{
+}

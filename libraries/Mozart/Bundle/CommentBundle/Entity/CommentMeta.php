@@ -3,14 +3,14 @@
 namespace  Mozart\Bundle\CommentBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use  Mozart\Bundle\CommentBundle\Annotation as Kayue;
+use  Mozart\Bundle\NucleusBundle\Annotation as Mozart;
 use  Mozart\Bundle\CommentBundle\Model\CommentMeta as ModelCommentaMeta;
 use Symfony\Component\Validator\Constraints as Constraints;
 
 /**
  * @ORM\Table(name="commentmeta")
  * @ORM\Entity
- * @Kayue\WPTable
+ * @Mozart\WPTable
  */
 class CommentMeta extends ModelCommentaMeta
 {
