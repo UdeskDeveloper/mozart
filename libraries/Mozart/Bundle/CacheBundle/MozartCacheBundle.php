@@ -5,9 +5,8 @@
 
 namespace Mozart\Bundle\CacheBundle;
 
-
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
-class MozartCacheBundle extends Bundle {
-
-} 
+class MozartCacheBundle extends Bundle
+{
+}

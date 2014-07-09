@@ -5,7 +5,6 @@
 
 namespace Mozart\Bundle\CacheBundle\Transient;
 
-
 class Transient implements TransientInterface
 {
 
@@ -18,7 +17,7 @@ class Transient implements TransientInterface
      *
      * @return bool true if successful, false otherwise
      */
-    function delete( $transient )
+    public function delete($transient)
     {
 
         /**
@@ -70,7 +69,7 @@ class Transient implements TransientInterface
      *
      * @return mixed Value of transient
      */
-    function get( $transient )
+    public function get($transient)
     {
 
         /**
@@ -141,7 +140,7 @@ class Transient implements TransientInterface
      *
      * @return bool False if value was not set and true if value was set.
      */
-    function set( $transient, $value, $expiration = 0 )
+    public function set($transient, $value, $expiration = 0)
     {
 
         /**
@@ -155,7 +154,7 @@ class Transient implements TransientInterface
          */
         $value = apply_filters( 'pre_set_transient_' . $transient, $value );
 
-        $expiration = (int)$expiration;
+        $expiration = (int) $expiration;
 
         if (wp_using_ext_object_cache()) {
             $result = wp_cache_set( $transient, $value, 'transient', $expiration );
@@ -217,6 +216,5 @@ class Transient implements TransientInterface
 
         return $result;
     }
-
 
 }
