@@ -5,9 +5,8 @@
 
 namespace Mozart\Bundle\AjaxBundle;
 
-
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
-class MozartAjaxBundle extends Bundle {
-
-} 
+class MozartAjaxBundle extends Bundle
+{
+}

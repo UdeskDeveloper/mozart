@@ -5,9 +5,8 @@
 
 namespace Mozart\Bundle\AssetBundle;
 
-
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
-class MozartAssetBunde extends Bundle {
-
-} 
+class MozartAssetBunde extends Bundle
+{
+}
