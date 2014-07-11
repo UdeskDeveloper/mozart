@@ -4,27 +4,27 @@
 // TODO: rethink these as it does not work well in console
 if (false === defined( 'ABSPATH' )) {
 
-    define( 'WP_USE_THEMES', false );
+	define( 'WP_USE_THEMES', false );
 
-    // let's find wp-load.php
-    $finder = new Symfony\Component\Finder\Finder();
+	// let's find wp-load.php
+	$finder = new Symfony\Component\Finder\Finder();
 
-    $finder->files()
-        ->name( 'wp-load.php' )
-        ->ignoreUnreadableDirs()
-        ->depth( '== 0' )
-        ->in( __DIR__ . '/../../' )
-        ->in( __DIR__ . '/../../../' )
-        ->in( __DIR__ . '/../../../../' )
-        ->in( __DIR__ . '/../../../../../' )
-        ->in( __DIR__ . '/../../../../../../' )
-        ->in( __DIR__ . '/../../../../../../../' )
-        ->in( __DIR__ . '/../../../../../../../../' );
+	$finder->files()
+		->name( 'wp-load.php' )
+		->ignoreUnreadableDirs()
+		->depth( '== 0' )
+		->in( __DIR__ . '/../../' )
+		->in( __DIR__ . '/../../../' )
+		->in( __DIR__ . '/../../../../' )
+		->in( __DIR__ . '/../../../../../' )
+		->in( __DIR__ . '/../../../../../../' )
+		->in( __DIR__ . '/../../../../../../../' )
+		->in( __DIR__ . '/../../../../../../../../' );
 
-    foreach ($finder as $file) {
-        require_once( $file->getRealpath() );
-        require_once ABSPATH . 'wp-admin/includes/file.php';
-    }
+	foreach ($finder as $file) {
+		require_once( $file->getRealpath() );
+		require_once ABSPATH . 'wp-admin/includes/file.php';
+	}
 }
 
 $loader = require_once __DIR__ . '/bootstrap.php.cache';
@@ -37,21 +37,21 @@ $loader = require_once __DIR__ . '/bootstrap.php.cache';
  */
 
 $environment = 'prod';
-$debug       = false;
+$debug = false;
 
 if (defined( 'WP_DEBUG' ) && WP_DEBUG) {
-    $environment = 'dev';
-    $debug       = true;
+	$environment = 'dev';
+	$debug = true;
 
-    Symfony\Component\Debug\Debug::enable( 1 );
+	Symfony\Component\Debug\Debug::enable( 1 );
 }
 
 require_once __DIR__ . '/MozartKernel.php';
-//require_once __DIR__.'/AppCache.php';
+//require_once __DIR__.'/MozartCache.php';
 
 $kernel = new MozartKernel( $environment, $debug );
 $kernel->loadClassCache();
-//$kernel = new AppCache($kernel);
+//$kernel = new MozartCache($kernel);
 // When using the HttpCache, you need to call the method in your front controller instead of relying on the configuration parameter
 //Request::enableHttpMethodParameterOverride();
 
@@ -67,24 +67,22 @@ $kernel->getContainer()->set( 'request', $request, 'request' );
 $request->setSession( $kernel->getContainer()->get( 'session' ) );
 $kernel->getContainer()->set( 'request_stack', $requestStack );
 
-\Mozart::setContainer( $kernel->getContainer() );
+Mozart::setContainer( $kernel->getContainer() );
 
 $url = content_url( '/mozart/public/' );
 
 preg_match( '%([^:]*):\/\/([^\/]*)(\/?.*)%', $url, $matches );
 if (count( $matches ) == 4) {
-    $context = $kernel->getContainer()->get( 'router' )->getContext();
-    $context->setHost( $matches[2] );
-    $context->setScheme( $matches[1] );
-    $context->setBaseUrl( $matches[3] );
+	$context = $kernel->getContainer()->get( 'router' )->getContext();
+	$context->setHost( $matches[2] );
+	$context->setScheme( $matches[1] );
+	$context->setBaseUrl( $matches[3] );
 }
 
-############################## SYMFONY 2 DEV ######################################
-//$kernel = new MozartKernel('dev', true);
-//$kernel->loadClassCache();
-//$request = Request::createFromGlobals();
-//$response = $kernel->handle($request);
-//$response->send();
-//$kernel->terminate($request, $response);
-
-add_action( 'wp_loader', array( 'Mozart', 'shutdown' ), 999 );
+add_action(
+	'wp_loader',
+	function () {
+		Mozart::service( 'kernel' )->shutdown();
+	},
+	999
+);
