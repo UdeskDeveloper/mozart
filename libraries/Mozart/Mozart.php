@@ -14,6 +14,10 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class Mozart
 {
 	/**
+	 * Mozart domain
+	 */
+	const DOMAIN = 'mozart';
+	/**
 	 * The currently active container object.
 	 *
 	 * @var \Symfony\Component\DependencyInjection\ContainerInterface
@@ -112,23 +116,5 @@ class Mozart
 	public static function renderView( $view, array $context = array() )
 	{
 		echo static::render( $view, $context );
-	}
-
-	/**
-	 * Gets Wordpress state.
-	 *
-	 * @return bool
-	 */
-	public static function isWpRunning()
-	{
-		return defined( 'ABSPATH' );
-	}
-
-	/**
-	 *
-	 */
-	public static function shutdown()
-	{
-		self::service( 'kernel' )->shutdown();
 	}
 }
