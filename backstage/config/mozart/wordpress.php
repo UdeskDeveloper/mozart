@@ -19,9 +19,10 @@ $wordressInfos = array(
         'uri' => plugins_url()
     ),
     'theme'      => array(
-        'name' => (string)wp_get_theme(),
-        'dir'  => get_template_directory(),
-        'uri'  => get_template_directory_uri()
+        'name'   => (string)wp_get_theme(),
+        'active' => get_template(),
+        'dir'    => get_template_directory(),
+        'uri'    => get_template_directory_uri()
     ),
     'stylesheet' => array(
         'dir' => get_stylesheet_directory(),

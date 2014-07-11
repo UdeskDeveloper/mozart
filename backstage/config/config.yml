@@ -26,10 +26,7 @@ framework:
     http_method_override: true
 
 # Twig Configuration
-twig:
-    paths:
-        "%wp.theme.dir%/twigs": twigs
-        "%wp.theme.dir%/twigs/Note": Note
+#twig:
 
 mopa_bootstrap:
     form:
@@ -38,6 +35,32 @@ mopa_bootstrap:
         error_type: inline # or block (default is inline)
     # menu: ~
         # template: MyBundles:Menu:template.html.twig
+
+
+# The default path patterns used by LiiThemeBundle
+#            app_resource:
+#                '%app_path%/themes/%current_theme%/%template%'
+#                '%app_path%/views/%template%'
+#            bundle_resource:
+#                '%bundle_path%/Resources/themes/%current_theme%/%template%'
+#            bundle_resource_dir:
+#                '%dir%/themes/%current_theme%/%bundle_name%/%template%'
+#                '%dir%/%bundle_name%/%override_path%'
+
+liip_theme:
+    load_controllers: false
+    themes: ['web', 'tablet', 'phone']
+    active_theme: 'web'
+    path_patterns:
+            app_resource:
+                - %wp.theme.dir%/views/themes/%%current_theme%%/%%template%%
+                - %wp.theme.dir%/views/%%template%%
+            bundle_resource:
+                - %%bundle_path%%/Resources/views/themes/%%current_theme%%/%%template%%
+                - %%bundle_path%%/Resources/views/%%template%%
+            bundle_resource_dir:
+                - %wp.theme.dir%/views/themes/%%current_theme%%/%%bundle_name%%/%%template%%
+                - %wp.theme.dir%/views/%%bundle_name%%/%%override_path%%
 #
 #liip_imagine:
 #    loaders:

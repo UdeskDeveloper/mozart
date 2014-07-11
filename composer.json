@@ -1,14 +1,14 @@
 {
-    "name"       : "rhetina/mozart",
+    "name": "rhetina/mozart",
     "description": "The framework that brings the awesomeness of Symfony into Wordpress",
-    "type"       : "wordpress-framework",
-    "authors"    : [
+    "type": "wordpress-framework",
+    "authors": [
         {
-            "name" : "Alexandru Furculita",
+            "name": "Alexandru Furculita",
             "email": "alex@rhetina.com"
         }
     ],
-    "autoload"   : {
+    "autoload": {
         "psr-4": {
             "ACF\\": "libraries/ACF/",
             "Mozart\\": "libraries/Mozart/",
@@ -21,40 +21,41 @@
             "libraries/Mozart/Mozart.php"
         ]
     },
-    "require"    : {
+    "require": {
         "php": ">=5.3.3",
 
-        "twig/twig"      : "~1.12",
+        "twig/twig": "~1.12",
         "twig/extensions": "~1.0",
 
-        "symfony/symfony"       : "~2.4",
+        "symfony/symfony": "~2.4",
         "symfony/monolog-bundle": "~2.4",
 
         "sensio/framework-extra-bundle": "~3.0",
 
-        "doctrine/orm"            : "~2.2,>=2.2.3",
+        "doctrine/orm": "~2.2,>=2.2.3",
         "doctrine/doctrine-bundle": "~1.2",
 
         "mopa/bootstrap-bundle": "3.*@dev",
+        "liip/theme-bundle": "dev-master",
 
         "tgm/plugin-activation": "*"
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3"
     },
-    "config"     : {
+    "config": {
         "autoloader-suffix": "Mozart",
-        "bin-dir"          : "binaries",
-        "vendor-dir"       : "vendor"
+        "bin-dir": "binaries",
+        "vendor-dir": "vendor"
     },
-    "scripts"    : {
+    "scripts": {
         "post-install-cmd": [
             "Rhetina\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::buildBootstrap",
             "Rhetina\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::clearCache",
             "Rhetina\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installAssets",
             "Rhetina\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::removeSymfonyStandardFiles"
         ],
-        "post-update-cmd" : [
+        "post-update-cmd": [
             "Rhetina\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::buildBootstrap",
             "Rhetina\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::clearCache",
             "Rhetina\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installAssets",
