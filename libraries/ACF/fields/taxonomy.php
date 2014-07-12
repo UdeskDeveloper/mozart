@@ -361,7 +361,7 @@ if (!class_exists( 'acf_field_taxonomy' )) :
         *  @return	$value (mixed) the modified value
         */
 
-        public function format_value( $value, $post_id, $field, $template )
+        public function format_value( $value, $post_id, $field, $template = false )
         {
             // bail early if no value or not for template
             if (empty( $value ) || !$template) {
