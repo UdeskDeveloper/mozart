@@ -66,7 +66,7 @@ class Taxonomy extends ModelTaxonomy
     /**
      * {@inheritdoc}
      *
-     * @ORM\ManyToMany(targetEntity="Mozart\Bundle\PostBundle\Entity\Post", mappedBy="taxonomies")
+     * @ORM\ManyToMany(targetEntity="Post", mappedBy="taxonomies")
      */
     protected $posts;
 

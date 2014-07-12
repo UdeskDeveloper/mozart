@@ -112,14 +112,14 @@ class User extends ModelUser
     /**
      * {@inheritdoc}
      *
-     * @ORM\OneToMany(targetEntity="Mozart\Bundle\PostBundle\Entity\Post", mappedBy="user")
+     * @ORM\OneToMany(targetEntity="Mozart\Bundle\UserBundle\Entity\Post", mappedBy="user")
      */
     protected $posts;
 
     /**
      * {@inheritdoc}
      *
-     * @ORM\OneToMany(targetEntity="Mozart\Bundle\CommentBundle\Entity\Comment", mappedBy="user")
+     * @ORM\OneToMany(targetEntity="Mozart\Bundle\UserBundle\Entity\Comment", mappedBy="user")
      */
     protected $comments;
 
