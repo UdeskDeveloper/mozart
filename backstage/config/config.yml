@@ -46,7 +46,6 @@ mopa_bootstrap:
 #            bundle_resource_dir:
 #                '%dir%/themes/%current_theme%/%bundle_name%/%template%'
 #                '%dir%/%bundle_name%/%override_path%'
-
 liip_theme:
     load_controllers: false
     themes: ['web', 'tablet', 'phone']
@@ -61,6 +60,7 @@ liip_theme:
             bundle_resource_dir:
                 - %wp.theme.dir%/views/themes/%%current_theme%%/%%bundle_name%%/%%template%%
                 - %wp.theme.dir%/views/%%bundle_name%%/%%override_path%%
+                - %wp.theme.dir%/views/%%bundle_name%%/%%template%%
 #
 #liip_imagine:
 #    loaders:
