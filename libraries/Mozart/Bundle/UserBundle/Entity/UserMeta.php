@@ -43,7 +43,7 @@ class UserMeta extends ModelUserMeta
     /**
      * {@inheritdoc}
      *
-     * @ORM\ManyToOne(targetEntity=" Mozart\Bundle\UserBundle\Entity\User", inversedBy="metas")
+     * @ORM\ManyToOne(targetEntity="Mozart\Bundle\UserBundle\Entity\User", inversedBy="metas")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="user_id", referencedColumnName="ID")
      * })

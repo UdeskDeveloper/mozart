@@ -1,6 +1,6 @@
 <?php
 
-namespace  Mozart\Bundle\CommentBundle\Entity;
+namespace Mozart\Bundle\CommentBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
@@ -152,8 +152,8 @@ class Comment extends ModelComment
      */
     public function onPrePersist()
     {
-        $this->date    = new \DateTime('now');
-        $this->dateGmt = new \DateTime('now', new \DateTimeZone('GMT'));
+        $this->date = new \DateTime( 'now' );
+        $this->dateGmt = new \DateTime( 'now', new \DateTimeZone( 'GMT' ) );
     }
 
     /**
@@ -167,7 +167,7 @@ class Comment extends ModelComment
             try {
                 // prevent lazy loading the user entity because it might not exist
                 $this->user->__load();
-            } catch (\Doctrine\ORM\EntityNotFoundException $e) {
+            } catch ( \Doctrine\ORM\EntityNotFoundException $e ) {
                 // return null if user does not exist
                 $this->user = null;
             }

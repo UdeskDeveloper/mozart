@@ -41,7 +41,7 @@ class CommentMeta extends ModelCommentaMeta
     /**
      * {@inheritdoc}
      *
-     * @ORM\ManyToOne(targetEntity=" Mozart\Bundle\CommentBundle\Entity\Comment", inversedBy="metas")
+     * @ORM\ManyToOne(targetEntity="Mozart\Bundle\CommentBundle\Entity\Comment", inversedBy="metas")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="comment_id", referencedColumnName="comment_ID")
      * })
