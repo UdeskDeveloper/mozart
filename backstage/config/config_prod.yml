@@ -12,9 +12,11 @@ imports:
 #        query_cache_driver: apc
 
 twig:
-    debug:            false
-    strict_variables: false
-    cache:            true
+    debug:                     %kernel.debug%
+    strict_variables:          %kernel.debug%
+    cache:                     %kernel.cache_dir%/twig
+    charset:                   %kernel.charset%
+    auto_reload:               true
 
 monolog:
     handlers:
