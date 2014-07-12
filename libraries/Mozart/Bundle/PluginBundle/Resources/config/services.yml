@@ -1,0 +1,3 @@
+services:
+    mozart.plugin.activator:
+        class: Mozart\Component\Plugin\Activator
