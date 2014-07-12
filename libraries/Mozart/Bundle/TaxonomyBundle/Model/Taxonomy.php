@@ -2,6 +2,8 @@
 
 namespace Mozart\Bundle\TaxonomyBundle\Model;
 
+use Mozart\Bundle\PostBundle\Model\Post;
+
 /**
  * Class Taxonomy
  *
