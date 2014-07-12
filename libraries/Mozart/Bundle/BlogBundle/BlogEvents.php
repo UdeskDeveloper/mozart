@@ -1,8 +1,12 @@
 <?php
 
-namespace  Mozart\Bundle\BlogBundle;
+namespace Mozart\Bundle\BlogBundle;
 
-class WordpressEvents
+/**
+ * Class BlogEvents
+ * @package Mozart\Bundle\BlogBundle
+ */
+class BlogEvents
 {
     /**
      * Switch the current blog.
