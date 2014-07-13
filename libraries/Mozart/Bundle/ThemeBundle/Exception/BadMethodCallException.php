@@ -10,4 +10,4 @@ use Mozart\Bundle\NucleusBundle\Exception\ExceptionInterface;
 class BadMethodCallException extends \BadMethodCallException implements ExceptionInterface
 {
 
-} 
+}

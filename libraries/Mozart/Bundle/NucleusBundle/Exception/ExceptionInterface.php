@@ -5,7 +5,6 @@
 
 namespace Mozart\Bundle\NucleusBundle\Exception;
 
-
-interface ExceptionInterface {
-
-} 
+interface ExceptionInterface
+{
+}

@@ -72,7 +72,8 @@ class Configuration
         $this->builder = new \ReduxFramework( $this->sections, $this->args );
     }
 
-    public function getBuilder () {
+    public function getBuilder()
+    {
         return $this->builder;
     }
 

@@ -25,7 +25,7 @@ class CaptionShortcode implements ShortcodeInterface
      *
      * @return null|string
      */
-    public function process( $attr, $content = null )
+    public function process($attr, $content = null)
     {
         // New-style shortcode with the caption inside the shortcode with the link and image tags.
         if (!isset( $attr['caption'] )) {
@@ -47,7 +47,7 @@ class CaptionShortcode implements ShortcodeInterface
             )
         );
 
-        if (1 > (int)$width || empty( $caption )) {
+        if (1 > (int) $width || empty( $caption )) {
             return $content;
         }
 
@@ -55,7 +55,7 @@ class CaptionShortcode implements ShortcodeInterface
             $id = 'id="' . $id . '" ';
         }
 
-        return '<div ' . $id . 'class="wp-caption ' . $align . '" style="width: ' . ( 10 + (int)$width ) . 'px">'
+        return '<div ' . $id . 'class="wp-caption ' . $align . '" style="width: ' . ( 10 + (int) $width ) . 'px">'
         . $content . '<p class="wp-caption-text">' . $caption . '</p></div>';
     }
 
@@ -65,9 +65,9 @@ class CaptionShortcode implements ShortcodeInterface
      *
      * @return array
      */
-    private function shortcodeAtts( $pairs, $atts )
+    private function shortcodeAtts($pairs, $atts)
     {
-        $atts = (array)$atts;
+        $atts = (array) $atts;
         $out  = array();
         foreach ($pairs as $name => $default) {
             if (array_key_exists( $name, $atts )) {

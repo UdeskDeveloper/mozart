@@ -20,7 +20,7 @@ class Configuration
         add_action( "redux/extensions/mozart-options/before", array( $this, 'loadExtensions' ) );
     }
 
-    public function loadExtensions( \ReduxFramework $builder )
+    public function loadExtensions(\ReduxFramework $builder)
     {
         if ($GLOBALS['pagenow'] === "customize.php"
             || $GLOBALS['pagenow'] === "admin-ajax.php"

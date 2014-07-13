@@ -10,4 +10,4 @@ use Mozart\Bundle\NucleusBundle\Exception\ExceptionInterface;
 class FileNotFoundException extends \Exception implements ExceptionInterface
 {
 
-} 
+}

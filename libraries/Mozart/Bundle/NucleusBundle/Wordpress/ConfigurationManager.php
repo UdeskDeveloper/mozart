@@ -37,7 +37,7 @@ class ConfigurationManager
      * @param        $loggedInKey
      * @param        $loggedInSalt
      */
-    public function __construct( $siteUrl, $cookiePath = '/', $cookieDomain = null, $loggedInKey, $loggedInSalt )
+    public function __construct($siteUrl, $cookiePath = '/', $cookieDomain = null, $loggedInKey, $loggedInSalt)
     {
         $this->siteUrl      = $siteUrl;
         $this->cookiePath   = $cookiePath;

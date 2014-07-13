@@ -5,9 +5,8 @@
 
 namespace Mozart\Bundle\ActionBundle;
 
-
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
-class MozartActionBundle extends Bundle {
-
-} 
+class MozartActionBundle extends Bundle
+{
+}

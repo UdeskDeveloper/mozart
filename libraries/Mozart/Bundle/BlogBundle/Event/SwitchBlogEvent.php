@@ -20,7 +20,7 @@ class SwitchBlogEvent extends Event
     /**
      * @param Blog $blog
      */
-    public function __construct( Blog $blog )
+    public function __construct(Blog $blog)
     {
         $this->blog = $blog;
     }

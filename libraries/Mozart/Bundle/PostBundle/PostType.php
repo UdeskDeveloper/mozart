@@ -414,7 +414,7 @@ class PostType implements PostTypeInterface
      *
      * @return array
      */
-    public function changeMediaViewStrings( $strings )
+    public function changeMediaViewStrings($strings)
     {
         $strings['insertIntoPost']     = sprintf( __( 'Insert into %s', 'woocommerce' ), $this->getName() );
         $strings['uploadedToThisPost'] = sprintf(

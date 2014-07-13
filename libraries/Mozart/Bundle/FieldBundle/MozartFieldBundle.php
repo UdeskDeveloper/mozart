@@ -11,7 +11,7 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 class MozartFieldBundle extends Bundle
 {
 
-    public function build( ContainerBuilder $container )
+    public function build(ContainerBuilder $container)
     {
         parent::build( $container );
     }
@@ -28,4 +28,4 @@ class MozartFieldBundle extends Bundle
         new \Mozart\Bundle\FieldBundle\ACF\Extension\NavMenu();
         new \Mozart\Bundle\FieldBundle\ACF\Extension\StarRating();
     }
-} 
+}

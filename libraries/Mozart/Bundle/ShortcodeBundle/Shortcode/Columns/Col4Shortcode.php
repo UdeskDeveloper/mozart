@@ -17,7 +17,7 @@ class Col4Shortcode implements ShortcodeInterface
      *
      * @return string
      */
-    public function process( $params, $content = null )
+    public function process($params, $content = null)
     {
         $result = '<div class="col-xs-4">' . do_shortcode( $content ) . '</div>';
 

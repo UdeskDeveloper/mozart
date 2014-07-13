@@ -7,14 +7,13 @@ namespace Mozart\Bundle\PostBundle\DependencyInjection\Compiler;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
-use Symfony\Component\DependencyInjection\Reference;
 
 class UserCapabilitiesPerPostTypeCompilerPass implements CompilerPassInterface
 {
     /**
      * @param ContainerBuilder $container
      */
-    public function process( ContainerBuilder $container )
+    public function process(ContainerBuilder $container)
     {
         if (false === $container->hasDefinition( 'mozart_post.post_type_manager' )) {
             return;

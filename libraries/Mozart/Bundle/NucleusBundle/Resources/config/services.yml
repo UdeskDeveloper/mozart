@@ -21,7 +21,7 @@ services:
             - @service_container
         tags:
             - { name: twig.extension }
-            
+
     mozart_nucleus.configuration.manager:
         class: %mozart_nucleus.configuration.manager.class%
         arguments:

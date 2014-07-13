@@ -33,8 +33,8 @@ class ReduxSection implements SectionInterface, \ArrayAccess
         $this->section               = array();
     }
 
-    public function getConfiguration() {
-
+    public function getConfiguration()
+    {
         $conf = array(
             'icon' => $this->getIcon(),
             'title' => $this->getTitle(),
@@ -44,7 +44,7 @@ class ReduxSection implements SectionInterface, \ArrayAccess
         if ($this->getParent() !== '') {
             $conf['subsection'] = true;
         }
-        $conf['fields'] = (array)$this->getFields();
+        $conf['fields'] = (array) $this->getFields();
 
         return $conf;
     }
@@ -112,7 +112,7 @@ class ReduxSection implements SectionInterface, \ArrayAccess
      *                 <p>
      *                 The return value will be casted to boolean if non-boolean was returned.
      */
-    public function offsetExists( $offset )
+    public function offsetExists($offset)
     {
         return isset( $this->section[$offset] );
     }
@@ -129,7 +129,7 @@ class ReduxSection implements SectionInterface, \ArrayAccess
      *
      * @return mixed Can return all value types.
      */
-    public function offsetGet( $offset )
+    public function offsetGet($offset)
     {
         return isset( $this->section[$offset] ) ? $this->section[$offset] : null;
     }
@@ -149,7 +149,7 @@ class ReduxSection implements SectionInterface, \ArrayAccess
      *
      * @return void
      */
-    public function offsetSet( $offset, $value )
+    public function offsetSet($offset, $value)
     {
         if (is_null( $offset )) {
             $this->section[] = $value;
@@ -170,7 +170,7 @@ class ReduxSection implements SectionInterface, \ArrayAccess
      *
      * @return void
      */
-    public function offsetUnset( $offset )
+    public function offsetUnset($offset)
     {
         unset( $this->section[$offset] );
     }
@@ -181,7 +181,7 @@ class ReduxSection implements SectionInterface, \ArrayAccess
      *
      * @link http://php.net/manual/en/iteratoraggregate.getiterator.php
      * @return Traversable An instance of an object implementing <b>Iterator</b> or
-     *       <b>Traversable</b>
+     *                     <b>Traversable</b>
      */
     public function getIterator()
     {

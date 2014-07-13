@@ -13,7 +13,7 @@ class CommentManager extends AbstractManager implements CommentManagerInterface
     protected $repository;
     protected $class;
 
-    public function __construct(Container $container, $class = ' Mozart\Bundle\CommentBundle\Entity\Comment')
+    public function __construct(Container $container, $class = 'Mozart\Bundle\CommentBundle\Entity\Comment')
     {
         parent::__construct($container);
 

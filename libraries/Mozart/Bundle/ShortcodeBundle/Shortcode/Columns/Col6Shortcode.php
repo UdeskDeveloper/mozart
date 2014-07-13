@@ -17,7 +17,7 @@ class Col6Shortcode implements ShortcodeInterface
      *
      * @return string
      */
-    public function process( $params, $content = null )
+    public function process($params, $content = null)
     {
         $result = '<div class="col-xs-6">' . do_shortcode( $content ) . '</div>';
 

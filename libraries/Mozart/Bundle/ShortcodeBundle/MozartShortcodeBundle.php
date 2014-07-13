@@ -9,10 +9,9 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Mozart\Bundle\ShortcodeBundle\DependencyInjection\Compiler\ShortcodeCompilerPass;
 
-
 class MozartShortcodeBundle extends Bundle
 {
-    public function build( ContainerBuilder $container )
+    public function build(ContainerBuilder $container)
     {
         parent::build( $container );
 
@@ -39,4 +38,4 @@ class MozartShortcodeBundle extends Bundle
         }
     }
 
-} 
+}

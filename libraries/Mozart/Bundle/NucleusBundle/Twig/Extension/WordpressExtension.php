@@ -2,7 +2,6 @@
 
 namespace Mozart\Bundle\NucleusBundle\Twig\Extension;
 
-use Doctrine\ORM\EntityManager;
 use Mozart\Bundle\PostBundle\Entity\Post;
 use Mozart\Bundle\TaxonomyBundle\Entity\Taxonomy;
 use Mozart\Bundle\UserBundle\Entity\User;
@@ -70,7 +69,7 @@ class WordpressExtension extends \Twig_Extension
      */
     protected $shortcodeChain;
 
-    public function __construct( ContainerInterface $container )
+    public function __construct(ContainerInterface $container)
     {
         $this->container      = $container;
         $this->blogManager    = $this->container->get( 'mozart_blog.manager' );
@@ -80,10 +79,10 @@ class WordpressExtension extends \Twig_Extension
 
     public function reloadManagers()
     {
-        $this->optionManager     = $this->container->get( 'mozart_option.manager' );
+        $this->optionManager     = $this->container->get( 'mozart.option.manager' );
         $this->postManager       = $this->container->get( 'mozart_post.manager' );
         $this->postMetaManager   = $this->container->get( 'mozart_post.meta.manager' );
-        $this->attachmentManager = $this->container->get( 'mozart_attachment.manager' );
+        $this->attachmentManager = $this->container->get( 'mozart_post.attachment_manager' );
         $this->termManager       = $this->container->get( 'mozart_taxonomy.term.manager' );
         $this->userMetaManager   = $this->container->get( 'mozart_user.meta.manager' );
         $this->commentManager    = $this->container->get( 'mozart_comment.manager' );
@@ -130,52 +129,52 @@ class WordpressExtension extends \Twig_Extension
         );
     }
 
-    public function switchBlog( $id )
+    public function switchBlog($id)
     {
         $this->blogManager->setCurrentBlogId( $id );
     }
 
-    public function findAttachmentsByPost( Post $post )
+    public function findAttachmentsByPost(Post $post)
     {
         return $this->attachmentManager->findAttachmentsByPost( $post );
     }
 
-    public function findOneAttachmentById( $id )
+    public function findOneAttachmentById($id)
     {
         return $this->attachmentManager->findOneAttachmentById( $id );
     }
 
-    public function findFeaturedImageByPost( Post $post )
+    public function findFeaturedImageByPost(Post $post)
     {
         return $this->attachmentManager->findFeaturedImageByPost( $post );
     }
 
-    public function findOneOptionByName( $id )
+    public function findOneOptionByName($id)
     {
         return $this->optionManager->findOneOptionByName( $id );
     }
 
-    public function findOnePostById( $id )
+    public function findOnePostById($id)
     {
         return $this->postManager->findOnePostById( $id );
     }
 
-    public function findOnePostBySlug( $slug )
+    public function findOnePostBySlug($slug)
     {
         return $this->postManager->findOnePostBySlug( $slug );
     }
 
-    public function findAllMetasByPost( Post $post )
+    public function findAllMetasByPost(Post $post)
     {
         return $this->postMetaManager->findAllMetasByPost( $post );
     }
 
-    public function findAllMetasByUser( User $user )
+    public function findAllMetasByUser(User $user)
     {
         return $this->userMetaManager->findAllMetasByUser( $user );
     }
 
-    public function findMetasBy( array $criteria )
+    public function findMetasBy(array $criteria)
     {
         if (array_key_exists( 'post', $criteria ) && array_key_exists( 'user', $criteria )) {
             throw new \Exception( 'It is ambiguous to find metas with both user and post key. Please remove one of them.' );
@@ -193,7 +192,7 @@ class WordpressExtension extends \Twig_Extension
         }
     }
 
-    public function findOneMetaBy( array $criteria )
+    public function findOneMetaBy(array $criteria)
     {
         if (array_key_exists( 'post', $criteria ) && array_key_exists( 'user', $criteria )) {
             throw new \Exception( 'It is ambiguous to find metas with both user and post key. Please remove one of them.' );
@@ -201,7 +200,7 @@ class WordpressExtension extends \Twig_Extension
 
         if (array_key_exists( 'post', $criteria )) {
             return $this->postMetaManager->findOneMetaBy( $criteria );
-        } else if (array_key_exists( 'user', $criteria )) {
+        } elseif (array_key_exists( 'user', $criteria )) {
             return $this->userMetaManager->findOneMetaBy( $criteria );
         } else {
             throw new \Exception( 'It is ambiguous to find metas without giving either post key or user key.
@@ -209,37 +208,37 @@ class WordpressExtension extends \Twig_Extension
         }
     }
 
-    public function findUserMetasBy( array $criteria )
+    public function findUserMetasBy(array $criteria)
     {
         return $this->userMetaManager->findMetasBy( $criteria );
     }
 
-    public function findOneUserMetaBy( array $criteria )
+    public function findOneUserMetaBy(array $criteria)
     {
         return $this->userMetaManager->findOneMetaBy( $criteria );
     }
 
-    public function findPostMetasBy( array $criteria )
+    public function findPostMetasBy(array $criteria)
     {
         return $this->postMetaManager->findMetasBy( $criteria );
     }
 
-    public function findOnePostMetaBy( array $criteria )
+    public function findOnePostMetaBy(array $criteria)
     {
         return $this->postMetaManager->findOneMetaBy( $criteria );
     }
 
-    public function findTermsByPost( Post $post, Taxonomy $taxonomy = null )
+    public function findTermsByPost(Post $post, Taxonomy $taxonomy = null)
     {
         return $this->termManager->findTermsByPost( $post, $taxonomy );
     }
 
-    public function findCommentsByPost( Post $post )
+    public function findCommentsByPost(Post $post)
     {
         return $this->commentManager->findCommentsByPost( $post );
     }
 
-    public function findCategoriesByPost( Post $post )
+    public function findCategoriesByPost(Post $post)
     {
         $taxonomy = new Taxonomy();
         $taxonomy->setName( 'category' );
@@ -247,7 +246,7 @@ class WordpressExtension extends \Twig_Extension
         return $this->findTermsByPost( $post, $taxonomy );
     }
 
-    public function findPostFormatByPost( Post $post )
+    public function findPostFormatByPost(Post $post)
     {
         $taxonomy = new Taxonomy();
         $taxonomy->setName( 'post_format' );
@@ -261,14 +260,13 @@ class WordpressExtension extends \Twig_Extension
         return 'standard';
     }
 
-    public function findTagsByPost( Post $post )
+    public function findTagsByPost(Post $post)
     {
         $taxonomy = new Taxonomy();
         $taxonomy->setName( 'post_tag' );
 
         return $this->findTermsByPost( $post, $taxonomy );
     }
-
 
     /**
      * Replaces double line-breaks with paragraph elements.
@@ -278,12 +276,12 @@ class WordpressExtension extends \Twig_Extension
      * line-breaks after conversion become <<br />> tags, unless $br is set to '0'
      * or 'false'.
      *
-     * @param  string $pee The text which has to be formatted.
-     * @param  bool   $br  Optional. If set, this will convert all remaining line-breaks after paragraphing. Default true.
+     * @param string $pee The text which has to be formatted.
+     * @param bool   $br  Optional. If set, this will convert all remaining line-breaks after paragraphing. Default true.
      *
      * @return string Text which has been converted into correct paragraph tags.
      */
-    public function wpautop( $pee, $br = true )
+    public function wpautop($pee, $br = true)
     {
         $pre_tags = array();
 
@@ -348,7 +346,7 @@ class WordpressExtension extends \Twig_Extension
         if ($br) {
             $pee = preg_replace_callback(
                 '/<(script|style).*?<\/\\1>/s',
-                function ( $matches ) {
+                function ($matches) {
                     // newline preservation help function for wpautop
                     return str_replace( "\n", "<WPPreserveNewline />", $matches[0] );
                 },
@@ -380,11 +378,11 @@ class WordpressExtension extends \Twig_Extension
      * </code>
      * Code within certain html blocks are skipped.
      *
-     * @param  string $text The text to be formatted
+     * @param string $text The text to be formatted
      *
      * @return string The string replaced with html entities
      */
-    public function wptexturize( $text )
+    public function wptexturize($text)
     {
         static $static_characters, $static_replacements, $dynamic_characters, $dynamic_replacements,
         $default_no_texturize_tags, $default_no_texturize_shortcodes;
@@ -537,15 +535,15 @@ class WordpressExtension extends \Twig_Extension
      * @access private
      * @since  2.9.0
      *
-     * @param  string $text              Text to check. First character is assumed to be $opening
-     * @param  array  $stack             Array used as stack of opened tag elements
-     * @param  string $disabled_elements Tags to match against formatted as regexp sub-expression
-     * @param  string $opening           Tag opening character, assumed to be 1 character long
-     * @param  string $opening           Tag closing  character
+     * @param string $text              Text to check. First character is assumed to be $opening
+     * @param array  $stack             Array used as stack of opened tag elements
+     * @param string $disabled_elements Tags to match against formatted as regexp sub-expression
+     * @param string $opening           Tag opening character, assumed to be 1 character long
+     * @param string $opening           Tag closing  character
      *
      * @return object
      */
-    public function wptexturizePushpopElement( $text, &$stack, $disabled_elements, $opening = '<', $closing = '>' )
+    public function wptexturizePushpopElement($text, &$stack, $disabled_elements, $opening = '<', $closing = '>')
     {
         // Check if it is a closing tag -- otherwise assume opening tag
         if (strncmp( $opening . '/', $text, 2 )) {
@@ -579,7 +577,7 @@ class WordpressExtension extends \Twig_Extension
      *
      * @return string Content with shortcodes filtered out.
      */
-    public function doShortcode( $content )
+    public function doShortcode($content)
     {
         return $this->shortcodeChain->process( $content );
     }

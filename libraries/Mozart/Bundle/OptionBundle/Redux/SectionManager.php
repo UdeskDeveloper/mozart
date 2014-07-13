@@ -31,7 +31,7 @@ class SectionManager
      * @param ReduxSection $section
      * @param null         $alias
      */
-    public function addSection( ReduxSection $section, $alias = null)
+    public function addSection(ReduxSection $section, $alias = null)
     {
         if (null === $alias) {
             $this->sections[] = $section->getConfiguration();

@@ -10,14 +10,13 @@ use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
 
-
 /**
  * Class MozartShortcodeExtension
  *
  * @package Mozart\Bundle\ShortcodeBundle\DependencyInjection
  */
-class MozartShortcodeExtension extends Extension {
-
+class MozartShortcodeExtension extends Extension
+{
     /**
      * Loads the services based on your application configuration.
      *
@@ -38,4 +37,4 @@ class MozartShortcodeExtension extends Extension {
     {
         return 'mozart_shortcode';
     }
-} 
+}
