@@ -2,6 +2,9 @@
 
 namespace Mozart\Component\Plugin;
 
+use Mozart\Bundle\PluginBundle\Admin\UserInterfaceManager;
+use Mozart\Bundle\PluginBundle\Model\PluginManager;
+
 if (false === class_exists( '\WP_List_Table' )) {
     require_once( ABSPATH . 'wp-admin/includes/class-wp-list-table.php' );
 }
@@ -23,21 +26,32 @@ if (false === class_exists( '\WP_List_Table' )) {
 class Lister extends \WP_List_Table
 {
 
-    private $activator;
+    /**
+     * @var UserInterfaceManager
+     */
+    private $userInterfaceManager;
+    /**
+     * @var BulkInstaller
+     */
     private $bulkInstaller;
+    /**
+     * @var PluginManager
+     */
+    private $pluginManager;
 
     /**
      * References parent constructor and sets defaults for class.
      *
-     * @global unknown $status
-     * @global string $page
      */
-    public function __construct( Activator $activator, BulkInstaller $bulkInstaller )
+    public function __construct(
+        PluginManager $pluginManager,
+        UserInterfaceManager $userInterfaceManager,
+        BulkInstaller $bulkInstaller
+    )
     {
-        $this->activator = $activator;
+        $this->pluginManager = $pluginManager;
+        $this->userInterfaceManager = $userInterfaceManager;
         $this->bulkInstaller = $bulkInstaller;
-
-        global $status, $page;
 
         parent::__construct(
             array(
@@ -61,15 +75,15 @@ class Lister extends \WP_List_Table
     {
 
         // Load thickbox for plugin links.
-        $this->activator->admin_init();
-        $this->activator->thickbox();
+        $this->userInterfaceManager->admin_init();
+        $this->userInterfaceManager->thickbox();
 
         // Prep variables for use and grab list of all installed plugins.
         $table_data = array();
         $i = 0;
         $installed_plugins = get_plugins();
 
-        foreach ($this->activator->plugins as $plugin) {
+        foreach ($this->$pluginManager->getPlugins() as $plugin) {
             if (is_plugin_active( $plugin['file_path'] )) {
                 continue; // No need to display plugins if they are installed and activated.
             }
@@ -103,7 +117,7 @@ class Lister extends \WP_List_Table
                 $table_data[$i]['plugin'] = '<strong>' . $plugin['name'] . '</strong>'; // No hyperlink.
             }
 
-            if (isset( $table_data[$i]['plugin'] ) && (array)$table_data[$i]['plugin']) {
+            if (isset( $table_data[$i]['plugin'] ) && (array) $table_data[$i]['plugin']) {
                 $plugin['name'] = $table_data[$i]['plugin'];
             }
 
@@ -175,14 +189,14 @@ class Lister extends \WP_List_Table
      *
      * @since 2.2.0
      *
-     * @param string $name Name of the plugin, as it was registered.
-     * @param string $data Optional. Array key of plugin data to return. Default is slug.
+     * @param  string         $name Name of the plugin, as it was registered.
+     * @param  string         $data Optional. Array key of plugin data to return. Default is slug.
      * @return string|boolean Plugin slug if found, false otherwise.
      */
-    protected function _get_plugin_data_from_name( $name, $data = 'slug' )
+    protected function _get_plugin_data_from_name($name, $data = 'slug')
     {
 
-        foreach ($this->activator->plugins as $plugin => $values) {
+        foreach ($this->pluginManager->getPlugins() as $plugin => $values) {
             if ($name == $values['name'] && isset( $values[$data] )) {
                 return $values[$data];
             }
@@ -193,31 +207,13 @@ class Lister extends \WP_List_Table
     }
 
     /**
-     * Create default columns to display important plugin information
-     * like type, action and status.
-     *
-     * @param array $item Array of item data.
-     * @param string $column_name The name of the column.
-     */
-    public function column_default( $item, $column_name )
-    {
-
-        switch ($column_name) {
-            case 'source':
-            case 'type':
-            case 'status':
-                return $item[$column_name];
-        }
-    }
-
-    /**
      * Create default title column along with action links of 'Install'
      * and 'Activate'.
      *
-     * @param array $item Array of item data.
-     * @return string     The action hover links.
+     * @param  array  $item Array of item data.
+     * @return string The action hover links.
      */
-    public function column_plugin( $item )
+    public function column_plugin($item)
     {
         $installed_plugins = get_plugins();
         $actions = array();
@@ -230,7 +226,7 @@ class Lister extends \WP_List_Table
                     wp_nonce_url(
                         add_query_arg(
                             array(
-                                'page'          => $this->activator->menu,
+                                'page'          => $this->userInterfaceManager->getOption('menu'),
                                 'plugin'        => $item['slug'],
                                 'plugin_name'   => $item['sanitized_plugin'],
                                 'plugin_source' => $item['url'],
@@ -253,7 +249,7 @@ class Lister extends \WP_List_Table
                     ) . '</a>',
                     add_query_arg(
                         array(
-                            'page'                 => $this->activator->menu,
+                            'page'                 => $this->userInterfaceManager->getOption('menu'),
                             'plugin'               => $item['slug'],
                             'plugin_name'          => $item['sanitized_plugin'],
                             'plugin_source'        => $item['url'],
@@ -276,10 +272,10 @@ class Lister extends \WP_List_Table
      *
      * Adds a checkbox for each plugin.
      *
-     * @param array $item Array of item data.
-     * @return string     The input checkbox with all necessary info.
+     * @param  array  $item Array of item data.
+     * @return string The input checkbox with all necessary info.
      */
-    public function column_cb( $item )
+    public function column_cb($item)
     {
 
         $value = $item['file_path'] . ',' . $item['url'] . ',' . $item['sanitized_plugin'];
@@ -377,7 +373,7 @@ class Lister extends \WP_List_Table
                 $plugins = explode( ',', stripslashes( $_GET['plugins'] ) );
             } // Looks like the user can use the direct method, take from $_POST.
             elseif (isset( $_POST['plugin'] )) {
-                $plugins = (array)$_POST['plugin'];
+                $plugins = (array) $_POST['plugin'];
             } // Nothing has been submitted.
             else {
                 $plugins = array();
@@ -410,7 +406,7 @@ class Lister extends \WP_List_Table
                 $plugin_paths = explode( ',', stripslashes( $_GET['plugin_paths'] ) );
             } // Looks like the user doesn't need to enter his FTP creds.
             elseif (isset( $_POST['plugin'] )) {
-                $plugin_paths = (array)$plugin_path;
+                $plugin_paths = (array) $plugin_path;
             } // Nothing has been submitted.
             else {
                 $plugin_paths = array();
@@ -421,7 +417,7 @@ class Lister extends \WP_List_Table
                 $plugin_names = explode( ',', stripslashes( $_GET['plugin_names'] ) );
             } // Looks like the user doesn't need to enter his FTP creds.
             elseif (isset( $_POST['plugin'] )) {
-                $plugin_names = (array)$plugin_name;
+                $plugin_names = (array) $plugin_name;
             } // Nothing has been submitted.
             else {
                 $plugin_names = array();
@@ -465,7 +461,7 @@ class Lister extends \WP_List_Table
             $url = wp_nonce_url(
                 add_query_arg(
                     array(
-                        'page'         => $this->activator->menu,
+                        'page'         => $this->userInterfaceManager->getOption('menu'),
                         'tgmpa-action' => 'install-selected',
                         'plugins'      => urlencode( implode( ',', $plugins ) ),
                         'plugin_paths' => urlencode( implode( ',', $plugin_paths ) ),
@@ -484,6 +480,7 @@ class Lister extends \WP_List_Table
 
             if (!\WP_Filesystem( $creds )) {
                 request_filesystem_credentials( $url, $method, true, false, $fields ); // Setup WP_Filesystem.
+
                 return true;
             }
 
@@ -503,12 +500,12 @@ class Lister extends \WP_List_Table
                 ) ? plugins_api(
                     'plugin_information',
                     array( 'slug' => $plugin, 'fields' => array( 'sections' => false ) )
-                ) : (object)$api[$i] = 'tgmpa-empty';
+                ) : (object) $api[$i] = 'tgmpa-empty';
                 $i++;
             }
 
             if (is_wp_error( $api )) {
-                wp_die( $this->activator->strings['oops'] . var_dump( $api ) );
+                wp_die( $this->userInterfaceManager->getMessage('oops') . var_dump( $api ) );
             }
 
             // Capture download links from $api or set install link to pre-packaged/private repo.
@@ -519,18 +516,22 @@ class Lister extends \WP_List_Table
             }
 
             // Finally, all the data is prepared to be sent to the installer.
-            $url = add_query_arg( array( 'page' => $this->activator->menu ), network_admin_url( 'themes.php' ) );
+            $url = add_query_arg( array( 'page' => $this->userInterfaceManager->getOption('menu') ), network_admin_url( 'themes.php' ) );
             $nonce = 'bulk-plugins';
             $names = $plugin_names;
 
-            $skin = new BulkInstallerSkin( compact( 'url', 'nonce', 'names' ), $this->activator );
+            $skin = new BulkInstallerSkin(
+                compact( 'url', 'nonce', 'names' ),
+                $this->userInterfaceManager,
+                $this->pluginManager
+            );
             $this->bulkInstaller->setSkin( $skin );
 
             // Wrap the install process with the appropriate HTML.
             echo '<div class="tgmpa wrap">';
             echo '<h2>' . esc_html( get_admin_page_title() ) . '</h2>';
             // Process the bulk installation submissions.
-            $this->bulkInstaller->bulk_install( $sources );
+            $this->bulkInstaller->bulk_install( $sources, $this->userInterfaceManager->getOption('is_automatic') );
             echo '</div>';
 
             return true;
@@ -541,7 +542,7 @@ class Lister extends \WP_List_Table
             check_admin_referer( 'bulk-' . $this->_args['plural'] );
 
             // Grab plugin data from $_POST.
-            $plugins = isset( $_POST['plugin'] ) ? (array)$_POST['plugin'] : array();
+            $plugins = isset( $_POST['plugin'] ) ? (array) $_POST['plugin'] : array();
             $plugins_to_activate = array();
 
             // Split plugin value into array with plugin file path, plugin source and plugin name.
@@ -557,7 +558,7 @@ class Lister extends \WP_List_Table
 
             // Return early if there are no plugins to activate.
             if (empty( $plugins_to_activate )) {
-                return;
+                return false;
             }
 
             $plugins = array();
@@ -594,7 +595,7 @@ class Lister extends \WP_List_Table
             }
 
             // Update recently activated plugins option.
-            $recent = (array)get_option( 'recently_activated' );
+            $recent = (array) get_option( 'recently_activated' );
 
             foreach ($plugins as $plugin => $time) {
                 if (isset( $recent[$plugin] )) {
@@ -606,6 +607,8 @@ class Lister extends \WP_List_Table
 
             unset( $_POST ); // Reset the $_POST variable in case user wants to perform one action after another.
         }
+
+        return true;
     }
 
     /**
@@ -613,7 +616,6 @@ class Lister extends \WP_List_Table
      */
     public function prepare_items()
     {
-        $per_page = 100; // Set it high so we shouldn't have to worry about pagination.
         $columns = $this->get_columns(); // Get all necessary column information.
         $hidden = array(); // No columns to hide, but we must set as an array.
         $sortable = array(); // No reason to make sortable columns.

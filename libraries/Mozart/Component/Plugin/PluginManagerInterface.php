@@ -7,9 +7,5 @@ namespace Mozart\Component\Plugin;
 
 interface PluginManagerInterface
 {
-    public function getInstaller();
-
-    public function getActivator();
-
     public function getPlugins();
-} 
+}

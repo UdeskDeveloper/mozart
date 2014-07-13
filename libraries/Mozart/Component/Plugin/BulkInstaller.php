@@ -16,11 +16,10 @@ if (!class_exists( '\WP_Upgrader' )) {
  */
 class BulkInstaller extends \WP_Upgrader
 {
-
     /**
-     * @var Activator
+     * @var \Bulk_Upgrader_Skin
      */
-    private $activator;
+    private $skin;
     /**
      * @var
      */
@@ -44,17 +43,9 @@ class BulkInstaller extends \WP_Upgrader
     public $bulk = false;
 
     /**
-     * @param Activator $activator
-     */
-    public function __construct( Activator $activator )
-    {
-        $this->activator = $activator;
-    }
-
-    /**
      * @param \Bulk_Upgrader_Skin $skin
      */
-    public function setSkin( \Bulk_Upgrader_Skin $skin )
+    public function setSkin(\Bulk_Upgrader_Skin $skin)
     {
         $this->skin = $skin;
     }
@@ -62,10 +53,11 @@ class BulkInstaller extends \WP_Upgrader
     /**
      * Processes the bulk installation of plugins.
      *
-     * @param array $packages The plugin sources needed for installation.
+     * @param  array          $packages     The plugin sources needed for installation.
+     * @param  bool           $is_automatic
      * @return string|boolean Install confirmation messages on success, false on failure.
      */
-    public function bulk_install( $packages )
+    public function bulk_install($packages, $is_automatic = false)
     {
         // Pass installer skin object and set bulk property to true.
         $this->init();
@@ -73,7 +65,7 @@ class BulkInstaller extends \WP_Upgrader
 
         // Set install strings and automatic activation strings (if config option is set to true).
         $this->install_strings();
-        if ($this->activator->is_automatic) {
+        if ($is_automatic) {
             $this->activate_strings();
         }
 
@@ -109,7 +101,8 @@ class BulkInstaller extends \WP_Upgrader
                     'clear_working'     => true, // Remove original install file.
                     'is_multi'          => true, // Are we processing multiple installs?
                     'hook_extra'        => array( 'plugin' => $plugin, ), // Pass plugin source as extra data.
-                )
+                ),
+                $is_automatic
             );
 
             // Store installation results in result property.
@@ -136,10 +129,10 @@ class BulkInstaller extends \WP_Upgrader
      * This method also activates the plugin in the automatic flag has been
      * set to true for the TGMPA class.
      *
-     * @param array $options The installation cofig options
+     * @param  array      $options The installation cofig options
      * @return null/array Return early if error, array of installation data on success
      */
-    public function run( $options )
+    public function run($options, $is_automatic = false)
     {
 
         // Default config options.
@@ -221,16 +214,13 @@ class BulkInstaller extends \WP_Upgrader
         }
 
         // Only process the activation of installed plugins if the automatic flag is set to true.
-        if ($this->activator->is_automatic) {
+        if ($is_automatic) {
             // Flush plugins cache so we can make sure that the installed plugins list is always up to date.
             wp_cache_flush();
 
             // Get the installed plugin file and activate it.
             $plugin_info = $this->plugin_info( $options['package'] );
             $activate = activate_plugin( $plugin_info );
-
-            // Re-populate the file path now that the plugin has been installed and activated.
-            $this->activator->populate_file_path();
 
             // Set correct strings based on results.
             if (is_wp_error( $activate )) {
@@ -315,4 +305,3 @@ class BulkInstaller extends \WP_Upgrader
     }
 
 }
-    

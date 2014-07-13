@@ -2,6 +2,9 @@
 
 namespace Mozart\Component\Plugin;
 
+use Mozart\Bundle\PluginBundle\Admin\UserInterfaceManager;
+use Mozart\Bundle\PluginBundle\Model\PluginManager;
+
 if (!class_exists( '\Bulk_Upgrader_Skin' )) {
     require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
 }
@@ -18,7 +21,14 @@ if (!class_exists( '\Bulk_Upgrader_Skin' )) {
 class BulkInstallerSkin extends \Bulk_Upgrader_Skin
 {
 
-    private $activator;
+    /**
+     * @var UserInterfaceManager
+     */
+    private $userInterfaceManager;
+    /**
+     * @var PluginManager
+     */
+    private $pluginManager;
     /**
      * Holds plugin info for each individual plugin installation.
      *
@@ -43,15 +53,23 @@ class BulkInstallerSkin extends \Bulk_Upgrader_Skin
     /**
      * Constructor. Parses default args with new ones and extracts them for use.
      *
-     * @param array $args
-     * @param Activator $activator
+     * @param array                $args
+     * @param UserInterfaceManager $userInterfaceManager
      */
-    public function __construct( array $args = array(), Activator $activator )
-    {
-        $this->activator = $activator;
+    public function __construct(
+        array $args = array(),
+        UserInterfaceManager $userInterfaceManager,
+        PluginManager $pluginManager
+    ) {
+        $this->userInterfaceManager = $userInterfaceManager;
+        $this->pluginManager = $pluginManager;
 
         // Parse default and new args.
-        $defaults = array( 'url' => '', 'nonce' => '', 'names' => array() );
+        $defaults = array(
+            'url'   => '',
+            'nonce' => '',
+            'names' => array()
+        );
         $args = wp_parse_args( $args, $defaults );
 
         // Set plugin names to $this->plugin_names property.
@@ -72,7 +90,7 @@ class BulkInstallerSkin extends \Bulk_Upgrader_Skin
     {
 
         // Automatic activation strings.
-        if ($this->activator->is_automatic) {
+        if ($this->userInterfaceManager->getOption( 'is_automatic' )) {
             $this->upgrader->strings['skin_upgrade_start'] = __(
                 'The installation and activation process is starting. This process may take a while on some hosts, so please be patient.',
                 'tgmpa'
@@ -121,7 +139,7 @@ class BulkInstallerSkin extends \Bulk_Upgrader_Skin
      *
      * @param string $title
      */
-    public function before( $title = '' )
+    public function before($title = '')
     {
 
         // We are currently in the plugin installation loop, so set to true.
@@ -155,7 +173,7 @@ class BulkInstallerSkin extends \Bulk_Upgrader_Skin
      *
      * @param string $title
      */
-    public function after( $title = '' )
+    public function after($title = '')
     {
 
         // Close install strings.
@@ -215,15 +233,15 @@ class BulkInstallerSkin extends \Bulk_Upgrader_Skin
 
         // Display message based on if all plugins are now active or not.
         $complete = array();
-        foreach ($this->activator->plugins as $plugin) {
+        foreach ($this->pluginManager->getPlugins() as $plugin) {
             if (!is_plugin_active( $plugin['file_path'] )) {
                 echo '<p><a href="' . add_query_arg(
                         'page',
-                        $this->activator->menu,
+                        $this->userInterfaceManager->getOption( 'menu' ),
                         network_admin_url( 'themes.php' )
                     ) . '" title="' . esc_attr(
-                        $this->activator->strings['return']
-                    ) . '" target="_parent">' . $this->activator->strings['return'] . '</a></p>';
+                        $this->userInterfaceManager->getMessage( 'return' )
+                    ) . '" target="_parent">' . $this->userInterfaceManager->getMessage( 'return' ) . '</a></p>';
                 $complete[] = $plugin;
                 break;
             } // Nothing to store.
@@ -238,7 +256,7 @@ class BulkInstallerSkin extends \Bulk_Upgrader_Skin
         // All plugins are active, so we display the complete string and hide the menu to protect users.
         if (empty( $complete )) {
             echo '<p>' . sprintf(
-                    $this->activator->strings['complete'],
+                    $this->userInterfaceManager->getMessage( 'complete' ),
                     '<a href="' . network_admin_url() . '" title="' . __(
                         'Return to the Dashboard',
                         'tgmpa'
@@ -272,4 +290,3 @@ class BulkInstallerSkin extends \Bulk_Upgrader_Skin
     }
 
 }
-    
