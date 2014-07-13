@@ -29,7 +29,7 @@ class UserMetaManager extends AbstractManager implements UserMetaManagerInterfac
      *
      * @param EntityManager $em
      */
-    public function __construct( Container $container )
+    public function __construct(Container $container)
     {
         parent::__construct( $container );
 
@@ -41,7 +41,7 @@ class UserMetaManager extends AbstractManager implements UserMetaManagerInterfac
      * @param User     $user
      * @param UserMeta $meta
      */
-    public function addMeta( User $user, UserMeta $meta )
+    public function addMeta(User $user, UserMeta $meta)
     {
         $user->addMeta( $meta );
     }
@@ -51,7 +51,7 @@ class UserMetaManager extends AbstractManager implements UserMetaManagerInterfac
      *
      * @return \Doctrine\Common\Collections\Collection
      */
-    public function findAllMetasByUser( User $user )
+    public function findAllMetasByUser(User $user)
     {
         return $user->getMetas();
     }
@@ -61,7 +61,7 @@ class UserMetaManager extends AbstractManager implements UserMetaManagerInterfac
      *
      * @return array
      */
-    public function findMetasBy( array $criteria )
+    public function findMetasBy(array $criteria)
     {
         return $this->repository->findBy( $criteria );
     }
@@ -71,7 +71,7 @@ class UserMetaManager extends AbstractManager implements UserMetaManagerInterfac
      *
      * @return null|object
      */
-    public function findOneMetaBy( array $criteria )
+    public function findOneMetaBy(array $criteria)
     {
         return $this->repository->findOneBy( $criteria );
     }

@@ -320,7 +320,7 @@ class User implements UserInterface, \Serializable
     public function getRoles()
     {
         $roles = array();
-        $metas = $this->getMetas()->filter(function(UserMeta $meta) {
+        $metas = $this->getMetas()->filter(function (UserMeta $meta) {
             return $meta->getKey() === 'wp_capabilities';
         });
 

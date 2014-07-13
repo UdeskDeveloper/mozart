@@ -3,3 +3,15 @@ services:
         class: Mozart\Bundle\UserBundle\Model\UserMetaManager
         arguments:
             - @service_container
+    mozart_user.widget.login:
+        class: Mozart\Bundle\UserBundle\Widget\LoginWidget
+        arguments:
+            - @templating
+        tags:
+            - { name: wordpress.widget }
+    mozart_user.widget.register:
+        class: Mozart\Bundle\UserBundle\Widget\RegisterWidget
+        arguments:
+            - @templating
+        tags:
+            - { name: wordpress.widget }

@@ -19,11 +19,9 @@ class MozartUserBundle extends Bundle
 
     public function boot()
     {
-        add_action('widgets_init', array($this, 'registerWidgets'));
-
         // Filters
-        add_filter('site_url', array($this, 'changeLoginUrl'));
-        add_filter('logout_url', array($this, 'changeLogoutUrl'));
+        add_filter( 'site_url', array( $this, 'changeLoginUrl' ) );
+        add_filter( 'logout_url', array( $this, 'changeLogoutUrl' ) );
     }
 
     /**
@@ -31,10 +29,10 @@ class MozartUserBundle extends Bundle
      *
      * @return mixed
      */
-    public function changeLoginUrl($url)
+    public function changeLoginUrl( $url )
     {
-        if (strpos($url, 'wp-login.php') !== false) {
-                $url = str_replace('wp-login.php', 'my-account', $url);
+        if (strpos( $url, 'wp-login.php' ) !== false) {
+            $url = str_replace( 'wp-login.php', 'my-account', $url );
         }
 
         return $url;
@@ -45,16 +43,6 @@ class MozartUserBundle extends Bundle
      */
     public function changeLogoutUrl()
     {
-        return home_url('logout');
+        return home_url( 'logout' );
     }
-
-    /**
-     *
-     */
-    public function registerWidgets()
-    {
-        register_widget('\Mozart\Bundle\UserBundle\Widget\Login');
-        register_widget('\Mozart\Bundle\UserBundle\Widget\Register');
-    }
-
 }
