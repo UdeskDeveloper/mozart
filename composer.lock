@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "81f6be6c85812cda3e42035f0395ace1",
+    "hash": "0120ca5e60902d7eb8d4643fffa95faf",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -1238,56 +1238,6 @@
                 "framework"
             ],
             "time": "2014-07-08 14:42:08"
-        },
-        {
-            "name": "tgm/plugin-activation",
-            "version": "v2.4.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/thomasgriffin/TGM-Plugin-Activation.git",
-                "reference": "374285ef50f233453b1275912471d4ab9bd53220"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/thomasgriffin/TGM-Plugin-Activation/zipball/374285ef50f233453b1275912471d4ab9bd53220",
-                "reference": "374285ef50f233453b1275912471d4ab9bd53220",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.2"
-            },
-            "type": "library",
-            "autoload": {
-                "files": [
-                    "class-tgm-plugin-activation.php"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "GPL-2.0+"
-            ],
-            "authors": [
-                {
-                    "name": "Thomas Griffin",
-                    "homepage": "http://thomasgriffinmedia.com",
-                    "role": "Developer"
-                },
-                {
-                    "name": "Gary Jones",
-                    "homepage": "https://github.com/GaryJones",
-                    "role": "Developer"
-                }
-            ],
-            "description": "TGM Plugin Activation is a PHP library that allows you to easily require or recommend plugins for your WordPress themes (and plugins).",
-            "homepage": "http://tgmpluginactivation.com",
-            "keywords": [
-                "activation",
-                "library",
-                "plugins",
-                "theme",
-                "wordpress"
-            ],
-            "time": "2014-03-17 15:23:47"
         },
         {
             "name": "twig/extensions",
