@@ -5,7 +5,7 @@
 
 namespace Mozart\Bundle\OptionBundle\Controller;
 
-use Mozart\Bundle\OptionBundle\Builder\OptionBuilderInterface;
+use Mozart\Component\Option\OptionBuilderInterface;
 use Mozart\Bundle\OptionBundle\Extension\ExtensionManager;
 use Mozart\Bundle\OptionBundle\SectionManager;
 
@@ -18,7 +18,8 @@ class OptionController
     /**
      * @var array
      */
-    protected $args = array();
+    protected $parameters = array();
+
     /**
      * @var array
      */
@@ -33,6 +34,7 @@ class OptionController
      * @var SectionManager
      */
     private $sectionManager;
+
     /**
      * @var ExtensionManager
      */
@@ -47,25 +49,29 @@ class OptionController
      * @param SectionManager $sectionManager
      * @param ExtensionManager $extensionManager
      */
-    public function __construct( OptionBuilderInterface $optionBuilder, SectionManager $sectionManager, ExtensionManager $extensionManager )
-    {
+    public function __construct(
+        OptionBuilderInterface $optionBuilder,
+        SectionManager $sectionManager,
+        ExtensionManager $extensionManager,
+        $parameters
+    ) {
         $this->optionBuilder = $optionBuilder;
         $this->sectionManager = $sectionManager;
         $this->extensionManager = $extensionManager;
+        $this->parameters = $parameters;
     }
 
     public function init()
     {
         add_action( "redux/extensions/mozart-options/before", array( $this, 'loadExtensions' ) );
 
-        $this->setArguments();
-        $this->setSections();
+        $this->sections = $this->sectionManager->getSections();
 
-        if (!isset( $this->args['opt_name'] )) {
+        if (!isset( $this->parameters['opt_name'] )) {
             return;
         }
 
-        $this->optionBuilder->boot( $this->sections, $this->args );
+        $this->optionBuilder->boot( $this->sections, $this->parameters );
         $this->setOptions();
         $this->startHooks();
     }
@@ -80,19 +86,6 @@ class OptionController
     public function getBuilder()
     {
         return $this->optionBuilder;
-    }
-
-    public function setSections()
-    {
-        $this->sections = array_merge(
-            $this->sectionManager->getSections(),
-            include __DIR__ . '/../Resources/config/option/sections.php'
-        );
-    }
-
-    public function setArguments()
-    {
-        $this->args = include __DIR__ . '/../Resources/config/option/arguments.php';
     }
 
     /**

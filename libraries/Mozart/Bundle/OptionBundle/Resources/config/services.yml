@@ -1,6 +1,16 @@
 services:
+    mozart.option.importer:
+        class: Mozart\Component\Option\Importer
+    mozart.option.debugger:
+        class: Mozart\Component\Option\Debugger
+    mozart.option.tracker:
+        class: Mozart\Component\Option\Tracker
     mozart.option.builder:
-        class: Mozart\Bundle\OptionBundle\Builder\OptionBuilder
+        class: Mozart\Component\Option\OptionBuilder
+        arguments:
+            - @mozart.option.importer
+            - @mozart.option.debugger
+            - @mozart.option.tracker
     mozart.option.manager:
         class: Mozart\Bundle\OptionBundle\Model\OptionManager
         arguments:
@@ -15,6 +25,7 @@ services:
             - @mozart.option.builder
             - @mozart.option.sectionmanager
             - @mozart.option.extensionmanager
+            - %mozart.option%
     mozart.option.extension.core.customizer:
         class: Mozart\Bundle\OptionBundle\Extension\Core\CustomizerExtension
         tags:

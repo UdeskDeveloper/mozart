@@ -2,7 +2,7 @@
 
 namespace Mozart\Bundle\OptionBundle\Extension\Core;
 
-use Mozart\Bundle\OptionBundle\Builder\OptionBuilderInterface;
+use Mozart\Component\Option\OptionBuilderInterface;
 use Mozart\Bundle\OptionBundle\Extension\ExtensionInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -13,7 +13,6 @@ use Symfony\Component\HttpFoundation\RequestStack;
  */
 class CustomizerExtension implements ExtensionInterface
 {
-
     /**
      * @var array
      */

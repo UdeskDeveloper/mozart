@@ -12,11 +12,9 @@
         "psr-4": {
             "ACF\\": "libraries/ACF/",
             "Mozart\\": "libraries/Mozart/",
-            "Rhetina\\": "libraries/Rhetina/",
-            "Redux\\": "libraries/Redux/"
+            "Rhetina\\": "libraries/Rhetina/"
         },
         "files": [
-            "libraries/Redux/framework.php",
             "libraries/ACF/acf.php",
             "libraries/Mozart/Mozart.php"
         ]
@@ -36,7 +34,9 @@
         "doctrine/doctrine-bundle": "~1.2",
 
         "mopa/bootstrap-bundle": "3.*@dev",
-        "liip/theme-bundle": "dev-master"
+        "liip/theme-bundle": "dev-master",
+
+        "knplabs/knp-markdown-bundle": "~1.3"
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3"
