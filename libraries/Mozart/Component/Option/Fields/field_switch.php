@@ -40,14 +40,14 @@
 
                 //Label ON
                 if ( ! isset( $this->field['on'] ) ) {
-                    $on = __( 'On', 'redux-framework' );
+                    $on = __( 'On', 'mozart-options' );
                 } else {
                     $on = $this->field['on'];
                 }
 
                 //Label OFF
                 if ( ! isset( $this->field['off'] ) ) {
-                    $off = __( 'Off', 'redux-framework' );
+                    $off = __( 'Off', 'mozart-options' );
                 } else {
                     $off = $this->field['off'];
                 }

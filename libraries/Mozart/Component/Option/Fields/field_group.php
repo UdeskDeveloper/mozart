@@ -77,7 +77,7 @@
                 echo '<div id="redux-groups-accordion">';
 
                 // Create dummy content for the adding new ones
-                echo '<div class="redux-groups-accordion-group redux-dummy" style="display:none" id="redux-dummy-' . $this->field['id'] . '"><h3><span class="redux-groups-header">' . __( "New ", "redux-framework" ) . $this->field['groupname'] . '</span></h3>';
+                echo '<div class="redux-groups-accordion-group redux-dummy" style="display:none" id="redux-dummy-' . $this->field['id'] . '"><h3><span class="redux-groups-header">' . __( "New ", "mozart-options" ) . $this->field['groupname'] . '</span></h3>';
                 echo '<div>'; //according content open
 
                 echo '<table style="margin-top: 0;" class="redux-groups-accordion redux-group form-table no-border">';
@@ -120,11 +120,11 @@
                     echo '</td></tr>';
                 }
                 echo '</table>';
-                echo '<a href="javascript:void(0);" class="button deletion redux-groups-remove">' . __( 'Delete', 'redux-framework' ) . ' ' . $this->field['groupname'] . '</a>';
+                echo '<a href="javascript:void(0);" class="button deletion redux-groups-remove">' . __( 'Delete', 'mozart-options' ) . ' ' . $this->field['groupname'] . '</a>';
                 echo '</div></div>';
 
 
-                echo '</div><a href="javascript:void(0);" class="button redux-groups-add button-primary" rel-id="' . $this->field['id'] . '-ul" rel-name="' . $this->parent->args['opt_name'] . '[' . $this->field['id'] . '][slide_title][]">' . __( 'Add', 'redux-framework' ) . ' ' . $this->field['groupname'] . '</a><br/>';
+                echo '</div><a href="javascript:void(0);" class="button redux-groups-add button-primary" rel-id="' . $this->field['id'] . '-ul" rel-name="' . $this->parent->args['opt_name'] . '[' . $this->field['id'] . '][slide_title][]">' . __( 'Add', 'mozart-options' ) . ' ' . $this->field['groupname'] . '</a><br/>';
 
                 //echo '</div>';
 

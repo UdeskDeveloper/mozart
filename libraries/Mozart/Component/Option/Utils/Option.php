@@ -107,7 +107,7 @@ class Option {
     {
         // Get the raw framework.php from github
         $gitpage = wp_remote_get(
-            'https://raw.github.com/ReduxFramework/redux-framework/master/ReduxCore/framework.php', array(
+            'https://raw.github.com/ReduxFramework/mozart-options/master/ReduxCore/framework.php', array(
                 'headers'   => array(
                     'Accept-Encoding' => ''
                 ),
@@ -180,7 +180,7 @@ class Option {
         if ( 1 == strcmp( $ver, $curVer ) ) {
             self::$_parent->admin_notices[] = array(
                 'type'    => 'updated',
-                'msg'     => '<strong>A new build of Redux is now available!</strong><br/><br/>Your version:  <strong>' . $curVer . '</strong><br/>New version:  <strong><span style="color: red;">' . $ver . '</span></strong><br/><br/><a href="https://github.com/ReduxFramework/redux-framework">Get it now</a>&nbsp;&nbsp;|',
+                'msg'     => '<strong>A new build of Redux is now available!</strong><br/><br/>Your version:  <strong>' . $curVer . '</strong><br/>New version:  <strong><span style="color: red;">' . $ver . '</span></strong><br/><br/><a href="https://github.com/ReduxFramework/mozart-options">Get it now</a>&nbsp;&nbsp;|',
                 'id'      => 'dev_notice_' . $ver,
                 'dismiss' => true,
             );
@@ -227,7 +227,7 @@ class Option {
                         }
 
                         // Print the notice with the dismiss link
-                        echo '<div class="' . $notice['type'] . '"><p>' . $notice['msg'] . '&nbsp;&nbsp;<a href="?dismiss=true&amp;id=' . $notice['id'] . $pageName . $curTab . '">' . __( 'Dismiss', 'redux-framework' ) . '</a>.</p></div>';
+                        echo '<div class="' . $notice['type'] . '"><p>' . $notice['msg'] . '&nbsp;&nbsp;<a href="?dismiss=true&amp;id=' . $notice['id'] . $pageName . $curTab . '">' . __( 'Dismiss', 'mozart-options' ) . '</a>.</p></div>';
                     }
                 } else {
 

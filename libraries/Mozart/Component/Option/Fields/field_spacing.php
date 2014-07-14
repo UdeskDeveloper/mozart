@@ -190,7 +190,7 @@
                 echo '<input type="hidden" class="field-units" value="' . $this->value['units'] . '">';
 
                 if ( isset( $this->field['all'] ) && $this->field['all'] == true ) {
-                    echo '<div class="field-spacing-input input-prepend"><span class="add-on"><i class="el-icon-fullscreen icon-large"></i></span><input type="text" class="redux-spacing-all redux-spacing-input mini' . $this->field['class'] . '" placeholder="' . __( 'All', 'redux-framework' ) . '" rel="' . $this->field['id'] . '-all" value="' . $this->value['top'] . '"></div>';
+                    echo '<div class="field-spacing-input input-prepend"><span class="add-on"><i class="el-icon-fullscreen icon-large"></i></span><input type="text" class="redux-spacing-all redux-spacing-input mini' . $this->field['class'] . '" placeholder="' . __( 'All', 'mozart-options' ) . '" rel="' . $this->field['id'] . '-all" value="' . $this->value['top'] . '"></div>';
                 }
 
                 if ($this->field['top'] === true) {
@@ -214,28 +214,28 @@
                      * Top
                      * */
                     if ($this->field['top'] === true) {
-                        echo '<div class="field-spacing-input input-prepend"><span class="add-on"><i class="el-icon-arrow-up icon-large"></i></span><input type="text" class="redux-spacing-top redux-spacing-input mini' . $this->field['class'] . '" placeholder="' . __( 'Top', 'redux-framework' ) . '" rel="' . $this->field['id'] . '-top" value="' . $this->value['top'] . '"></div>';
+                        echo '<div class="field-spacing-input input-prepend"><span class="add-on"><i class="el-icon-arrow-up icon-large"></i></span><input type="text" class="redux-spacing-top redux-spacing-input mini' . $this->field['class'] . '" placeholder="' . __( 'Top', 'mozart-options' ) . '" rel="' . $this->field['id'] . '-top" value="' . $this->value['top'] . '"></div>';
                     }
 
                     /**
                      * Right
                      * */
                     if ($this->field['right'] === true) {
-                        echo '<div class="field-spacing-input input-prepend"><span class="add-on"><i class="el-icon-arrow-right icon-large"></i></span><input type="text" class="redux-spacing-right redux-spacing-input mini' . $this->field['class'] . '" placeholder="' . __( 'Right', 'redux-framework' ) . '" rel="' . $this->field['id'] . '-right" value="' . $this->value['right'] . '"></div>';
+                        echo '<div class="field-spacing-input input-prepend"><span class="add-on"><i class="el-icon-arrow-right icon-large"></i></span><input type="text" class="redux-spacing-right redux-spacing-input mini' . $this->field['class'] . '" placeholder="' . __( 'Right', 'mozart-options' ) . '" rel="' . $this->field['id'] . '-right" value="' . $this->value['right'] . '"></div>';
                     }
 
                     /**
                      * Bottom
                      * */
                     if ($this->field['bottom'] === true) {
-                        echo '<div class="field-spacing-input input-prepend"><span class="add-on"><i class="el-icon-arrow-down icon-large"></i></span><input type="text" class="redux-spacing-bottom redux-spacing-input mini' . $this->field['class'] . '" placeholder="' . __( 'Bottom', 'redux-framework' ) . '" rel="' . $this->field['id'] . '-bottom" value="' . $this->value['bottom'] . '"></div>';
+                        echo '<div class="field-spacing-input input-prepend"><span class="add-on"><i class="el-icon-arrow-down icon-large"></i></span><input type="text" class="redux-spacing-bottom redux-spacing-input mini' . $this->field['class'] . '" placeholder="' . __( 'Bottom', 'mozart-options' ) . '" rel="' . $this->field['id'] . '-bottom" value="' . $this->value['bottom'] . '"></div>';
                     }
 
                     /**
                      * Left
                      * */
                     if ($this->field['left'] === true) {
-                        echo '<div class="field-spacing-input input-prepend"><span class="add-on"><i class="el-icon-arrow-left icon-large"></i></span><input type="text" class="redux-spacing-left redux-spacing-input mini' . $this->field['class'] . '" placeholder="' . __( 'Left', 'redux-framework' ) . '" rel="' . $this->field['id'] . '-left" value="' . $this->value['left'] . '"></div>';
+                        echo '<div class="field-spacing-input input-prepend"><span class="add-on"><i class="el-icon-arrow-left icon-large"></i></span><input type="text" class="redux-spacing-left redux-spacing-input mini' . $this->field['class'] . '" placeholder="' . __( 'Left', 'mozart-options' ) . '" rel="' . $this->field['id'] . '-left" value="' . $this->value['left'] . '"></div>';
                     }
                 }
 
@@ -244,8 +244,8 @@
                  * */
                 if ( $this->field['units'] !== false && is_array( $this->field['units'] ) /* && !isset($absolute) */ && $this->field['display_units'] == true ) {
 
-                    echo '<div class="select_wrapper spacing-units" original-title="' . __( 'Units', 'redux-framework' ) . '">';
-                    echo '<select data-placeholder="' . __( 'Units', 'redux-framework' ) . '" class="redux-spacing redux-spacing-units select' . $this->field['class'] . '" original-title="' . __( 'Units', 'redux-framework' ) . '" name="' . $this->field['name'] . '[units]' . $this->field['name_suffix'] . '" id="' . $this->field['id'] . '_units">';
+                    echo '<div class="select_wrapper spacing-units" original-title="' . __( 'Units', 'mozart-options' ) . '">';
+                    echo '<select data-placeholder="' . __( 'Units', 'mozart-options' ) . '" class="redux-spacing redux-spacing-units select' . $this->field['class'] . '" original-title="' . __( 'Units', 'mozart-options' ) . '" name="' . $this->field['name'] . '[units]' . $this->field['name_suffix'] . '" id="' . $this->field['id'] . '_units">';
 
                     if ($this->field['units_extended']) {
                         $testUnits = array( 'px', 'em', 'rem', '%', 'in', 'cm', 'mm', 'ex', 'pt', 'pc' );

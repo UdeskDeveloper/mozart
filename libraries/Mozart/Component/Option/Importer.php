@@ -41,16 +41,16 @@ class Importer
         echo '<div id="import_export_default_section_group' . '" class="' . $c . '">';
 
         if (false == $this->is_field) {
-            echo '<h3>' . __( 'Import / Export Options', 'redux-framework' ) . '</h3>';
+            echo '<h3>' . __( 'Import / Export Options', 'mozart-options' ) . '</h3>';
         }
 
-        echo '<h4>' . __( 'Import Options', 'redux-framework' ) . '</h4>';
+        echo '<h4>' . __( 'Import Options', 'mozart-options' ) . '</h4>';
         echo '<p><a href="javascript:void(0);" id="redux-import-code-button" class="button-secondary">' . __(
                 'Import from file',
-                'redux-framework'
+                'mozart-options'
             ) . '</a> <a href="javascript:void(0);" id="redux-import-link-button" class="button-secondary">' . __(
                 'Import from URL',
-                'redux-framework'
+                'mozart-options'
             ) . '</a></p>';
 
         echo '<div id="redux-import-code-wrapper">';
@@ -58,7 +58,7 @@ class Importer
                 'redux-import-file-description',
                 __(
                     'Input your backup file below and hit Import to restore your sites options from a backup.',
-                    'redux-framework'
+                    'mozart-options'
                 )
             ) . '</p>';
         echo '<textarea id="import-code-value" name="' . $this->builder->args['opt_name'] . '[import_code]" class="large-text noUpdate" rows="8"></textarea>';
@@ -69,7 +69,7 @@ class Importer
                 'redux-import-link-description',
                 __(
                     'Input the URL to another sites options set and hit Import to load the options from that site.',
-                    'redux-framework'
+                    'mozart-options'
                 )
             ) . '</p>';
         echo '<input type="text" id="import-link-value" name="' . $this->builder->args['opt_name'] . '[import_link]" class="large-text noUpdate" value="" />';
@@ -77,24 +77,24 @@ class Importer
 
         echo '<p id="redux-import-action"><input type="submit" id="redux-import" name="' . $this->builder->args['opt_name'] . '[import]" class="button-primary" value="' . __(
                 'Import',
-                'redux-framework'
+                'mozart-options'
             ) . '">&nbsp;&nbsp;<span>' . apply_filters(
                 'redux-import-warning',
                 __(
                     'WARNING! This will overwrite all existing option values, please proceed with caution!',
-                    'redux-framework'
+                    'mozart-options'
                 )
             ) . '</span></p>';
 
         echo '<div class="hr"/><div class="inner"><span>&nbsp;</span></div></div>';
-        echo '<h4>' . __( 'Export Options', 'redux-framework' ) . '</h4>';
+        echo '<h4>' . __( 'Export Options', 'mozart-options' ) . '</h4>';
         echo '<div class="redux-section-desc">';
 
         echo '<p class="description">' . apply_filters(
                 'redux-backup-description',
                 __(
                     'Here you can copy/download your current option settings. Keep this safe as you can use it as a backup should anything go wrong, or you can use it to restore your settings on this site (or any other site).',
-                    'redux-framework'
+                    'mozart-options'
                 )
             ) . '</p>';
         echo '</div>';
@@ -102,13 +102,13 @@ class Importer
         $link = admin_url( 'admin-ajax.php?action=redux_download_options&secret=' . $secret );
         echo '<p><a href="javascript:void(0);" id="redux-export-code-copy" class="button-secondary">' . __(
                 'Copy',
-                'redux-framework'
+                'mozart-options'
             ) . '</a> <a href="' . $link . '" id="redux-export-code-dl" class="button-primary">' . __(
                 'Download',
-                'redux-framework'
+                'mozart-options'
             ) . '</a> <a href="javascript:void(0);" id="redux-export-link" class="button-secondary">' . __(
                 'Copy Link',
-                'redux-framework'
+                'mozart-options'
             ) . '</a></p>';
 
         $backup_options = $this->builder->options;
@@ -149,7 +149,7 @@ class Importer
 
         echo '<a href="javascript:void(0);" id="import_export_default_section_group_li_a" class="redux-group-tab-link-a" data-rel="import_export_default">' . $icon . ' <span class="group_title">' . __(
                 'Import / Export',
-                'redux-framework'
+                'mozart-options'
             ) . '</span></a>';
         echo '</li>';
 
@@ -160,8 +160,8 @@ class Importer
     {
         add_submenu_page(
             $this->builder->args['page_slug'],
-            __( 'Import / Export', 'redux-framework' ),
-            __( 'Import / Export', 'redux-framework' ),
+            __( 'Import / Export', 'mozart-options' ),
+            __( 'Import / Export', 'mozart-options' ),
             $this->builder->args['page_permissions'],
             $this->builder->args['page_slug'] . '&tab=import_export_default',
             '__return_null'

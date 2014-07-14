@@ -45,7 +45,7 @@ class RGBA
 
             echo '<label for="' . $this->field['id'] . '-transparency" class="color_rgba-transparency-check"><input type="checkbox" class="checkbox color_rgba-transparency ' . $this->field['class'] . '" id="' . $this->field['id'] . '-transparency" data-id="' . $this->field['id'] . '-color" value="1"' . $tChecked . '> ' . __(
                     'Transparent',
-                    'redux-framework'
+                    'mozart-options'
                 ) . '</label>';
         }
     }

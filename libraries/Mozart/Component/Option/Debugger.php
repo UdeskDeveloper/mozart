@@ -14,7 +14,7 @@ class Debugger
     public function render()
     {
         echo '<div id="dev_mode_default_section_group' . '" class="redux-group-tab">';
-        echo '<h3>' . __( 'Options Object', 'redux-framework' ) . '</h3>';
+        echo '<h3>' . __( 'Options Object', 'mozart-options' ) . '</h3>';
         echo '<div class="redux-section-desc">';
         echo '<div id="redux-object-browser"></div>';
         echo '</div>';
@@ -25,7 +25,7 @@ class Debugger
 
         echo '<a href="#" id="consolePrintObject" class="button">' . __(
                 'Show Object in Javascript Console Object',
-                'redux-framework'
+                'mozart-options'
             ) . '</a>';
 
         echo '</div>';
@@ -44,7 +44,7 @@ class Debugger
 
         echo '<a href="javascript:void(0);" id="dev_mode_default_section_group_li_a" class="redux-group-tab-link-a custom-tab" data-rel="dev_mode_default">' . $icon . ' <span class="group_title">' . __(
                 'Options Object',
-                'redux-framework'
+                'mozart-options'
             ) . '</span></a>';
         echo '</li>';
     }
@@ -53,8 +53,8 @@ class Debugger
     {
         add_submenu_page(
             $this->builder->args['page_slug'],
-            __( 'Options Object', 'redux-framework' ),
-            __( 'Options Object', 'redux-framework' ),
+            __( 'Options Object', 'mozart-options' ),
+            __( 'Options Object', 'mozart-options' ),
             $this->builder->args['page_permissions'],
             $this->builder->args['page_slug'] . '&tab=dev_mode_default',
             '__return_null'

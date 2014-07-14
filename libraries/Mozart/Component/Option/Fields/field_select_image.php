@@ -60,7 +60,7 @@
                     }
 
                     // Process placeholder
-                    $placeholder = ( isset( $this->field['placeholder'] ) ) ? esc_attr( $this->field['placeholder'] ) : __( 'Select an item', 'redux-framework' );
+                    $placeholder = ( isset( $this->field['placeholder'] ) ) ? esc_attr( $this->field['placeholder'] ) : __( 'Select an item', 'mozart-options' );
 
                     if ( isset( $this->field['select2'] ) ) { // if there are any let's pass them to js
                         $select2_params = json_encode( $this->field['select2'] );
@@ -141,7 +141,7 @@
                 } else {
 
                     // No options specified.  Really?
-                    echo '<strong>' . __( 'No items of this type were found.', 'redux-framework' ) . '</strong>';
+                    echo '<strong>' . __( 'No items of this type were found.', 'mozart-options' ) . '</strong>';
                 }
             } //function
 

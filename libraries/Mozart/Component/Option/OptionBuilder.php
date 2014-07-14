@@ -6,7 +6,6 @@
 namespace Mozart\Component\Option;
 
 use Mozart\Component\Debug\SystemInfo;
-use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * Class OptionBuilder
@@ -289,8 +288,7 @@ class OptionBuilder implements OptionBuilderInterface
             // Set the default values
             $this->_default_cleanup();
 
-            // Internataionalization
-            $this->_internationalization();
+            $this->loadTranslations();
 
             // Grab database values
             $this->get_options();
@@ -511,20 +509,8 @@ class OptionBuilder implements OptionBuilderInterface
         exit();
     }
 
-    /**
-     * Load the plugin text domain for translation.
-     */
-    public function _internationalization()
+    private function loadTranslations()
     {
-        /**
-         * Locale for text domain
-         * filter 'redux/textdomain/{opt_name}'
-         *
-         * @param string     The locale of the blog or from the 'locale' hook
-         * @param string 'redux-framework'  text domain
-         */
-        $locale = apply_filters( "redux/textdomain/{$this->args['opt_name']}", get_locale(), 'redux-framework' );
-
         if (strpos( $locale, '_' ) === false) {
             if (file_exists(
                 self::$_dir . 'languages/' . strtolower( $locale ) . '_' . strtoupper( $locale ) . '.mo'
@@ -532,7 +518,7 @@ class OptionBuilder implements OptionBuilderInterface
                 $locale = strtolower( $locale ) . '_' . strtoupper( $locale );
             }
         }
-        load_textdomain( 'redux-framework', self::$_dir . 'languages/' . $locale . '.mo' );
+        load_textdomain( 'mozart-options', self::$_dir . 'languages/' . $locale . '.mo' );
     }
 
     /**
@@ -1371,8 +1357,8 @@ class OptionBuilder implements OptionBuilderInterface
                 if (true == $this->args['system_info']) {
                     add_submenu_page(
                         $this->args['page_slug'],
-                        __( 'System Info', 'redux-framework' ),
-                        __( 'System Info', 'redux-framework' ),
+                        __( 'System Info', 'mozart-options' ),
+                        __( 'System Info', 'mozart-options' ),
                         $this->args['page_permissions'],
                         $this->args['page_slug'] . '&tab=system_info_default',
                         '__return_null'
@@ -1433,7 +1419,7 @@ class OptionBuilder implements OptionBuilderInterface
                 'id'    => $this->args["page_slug"],
                 'title' => "<span class='ab-icon dashicons-admin-generic'></span>" . $theme_data->get(
                         'Name'
-                    ) . " " . __( 'Options', 'redux-framework-demo' ),
+                    ) . " " . __( 'Options', 'mozart-options-demo' ),
                 'href'  => admin_url( 'admin.php?page=' . $this->args["page_slug"] ),
                 'meta'  => array()
             );
@@ -1959,7 +1945,7 @@ class OptionBuilder implements OptionBuilderInterface
          */
         $save_pending = apply_filters(
             "redux/{$this->args['opt_name']}/localize/save_pending",
-            __( 'You have changes that are not saved. Would you like to save them now?', 'redux-framework' )
+            __( 'You have changes that are not saved. Would you like to save them now?', 'mozart-options' )
         );
 
         /**
@@ -1970,7 +1956,7 @@ class OptionBuilder implements OptionBuilderInterface
          */
         $reset_all = apply_filters(
             "redux/{$this->args['opt_name']}/localize/reset",
-            __( 'Are you sure? Resetting will lose all custom values.', 'redux-framework' )
+            __( 'Are you sure? Resetting will lose all custom values.', 'mozart-options' )
         );
 
         /**
@@ -1981,7 +1967,7 @@ class OptionBuilder implements OptionBuilderInterface
          */
         $reset_section = apply_filters(
             "redux/{$this->args['opt_name']}/localize/reset_section",
-            __( 'Are you sure? Resetting will lose all custom values in this section.', 'redux-framework' )
+            __( 'Are you sure? Resetting will lose all custom values in this section.', 'mozart-options' )
         );
 
         /**
@@ -1994,7 +1980,7 @@ class OptionBuilder implements OptionBuilderInterface
             "redux/{$this->args['opt_name']}/localize/preset",
             __(
                 'Your current options will be replaced with the values of this preset. Would you like to proceed?',
-                'redux-framework'
+                'mozart-options'
             )
         );
 
@@ -2003,7 +1989,7 @@ class OptionBuilder implements OptionBuilderInterface
             'reset_confirm'         => $reset_all,
             'reset_section_confirm' => $reset_section,
             'preset_confirm'        => $preset_confirm,
-            'please_wait'           => __( 'Please Wait', 'redux-framework' ),
+            'please_wait'           => __( 'Please Wait', 'mozart-options' ),
             'opt_name'              => $this->args['opt_name'],
             'slug'                  => $this->args['page_slug'],
             'hints'                 => $this->args['hints'],
@@ -2155,8 +2141,8 @@ class OptionBuilder implements OptionBuilderInterface
             // Construct hint tab
             $tab = array(
                 'id'      => 'redux-hint-tab',
-                'title'   => __( 'Hints', 'redux-framework-demo' ),
-                'content' => __( '<p>' . $msg . '</p>', 'redux-framework-demo' )
+                'title'   => __( 'Hints', 'mozart-options-demo' ),
+                'content' => __( '<p>' . $msg . '</p>', 'mozart-options-demo' )
             );
 
             $screen->add_help_tab( $tab );
@@ -2285,7 +2271,7 @@ class OptionBuilder implements OptionBuilderInterface
         }
 
         if (!empty( $default_output )) {
-            $default_output = __( 'Default', 'redux-framework' ) . ": " . substr( $default_output, 0, -2 );
+            $default_output = __( 'Default', 'mozart-options' ) . ": " . substr( $default_output, 0, -2 );
         }
 
         if (!empty( $default_output )) {
@@ -3357,7 +3343,7 @@ class OptionBuilder implements OptionBuilderInterface
         // Do we support JS?
         echo '<noscript><div class="no-js">' . __(
                 'Warning- This options panel will not work properly without javascript!',
-                'redux-framework'
+                'mozart-options'
             ) . '</div></noscript>';
 
         // Security is vital!
@@ -3436,22 +3422,22 @@ class OptionBuilder implements OptionBuilderInterface
 
         echo '<a href="javascript:void(0);" class="expand_options' . $expanded . '">' . __(
                 'Expand',
-                'redux-framework'
+                'mozart-options'
             ) . '</a>';
         echo '<div class="redux-action_bar">';
-        submit_button( __( 'Save Changes', 'redux-framework' ), 'primary', 'redux_save', false );
+        submit_button( __( 'Save Changes', 'mozart-options' ), 'primary', 'redux_save', false );
 
         if (false === $this->args['hide_reset']) {
             echo '&nbsp;';
             submit_button(
-                __( 'Reset Section', 'redux-framework' ),
+                __( 'Reset Section', 'mozart-options' ),
                 'secondary',
                 $this->args['opt_name'] . '[defaults-section]',
                 false
             );
             echo '&nbsp;';
             submit_button(
-                __( 'Reset All', 'redux-framework' ),
+                __( 'Reset All', 'mozart-options' ),
                 'secondary',
                 $this->args['opt_name'] . '[defaults]',
                 false
@@ -3460,7 +3446,7 @@ class OptionBuilder implements OptionBuilderInterface
 
         echo '</div>';
 
-        echo '<div class="redux-ajax-loading" alt="' . __( 'Working...', 'redux-framework' ) . '">&nbsp;</div>';
+        echo '<div class="redux-ajax-loading" alt="' . __( 'Working...', 'mozart-options' ) . '">&nbsp;</div>';
         echo '<div class="clear"></div>';
         echo '</div>';
 
@@ -3476,7 +3462,7 @@ class OptionBuilder implements OptionBuilderInterface
 
                 echo '<div class="admin-notice notice-blue saved_notice"><strong>' . apply_filters(
                         "redux-imported-text-{$this->args['opt_name']}",
-                        __( 'Settings Imported!', 'redux-framework' )
+                        __( 'Settings Imported!', 'mozart-options' )
                     ) . '</strong></div>';
                 //exit();
             } elseif ($this->transients['last_save_mode'] == "defaults") {
@@ -3484,7 +3470,7 @@ class OptionBuilder implements OptionBuilderInterface
 
                 echo '<div class="saved_notice admin-notice notice-yellow"><strong>' . apply_filters(
                         "redux-defaults-text-{$this->args['opt_name']}",
-                        __( 'All Defaults Restored!', 'redux-framework' )
+                        __( 'All Defaults Restored!', 'mozart-options' )
                     ) . '</strong></div>';
             } elseif ($this->transients['last_save_mode'] == "defaults_section") {
 
@@ -3492,7 +3478,7 @@ class OptionBuilder implements OptionBuilderInterface
 
                 echo '<div class="saved_notice admin-notice notice-yellow"><strong>' . apply_filters(
                         "redux-defaults-section-text-{$this->args['opt_name']}",
-                        __( 'Section Defaults Restored!', 'redux-framework' )
+                        __( 'Section Defaults Restored!', 'mozart-options' )
                     ) . '</strong></div>';
             } else {
                 do_action(
@@ -3503,7 +3489,7 @@ class OptionBuilder implements OptionBuilderInterface
 
                 echo '<div class="saved_notice admin-notice notice-green"><strong>' . apply_filters(
                         "redux-saved-text-{$this->args['opt_name']}",
-                        __( 'Settings Saved!', 'redux-framework' )
+                        __( 'Settings Saved!', 'mozart-options' )
                     ) . '</strong></div>';
             }
             unset( $this->transients['last_save_mode'] );
@@ -3518,7 +3504,7 @@ class OptionBuilder implements OptionBuilderInterface
 
         echo '<div class="redux-save-warn notice-yellow"><strong>' . apply_filters(
                 "redux-changed-text-{$this->args['opt_name']}",
-                __( 'Settings have changed, you should save them!', 'redux-framework' )
+                __( 'Settings have changed, you should save them!', 'mozart-options' )
             ) . '</strong></div>';
 
         /**
@@ -3529,7 +3515,7 @@ class OptionBuilder implements OptionBuilderInterface
         do_action( "redux/options/{$this->args['opt_name']}/errors", $this->errors );
         echo '<div class="redux-field-errors notice-red"><strong><span></span> ' . __(
                 'error(s) were found!',
-                'redux-framework'
+                'mozart-options'
             ) . '</strong></div>';
 
         /**
@@ -3540,7 +3526,7 @@ class OptionBuilder implements OptionBuilderInterface
         do_action( "redux/options/{$this->args['opt_name']}/warnings", $this->warnings );
         echo '<div class="redux-field-warnings notice-yellow"><strong><span></span> ' . __(
                 'warning(s) were found!',
-                'redux-framework'
+                'mozart-options'
             ) . '</strong></div>';
 
         echo '</div>';
@@ -3596,7 +3582,7 @@ class OptionBuilder implements OptionBuilderInterface
 
             echo '<a href="javascript:void(0);" id="system_info_default_section_group_li_a" class="redux-group-tab-link-a custom-tab" data-rel="system_info_default">' . $icon . ' <span class="group_title">' . __(
                     'System Info',
-                    'redux-framework'
+                    'mozart-options'
                 ) . '</span></a>';
             echo '</li>';
         }
@@ -3645,7 +3631,7 @@ class OptionBuilder implements OptionBuilderInterface
 
         if ($this->args['system_info'] === true) {
             echo '<div id="system_info_default_section_group' . '" class="redux-group-tab">';
-            echo '<h3>' . __( 'System Info', 'redux-framework' ) . '</h3>';
+            echo '<h3>' . __( 'System Info', 'mozart-options' ) . '</h3>';
 
             echo '<div id="redux-system-info">';
             echo SystemInfo::get();
@@ -3693,19 +3679,19 @@ class OptionBuilder implements OptionBuilderInterface
         }
 
         echo '<div class="redux-action_bar">';
-        submit_button( __( 'Save Changes', 'redux-framework' ), 'primary', 'redux_save', false );
+        submit_button( __( 'Save Changes', 'mozart-options' ), 'primary', 'redux_save', false );
 
         if (false === $this->args['hide_reset']) {
             echo '&nbsp;';
             submit_button(
-                __( 'Reset Section', 'redux-framework' ),
+                __( 'Reset Section', 'mozart-options' ),
                 'secondary',
                 $this->args['opt_name'] . '[defaults-section]',
                 false
             );
             echo '&nbsp;';
             submit_button(
-                __( 'Reset All', 'redux-framework' ),
+                __( 'Reset All', 'mozart-options' ),
                 'secondary',
                 $this->args['opt_name'] . '[defaults]',
                 false
@@ -3714,7 +3700,7 @@ class OptionBuilder implements OptionBuilderInterface
 
         echo '</div>';
 
-        echo '<div class="redux-ajax-loading" alt="' . __( 'Working...', 'redux-framework' ) . '">&nbsp;</div>';
+        echo '<div class="redux-ajax-loading" alt="' . __( 'Working...', 'mozart-options' ) . '">&nbsp;</div>';
         echo '<div class="clear"></div>';
 
         echo '</div>';

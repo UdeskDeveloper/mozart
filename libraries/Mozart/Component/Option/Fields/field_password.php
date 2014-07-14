@@ -61,8 +61,8 @@
                     'username'    => '',
                     'password'    => '',
                     'placeholder' => array(
-                        'password' => __( 'Password', 'redux-framework' ),
-                        'username' => __( 'Username', 'redux-framework' )
+                        'password' => __( 'Password', 'mozart-options' ),
+                        'username' => __( 'Username', 'mozart-options' )
                     )
                 );
 
