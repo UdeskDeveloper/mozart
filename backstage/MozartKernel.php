@@ -77,7 +77,7 @@ class MozartKernel extends Kernel
             new MopaBootstrapBundle()
         );
 
-        $bundles = apply_filters( 'register_mozart_bundle', $bundles );
+        $bundles = \Mozart::registerAdditionalBundles( $bundles );
 
         if (in_array( $this->getEnvironment(), array( 'dev', 'test' ) )) {
             $bundles[] = new WebProfilerBundle();
@@ -103,24 +103,10 @@ class MozartKernel extends Kernel
 
         $request->setSession( $this->container->get( 'session' ) );
         $this->container->set( 'request_stack', $requestStack );
-
-        //$url = content_url( '/mozart/public/' );
-        //
-        //preg_match( '%([^:]*):\/\/([^\/]*)(\/?.*)%', $url, $matches );
-        //if (count( $matches ) == 4) {
-        //    $context = $kernel->getContainer()->get( 'router' )->getContext();
-        //    $context->setHost( $matches[2] );
-        //    $context->setScheme( $matches[1] );
-        //    $context->setBaseUrl( $matches[3] );
-        //}
     }
 
     public function bootWordpress()
     {
-        /**
-         * what if we are not in WordPress mode
-         * TODO: rethink these as it does not work well in console
-         */
         if (false === defined( 'ABSPATH' )) {
 
             define( 'WP_USE_THEMES', false );
@@ -131,13 +117,7 @@ class MozartKernel extends Kernel
             $finder->files()
                 ->name( 'wp-load.php' )
                 ->ignoreUnreadableDirs()
-                ->depth( '== 0' )
-                ->in( __DIR__ . '/../../' )
-                ->in( __DIR__ . '/../../../' )
-                ->in( __DIR__ . '/../../../../' )
-                ->in( __DIR__ . '/../../../../../' )
-                ->in( __DIR__ . '/../../../../../../' )
-                ->in( __DIR__ . '/../../../../../../../' )
+                ->depth( '== 6' )
                 ->in( __DIR__ . '/../../../../../../../../' );
 
             foreach ($finder as $file) {
