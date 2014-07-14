@@ -2,8 +2,9 @@
 namespace Mozart\Component\Option\Fields\Color;
 
 use Mozart\Component\Option\Utils;
+use Mozart\Component\Option\Field;
 
-class RGBA
+class RGBA extends Field
 {
     /**
      * Field Constructor.
