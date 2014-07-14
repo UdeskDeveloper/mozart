@@ -1,23 +1,17 @@
 <?php
 
-namespace Mozart\Bundle\OptionBundle\Redux\Extensions;
+namespace Mozart\Bundle\OptionBundle\Extension\Core;
 
-    /**
-     * Class Customizer
-     *
-     * @package Mozart\Bundle\OptionBundle\Redux\Extensions
-     */
-    /**
-     * Class Customizer
-     *
-     * @package Mozart\Bundle\OptionBundle\Redux\Extensions
-     */
+use Mozart\Bundle\OptionBundle\Builder\OptionBuilderInterface;
+use Mozart\Bundle\OptionBundle\Extension\ExtensionInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
+
 /**
  * Class Customizer
  *
- * @package Mozart\Bundle\OptionBundle\Redux\Extensions
+ * @package Mozart\Bundle\OptionBundle\Extensions
  */
-class Customizer
+class CustomizerExtension implements ExtensionInterface
 {
 
     /**
@@ -37,7 +31,7 @@ class Customizer
      */
     private $_extension_dir;
     /**
-     * @var \ReduxFramework
+     * @var OptionBuilderInterface
      */
     private $builder;
     /**
@@ -45,20 +39,34 @@ class Customizer
      */
     private $currentPage;
     /**
-     * @var array
+     * @var RequestStack
      */
-    private $request;
+    private $requestStack;
 
     /**
-     * @param \ReduxFramework $builder
-     * @param array           $request
-     * @param string          $currentPage
+     * @param OptionBuilderInterface $builder
+     * @param RequestStack $request
      */
-    public function __construct( \ReduxFramework $builder, array $request = array(), $currentPage = '' )
+    public function __construct( OptionBuilderInterface $builder, RequestStack $requestStack )
     {
-        $this->builder     = $builder;
-        $this->currentPage = $currentPage;
-        $this->request     = $request;
+        $this->builder = $builder;
+        $this->currentPage = $GLOBALS['pagenow'];
+        $this->requestStack = $requestStack;
+    }
+
+    /**
+     * Boot the extension
+     */
+    public function boot()
+    {
+
+        if ($this->currentPage !== "customize.php"
+            && $this->currentPage !== "admin-ajax.php"
+            && !isset( $GLOBALS['wp_customize'] )
+        ) {
+            return false;
+        }
+
         //add_action('wp_head', array( $this, '_enqueue_new' ));
 
         $this->_extension_dir = trailingslashit( str_replace( '\\', '/', dirname( __FILE__ ) ) );
@@ -66,7 +74,7 @@ class Customizer
             str_replace( trailingslashit( str_replace( '\\', '/', ABSPATH ) ), '', $this->_extension_dir )
         );
 
-        if (false === isset( $this->request['customized'] )
+        if ('' !== $this->requestStack->get( 'customized' )
             || $this->currentPage === "admin-ajax.php"
         ) {
             if (current_user_can( $this->builder->args['page_permissions'] )) {
@@ -77,7 +85,7 @@ class Customizer
             }
         }
 
-        if (isset( $this->request['customized'] )) {
+        if ('' !== $this->requestStack->get( 'customized' )) {
             add_action(
                 "redux/options/{$this->builder->args['opt_name']}/options",
                 array( $this, '_override_values' ),
@@ -107,22 +115,22 @@ class Customizer
      *
      * @return mixed
      */
-    public function _override_values($data)
+    public function _override_values( $data )
     {
         if (isset( $this->request['customized'] )) {
             $this->orig_options = $this->builder->options;
-            $options            = json_decode( stripslashes_deep( $this->request['customized'] ), true );
+            $options = json_decode( stripslashes_deep( $this->request['customized'] ), true );
 
             foreach ($options as $key => $value) {
                 if (strpos( $key, $this->builder->args['opt_name'] ) !== false) {
-                    $key                                                    = str_replace(
+                    $key = str_replace(
                         $this->builder->args['opt_name'] . '[',
                         '',
                         rtrim( $key, "]" )
                     );
-                    $data[$key]                                             = $value;
+                    $data[$key] = $value;
                     $GLOBALS[$this->builder->args['global_variable']][$key] = $value;
-                    $this->builder->options[$key]                           = $value;
+                    $this->builder->options[$key] = $value;
                 }
             }
         }
@@ -168,7 +176,7 @@ class Customizer
     /**
      * @param \WP_Customize_Manager $wp_customize
      */
-    public function registerCustomizer(\WP_Customize_Manager $wp_customize)
+    public function registerCustomizer( \WP_Customize_Manager $wp_customize )
     {
         $order = array(
             'heading' => -500,
@@ -305,8 +313,8 @@ class Customizer
                 switch ($option['type']) {
                     case 'heading':
                         // We don't want to put up the section unless it's used by something visible in the customizer
-                        $section          = $option;
-                        $section['id']    = strtolower( str_replace( " ", "", $option['title'] ) );
+                        $section = $option;
+                        $section['id'] = strtolower( str_replace( " ", "", $option['title'] ) );
                         $order['heading'] = -500;
 
                         if (!empty( $option['priority'] )) {
@@ -383,23 +391,27 @@ class Customizer
 
                     case 'media':
                         $wp_customize->add_control(
-                            new \WP_Customize_Image_Control( $wp_customize, $option['id'], array(
-                                'label'    => $option['title'],
-                                'section'  => $section['id'],
-                                'settings' => $option['id'],
-                                'priority' => $option['priority']
-                            ) )
+                            new \WP_Customize_Image_Control(
+                                $wp_customize, $option['id'], array(
+                                    'label'    => $option['title'],
+                                    'section'  => $section['id'],
+                                    'settings' => $option['id'],
+                                    'priority' => $option['priority']
+                                )
+                            )
                         );
                         break;
 
                     case 'color':
                         $wp_customize->add_control(
-                            new \WP_Customize_Color_Control( $wp_customize, $option['id'], array(
-                                'label'    => $option['title'],
-                                'section'  => $section['id'],
-                                'settings' => $option['id'],
-                                'priority' => $option['priority']
-                            ) )
+                            new \WP_Customize_Color_Control(
+                                $wp_customize, $option['id'], array(
+                                    'label'    => $option['title'],
+                                    'section'  => $section['id'],
+                                    'settings' => $option['id'],
+                                    'priority' => $option['priority']
+                                )
+                            )
                         );
                         break;
 
@@ -435,7 +447,7 @@ class Customizer
     /**
      * @param $plugin_options
      */
-    public function customizer_save_before($plugin_options)
+    public function customizer_save_before( $plugin_options )
     {
         $this->before_save = $this->builder->options;
         //$parent->_field_input( $plugin_options );
@@ -444,12 +456,12 @@ class Customizer
     /**
      * @param \WP_Customize_Manager $wp_customize
      */
-    public function customizer_save_after(\WP_Customize_Manager $wp_customize)
+    public function customizer_save_after( \WP_Customize_Manager $wp_customize )
     {
         //if ( isset( $this->request['customized'] ) ) {
-        $options  = json_decode( stripslashes_deep( $this->request['customized'] ), true );
+        $options = json_decode( stripslashes_deep( $this->request['customized'] ), true );
         $compiler = false;
-        $changed  = array();
+        $changed = array();
 
         foreach ($options as $key => $value) {
             if (strpos( $key, $this->builder->args['opt_name'] ) !== false) {
@@ -605,8 +617,6 @@ class Customizer
     /**
      * Register Option for use
      *
-     * @since       1.0.0
-     * @access      public
      * @return void
      */
     public function _register_setting()
@@ -617,13 +627,11 @@ class Customizer
     /**
      * Validate the options before insertion
      *
-     * @since       3.0.0
-     *
      * @param array $plugin_options The options array
      *
      * @return
      */
-    public function _field_validation($plugin_options, $two)
+    public function _field_validation( $plugin_options, $two )
     {
         echo $two;
 
@@ -632,8 +640,6 @@ class Customizer
 
     /**
      * HTML OUTPUT.
-     *
-     * @since       1.0.0
      * @return void
      */
     public function _customizer_html_output()

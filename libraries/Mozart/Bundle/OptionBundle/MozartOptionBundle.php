@@ -5,7 +5,8 @@
 
 namespace Mozart\Bundle\OptionBundle;
 
-use Mozart\Bundle\OptionBundle\DependencyInjection\Compiler\ReduxSectionsCompilerPass;
+use Mozart\Bundle\OptionBundle\DependencyInjection\Compiler\OptionExtensionsCompilerPass;
+use Mozart\Bundle\OptionBundle\DependencyInjection\Compiler\OptionSectionsCompilerPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
@@ -19,32 +20,18 @@ class MozartOptionBundle extends Bundle
     /**
      * @param ContainerBuilder $container
      */
-    public function build(ContainerBuilder $container)
+    public function build( ContainerBuilder $container )
     {
         parent::build( $container );
-        $container->addCompilerPass( new ReduxSectionsCompilerPass );
+        $container->addCompilerPass( new OptionExtensionsCompilerPass() );
+        $container->addCompilerPass( new OptionSectionsCompilerPass );
     }
 
     /**
-     *
+     * Boot bundle
      */
     public function boot()
     {
-        $this->runRedux();
+        $this->container->get( 'mozart.option.controller' )->init( );
     }
-
-    /**
-     *
-     */
-    protected function runRedux()
-    {
-        $this->container->get( 'redux.extensions.configuration' )->init();
-
-        $sections = $this->container->get( 'redux.sectionmanager' )->getSections();
-
-        $this->container->get( 'redux.configuration' )->init( array( 'sections' => $sections ) );
-
-        $this->container->get( 'redux' )->init();
-    }
-
 }

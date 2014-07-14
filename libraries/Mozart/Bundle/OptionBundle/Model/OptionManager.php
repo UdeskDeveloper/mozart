@@ -8,6 +8,10 @@ use Doctrine\ORM\EntityRepository;
 use Mozart\Bundle\NucleusBundle\Model\AbstractManager;
 use Symfony\Component\DependencyInjection\Container;
 
+/**
+ * Class OptionManager
+ * @package Mozart\Bundle\OptionBundle\Model
+ */
 class OptionManager extends AbstractManager implements OptionManagerInterface
 {
     /**
@@ -39,6 +43,10 @@ class OptionManager extends AbstractManager implements OptionManagerInterface
         $this->cache      = new ArrayCache();
     }
 
+    /**
+     * @param $name
+     * @return bool|mixed|Option|string
+     */
     public function findOneOptionByName($name)
     {
         if (false === $option = $this->cache->fetch($name)) {
@@ -55,6 +63,9 @@ class OptionManager extends AbstractManager implements OptionManagerInterface
         return $option;
     }
 
+    /**
+     * @param Option $option
+     */
     private function cacheOption(Option $option)
     {
         $this->cache->save($option->getName(), clone $option);

@@ -1,16 +1,11 @@
 <?php
 
-namespace Mozart\Bundle\OptionBundle\Redux;
+namespace Mozart\Bundle\OptionBundle;
 
 /**
  * Class SectionManager
  *
- * @package Mozart\Bundle\OptionBundle\Redux
- */
-/**
- * Class SectionManager
- *
- * @package Mozart\Bundle\OptionBundle\Redux
+ * @package Mozart\Bundle\OptionBundle
  */
 class SectionManager
 {
@@ -19,19 +14,16 @@ class SectionManager
      */
     private $sections;
 
-    /**
-     *
-     */
     public function __construct()
     {
         $this->sections = array();
     }
 
     /**
-     * @param ReduxSection $section
+     * @param OptionSection $section
      * @param null         $alias
      */
-    public function addSection(ReduxSection $section, $alias = null)
+    public function addSection(OptionSection $section, $alias = null)
     {
         if (null === $alias) {
             $this->sections[] = $section->getConfiguration();

@@ -3,16 +3,16 @@
  * Copyright 2014 Alexandru Furculita <alex@rhetina.com>
  */
 
-namespace Mozart\Bundle\OptionBundle\Redux\Section;
+namespace Mozart\Bundle\NucleusBundle\Option\Section;
 
-use Mozart\Bundle\OptionBundle\Redux\ReduxSection;
+use Mozart\Bundle\OptionBundle\OptionSection;
 
 /**
  * Class MozartSection
  *
- * @package Mozart\Bundle\OptionBundle\Redux\Section
+ * @package Mozart\Bundle\OptionBundle\Option\Section
  */
-class MozartSection extends ReduxSection
+class MozartSection extends OptionSection
 {
 
     /**

@@ -3,52 +3,96 @@
  * Copyright 2014 Alexandru Furculita <alex@rhetina.com>
  */
 
-namespace Mozart\Bundle\OptionBundle\Redux;
+namespace Mozart\Bundle\OptionBundle\Controller;
+
+use Mozart\Bundle\OptionBundle\Builder\OptionBuilderInterface;
+use Mozart\Bundle\OptionBundle\Extension\ExtensionManager;
+use Mozart\Bundle\OptionBundle\SectionManager;
 
 /**
- * Class Redux
- *
- * @package Mozart\Bundle\OptionBundle\Redux
+ * Class OptionController
+ * @package Mozart\Bundle\OptionBundle\Controller
  */
-class Redux
+class OptionController
 {
+    /**
+     * @var array
+     */
+    protected $args = array();
+    /**
+     * @var array
+     */
+    protected $sections = array();
 
     /**
-     * @access      protected
-     * @var         array $options Array of config options, used to check for demo mode
+     * @var array
      */
     protected $options = array();
 
     /**
-     * Use this value as the text domain when translating strings from this plugin. It should match
-     * the Text Domain field set in the plugin header, as well as the directory name of the plugin.
-     * Additionally, text domains should only contain letters, number and hypens, not underscores
-     * or spaces.
-     *
-     * @access      protected
-     * @var         string $plugin_slug The unique ID (slug) of this plugin
+     * @var SectionManager
      */
-    protected $plugin_slug = 'redux-framework';
+    private $sectionManager;
+    /**
+     * @var ExtensionManager
+     */
+    private $extensionManager;
 
     /**
-     * @access      protected
-     * @var         string $plugin_screen_hook_suffix The slug of the plugin screen
+     * @var OptionBuilderInterface
      */
-    protected $plugin_screen_hook_suffix = null;
+    private $optionBuilder;
 
     /**
-     * @access      protected
-     * @var         string $plugin_network_activated Check for plugin network activation
+     * @param SectionManager $sectionManager
+     * @param ExtensionManager $extensionManager
      */
-    protected $plugin_network_activated = null;
+    public function __construct( OptionBuilderInterface $optionBuilder, SectionManager $sectionManager, ExtensionManager $extensionManager )
+    {
+        $this->optionBuilder = $optionBuilder;
+        $this->sectionManager = $sectionManager;
+        $this->extensionManager = $extensionManager;
+    }
 
-    /**
-     *
-     */
     public function init()
     {
+        add_action( "redux/extensions/mozart-options/before", array( $this, 'loadExtensions' ) );
+
+        $this->setArguments();
+        $this->setSections();
+
+        if (!isset( $this->args['opt_name'] )) {
+            return;
+        }
+
+        $this->optionBuilder->boot( $this->sections, $this->args );
         $this->setOptions();
         $this->startHooks();
+    }
+
+    public function loadExtensions()
+    {
+        foreach ($this->extensionManager->getExtensions() as $extension) {
+            $extension->boot();
+        }
+    }
+
+    public function getBuilder()
+    {
+        return $this->optionBuilder;
+    }
+
+    public function setSections()
+    {
+        $this->sections = array_merge(
+            $this->sectionManager->getSections(),
+            include __DIR__ . '/../Resources/config/option/sections.php'
+        );
+    }
+
+    public function setArguments()
+    {
+        $this->args = include __DIR__ . '/../Resources/config/option/arguments.php';
     }
 
     /**
@@ -66,8 +110,6 @@ class Redux
     /**
      * Get Redux options
      *
-     * @access      public
-     * @since       3.1.3
      * @return void
      */
     public function setOptions()
@@ -85,7 +127,7 @@ class Redux
             foreach ($plugins as $file => $plugin) {
                 if (strpos( $file, 'redux-framework.php' ) !== false) {
                     $this->plugin_network_activated = true;
-                    $this->options                  = get_site_option( 'ReduxFrameworkPlugin', $defaults );
+                    $this->options = get_site_option( 'ReduxFrameworkPlugin', $defaults );
                 }
             }
         }
@@ -99,8 +141,6 @@ class Redux
     /**
      * Run action and filter hooks
      *
-     * @access      private
-     * @since       3.1.3
      * @return void
      */
     public function startHooks()
@@ -118,6 +158,9 @@ class Redux
         do_action( 'redux/plugin/hooks', $this );
     }
 
+    /**
+     *
+     */
     public function admin_notices()
     {
     }
@@ -140,14 +183,11 @@ class Redux
     /**
      * Fired on plugin activation
      *
-     * @access      public
-     * @since       3.0.0
-     *
      * @param boolean $network_wide True if plugin is network activated, false otherwise
      *
      * @return void
      */
-    public function activate($network_wide)
+    public function activate( $network_wide )
     {
         if (function_exists( 'is_multisite' ) && is_multisite()) {
             if ($network_wide) {
@@ -172,14 +212,11 @@ class Redux
     /**
      * Fired when plugin is deactivated
      *
-     * @access      public
-     * @since       3.0.0
-     *
      * @param boolean $network_wide True if plugin is network activated, false otherwise
      *
      * @return void
      */
-    public function deactivate($network_wide)
+    public function deactivate( $network_wide )
     {
         if (function_exists( 'is_multisite' ) && is_multisite()) {
             if ($network_wide) {
@@ -204,14 +241,11 @@ class Redux
     /**
      * Fired when a new WPMU site is activated
      *
-     * @access      public
-     * @since       3.0.0
-     *
      * @param int $blog_id The ID of the new blog
      *
      * @return void
      */
-    public function activate_new_site($blog_id)
+    public function activate_new_site( $blog_id )
     {
         if (1 !== did_action( 'wpmu_new_blog' )) {
             return;
@@ -222,11 +256,17 @@ class Redux
         restore_current_blog();
     }
 
+    /**
+     *
+     */
     public function single_activate()
     {
 
     }
 
+    /**
+     *
+     */
     public function single_deactivate()
     {
 
@@ -235,9 +275,6 @@ class Redux
     /**
      * Get all IDs of blogs that are not activated, not spam, and not deleted
      *
-     * @access      private
-     * @since       3.0.0
-     * @global      object $wpdb
      * @return array|false Array of IDs or false if none are found
      */
     private static function get_blog_ids()
@@ -255,9 +292,6 @@ class Redux
     /**
      * Turn on or off
      *
-     * @access      public
-     * @since       3.0.0
-     * @global      string $pagenow The current page being displayed
      * @return void
      */
     public function options_toggle_check()
@@ -288,7 +322,7 @@ class Redux
     /**
      * Add settings action link to plugins page
      */
-    public function add_action_links($links)
+    public function add_action_links( $links )
     {
         // In case we ever want to do this...
         return $links;

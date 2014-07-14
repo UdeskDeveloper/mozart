@@ -3,21 +3,21 @@
  * Copyright 2014 Alexandru Furculita <alex@rhetina.com>
  */
 
-namespace Mozart\Bundle\OptionBundle\Redux;
+namespace Mozart\Bundle\OptionBundle;
 
 /**
- * Class ReduxSection
+ * Class OptionSection
  *
- * @package Mozart\Bundle\OptionBundle\Redux
+ * @package Mozart\Bundle\OptionBundle
  */
 use Traversable;
 
 /**
- * Class ReduxSection
+ * Class OptionSection
  *
  * @package Mozart\Bundle\OptionBundle\Redux
  */
-class ReduxSection implements SectionInterface, \ArrayAccess
+class OptionSection implements SectionInterface, \ArrayAccess
 {
 
     /**
