@@ -36,7 +36,8 @@
         "mopa/bootstrap-bundle": "3.*@dev",
         "liip/theme-bundle": "dev-master",
 
-        "knplabs/knp-markdown-bundle": "~1.3"
+        "knplabs/knp-markdown-bundle": "~1.3",
+        "garetjax/phpbrowscap": "~2.0"
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3"

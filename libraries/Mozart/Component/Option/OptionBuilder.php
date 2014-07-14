@@ -5,6 +5,8 @@
 
 namespace Mozart\Component\Option;
 
+use Mozart\Component\Debug\SystemInfo;
+
 /**
  * Class OptionBuilder
  * @package Mozart\Component\Option
@@ -216,12 +218,11 @@ class OptionBuilder implements OptionBuilderInterface
         $this->importer = $importer;
         $this->debugger = $debugger;
         $this->tracker = $tracker;
+
+        $this->init();
     }
 
-    /**
-     *
-     */
-    public static function init()
+    public function init()
     {
         if (has_action( 'ecpt_field_options_' )) {
             global $pagenow;
@@ -255,8 +256,8 @@ class OptionBuilder implements OptionBuilderInterface
         // Create our private upload directory
         Utils\Option::initWpFilesystem();
 
-        self::$_upload_dir = trailingslashit( $wp_filesystem->wp_content_dir() ) . '/redux/';
-        self::$_upload_url = trailingslashit( content_url() ) . '/redux/';
+        self::$_upload_dir = trailingslashit( $wp_filesystem->wp_content_dir() ) . '/uploads/Mozart/Options/';
+        self::$_upload_url = trailingslashit( content_url() ) . '/uploads/Mozart/Options/';
 
         if (function_exists( 'sys_get_temp_dir' )) {
             $tmp = sys_get_temp_dir();
@@ -359,12 +360,6 @@ class OptionBuilder implements OptionBuilderInterface
              */
             $this->sections = apply_filters( "redux/options/{$this->args['opt_name']}/sections", $this->sections );
 
-            /**
-             * Construct hook
-             * action 'redux/construct'
-             *
-             * @param object $this ReduxFramework
-             */
             do_action( 'redux/construct', $this );
 
             // Set the default values
@@ -437,19 +432,10 @@ class OptionBuilder implements OptionBuilderInterface
             //Utils\Option::modRewriteCheck();
         }
 
-        /**
-         * Loaded hook
-         * action 'redux/loaded'
-         *
-         * @param  object $this ReduxFramework
-         */
         do_action( 'redux/loaded', $this );
 
-    } // __construct()
+    }
 
-    /**
-     * @return array
-     */
     protected function getDefaultArgs()
     {
         return array(
@@ -725,12 +711,10 @@ class OptionBuilder implements OptionBuilderInterface
         }
 
         return false;
-    } // set_global_variable()
+    }
 
     /**
-     * ->set_options(); This is used to set an arbitrary option in the options array
-     *
-     * @since ReduxFramework 3.0.0
+     * This is used to set an arbitrary option in the options array
      *
      * @param mixed $value the value of the option being added
      */
@@ -781,12 +765,11 @@ class OptionBuilder implements OptionBuilderInterface
             //do_action( "redux/options/{$this->args['opt_name']}/saved", $value, $this->transients['changed_values'] );
 
         }
-    } // set_options()
+    }
 
     /**
-     * ->get_options(); This is used to get options from the database
+     * This is used to get options from the database
      *
-     * @since ReduxFramework 3.0.0
      */
     public function get_options()
     {
@@ -831,9 +814,8 @@ class OptionBuilder implements OptionBuilderInterface
     } // get_options()
 
     /**
-     * ->get_wordpress_date() - Get Wordpress specific data from the DB and return in a usable array
+     * Get Wordpress specific data from the DB and return in a usable array
      *
-     * @since ReduxFramework 3.0.0
      */
     public function get_wordpress_data( $type = false, $args = array() )
     {
@@ -1147,8 +1129,6 @@ class OptionBuilder implements OptionBuilderInterface
 
     /**
      * Get fold values into an array suitable for setting folds
-     *
-     * @since ReduxFramework 1.0.0
      */
     public function _fold_values()
     {
@@ -3740,14 +3720,11 @@ class OptionBuilder implements OptionBuilderInterface
         }
 
         if ($this->args['system_info'] === true) {
-            require_once 'src/sysinfo.php';
-            $system_info = new Simple_System_Info();
-
             echo '<div id="system_info_default_section_group' . '" class="redux-group-tab">';
             echo '<h3>' . __( 'System Info', 'redux-framework' ) . '</h3>';
 
             echo '<div id="redux-system-info">';
-            echo $system_info->get( true );
+            echo SystemInfo::get();
             echo '</div>';
 
             echo '</div>';

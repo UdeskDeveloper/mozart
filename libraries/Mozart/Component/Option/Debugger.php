@@ -5,7 +5,7 @@ namespace Mozart\Component\Option;
 class Debugger
 {
     protected $builder;
-    
+
     public function init( OptionBuilderInterface $builder )
     {
         $this->builder = $builder;
@@ -19,11 +19,7 @@ class Debugger
         echo '<div id="redux-object-browser"></div>';
         echo '</div>';
 
-        if (version_compare( phpversion(), "5.3.0", ">=" )) {
-            $json = json_encode( $this->builder->options, true );
-        } else {
-            $json = json_encode( $this->builder->options );
-        }
+        $json = json_encode( $this->builder->options, true );
 
         echo '<div id="redux-object-json" class="hide">' . $json . '</div>';
 
