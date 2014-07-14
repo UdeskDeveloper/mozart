@@ -6,6 +6,7 @@
 namespace Mozart\Component\Option;
 
 use Mozart\Component\Debug\SystemInfo;
+use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * Class OptionBuilder
@@ -25,27 +26,7 @@ class OptionBuilder implements OptionBuilderInterface
     /**
      * @var
      */
-    public static $_upload_dir;
-    /**
-     * @var
-     */
-    public static $_upload_url;
-    /**
-     * @var
-     */
-    public static $wp_content_url;
-    /**
-     * @var
-     */
-    public static $base_wp_content_url;
-    /**
-     * @var
-     */
     public static $_properties;
-    /**
-     * @var bool
-     */
-    public static $_is_plugin = true;
     /**
      * @var bool
      */
@@ -218,63 +199,6 @@ class OptionBuilder implements OptionBuilderInterface
         $this->importer = $importer;
         $this->debugger = $debugger;
         $this->tracker = $tracker;
-
-        $this->init();
-    }
-
-    public function init()
-    {
-        if (has_action( 'ecpt_field_options_' )) {
-            global $pagenow;
-            if ($pagenow === 'admin.php') {
-                remove_action( 'admin_init', 'pb_admin_init' );
-            }
-        }
-
-        global $wp_filesystem;
-
-        self::$_dir = trailingslashit( Utils\Option::cleanFilePath( dirname( __FILE__ ) ) );
-        $wp_content_dir = trailingslashit( Utils\Option::cleanFilePath( WP_CONTENT_DIR ) );
-        $wp_content_dir = trailingslashit( str_replace( '//', '/', $wp_content_dir ) );
-        $relative_url = str_replace( $wp_content_dir, '', self::$_dir );
-        self::$wp_content_url = trailingslashit(
-            Utils\Option::cleanFilePath(
-                ( is_ssl() ? str_replace( 'http://', 'https://', WP_CONTENT_URL ) : WP_CONTENT_URL )
-            )
-        );
-        self::$_url = self::$wp_content_url . $relative_url;
-
-        // See if Redux is a plugin or not
-        if (strpos(
-                Utils\Option::cleanFilePath( __FILE__ ),
-                Utils\Option::cleanFilePath( get_stylesheet_directory() )
-            ) !== false
-        ) {
-            self::$_is_plugin = false;
-        }
-
-        // Create our private upload directory
-        Utils\Option::initWpFilesystem();
-
-        self::$_upload_dir = trailingslashit( $wp_filesystem->wp_content_dir() ) . '/uploads/Mozart/Options/';
-        self::$_upload_url = trailingslashit( content_url() ) . '/uploads/Mozart/Options/';
-
-        if (function_exists( 'sys_get_temp_dir' )) {
-            $tmp = sys_get_temp_dir();
-            if (empty( $tmp )) {
-                $tmpDir = self::$_upload_url . 'tmp';
-                if (file_exists( $tmpDir )) {
-                    Utils\Option::rmdir( $tmpDir );
-                }
-                putenv( 'TMPDIR=' . self::$_upload_dir . 'tmp' );
-            }
-        }
-
-        // Ensure it exists
-        if (!is_dir( self::$_upload_dir )) {
-            // Create the directory
-            $wp_filesystem->mkdir( self::$_upload_dir );
-        }
 
         do_action( 'redux/init' );
     }

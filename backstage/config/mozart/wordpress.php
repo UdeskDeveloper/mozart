@@ -32,6 +32,7 @@ $wordressInfos = array(
         'dir' => WP_CONTENT_DIR,
         'uri' => content_url()
     ),
+    'upload'     => wp_upload_dir(),
     'includes'   => array(
         'dir' => WPINC,
         'uri' => includes_url()
