@@ -8,5 +8,5 @@ namespace Mozart\Component\Option;
 
 interface OptionBuilderInterface
 {
-    public function boot( $sections = array(), $args = array(), $extra_tabs = array() );
+    public function boot( $sections = array(), $args = array() );
 } 

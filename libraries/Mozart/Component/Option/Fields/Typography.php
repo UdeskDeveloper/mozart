@@ -1,8 +1,10 @@
 <?php
+namespace Mozart\Component\Option\Fields;
 
+use Mozart\Component\Option\Field;
 use Symfony\Component\Filesystem\Filesystem;
 
-class ReduxFramework_typography
+class Typography extends Field
 {
     private $std_fonts = array(
         "Arial, Helvetica, sans-serif"                         => "Arial, Helvetica, sans-serif",
@@ -51,7 +53,9 @@ class ReduxFramework_typography
         // Move installed googlefonts.json to upload location, if not exists
         if (!$filesystem->exists( $this->google_json )) {
             $filesystem->copy(
-                ReduxFramework::$_dir . 'src/fields/typography/googlefonts.json',
+                \Mozart::parameter(
+                    'wp.plugin.dir'
+                ) . '/mozart/public/bundles/mozart/option/fields/typography/googlefonts.json',
                 $this->font_dir . '/googlefonts.json',
                 false
             );
@@ -131,7 +135,7 @@ class ReduxFramework_typography
      *
      * Takes the vars and outputs the HTML for the field in the settings
      *
-     * @since ReduxFramework 1.0.0
+     *
      */
     function render()
     {
@@ -664,20 +668,22 @@ class ReduxFramework_typography
             echo '<p data-preview-size="' . $inUse . '" class="clear ' . $this->field['id'] . '_previewer typography-preview" ' . 'style="' . $style . '">' . $g_text . '</p>';
             echo '</div>'; // end typography container
         }
-    } //function
+    }
 
     /**
      * Enqueue Function.
      *
      * If this field requires any scripts, or css define this function and register/enqueue the scripts/css
      *
-     * @since ReduxFramework 1.0.0
+     *
      */
     function enqueue()
     {
         wp_enqueue_script(
             'redux-field-typography-js',
-            ReduxFramework::$_url . 'src/fields/typography/field_typography' . Redux_Functions::isMin() . '.js',
+            \Mozart::parameter(
+                'wp.plugin.uri'
+            ) . '/mozart/public/bundles/mozart/option/fields/typography/field_typography.js',
             array( 'jquery', 'wp-color-picker', 'select2-js', 'redux-js' ),
             time(),
             true
@@ -691,11 +697,13 @@ class ReduxFramework_typography
 
         wp_enqueue_style(
             'redux-field-typography-css',
-            ReduxFramework::$_url . 'src/fields/typography/field_typography.css',
+            \Mozart::parameter(
+                'wp.plugin.uri'
+            ) . '/mozart/public/bundles/mozart/option/fields/typography/field_typography.css',
             time(),
             true
         );
-    } //function
+    }
 
     /**
      * makeGoogleWebfontLink Function.
@@ -1099,8 +1107,6 @@ class ReduxFramework_typography
      * getSubsets Function.
      *
      * Clean up the Google Webfonts subsets to be human readable
-     *
-     * @since ReduxFramework 0.2.0
      */
     private function getSubsets( $var )
     {
@@ -1123,14 +1129,12 @@ class ReduxFramework_typography
         }
 
         return array_filter( $result );
-    } //function
+    }
 
     /**
      * getVariants Function.
      *
      * Clean up the Google Webfonts variants to be human readable
-     *
-     * @since ReduxFramework 0.2.0
      */
     private function getVariants( $var )
     {

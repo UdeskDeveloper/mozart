@@ -9,20 +9,20 @@ class Border extends Field
      * Field Constructor.
      * Required - must call the parent constructor, then assign field and value to vars, and obviously call the render field function
      *
-     * @since ReduxFramework 1.0.0
+     *
      */
     function __construct( $field = array(), $value = '', $parent )
     {
         $this->parent = $parent;
         $this->field = $field;
         $this->value = $value;
-    } //function
+    }
 
     /**
      * Field Render Function.
      * Takes the vars and outputs the HTML for the field in the settings
      *
-     * @since ReduxFramework 1.0.0
+     *
      */
     function render()
     {
@@ -197,21 +197,19 @@ class Border extends Field
         }
     }
 
-    //function
+
 
     /**
      * Enqueue Function.
      * If this field requires any scripts, or css define this function and register/enqueue the scripts/css
      *
-     * @since ReduxFramework 1.0.0
+     *
      */
     function enqueue()
     {
-        $min = Redux_Functions::isMin();
-
         wp_enqueue_script(
             'redux-field-border-js',
-            ReduxFramework::$_url . 'src/fields/border/field_border' . $min . '.js',
+            \Mozart::parameter('wp.plugin.uri') . '/mozart/public/bundles/mozart/option/fields/border/field_border.js',
             array( 'jquery', 'select2-js', 'wp-color-picker', 'redux-js' ),
             time(),
             true
@@ -219,11 +217,11 @@ class Border extends Field
 
         wp_enqueue_style(
             'redux-field-border-css',
-            ReduxFramework::$_url . 'src/fields/border/field_border.css',
+            \Mozart::parameter('wp.plugin.uri') . '/mozart/public/bundles/mozart/option/fields/border/field_border.css',
             time(),
             true
         );
-    } //function
+    }
 
     public function output()
     {

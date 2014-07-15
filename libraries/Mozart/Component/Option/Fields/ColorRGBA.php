@@ -1,10 +1,10 @@
 <?php
-namespace Mozart\Component\Option\Fields\Color;
+namespace Mozart\Component\Option\Fields;
 
 use Mozart\Component\Option\Utils;
 use Mozart\Component\Option\Field;
 
-class RGBA extends Field
+class ColorRGBA extends Field
 {
     /**
      * Field Constructor.
@@ -91,11 +91,9 @@ class RGBA extends Field
      */
     public function enqueue()
     {
-        $min = Redux_Functions::isMin();
-
         wp_enqueue_script(
             'redux-field-color_rgba-minicolors-js',
-            ReduxFramework::$_url . 'src/fields/color_rgba/vendor/minicolors/jquery.minicolors' . $min . '.js',
+            \Mozart::parameter('wp.plugin.uri') . '/mozart/public/bundles/mozart/option/fields/color_rgba/vendor/minicolors/jquery.minicolors.js',
             array( 'jquery' ),
             time(),
             true
@@ -103,7 +101,7 @@ class RGBA extends Field
 
         wp_enqueue_script(
             'redux-field-color_rgba-js',
-            ReduxFramework::$_url . 'src/fields/color_rgba/field_color_rgba' . $min . '.js',
+            \Mozart::parameter('wp.plugin.uri') . '/mozart/public/bundles/mozart/option/fields/color_rgba/field_color_rgba.js',
             array( 'jquery', 'redux-js' ),
             time(),
             true
@@ -111,7 +109,7 @@ class RGBA extends Field
 
         wp_enqueue_style(
             'redux-field-color_rgba-css',
-            ReduxFramework::$_url . 'src/fields/color_rgba/field_color_rgba.css',
+            \Mozart::parameter('wp.plugin.uri') . '/mozart/public/bundles/mozart/option/fields/color_rgba/field_color_rgba.css',
             time(),
             true
         );

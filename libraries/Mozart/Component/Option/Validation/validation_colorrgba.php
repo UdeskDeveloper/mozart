@@ -19,7 +19,7 @@
                 //$this->validate();
             }
 
-            //function
+
 
             /**
              * Validate Color to RGBA
@@ -51,7 +51,7 @@
                 return array( 'hex' => $color, 'alpha' => $alpha );
             }
 
-            //function
+
 
             /**
              * Field Render Function.
@@ -73,7 +73,7 @@
                  */
             }
 
-            //function
+
         }
 
         //class

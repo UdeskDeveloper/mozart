@@ -17,7 +17,7 @@
                 $this->current      = $current;
 
                 $this->validate();
-            } //function
+            }
 
             /**
              * Validate Color to RGBA
@@ -40,7 +40,7 @@
                 }
 
                 return array( 'hex' => $color, 'rgba' => Utils\Option::hex2rgba( $color ) );
-            } //function
+            }
 
             /**
              * Field Render Function.
@@ -58,6 +58,6 @@
                 } else { // not array
                     $this->value = $this->validate_color_rgba( $this->value );
                 } // END array check
-            } //function
+            }
         } //class
     }

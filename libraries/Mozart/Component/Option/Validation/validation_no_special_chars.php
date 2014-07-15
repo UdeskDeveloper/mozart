@@ -7,7 +7,7 @@
              * Field Constructor.
              * Required - must call the parent constructor, then assign field and value to vars, and obviously call the render field function
              *
-             * @since ReduxFramework 1.0.0
+             *
              */
             function __construct($parent, $field, $value, $current)
             {
@@ -18,13 +18,13 @@
                 $this->current      = $current;
 
                 $this->validate();
-            } //function
+            }
 
             /**
              * Field Render Function.
              * Takes the vars and validates them
              *
-             * @since ReduxFramework 1.0.0
+             *
              */
             function validate()
             {
@@ -33,6 +33,6 @@
                 }
 
                 $this->value = preg_replace( '/[^a-zA-Z0-9_ -]/s', '', $this->value );
-            } //function
+            }
         } //class
     }

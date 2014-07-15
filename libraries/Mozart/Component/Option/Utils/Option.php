@@ -10,17 +10,6 @@ class Option {
 
     public static $_parent;
 
-    public static function isMin()
-    {
-        $min = '';
-
-        if (false == self::$_parent->args['dev_mode']) {
-            $min = '.min';
-        }
-
-        return $min;
-    }
-
     /**
      * Parse CSS from output/compiler array
      *

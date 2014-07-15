@@ -380,7 +380,7 @@ class Background extends Field
     {
         wp_enqueue_script(
             'redux-field-background-js',
-            ReduxFramework::$_url . 'src/fields/background/field_background' . Redux_Functions::isMin() . '.js',
+            \Mozart::parameter('wp.plugin.uri') . '/mozart/public/bundles/mozart/option/fields/background/field_background.js',
             array( 'jquery', 'wp-color-picker', 'select2-js', 'redux-js' ),
             time(),
             true
@@ -388,7 +388,7 @@ class Background extends Field
 
         wp_enqueue_style(
             'redux-field-background-css',
-            ReduxFramework::$_url . 'src/fields/background/field_background.css',
+            \Mozart::parameter('wp.plugin.uri') . '/mozart/public/bundles/mozart/option/fields/background/field_background.css',
             time(),
             true
         );

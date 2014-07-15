@@ -172,7 +172,7 @@ class Importer
     {
         wp_enqueue_script(
             'redux-field-import-export-js',
-            ReduxFramework::$_url . 'assets/js/import_export/import_export' . Utils\Option::isMin() . '.js',
+            \Mozart::parameter('wp.plugin.uri') . '/mozart/public/bundles/mozart/option/js/import_export/import_export.js',
             array( 'jquery', 'redux-js' ),
             time(),
             true
@@ -180,7 +180,7 @@ class Importer
 
         wp_enqueue_style(
             'redux-field-import-export-css',
-            ReduxFramework::$_url . 'assets/css/import_export/import_export.css',
+            \Mozart::parameter('wp.plugin.uri') . '/mozart/public/bundles/mozart/option/css/import_export/import_export.css',
             time(),
             true
         );

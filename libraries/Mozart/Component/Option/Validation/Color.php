@@ -20,7 +20,7 @@ class Redux_Validation_color
         $this->current = $current;
 
         $this->validate();
-    } //function
+    }
 
     /**
      * Validate Color
@@ -55,7 +55,7 @@ class Redux_Validation_color
 
         //$this->error = $this->field;
         return false;
-    } //function
+    }
 
     /**
      * Field Render Function.
@@ -73,5 +73,5 @@ class Redux_Validation_color
         } else { // not array
             $this->value = $this->validate_color( $this->value );
         } // END array check
-    } //function
+    }
 }

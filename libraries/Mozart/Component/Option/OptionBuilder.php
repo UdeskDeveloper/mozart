@@ -6,6 +6,7 @@
 namespace Mozart\Component\Option;
 
 use Mozart\Component\Debug\SystemInfo;
+use Symfony\Component\DependencyInjection\Container;
 
 /**
  * Class OptionBuilder
@@ -13,6 +14,9 @@ use Mozart\Component\Debug\SystemInfo;
  */
 class OptionBuilder implements OptionBuilderInterface
 {
+    /**
+     *
+     */
     const NAME = 'mozart';
     /**
      * @var
@@ -190,174 +194,109 @@ class OptionBuilder implements OptionBuilderInterface
      * @var Importer
      */
     protected $importer;
+    /**
+     * @var Debugger
+     */
     protected $debugger;
+    /**
+     * @var Tracker
+     */
     protected $tracker;
 
+    /**
+     * @param Importer $importer
+     * @param Debugger $debugger
+     * @param Tracker $tracker
+     */
     public function __construct( Importer $importer, Debugger $debugger, Tracker $tracker )
     {
         $this->importer = $importer;
         $this->debugger = $debugger;
         $this->tracker = $tracker;
-
-        do_action( 'redux/init' );
     }
 
     /**
      * @param array $sections
      * @param array $args
-     * @param array $extra_tabs
      */
-    public function boot( $sections = array(), $args = array(), $extra_tabs = array() )
+    public function boot( $sections = array(), $args = array() )
     {
-        $this->args = $this->getDefaultArgs();
-
-        // Disregard WP AJAX 'heartbeat'call.  Why waste resources?
-        if (isset( $_POST ) && isset( $_POST['action'] ) && $_POST['action'] == 'heartbeat') {
-
-            // Hook, for purists.
-            if (!has_action( 'redux/ajax/heartbeat' )) {
-                do_action( 'redux/ajax/heartbeat', $this );
-            }
-
-            return;
-        }
-
-        // Pass parent pointer to function helper.
-        Utils\Option::$_parent = $this;
-
         // Set values
-        $this->args = wp_parse_args( $args, $this->args );
+        $this->args = array_merge( $args, $this->getDefaultArgs() );
 
-        if (!empty( $this->args['opt_name'] )) {
-            /**
-             * SHIM SECTION
-             * Old variables and ways of doing things that need correcting.  ;)
-             **/
-            // Variable name change
-            if (!empty( $this->args['page_cap'] )) {
-                $this->args['page_permissions'] = $this->args['page_cap'];
-                unset( $this->args['page_cap'] );
-            }
-
-            if (!empty( $this->args['page_position'] )) {
-                $this->args['page_priority'] = $this->args['page_position'];
-                unset( $this->args['page_position'] );
-            }
-
-            if (!empty( $this->args['page_type'] )) {
-                $this->args['menu_type'] = $this->args['page_type'];
-                unset( $this->args['page_type'] );
-            }
-
-            // Get rid of extra_tabs! Not needed.
-            if (is_array( $extra_tabs ) && !empty( $extra_tabs )) {
-                foreach ($extra_tabs as $tab) {
-                    array_push( $this->sections, $tab );
-                }
-            }
-
-            // Move to the first loop area!
-            /**
-             * filter 'redux-sections'
-             *
-             * @deprecated
-             *
-             * @param  array $sections field option sections
-             */
-            $this->sections = apply_filters( 'redux-sections', $sections ); // REMOVE LATER
-            /**
-             * filter 'redux-sections-{opt_name}'
-             *
-             * @deprecated
-             *
-             * @param  array $sections field option sections
-             */
-            $this->sections = apply_filters(
-                "redux-sections-{$this->args['opt_name']}",
-                $this->sections
-            ); // REMOVE LATER
-            /**
-             * filter 'redux/options/{opt_name}/sections'
-             *
-             * @param  array $sections field option sections
-             */
-            $this->sections = apply_filters( "redux/options/{$this->args['opt_name']}/sections", $this->sections );
-
-            do_action( 'redux/construct', $this );
-
-            // Set the default values
-            $this->_default_cleanup();
-
-            $this->loadTranslations();
-
-            // Grab database values
-            $this->get_options();
-
-            $this->tracker->load( $this );
-
-            // Set option with defaults
-            //add_action( 'init', array( &$this, '_set_default_options' ), 101 );
-
-            // Options page
-            add_action( 'admin_menu', array( $this, '_options_page' ) );
-
-            // Add a network menu
-            if ($this->args['database'] == "network" && $this->args['network_admin']) {
-                add_action( 'network_admin_menu', array( $this, '_options_page' ) );
-            }
-
-            // Admin Bar menu
-            add_action( 'admin_bar_menu', array( $this, '_admin_bar_menu' ), 999 );
-
-            // Register setting
-            add_action( 'admin_init', array( $this, '_register_settings' ) );
-
-            // Display admin notices in dev_mode
-            if (true == $this->args['dev_mode']) {
-                $this->debugger->init( $this );
-            }
-
-            // Display admin notices
-            add_action( 'admin_notices', array( 'Utils\Option', 'adminNotices' ) );
-
-            // Check for dismissed admin notices.
-            add_action( 'admin_init', array( 'Utils\Option', 'dismissAdminNotice' ), 9 );
-
-            // Enqueue the admin page CSS and JS
-            if (isset( $_GET['page'] ) && $_GET['page'] == $this->args['page_slug']) {
-                add_action( 'admin_enqueue_scripts', array( $this, '_enqueue' ), 1 );
-            }
-
-            // Output dynamic CSS
-            add_action( 'wp_head', array( &$this, '_output_css' ), 150 );
-
-            // Enqueue dynamic CSS and Google fonts
-            add_action( 'wp_enqueue_scripts', array( &$this, '_enqueue_output' ), 150 );
-
-            $this->importer->init( $this );
-
-            if ($this->args['database'] == "network" && $this->args['network_admin']) {
-                add_action(
-                    'network_admin_edit_redux_' . $this->args['opt_name'],
-                    array(
-                        $this,
-                        'save_network_page'
-                    ),
-                    10,
-                    0
-                );
-                add_action( 'admin_bar_menu', array( $this, 'network_admin_bar' ), 999 );
-
-            }
-
-            // mod_rewrite check
-            //Utils\Option::modRewriteCheck();
+        if (empty( $this->args['opt_name'] )) {
+            return false;
         }
 
-        do_action( 'redux/loaded', $this );
+        // Set the default values
+        if ($this->args['global_variable'] == "" && $this->args['global_variable'] !== false) {
+            $this->args['global_variable'] = str_replace( '-', '_', $this->args['opt_name'] );
+        }
 
+        $this->loadTranslations();
+
+        // Grab database values
+        $this->loadOptions();
+
+        $this->tracker->load( $this );
+
+        // Options page
+        add_action( 'admin_menu', array( $this, '_options_page' ) );
+
+        // Add a network menu
+        if ($this->args['database'] == "network" && $this->args['network_admin']) {
+            add_action( 'network_admin_menu', array( $this, '_options_page' ) );
+        }
+
+        // Admin Bar menu
+        add_action( 'admin_bar_menu', array( $this, '_admin_bar_menu' ), 999 );
+
+        // Register setting
+        add_action( 'admin_init', array( $this, '_register_settings' ) );
+
+        // Display admin notices in dev_mode
+        if (true == $this->args['dev_mode']) {
+            $this->debugger->init( $this );
+        }
+
+        // Display admin notices
+        add_action( 'admin_notices', array( 'Utils\Option', 'adminNotices' ) );
+
+        // Check for dismissed admin notices.
+        add_action( 'admin_init', array( 'Utils\Option', 'dismissAdminNotice' ), 9 );
+
+        // Enqueue the admin page CSS and JS
+        if (isset( $_GET['page'] ) && $_GET['page'] == $this->args['page_slug']) {
+            add_action( 'admin_enqueue_scripts', array( $this, '_enqueue' ), 1 );
+        }
+
+        // Output dynamic CSS
+        add_action( 'wp_head', array( &$this, '_output_css' ), 150 );
+
+        // Enqueue dynamic CSS and Google fonts
+        add_action( 'wp_enqueue_scripts', array( &$this, '_enqueue_output' ), 150 );
+
+        $this->importer->init( $this );
+
+        if ($this->args['database'] == "network" && $this->args['network_admin']) {
+            add_action(
+                'network_admin_edit_redux_' . $this->args['opt_name'],
+                array(
+                    $this,
+                    'save_network_page'
+                ),
+                10,
+                0
+            );
+            add_action( 'admin_bar_menu', array( $this, 'network_admin_bar' ), 999 );
+
+        }
     }
 
+
+    /**
+     * @return array
+     */
     protected function getDefaultArgs()
     {
         return array(
@@ -509,6 +448,9 @@ class OptionBuilder implements OptionBuilderInterface
         exit();
     }
 
+    /**
+     *
+     */
     private function loadTranslations()
     {
         if (strpos( $locale, '_' ) === false) {
@@ -544,13 +486,10 @@ class OptionBuilder implements OptionBuilderInterface
         }
 
         return $default;
-    } // _get_default()
+    }
 
     /**
-     * ->get(); This is used to return and option value from the options array
-     *
-     * @since       1.0.0
-     * @access      public
+     * This is used to return and option value from the options array
      *
      * @param       string $opt_name The option name to return
      * @param       mixed $default (null) The value to return if option not set
@@ -563,13 +502,10 @@ class OptionBuilder implements OptionBuilderInterface
             $opt_name,
             $default
         );
-    } // get()
+    }
 
     /**
-     * ->set(); This is used to set an arbitrary option in the options array
-     *
-     * @since       1.0.0
-     * @access      public
+     * This is used to set an arbitrary option in the options array
      *
      * @param       string $opt_name The name of the option being added
      * @param       mixed $value The value of the option being added
@@ -582,28 +518,18 @@ class OptionBuilder implements OptionBuilderInterface
             $this->options[$opt_name] = $value;
             $this->set_options( $this->options );
         }
-    } // set()
+    }
 
     /**
      * Set a global variable by the global_variable argument
      *
-     * @since   3.1.5
-     * @return  bool          (global was set)
+     * @return  bool
      */
     public function set_global_variable()
     {
         if ($this->args['global_variable']) {
             $option_global = $this->args['global_variable'];
-            /**
-             * filter 'redux/options/{opt_name}/global_variable'
-             *
-             * @param array $value option value to set global_variable with
-             */
 
-            $GLOBALS[$option_global] = apply_filters(
-                "redux/options/{$this->args['opt_name']}/global_variable",
-                $this->options
-            );
             if (isset( $this->transients['last_save'] )) {
                 // Deprecated
                 $GLOBALS[$option_global]['REDUX_last_saved'] = $this->transients['last_save'];
@@ -670,10 +596,6 @@ class OptionBuilder implements OptionBuilderInterface
 
             // Saving the transient values
             $this->set_transients();
-
-            //do_action( "redux-saved-{$this->args['opt_name']}", $value ); // REMOVE
-            //do_action( "redux/options/{$this->args['opt_name']}/saved", $value, $this->transients['changed_values'] );
-
         }
     }
 
@@ -681,7 +603,7 @@ class OptionBuilder implements OptionBuilderInterface
      * This is used to get options from the database
      *
      */
-    public function get_options()
+    public function loadOptions()
     {
         $defaults = false;
 
@@ -721,7 +643,7 @@ class OptionBuilder implements OptionBuilderInterface
 
         // Set a global variable by the global_variable argument.
         $this->set_global_variable();
-    } // get_options()
+    }
 
     /**
      * Get Wordpress specific data from the DB and return in a usable array
@@ -730,22 +652,6 @@ class OptionBuilder implements OptionBuilderInterface
     public function get_wordpress_data( $type = false, $args = array() )
     {
         $data = "";
-
-        /**
-         * filter 'redux/options/{opt_name}/wordpress_data/{type}/'
-         *
-         * @deprecated
-         *
-         * @param string $data
-         */
-        $data = apply_filters( "redux/options/{$this->args['opt_name']}/wordpress_data/$type/", $data ); // REMOVE LATER
-
-        /**
-         * filter 'redux/options/{opt_name}/data/{type}'
-         *
-         * @param string $data
-         */
-        $data = apply_filters( "redux/options/{$this->args['opt_name']}/data/$type", $data );
 
         $argsKey = "";
         foreach ($args as $key => $value) {
@@ -867,33 +773,6 @@ class OptionBuilder implements OptionBuilderInterface
                     case "font-icons":
                     case "icons":
 
-                        /**
-                         * filter 'redux-font-icons'
-                         *
-                         * @deprecated
-                         *
-                         * @param array $font_icons array of elusive icon classes
-                         */
-                        $font_icons = apply_filters( 'redux-font-icons', array() ); // REMOVE LATER
-
-                        /**
-                         * filter 'redux/font-icons'
-                         *
-                         * @deprecated
-                         *
-                         * @param array $font_icons array of elusive icon classes
-                         */
-                        $font_icons = apply_filters( 'redux/font-icons', $font_icons );
-
-                        /**
-                         * filter 'redux/{opt_name}/field/font/icons'
-                         *
-                         * @deprecated
-                         *
-                         * @param array $font_icons array of elusive icon classes
-                         */
-                        $font_icons = apply_filters( "redux/{$this->args['opt_name']}/field/font/icons", $font_icons );
-
                         foreach ($font_icons as $k) {
                             $data[$k] = $k;
                         }
@@ -934,15 +813,11 @@ class OptionBuilder implements OptionBuilderInterface
             $this->wp_data[$type . $argsKey] = $data;
         }
 
-        //if
         return $data;
-    } // get_wordpress_data()
+    }
 
     /**
-     * ->show(); This is used to echo and option value from the options array
-     *
-     * @since       1.0.0
-     * @access      public
+     * This is used to echo and option value from the options array
      *
      * @param       string $opt_name The name of the option being shown
      * @param       mixed $default The value to show if $opt_name isn't set
@@ -957,13 +832,11 @@ class OptionBuilder implements OptionBuilderInterface
         } elseif ($default != '') {
             echo $this->_get_default( $opt_name, $default );
         }
-    } // show()
+    }
 
     /**
      * Get default options into an array suitable for the settings API
      *
-     * @since       1.0.0
-     * @access      public
      * @return      array $this->options_defaults
      */
     public function _default_values()
@@ -1042,11 +915,7 @@ class OptionBuilder implements OptionBuilderInterface
      */
     public function _fold_values()
     {
-        /*
-             Folds work by setting the folds value like so
-             $this->folds['parentID']['parentValue'][] = 'childId'
-            */
-//          $folds = array();
+
         if (!is_null( $this->sections )) {
 
             foreach ($this->sections as $section) {
@@ -1099,10 +968,10 @@ class OptionBuilder implements OptionBuilderInterface
         }
 
         return $this->folds;
-    } // _fold_values()
+    }
 
     /**
-     * get_fold() - Get the fold values
+     * Get the fold values
      *
      * @param array $field
      *
@@ -1176,28 +1045,11 @@ class OptionBuilder implements OptionBuilderInterface
         }
 
         return $this->folds;
-    } // get_fold()
-
-    /**
-     * Set default options on admin_init if option doesn't exist
-     *
-     * @since       1.0.0
-     * @access      public
-     * @return      void
-     */
-    public function _default_cleanup()
-    {
-        // Fix the global variable name
-        if ($this->args['global_variable'] == "" && $this->args['global_variable'] !== false) {
-            $this->args['global_variable'] = str_replace( '-', '_', $this->args['opt_name'] );
-        }
     }
 
     /**
      * Class Add Sub Menu Function, creates options submenu in Wordpress admin area.
      *
-     * @since       3.1.9
-     * @access      private
      * @return      void
      */
     private function add_submenu( $page_parent, $page_title, $menu_title, $page_permissions, $page_slug )
@@ -1286,8 +1138,6 @@ class OptionBuilder implements OptionBuilderInterface
     /**
      * Class Options Page Function, creates main options page.
      *
-     * @since       1.0.0
-     * @access      public
      * @return void
      */
     public function _options_page()
@@ -1426,13 +1276,11 @@ class OptionBuilder implements OptionBuilderInterface
 
             $wp_admin_bar->add_node( $nodeargs );
         }
-    } // _admin_bar_menu()
+    }
 
     /**
      * Output dynamic CSS at bottom of HEAD
      *
-     * @since       3.2.8
-     * @access      public
      * @return      void
      */
     public function _output_css()
@@ -1453,8 +1301,6 @@ class OptionBuilder implements OptionBuilderInterface
     /**
      * Enqueue CSS and Google fonts for front end
      *
-     * @since       1.0.0
-     * @access      public
      * @return      void
      */
     public function _enqueue_output()
@@ -1463,43 +1309,28 @@ class OptionBuilder implements OptionBuilderInterface
             return;
         }
 
-        /** @noinspection PhpUnusedLocalVariableInspection */
         foreach ($this->sections as $k => $section) {
             if (isset( $section['type'] ) && ( $section['type'] == 'divide' )) {
                 continue;
             }
 
             if (isset( $section['fields'] )) {
-                /** @noinspection PhpUnusedLocalVariableInspection */
                 foreach ($section['fields'] as $fieldk => $field) {
                     if (isset( $field['type'] ) && $field['type'] != "callback") {
-                        $field_class = "ReduxFramework_{$field['type']}";
-                        if (!class_exists( $field_class )) {
+                        $field_class = "Mozart\\Component\\Option\\Field\\" . Container::camelize( $field['type'] );
+                        if (!isset( $field['compiler'] )) {
+                            $field['compiler'] = "";
+                        }
 
-                            if (!isset( $field['compiler'] )) {
-                                $field['compiler'] = "";
-                            }
-
-                            /**
-                             * Field class file
-                             * filter 'redux/{opt_name}/field/class/{field.type}
-                             *
-                             * @param       string        field class file
-                             * @param array $field field config data
-                             */
-                            $class_file = apply_filters(
-                                "redux/{$this->args['opt_name']}/field/class/{$field['type']}",
-                                self::$_dir . "src/fields/{$field['type']}/field_{$field['type']}.php",
-                                $field
-                            );
-
-                            if ($class_file && file_exists( $class_file ) && !class_exists( $field_class )) {
-                                /** @noinspection PhpIncludeInspection */
-                                require_once( $class_file );
+                        if (false === class_exists( $field_class )) {
+                            if (false === class_exists( $field_class . 'Field' )) {
+                                continue;
+                            } else {
+                                $field_class = $field_class . 'Field';
                             }
                         }
 
-                        if (!empty( $this->options[$field['id']] ) && class_exists( $field_class ) && method_exists(
+                        if (!empty( $this->options[$field['id']] ) && method_exists(
                                 $field_class,
                                 'output'
                             ) && $this->_can_output_css( $field )
@@ -1533,7 +1364,7 @@ class OptionBuilder implements OptionBuilderInterface
             )
         ) {
             $version = !empty( $this->transients['last_save'] ) ? $this->transients['last_save'] : '';
-            $typography = new ReduxFramework_typography( null, null, $this );
+            $typography = new Fields\Typography( null, null, $this );
 
             if ($this->args['async_typography'] && !empty( $this->typography )) {
                 $families = array();
@@ -1580,13 +1411,10 @@ class OptionBuilder implements OptionBuilderInterface
             }
         }
 
-    } // _enqueue_output()
+    }
 
     /**
      * Enqueue CSS/JS for options page
-     *
-     * @since       1.0.0
-     * @access      public
      * @global      $wp_styles
      * @return      void
      */
@@ -1595,7 +1423,6 @@ class OptionBuilder implements OptionBuilderInterface
         global $wp_styles;
 
         Utils\Option::$_parent = $this;
-        $min = Utils\Option::isMin();
 
         // Select2 business.  Fields:  Background, Border, Dimensions, Select, Slider, Typography
         if (Utils\Option::isFieldInUseByType(
@@ -1690,8 +1517,6 @@ class OptionBuilder implements OptionBuilderInterface
 
         /**
          * jQuery UI stylesheet src
-         * filter 'redux/page/{opt_name}/enqueue/jquery-ui-css'
-         *
          * @param string  bundled stylesheet src
          */
         wp_register_style(
@@ -1827,77 +1652,63 @@ class OptionBuilder implements OptionBuilderInterface
 
         wp_register_script(
             'redux-js',
-            self::$_url . 'assets/js/redux' . $min . '.js',
+            self::$_url . 'assets/js/redux.js',
             $depArray,
-            filemtime( self::$_dir . 'assets/js/redux' . $min . '.js' ),
+            filemtime( self::$_dir . 'assets/js/redux.js' ),
             true
         );
 
         foreach ($this->sections as $section) {
             if (isset( $section['fields'] )) {
                 foreach ($section['fields'] as $field) {
-                    // TODO AFTER GROUP WORKS - Revert IF below
-                    // if ( isset( $field['type'] ) && $field['type'] != 'callback' ) {
-                    if (isset( $field['type'] ) && $field['type'] != 'callback') {
+                    if (!isset( $field['type'] ) || $field['type'] == 'callback') {
+                        continue;
+                    }
 
-                        $field_class = 'ReduxFramework_' . $field['type'];
+                    $field_class = "Mozart\\Component\\Option\\Fields\\" . Container::camelize( $field['type'] );
 
-                        /**
-                         * Field class file
-                         * filter 'redux/{opt_name}/field/class/{field.type}
-                         *
-                         * @param       string        field class file path
-                         * @param array $field field config data
-                         */
-                        $class_file = apply_filters(
-                            "redux/{$this->args['opt_name']}/field/class/{$field['type']}",
-                            self::$_dir . "src/fields/{$field['type']}/field_{$field['type']}.php",
-                            $field
-                        );
-                        if ($class_file) {
-                            if (!class_exists( $field_class )) {
-                                if (file_exists( $class_file )) {
-                                    require_once( $class_file );
-                                }
-                            }
-
-                            if (( method_exists( $field_class, 'enqueue' ) ) || method_exists(
-                                    $field_class,
-                                    'localize'
-                                )
-                            ) {
-                                if (!isset( $this->options[$field['id']] )) {
-                                    $this->options[$field['id']] = "";
-                                }
-                                $theField = new $field_class( $field, $this->options[$field['id']], $this );
-
-                                // Move dev_mode check to a new if/then block
-                                if (!wp_script_is(
-                                        'redux-field-' . $field['type'] . '-js',
-                                        'enqueued'
-                                    ) && class_exists( $field_class ) && method_exists( $field_class, 'enqueue' )
-                                ) {
-
-                                    // Checking for extension field AND dev_mode = false OR dev_mode = true
-                                    // Since extension fields use 'extension_dir' exclusively, we can detect them here.
-                                    // Also checking for dev_mode = true doesn't mess up the JS combinine.
-                                    //if ( /*$this->args['dev_mode'] === false && */ isset($theField->extension_dir) && (!'' == $theField->extension_dir) /* || ($this->args['dev_mode'] === true) */) {
-                                    $theField->enqueue();
-                                    //}
-                                }
-
-                                if (method_exists( $field_class, 'localize' )) {
-                                    $params = $theField->localize( $field );
-                                    if (!isset( $this->localize_data[$field['type']] )) {
-                                        $this->localize_data[$field['type']] = array();
-                                    }
-                                    $this->localize_data[$field['type']][$field['id']] = $theField->localize( $field );
-                                }
-
-                                unset( $theField );
-                            }
+                    if (false === class_exists( $field_class )) {
+                        if (false === class_exists( $field_class . 'Field' )) {
+                            continue;
+                        } else {
+                            $field_class = $field_class . 'Field';
                         }
                     }
+
+                    if (false === method_exists( $field_class, 'enqueue' )
+                        && false === method_exists( $field_class, 'localize' )
+                    ) {
+                        continue;
+                    }
+                    if (!isset( $this->options[$field['id']] )) {
+                        $this->options[$field['id']] = "";
+                    }
+                    $theField = new $field_class( $field, $this->options[$field['id']], $this );
+
+                    // Move dev_mode check to a new if/then block
+                    if (!wp_script_is(
+                            'redux-field-' . $field['type'] . '-js',
+                            'enqueued'
+                        ) && class_exists( $field_class ) && method_exists( $field_class, 'enqueue' )
+                    ) {
+
+                        // Checking for extension field AND dev_mode = false OR dev_mode = true
+                        // Since extension fields use 'extension_dir' exclusively, we can detect them here.
+                        // Also checking for dev_mode = true doesn't mess up the JS combinine.
+                        //if ( /*$this->args['dev_mode'] === false && */ isset($theField->extension_dir) && (!'' == $theField->extension_dir) /* || ($this->args['dev_mode'] === true) */) {
+                        $theField->enqueue();
+                        //}
+                    }
+
+                    if (method_exists( $field_class, 'localize' )) {
+                        $params = $theField->localize( $field );
+                        if (!isset( $this->localize_data[$field['type']] )) {
+                            $this->localize_data[$field['type']] = array();
+                        }
+                        $this->localize_data[$field['type']][$field['id']] = $theField->localize( $field );
+                    }
+
+                    unset( $theField );
                 }
             }
         }
@@ -1939,8 +1750,6 @@ class OptionBuilder implements OptionBuilderInterface
 
         /**
          * Save pending string
-         * filter 'redux/{opt_name}/localize/save_pending
-         *
          * @param       string        save_pending string
          */
         $save_pending = apply_filters(
@@ -1950,8 +1759,6 @@ class OptionBuilder implements OptionBuilderInterface
 
         /**
          * Reset all string
-         * filter 'redux/{opt_name}/localize/reset
-         *
          * @param       string        reset all string
          */
         $reset_all = apply_filters(
@@ -1961,8 +1768,6 @@ class OptionBuilder implements OptionBuilderInterface
 
         /**
          * Reset section string
-         * filter 'redux/{opt_name}/localize/reset_section
-         *
          * @param       string        reset section string
          */
         $reset_section = apply_filters(
@@ -1972,7 +1777,6 @@ class OptionBuilder implements OptionBuilderInterface
 
         /**
          * Preset confirm string
-         * filter 'redux/{opt_name}/localize/preset
          *
          * @param       string        preset confirm string
          */
@@ -2057,27 +1861,10 @@ class OptionBuilder implements OptionBuilderInterface
             '1.5.0',
             true
         );
-
-        /**
-         * action 'redux-enqueue-{opt_name}'
-         *
-         * @deprecated
-         *
-         * @param  object $this ReduxFramework
-         */
-        do_action( "redux-enqueue-{$this->args['opt_name']}", $this ); // REMOVE
-
-        /**
-         * action 'redux/page/{opt_name}/enqueue'
-         */
-        do_action( "redux/page/{$this->args['opt_name']}/enqueue" );
-    } // _enqueue()
+    }
 
     /**
      * Show page help
-     *
-     * @since       1.0.0
-     * @access      public
      * @return      void
      */
     public function _load_page()
@@ -2163,68 +1950,20 @@ class OptionBuilder implements OptionBuilderInterface
                 );
             }
         }
-
-        /**
-         * action 'redux-load-page-{opt_name}'
-         *
-         * @deprecated
-         *
-         * @param object $screen WP_Screen
-         */
-        do_action( "redux-load-page-{$this->args['opt_name']}", $screen ); // REMOVE
-
-        /**
-         * action 'redux/page/{opt_name}/load'
-         *
-         * @param object $screen WP_Screen
-         */
-        do_action( "redux/page/{$this->args['opt_name']}/load", $screen );
-
-    } // _load_page()
-
-    /**
-     * Do action redux-admin-head for options page
-     *
-     * @since       1.0.0
-     * @access      public
-     * @return      void
-     */
-    public function admin_head()
-    {
-        /**
-         * action 'redux-admin-head-{opt_name}'
-         *
-         * @deprecated
-         *
-         * @param  object $this ReduxFramework
-         */
-        do_action( "redux-admin-head-{$this->args['opt_name']}", $this ); // REMOVE
-
-        /**
-         * action 'redux/page/{opt_name}/header'
-         *
-         * @param  object $this ReduxFramework
-         */
-        do_action( "redux/page/{$this->args['opt_name']}/header", $this );
-    } // admin_head()
+    }
 
     /**
      * Return footer text
-     *
-     * @since       2.0.0
-     * @access      public
      * @return      string $this->args['footer_credit']
      */
     public function admin_footer_text()
     {
         return $this->args['footer_credit'];
-    } // admin_footer_text()
+    }
 
     /**
      * Return default output string for use in panel
      *
-     * @since       3.1.5
-     * @access      public
      * @return      string default_output
      */
     public function get_default_output_string( $field )
@@ -2279,7 +2018,7 @@ class OptionBuilder implements OptionBuilderInterface
         }
 
         return $default_output;
-    } // get_default_output_string()
+    }
 
     /**
      * @param $field
@@ -2356,15 +2095,10 @@ class OptionBuilder implements OptionBuilderInterface
     /**
      * Register Option for use
      *
-     * @since       1.0.0
-     * @access      public
      * @return      void
      */
     public function _register_settings()
     {
-        // TODO - REMOVE
-        // Not used by new sample-config, but in here for legacy builds
-        // This is bad and can break things. Hehe.
         if (!function_exists( 'wp_get_current_user' )) {
             include( ABSPATH . "wp-includes/pluggable.php" );
         }
@@ -2403,17 +2137,12 @@ class OptionBuilder implements OptionBuilderInterface
                 continue;
             }
 
-            // DOVY! Replace $k with $section['id'] when ready
             /**
-             * filter 'redux-section-{index}-modifier-{opt_name}'
-             *
              * @param array $section section configuration
              */
             $section = apply_filters( "redux-section-{$k}-modifier-{$this->args['opt_name']}", $section );
 
             /**
-             * filter 'redux/options/{opt_name}/section/{section.id}'
-             *
              * @param array $section section configuration
              */
             if (isset( $section['id'] )) {
@@ -2471,8 +2200,6 @@ class OptionBuilder implements OptionBuilderInterface
                     }
 
                     /**
-                     * filter 'redux/options/{opt_name}/field/{field.id}'
-                     *
                      * @param array $field field config
                      */
                     $field = apply_filters(
@@ -2490,19 +2217,6 @@ class OptionBuilder implements OptionBuilderInterface
                     if (!$display) {
                         continue;
                     }
-
-                    // TODO AFTER GROUP WORKS - Remove IF statement
-//                            if ( $field['type'] == "group" && isset( $_GET['page'] ) && $_GET['page'] == $this->args['page_slug'] ) {
-//                                if ($this->args['dev_mode']) {
-//                                    $this->admin_notices[] = array(
-//                                        'type'    => 'error',
-//                                        'msg'     => 'The <strong>group field</strong> has been <strong>removed</strong> while we retool it for improved performance.',
-//                                        'id'      => 'group_err',
-//                                        'dismiss' => true,
-//                                    );
-//                                }
-//                                continue; // Disabled for now
-//                            }
 
 
                     if (isset( $field['permissions'] )) {
@@ -2632,15 +2346,10 @@ class OptionBuilder implements OptionBuilderInterface
                             }
                         }
                     }
-                    // END -> CORRECT URLS if media URLs are wrong, but attachment IDs are present.
-
                     if (true == $doUpdate && !isset( $this->never_save_to_db )) {
                         if ($this->args['save_defaults']) { // Only save that to the DB if allowed to
                             $runUpdate = true;
                         }
-                        // elseif ($this->saved != '' && $this->saved != false) {
-                        // $runUpdate = true;
-                        //}
                     }
 
                     if (!isset( $field['class'] )) { // No errors please
@@ -2649,20 +2358,6 @@ class OptionBuilder implements OptionBuilderInterface
                     $id = $field['id'];
 
                     /**
-                     * filter 'redux-field-{field.id}modifier-{opt_name}'
-                     *
-                     * @deprecated
-                     *
-                     * @param array $field field config
-                     */
-                    $field = apply_filters(
-                        "redux-field-{$field['id']}modifier-{$this->args['opt_name']}",
-                        $field
-                    ); // REMOVE LATER
-
-                    /**
-                     * filter 'redux/options/{opt_name}/field/{field.id}'
-                     *
                      * @param array $field field config
                      */
                     $field = apply_filters( "redux/options/{$this->args['opt_name']}/field/{$field['id']}", $field );
@@ -2700,11 +2395,6 @@ class OptionBuilder implements OptionBuilderInterface
                         $th .= '<br /><a href="#TB_inline?width=600&height=800&inlineId=' . $field['id'] . '-settings" class="thickbox"><small>View Source</small></a>';
                     }
 
-                    /**
-                     * action 'redux/options/{opt_name}/field/field.type}/register'
-                     */
-                    do_action( "redux/options/{$this->args['opt_name']}/field/{$field['type']}/register", $field );
-
                     $this->check_dependencies( $field );
 
                     add_settings_field(
@@ -2719,20 +2409,6 @@ class OptionBuilder implements OptionBuilderInterface
             }
         }
 
-        /**
-         * action 'redux-register-settings-{opt_name}'
-         *
-         * @deprecated
-         */
-        do_action( "redux-register-settings-{$this->args['opt_name']}" ); // REMOVE
-
-        /**
-         * action 'redux/options/{opt_name}/register'
-         *
-         * @param array option sections
-         */
-        do_action( "redux/options/{$this->args['opt_name']}/register", $this->sections );
-
         if ($runUpdate && !isset( $this->never_save_to_db )) { // Always update the DB with new fields
             $this->set_options( $this->options );
         }
@@ -2740,35 +2416,6 @@ class OptionBuilder implements OptionBuilderInterface
         if (isset( $this->transients['run_compiler'] ) && $this->transients['run_compiler']) {
             $this->args['output_tag'] = false;
             $this->_enqueue_output();
-
-
-            /**
-             * action 'redux-compiler-{opt_name}'
-             *
-             * @deprecated
-             *
-             * @param array  options
-             * @param string CSS that get sent to the compiler hook
-             */
-            do_action(
-                "redux-compiler-{$this->args['opt_name']}",
-                $this->options,
-                $this->compilerCSS,
-                $this->transients['changed_values']
-            ); // REMOVE
-
-            /**
-             * action 'redux/options/{opt_name}/compiler'
-             *
-             * @param array  options
-             * @param string CSS that get sent to the compiler hook
-             */
-            do_action(
-                "redux/options/{$this->args['opt_name']}/compiler",
-                $this->options,
-                $this->compilerCSS,
-                $this->transients['changed_values']
-            );
 
             unset( $this->transients['run_compiler'] );
             $this->set_transients();
@@ -2799,9 +2446,6 @@ class OptionBuilder implements OptionBuilderInterface
 
     /**
      * Validate the Options options before insertion
-     *
-     * @since       3.0.0
-     * @access      public
      *
      * @param       array $plugin_options The options array
      *
@@ -2854,20 +2498,6 @@ class OptionBuilder implements OptionBuilderInterface
                     }
                 }
 
-                /**
-                 * action 'redux/options/{opt_name}/import'
-                 *
-                 * @param  &array [&$plugin_options, redux_options]
-                 */
-                do_action_ref_array(
-                    "redux/options/{$this->args['opt_name']}/import",
-                    array(
-                        &$plugin_options,
-                        $imported_options,
-                        $this->transients['changed_values']
-                    )
-                );
-
                 // Remove the import/export tab cookie.
                 if ($_COOKIE['redux_current_tab'] == 'importer_default') {
                     setcookie( 'redux_current_tab', '', 1, '/' );
@@ -2881,7 +2511,7 @@ class OptionBuilder implements OptionBuilderInterface
                 if ($this->args['database'] == 'transient' || $this->args['database'] == 'theme_mods' || $this->args['database'] == 'theme_mods_expanded' || $this->args['database'] == 'network') {
                     $this->set_options( $plugin_options );
 
-                    return;
+                    return false;
                 }
 
                 $plugin_options = wp_parse_args( $imported_options, $plugin_options );
@@ -2897,8 +2527,6 @@ class OptionBuilder implements OptionBuilderInterface
                 $this->options_defaults = $this->_default_values();
             }
 
-            // Section reset
-            //setcookie('redux-compiler-' . $this->args['opt_name'], 1, time() + 3000, '/');
             $plugin_options = $this->options_defaults;
 
             $this->transients['changed_values'] = array();
@@ -2911,8 +2539,6 @@ class OptionBuilder implements OptionBuilderInterface
             $this->transients['run_compiler'] = 1;
             $this->transients['last_save_mode'] = "defaults"; // Last save mode
 
-            //setcookie('redux-compiler-' . $this->args['opt_name'], 1, time() + 1000, "/");
-            //setcookie("redux-saved-{$this->args['opt_name']}", 'defaults', time() + 1000, "/");
             $this->set_transients(); // Update the transients
 
             return $plugin_options;
@@ -2942,16 +2568,12 @@ class OptionBuilder implements OptionBuilderInterface
             }
 
             if (isset( $compiler )) {
-                //$this->run_compiler = true;
-                //setcookie('redux-compiler-' . $this->args['opt_name'], 1, time()+1000, '/');
-                //$plugin_options['REDUX_COMPILER'] = time();
                 $this->transients['last_compiler'] = $time;
                 $this->transients['run_compiler'] = 1;
             }
 
             $this->transients['last_save_mode'] = "defaults_section"; // Last save mode
 
-            //setcookie("redux-saved-{$this->args['opt_name']}", 'defaults_section', time() + 1000, "/");
             unset( $plugin_options['defaults'], $plugin_options['defaults_section'], $plugin_options['import'], $plugin_options['import_code'], $plugin_options['import_link'], $plugin_options['compiler'], $plugin_options['redux-section'] );
             $this->set_transients();
 
@@ -2967,34 +2589,6 @@ class OptionBuilder implements OptionBuilderInterface
             $this->transients['notices'] = array( 'errors' => $this->errors, 'warnings' => $this->warnings );
         }
 
-        /**
-         * action 'redux-validate-{opt_name}'
-         *
-         * @deprecated
-         *
-         * @param  &array [&$plugin_options, redux_options]
-         */
-        do_action_ref_array(
-            "redux-validate-{$this->args['opt_name']}",
-            array(
-                &$plugin_options,
-                $this->options
-            )
-        ); // REMOVE
-
-        /**
-         * action 'redux/options/{opt_name}/validate'
-         *
-         * @param  &array [&$plugin_options, redux_options]
-         */
-        do_action_ref_array(
-            "redux/options/{$this->args['opt_name']}/validate",
-            array(
-                &$plugin_options,
-                $this->options,
-                $this->transients['changed_values']
-            )
-        );
 
         if (!empty( $plugin_options['compiler'] )) {
             unset( $plugin_options['compiler'] );
@@ -3031,9 +2625,6 @@ class OptionBuilder implements OptionBuilderInterface
     /**
      * Validate values from options form (used in settings api validate function)
      * calls the custom validation class for the field so authors can override with custom classes
-     *
-     * @since       1.0.0
-     * @access      public
      *
      * @param       array $plugin_options
      * @param       array $options
@@ -3092,23 +2683,8 @@ class OptionBuilder implements OptionBuilderInterface
                         $validate = 'Redux_Validation_' . $field['validate'];
 
                         if (!class_exists( $validate )) {
-                            /**
-                             * filter 'redux-validateclass-load'
-                             *
-                             * @deprecated
-                             *
-                             * @param        string             validation class file path
-                             * @param string $validate validation class name
-                             */
-                            $class_file = apply_filters(
-                                "redux-validateclass-load",
-                                self::$_dir . "src/validation/{$field['validate']}/validation_{$field['validate']}.php",
-                                $validate
-                            ); // REMOVE LATER
 
                             /**
-                             * filter 'redux/validate/{opt_name}/class/{field.validate}'
-                             *
                              * @param        string                validation class file path
                              * @param string $class_file validation class file path
                              */
@@ -3215,8 +2791,6 @@ class OptionBuilder implements OptionBuilderInterface
     /**
      * Return Section Menu HTML
      *
-     * @since       3.1.5
-     * @access      public
      * @return      void
      */
     public function section_menu( $k, $section, $suffix = "", $sections = array() )
@@ -3326,7 +2900,7 @@ class OptionBuilder implements OptionBuilderInterface
 
         return $string;
 
-    } // section_menu()
+    }
 
     /**
      * HTML OUTPUT.
@@ -3350,20 +2924,6 @@ class OptionBuilder implements OptionBuilderInterface
         echo '<input type="hidden" id="ajaxsecurity" name="security" value="' . wp_create_nonce(
                 'redux_ajax_nonce'
             ) . '" />';
-
-        /**
-         * action 'redux-page-before-form-{opt_name}'
-         *
-         * @deprecated
-         */
-        do_action( "redux-page-before-form-{$this->args['opt_name']}" ); // Remove
-
-        /**
-         * action 'redux/page/{opt_name}/form/before'
-         *
-         * @param object $this ReduxFramework
-         */
-        do_action( "redux/page/{$this->args['opt_name']}/form/before", $this );
 
         // Main container
         $expanded = ( $this->args['open_expanded'] ) ? ' fully-expanded' : '';
@@ -3401,7 +2961,6 @@ class OptionBuilder implements OptionBuilderInterface
         }
 
         // Page icon
-        // DOVY!
         echo '<div id="' . $this->args['page_icon'] . '" class="icon32"></div>';
 
         echo '<div class="clear"></div>';
@@ -3454,39 +3013,22 @@ class OptionBuilder implements OptionBuilderInterface
         if (isset( $this->transients['last_save_mode'] )) {
 
             if ($this->transients['last_save_mode'] == "import") {
-                do_action(
-                    "redux/options/{$this->args['opt_name']}/import",
-                    $this,
-                    $this->transients['changed_values']
-                );
-
                 echo '<div class="admin-notice notice-blue saved_notice"><strong>' . apply_filters(
                         "redux-imported-text-{$this->args['opt_name']}",
                         __( 'Settings Imported!', 'mozart-options' )
                     ) . '</strong></div>';
-                //exit();
             } elseif ($this->transients['last_save_mode'] == "defaults") {
-                do_action( "redux/options/{$this->args['opt_name']}/reset", $this );
-
                 echo '<div class="saved_notice admin-notice notice-yellow"><strong>' . apply_filters(
                         "redux-defaults-text-{$this->args['opt_name']}",
                         __( 'All Defaults Restored!', 'mozart-options' )
                     ) . '</strong></div>';
             } elseif ($this->transients['last_save_mode'] == "defaults_section") {
 
-                do_action( "redux/options/{$this->args['opt_name']}/section/reset", $this );
-
                 echo '<div class="saved_notice admin-notice notice-yellow"><strong>' . apply_filters(
                         "redux-defaults-section-text-{$this->args['opt_name']}",
                         __( 'Section Defaults Restored!', 'mozart-options' )
                     ) . '</strong></div>';
             } else {
-                do_action(
-                    "redux/options/{$this->args['opt_name']}/saved",
-                    $this->options,
-                    $this->transients['changed_values']
-                );
-
                 echo '<div class="saved_notice admin-notice notice-green"><strong>' . apply_filters(
                         "redux-saved-text-{$this->args['opt_name']}",
                         __( 'Settings Saved!', 'mozart-options' )
@@ -3496,34 +3038,16 @@ class OptionBuilder implements OptionBuilderInterface
 
         }
 
-        do_action(
-            "redux/options/{$this->args['opt_name']}/settings/change",
-            $this->options,
-            $this->transients['changed_values']
-        );
-
         echo '<div class="redux-save-warn notice-yellow"><strong>' . apply_filters(
                 "redux-changed-text-{$this->args['opt_name']}",
                 __( 'Settings have changed, you should save them!', 'mozart-options' )
             ) . '</strong></div>';
 
-        /**
-         * action 'redux/options/{opt_name}/errors'
-         *
-         * @param array $this ->errors error information
-         */
-        do_action( "redux/options/{$this->args['opt_name']}/errors", $this->errors );
         echo '<div class="redux-field-errors notice-red"><strong><span></span> ' . __(
                 'error(s) were found!',
                 'mozart-options'
             ) . '</strong></div>';
 
-        /**
-         * action 'redux/options/{opt_name}/warnings'
-         *
-         * @param array $this ->warnings warning information
-         */
-        do_action( "redux/options/{$this->args['opt_name']}/warnings", $this->warnings );
         echo '<div class="redux-field-warnings notice-yellow"><strong><span></span> ' . __(
                 'warning(s) were found!',
                 'mozart-options'
@@ -3556,9 +3080,6 @@ class OptionBuilder implements OptionBuilderInterface
                 $skip_sec = false;
             }
         }
-
-        do_action( "redux-page-after-sections-menu-{$this->args['opt_name']}", $this );
-        do_action( "redux/page/{$this->args['opt_name']}/menu/after", $this );
 
         // Import / Export tab
         if (true == $this->args['show_importer'] && false == $this->importer->is_field) {
@@ -3640,13 +3161,6 @@ class OptionBuilder implements OptionBuilderInterface
             echo '</div>';
         }
 
-        /**
-         * action 'redux/page/{opt_name}/sections/after'
-         *
-         * @param object $this ReduxFramework
-         */
-        do_action( "redux/page/{$this->args['opt_name']}/sections/after", $this );
-
         echo '<div class="clear"></div>';
         echo '</div>';
         echo '<div class="clear"></div>';
@@ -3709,19 +3223,6 @@ class OptionBuilder implements OptionBuilderInterface
 
         echo ( isset( $this->args['footer_text'] ) ) ? '<div id="redux-sub-footer">' . $this->args['footer_text'] . '</div>' : '';
 
-        /**
-         * action 'redux-page-after-form-{opt_name}'
-         *
-         * @deprecated
-         */
-        do_action( "redux-page-after-form-{$this->args['opt_name']}" ); // REMOVE
-
-        /**
-         * action 'redux/page/{opt_name}/form/after'
-         *
-         * @param object $this ReduxFramework
-         */
-        do_action( "redux/page/{$this->args['opt_name']}/form/after", $this );
 
         echo '<div class="clear"></div>';
         echo '</div><!--wrap-->';
@@ -3772,61 +3273,7 @@ class OptionBuilder implements OptionBuilderInterface
     {
         if (isset( $field['callback'] ) && function_exists( $field['callback'] )) {
             $value = ( isset( $this->options[$field['id']] ) ) ? $this->options[$field['id']] : '';
-
-            /**
-             * action 'redux-before-field-{opt_name}'
-             *
-             * @deprecated
-             *
-             * @param array $field field data
-             * @param string $value field.id
-             */
-            do_action( "redux-before-field-{$this->args['opt_name']}", $field, $value ); // REMOVE
-
-            /**
-             * action 'redux/field/{opt_name}/{field.type}/callback/before'
-             *
-             * @param array $field field data
-             * @param string $value field.id
-             */
-            do_action( "redux/field/{$this->args['opt_name']}/{$field['type']}/callback/before", $field, $value );
-
-            /**
-             * action 'redux/field/{opt_name}/callback/before'
-             *
-             * @param array $field field data
-             * @param string $value field.id
-             */
-            do_action( "redux/field/{$this->args['opt_name']}/callback/before", $field, $value );
-
             call_user_func( $field['callback'], $field, $value );
-
-
-            /**
-             * action 'redux-after-field-{opt_name}'
-             *
-             * @deprecated
-             *
-             * @param array $field field data
-             * @param string $value field.id
-             */
-            do_action( "redux-after-field-{$this->args['opt_name']}", $field, $value ); // REMOVE
-
-            /**
-             * action 'redux/field/{opt_name}/{field.type}/callback/after'
-             *
-             * @param array $field field data
-             * @param string $value field.id
-             */
-            do_action( "redux/field/{$this->args['opt_name']}/{$field['type']}/callback/after", $field, $value );
-
-            /**
-             * action 'redux/field/{opt_name}/callback/after'
-             *
-             * @param array $field field data
-             * @param string $value field.id
-             */
-            do_action( "redux/field/{$this->args['opt_name']}/callback/after", $field, $value );
 
             return;
         }
@@ -3845,202 +3292,69 @@ class OptionBuilder implements OptionBuilderInterface
                 return;
             }
 
-            $field_class = "ReduxFramework_{$field['type']}";
+            $field_class = "Mozart\\Component\\Option\\Fields\\" . Container::camelize( $field['type'] );
 
-            if (!class_exists( $field_class )) {
-//                    $class_file = apply_filters( 'redux/field/class/'.$field['type'], self::$_dir . 'src/fields/' . $field['type'] . '/field_' . $field['type'] . '.php', $field ); // REMOVE
-                /**
-                 * filter 'redux/{opt_name}/field/class/{field.type}'
-                 *
-                 * @param       string        field class file path
-                 * @param array $field field data
-                 */
-                $class_file = apply_filters(
-                    "redux/{$this->args['opt_name']}/field/class/{$field['type']}",
-                    self::$_dir . "src/fields/{$field['type']}/field_{$field['type']}.php",
-                    $field
-                );
-
-                if ($class_file) {
-                    if (file_exists( $class_file )) {
-                        require_once( $class_file );
-                    }
+            if (false === class_exists( $field_class )) {
+                if (false === class_exists( $field_class . 'Field' )) {
+                    return false;
                 }
-
             }
 
-            if (class_exists( $field_class )) {
-                $value = isset( $this->options[$field['id']] ) ? $this->options[$field['id']] : '';
+            $value = isset( $this->options[$field['id']] ) ? $this->options[$field['id']] : '';
 
-                if ($v !== null) {
-                    $value = $v;
-                }
+            if ($v !== null) {
+                $value = $v;
+            }
 
-                /**
-                 * action 'redux-before-field-{opt_name}'
-                 *
-                 * @deprecated
-                 *
-                 * @param array $field field data
-                 * @param string $value field id
-                 */
-                do_action( "redux-before-field-{$this->args['opt_name']}", $field, $value ); // REMOVE
+            if (!isset( $field['name_suffix'] )) {
+                $field['name_suffix'] = "";
+            }
 
-                /**
-                 * action 'redux/field/{opt_name}/{field.type}/render/before'
-                 *
-                 * @param array $field field data
-                 * @param string $value field id
-                 */
-                do_action( "redux/field/{$this->args['opt_name']}/{$field['type']}/render/before", $field, $value );
+            $render = new $field_class( $field, $value, $this );
+            ob_start();
 
-                /**
-                 * action 'redux/field/{$this->args['opt_name']}/render/before'
-                 *
-                 * @param array $field field data
-                 * @param string $value field id
-                 */
-                do_action( "redux/field/{$this->args['opt_name']}/render/before", $field, $value );
+            $render->render();
 
-                if (!isset( $field['name_suffix'] )) {
-                    $field['name_suffix'] = "";
-                }
+            /**
+             * @param string $_render rendered field markup
+             * @param array $field field data
+             */
+            $_render = apply_filters(
+                "redux/field/{$this->args['opt_name']}/{$field['type']}/render/after",
+                $render,
+                $field
+            );
 
-                $render = new $field_class( $field, $value, $this );
-                ob_start();
+            ob_end_clean();
 
-                $render->render();
-
-                /*
-
-                    echo "<pre>";
-                    print_r($value);
-                    echo "</pre>";
-                    */
-
-                /**
-                 * filter 'redux-field-{opt_name}'
-                 *
-                 * @deprecated
-                 *
-                 * @param       string        rendered field markup
-                 * @param array $field field data
-                 */
-                $_render = apply_filters(
-                    "redux-field-{$this->args['opt_name']}",
-                    ob_get_contents(),
-                    $field
-                ); // REMOVE
-
-                /**
-                 * filter 'redux/field/{opt_name}/{field.type}/render/after'
-                 *
-                 * @param string $_render rendered field markup
-                 * @param array $field field data
-                 */
-                $_render = apply_filters(
-                    "redux/field/{$this->args['opt_name']}/{$field['type']}/render/after",
-                    $_render,
-                    $field
-                );
-
-                /**
-                 * filter 'redux/field/{opt_name}/render/after'
-                 *
-                 * @param string $_render rendered field markup
-                 * @param array $field field data
-                 */
-                $_render = apply_filters( "redux/field/{$this->args['opt_name']}/render/after", $_render, $field );
-
-                ob_end_clean();
-
-                //save the values into a unique array in case we need it for dependencies
-                $this->fieldsValues[$field['id']] = ( isset( $value['url'] ) && is_array(
-                        $value
-                    ) ) ? $value['url'] : $value;
-
-                //create default data und class string and checks the dependencies of an object
-                $class_string = '';
-                $data_string = '';
-
-                $this->check_dependencies( $field );
-
-                /**
-                 * action 'redux/field/{opt_name}/{field.type}/fieldset/before/{opt_name}'
-                 *
-                 * @param array $field field data
-                 * @param string $value field id
-                 */
-                do_action(
-                    "redux/field/{$this->args['opt_name']}/{$field['type']}/fieldset/before/{$this->args['opt_name']}",
-                    $field,
+            //save the values into a unique array in case we need it for dependencies
+            $this->fieldsValues[$field['id']] = ( isset( $value['url'] ) && is_array(
                     $value
-                );
+                ) ) ? $value['url'] : $value;
 
-                /**
-                 * action 'redux/field/{opt_name}/fieldset/before/{opt_name}'
-                 *
-                 * @param array $field field data
-                 * @param string $value field id
-                 */
-                do_action(
-                    "redux/field/{$this->args['opt_name']}/fieldset/before/{$this->args['opt_name']}",
-                    $field,
-                    $value
-                );
+            //create default data und class string and checks the dependencies of an object
+            $class_string = '';
+            $data_string = '';
 
-                if (!isset( $field['fields'] ) || empty( $field['fields'] )) {
-                    echo '<fieldset id="' . $this->args['opt_name'] . '-' . $field['id'] . '" class="redux-field-container redux-field redux-field-init redux-container-' . $field['type'] . ' ' . $class_string . '" data-id="' . $field['id'] . '" ' . $data_string . ' data-type="' . $field['type'] . '">';
-                }
+            $this->check_dependencies( $field );
 
-                echo $_render;
+            if (!isset( $field['fields'] ) || empty( $field['fields'] )) {
+                echo '<fieldset id="' . $this->args['opt_name'] . '-' . $field['id'] . '" class="redux-field-container redux-field redux-field-init redux-container-' . $field['type'] . ' ' . $class_string . '" data-id="' . $field['id'] . '" ' . $data_string . ' data-type="' . $field['type'] . '">';
+            }
 
-                if (!empty( $field['desc'] )) {
-                    $field['description'] = $field['desc'];
-                }
+            echo $_render;
 
-                echo ( isset( $field['description'] ) && $field['type'] != "info" && $field['type'] !== "section" && !empty( $field['description'] ) ) ? '<div class="description field-desc">' . $field['description'] . '</div>' : '';
+            if (!empty( $field['desc'] )) {
+                $field['description'] = $field['desc'];
+            }
 
-                if (!isset( $field['fields'] ) || empty( $field['fields'] )) {
-                    echo '</fieldset>';
-                }
+            echo ( isset( $field['description'] ) && $field['type'] != "info" && $field['type'] !== "section" && !empty( $field['description'] ) ) ? '<div class="description field-desc">' . $field['description'] . '</div>' : '';
 
-                /**
-                 * action 'redux-after-field-{opt_name}'
-                 *
-                 * @deprecated
-                 *
-                 * @param array $field field data
-                 * @param string $value field id
-                 */
-                do_action( "redux-after-field-{$this->args['opt_name']}", $field, $value ); // REMOVE
-
-                /**
-                 * action 'redux/field/{opt_name}/{field.type}/fieldset/after/{opt_name}'
-                 *
-                 * @param array $field field data
-                 * @param string $value field id
-                 */
-                do_action(
-                    "redux/field/{$this->args['opt_name']}/{$field['type']}/fieldset/after/{$this->args['opt_name']}",
-                    $field,
-                    $value
-                );
-
-                /**
-                 * action 'redux/field/{opt_name}/fieldset/after/{opt_name}'
-                 *
-                 * @param array $field field data
-                 * @param string $value field id
-                 */
-                do_action(
-                    "redux/field/{$this->args['opt_name']}/fieldset/after/{$this->args['opt_name']}",
-                    $field,
-                    $value
-                );
+            if (!isset( $field['fields'] ) || empty( $field['fields'] )) {
+                echo '</fieldset>';
             }
         }
-    } // _field_input()
+    }
 
     /**
      * Can Output CSS
@@ -4054,7 +3368,6 @@ class OptionBuilder implements OptionBuilderInterface
     {
         $return = true;
 
-        $field = apply_filters( "redux/field/{$this->args['opt_name']}/_can_output_css", $field );
         if (isset( $field['force_output'] ) && $field['force_output'] == true) {
             return $return;
         }
@@ -4083,7 +3396,7 @@ class OptionBuilder implements OptionBuilderInterface
         }
 
         return $return;
-    } // _can_output_css
+    }
 
     /**
      * Checks dependencies between objects based on the $field['required'] array
@@ -4100,8 +3413,6 @@ class OptionBuilder implements OptionBuilderInterface
      */
     public function check_dependencies( $field )
     {
-        //$params = array('data_string' => "", 'class_string' => "");
-
         if (!empty( $field['required'] )) {
 
             //$this->folds[$field['id']] = $this->folds[$field['id']] ? $this->folds[$field['id']] : array();
@@ -4146,7 +3457,6 @@ class OptionBuilder implements OptionBuilderInterface
             }
 
         }
-        //return $params;
     }
 
     /**
