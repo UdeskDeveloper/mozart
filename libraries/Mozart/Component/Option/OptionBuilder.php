@@ -6,6 +6,7 @@
 namespace Mozart\Component\Option;
 
 use Mozart\Component\Debug\SystemInfo;
+use Mozart\Component\Option\Utils\OptionUtil;
 use Mozart\Component\Support\Str;
 use Mozart\Component\Option\Extension\ExtensionManager;
 use Mozart\Component\Option\Section\SectionManager;
@@ -236,7 +237,7 @@ class OptionBuilder implements OptionBuilderInterface
      */
     public function boot( $params = array() )
     {
-        $this->params = array_merge( $params, $this->getDefaultArgs() );
+        $this->params = array_merge( $this->getDefaultArgs(), $params );
 
         if (empty( $this->params['opt_name'] )) {
             return false;
@@ -264,52 +265,6 @@ class OptionBuilder implements OptionBuilderInterface
 
         $this->importer->init( $this );
 
-        // Options page
-        add_action( 'admin_menu', array( $this, '_options_page' ) );
-
-        // Add a network menu
-        if ($this->params['database'] == "network" && $this->params['network_admin']) {
-            add_action( 'network_admin_menu', array( $this, '_options_page' ) );
-        }
-
-        // Admin Bar menu
-        add_action( 'admin_bar_menu', array( $this, '_admin_bar_menu' ), 999 );
-
-        // Register setting
-        add_action( 'admin_init', array( $this, '_register_settings' ) );
-
-
-        // Display admin notices
-        add_action( 'admin_notices', array( 'Utils\Option', 'adminNotices' ) );
-
-        // Check for dismissed admin notices.
-        add_action( 'admin_init', array( 'Utils\Option', 'dismissAdminNotice' ), 9 );
-
-        // Enqueue the admin page CSS and JS
-        if (isset( $_GET['page'] ) && $_GET['page'] == $this->params['page_slug']) {
-            add_action( 'admin_enqueue_scripts', array( $this, '_enqueue' ), 1 );
-        }
-
-        // Output dynamic CSS
-        add_action( 'wp_head', array( &$this, '_output_css' ), 150 );
-
-        // Enqueue dynamic CSS and Google fonts
-        add_action( 'wp_enqueue_scripts', array( &$this, '_enqueue_output' ), 150 );
-
-
-        if ($this->params['database'] == "network" && $this->params['network_admin']) {
-            add_action(
-                'network_admin_edit_redux_' . $this->params['opt_name'],
-                array(
-                    $this,
-                    'save_network_page'
-                ),
-                10,
-                0
-            );
-            add_action( 'admin_bar_menu', array( $this, 'network_admin_bar' ), 999 );
-
-        }
     }
 
     /**
@@ -327,6 +282,22 @@ class OptionBuilder implements OptionBuilderInterface
     {
 
         $this->sections = $sections;
+    }
+
+    /**
+     * @return array
+     */
+    public function getParams()
+    {
+        return $this->params;
+    }
+
+    /**
+     * @return array
+     */
+    public function getParam( $param )
+    {
+        return $this->params[$param];
     }
 
     protected function loadExtensions()
@@ -517,7 +488,7 @@ class OptionBuilder implements OptionBuilderInterface
      *
      * @return      mixed $default
      */
-    public function _get_default( $opt_name, $default = null )
+    public function getDefaultOption( $opt_name, $default = null )
     {
         if ($this->params['default_show'] == true) {
 
@@ -542,9 +513,9 @@ class OptionBuilder implements OptionBuilderInterface
      *
      * @return      mixed
      */
-    public function get( $opt_name, $default = null )
+    public function getOption( $opt_name, $default = null )
     {
-        return ( !empty( $this->options[$opt_name] ) ) ? $this->options[$opt_name] : $this->_get_default(
+        return ( !empty( $this->options[$opt_name] ) ) ? $this->options[$opt_name] : $this->getDefaultOption(
             $opt_name,
             $default
         );
@@ -558,7 +529,7 @@ class OptionBuilder implements OptionBuilderInterface
      *
      * @return      void
      */
-    public function set( $opt_name = '', $value = '' )
+    public function setOption( $opt_name = '', $value = '' )
     {
         if ($opt_name != '') {
             $this->options[$opt_name] = $value;
@@ -872,11 +843,11 @@ class OptionBuilder implements OptionBuilderInterface
      */
     public function show( $opt_name, $default = '' )
     {
-        $option = $this->get( $opt_name );
+        $option = $this->getOption( $opt_name );
         if (!is_array( $option ) && $option != '') {
             echo $option;
         } elseif ($default != '') {
-            echo $this->_get_default( $opt_name, $default );
+            echo $this->getDefaultOption( $opt_name, $default );
         }
     }
 
@@ -1279,8 +1250,7 @@ class OptionBuilder implements OptionBuilderInterface
     {
         global $menu, $submenu, $wp_admin_bar;
 
-        $ct = wp_get_theme();
-        $theme_data = $ct;
+        $theme_data = wp_get_theme();
 
         if (!is_super_admin() || !is_admin_bar_showing() || !$this->params['admin_bar']) {
             return;
@@ -1471,10 +1441,10 @@ class OptionBuilder implements OptionBuilderInterface
     {
         global $wp_styles;
 
-        Utils\Option::$_parent = $this;
+        OptionUtil::$_parent = $this;
 
         // Select2 business.  Fields:  Background, Border, Dimensions, Select, Slider, Typography
-        if (Utils\Option::isFieldInUseByType(
+        if (OptionUtil::isFieldInUseByType(
             $this->fields,
             array(
                 'background',
@@ -1602,7 +1572,7 @@ class OptionBuilder implements OptionBuilderInterface
         wp_enqueue_script( 'jquery-ui-dialog' );
 
         // Load jQuery sortable for slides, sorter, sortable and group
-        if (Utils\Option::isFieldInUseByType(
+        if (OptionUtil::isFieldInUseByType(
             $this->fields,
             array(
                 'slides',
@@ -1617,17 +1587,17 @@ class OptionBuilder implements OptionBuilderInterface
         }
 
         // Load jQuery UI Datepicker for date
-        if (Utils\Option::isFieldInUseByType( $this->fields, array( 'date' ) )) {
+        if (OptionUtil::isFieldInUseByType( $this->fields, array( 'date' ) )) {
             wp_enqueue_script( 'jquery-ui-datepicker' );
         }
 
         // Load jQuery UI Accordion for slides and group
-        if (Utils\Option::isFieldInUseByType( $this->fields, array( 'slides', 'group' ) )) {
+        if (OptionUtil::isFieldInUseByType( $this->fields, array( 'slides', 'group' ) )) {
             wp_enqueue_script( 'jquery-ui-accordion' );
         }
 
         // Load wp-color-picker for color, color_gradient, link_color, border, background and typography
-        if (Utils\Option::isFieldInUseByType(
+        if (OptionUtil::isFieldInUseByType(
             $this->fields,
             array(
                 'background',
@@ -1918,9 +1888,6 @@ class OptionBuilder implements OptionBuilderInterface
      */
     public function _load_page()
     {
-        // Do admin head action for this page
-        add_action( 'admin_head', array( &$this, 'admin_head' ) );
-
         // Do admin footer text hook
         add_filter( 'admin_footer_text', array( &$this, 'admin_footer_text' ) );
 
