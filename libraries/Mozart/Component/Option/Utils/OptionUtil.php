@@ -6,7 +6,7 @@
 namespace Mozart\Component\Option\Utils;
 
 
-class Option {
+class OptionUtil {
 
     public static $_parent;
 
