@@ -76,10 +76,6 @@ class OptionBuilder implements OptionBuilderInterface
     /**
      * @var array
      */
-    public $extensions = array(); // Extensions by type used in the panel
-    /**
-     * @var array
-     */
     protected $sections = array(); // Sections and fields
     /**
      * @var array
@@ -240,7 +236,6 @@ class OptionBuilder implements OptionBuilderInterface
      */
     public function boot( $params = array() )
     {
-        // Set values
         $this->params = array_merge( $params, $this->getDefaultArgs() );
 
         if (empty( $this->params['opt_name'] )) {
@@ -249,7 +244,6 @@ class OptionBuilder implements OptionBuilderInterface
 
         $this->sections = $this->sectionManager->getSections();
 
-        // Set the default values
         if ($this->params['global_variable'] == "" && $this->params['global_variable'] !== false) {
             $this->params['global_variable'] = str_replace( '-', '_', $this->params['opt_name'] );
         }
@@ -320,7 +314,7 @@ class OptionBuilder implements OptionBuilderInterface
     {
 
         foreach ($this->extensionManager->getExtensions() as $extension) {
-            $extension->boot( $this );
+            $extension->extend( $this );
         }
     }
 
@@ -484,6 +478,8 @@ class OptionBuilder implements OptionBuilderInterface
      */
     private function loadTranslations()
     {
+        $locale = get_locale();
+
         if (strpos( $locale, '_' ) === false) {
             if (file_exists(
                 self::$_dir . 'languages/' . strtolower( $locale ) . '_' . strtoupper( $locale ) . '.mo'
