@@ -32,6 +32,6 @@ class MozartOptionBundle extends Bundle
      */
     public function boot()
     {
-        $this->container->get( 'mozart.option.controller' )->init( );
+        $this->container->get( 'mozart.option.controller' )->initOptionManager( );
     }
 }

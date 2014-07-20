@@ -11,23 +11,23 @@ services:
             - @mozart.option.importer
             - @mozart.option.debugger
             - @mozart.option.tracker
+            - @mozart.option.extensionmanager
+            - @mozart.option.sectionmanager
     mozart.option.manager:
         class: Mozart\Bundle\OptionBundle\Model\OptionManager
         arguments:
             - @service_container
     mozart.option.sectionmanager:
-        class: Mozart\Bundle\OptionBundle\SectionManager
+        class: Mozart\Component\Option\Section\SectionManager
     mozart.option.extensionmanager:
-        class: Mozart\Bundle\OptionBundle\Extension\ExtensionManager
+        class: Mozart\Component\Option\Extension\ExtensionManager
     mozart.option.controller:
         class: Mozart\Bundle\OptionBundle\Controller\OptionController
         arguments:
             - @mozart.option.builder
-            - @mozart.option.sectionmanager
-            - @mozart.option.extensionmanager
             - %mozart.option%
     mozart.option.extension.core.customizer:
-        class: Mozart\Bundle\OptionBundle\Extension\Core\CustomizerExtension
+        class: Mozart\Component\Option\Extension\Core\CustomizerExtension
         tags:
             - { name: mozart.option.extension }
         arguments:

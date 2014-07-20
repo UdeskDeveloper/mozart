@@ -212,9 +212,9 @@ class Tracker
 
                         function redux_store_answer( input, nonce ) {
                             var redux_tracking_data = {
-                                action: 'redux_allow_tracking',
+                                action        : 'redux_allow_tracking',
                                 allow_tracking: input,
-                                nonce: nonce
+                                nonce         : nonce
                             }
                             jQuery.post(
                                 ajaxurl, redux_tracking_data, function () {
@@ -236,7 +236,7 @@ class Tracker
 
                                     return button;
                                 },
-                                close: function () {
+                                close  : function () {
                                 }
                             }
                         );
@@ -342,6 +342,9 @@ class Tracker
             'release' => PHP_VERSION
         );
 
+        $user_query = new WP_User_Query( array( 'blog_id' => $blog_id, 'count_total' => true, ) );
+        $comments_query = new WP_Comment_Query();
+
         $data = array(
             '_id'       => $this->options['hash'],
             'localhost' => ( $_SERVER['REMOTE_ADDR'] === '127.0.0.1' ) ? 1 : 0,
@@ -350,12 +353,7 @@ class Tracker
                 'hash'      => $this->options['hash'],
                 'version'   => get_bloginfo( 'version' ),
                 'multisite' => is_multisite(),
-                'users'     => $wpdb->get_var(
-                    $wpdb->prepare(
-                        "SELECT COUNT(*) FROM $wpdb->users INNER JOIN $wpdb->usermeta ON ({$wpdb->users}.ID = {$wpdb->usermeta}.user_id) WHERE 1 = 1 AND ( {$wpdb->usermeta}.meta_key = %s )",
-                        'wp_' . $blog_id . '_capabilities'
-                    )
-                ),
+                'users'     => $user_query->get_total(),
                 'lang'      => get_locale(),
                 'wp_debug'  => ( defined( 'WP_DEBUG' ) ? WP_DEBUG ? true : false : false ),
                 'memory'    => WP_MEMORY_LIMIT,
@@ -365,14 +363,11 @@ class Tracker
                 'total'    => $comments_count->total_comments,
                 'approved' => $comments_count->approved,
                 'spam'     => $comments_count->spam,
-                'pings'    => $wpdb->get_var(
-                    "SELECT COUNT(comment_ID) FROM $wpdb->comments WHERE comment_type = 'pingback'"
-                ),
+                'pings'    => $comments_query->query( array( 'count' => true, 'type' => 'pingback' ) ),
             ),
             'options'   => apply_filters( 'redux/tracking/options', array() ),
             'theme'     => $theme,
             'redux'     => array(
-                'mode'      => ReduxFramework::$_is_plugin ? 'plugin' : 'theme',
                 'version'   => ReduxFramework::$_version,
                 'demo_mode' => get_option( 'ReduxFrameworkPlugin' ),
             ),

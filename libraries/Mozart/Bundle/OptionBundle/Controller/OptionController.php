@@ -6,8 +6,6 @@
 namespace Mozart\Bundle\OptionBundle\Controller;
 
 use Mozart\Component\Option\OptionBuilderInterface;
-use Mozart\Bundle\OptionBundle\Extension\ExtensionManager;
-use Mozart\Bundle\OptionBundle\SectionManager;
 
 /**
  * Class OptionController
@@ -23,64 +21,31 @@ class OptionController
     /**
      * @var array
      */
-    protected $sections = array();
-
-    /**
-     * @var array
-     */
     protected $options = array();
 
-    /**
-     * @var SectionManager
-     */
-    private $sectionManager;
-
-    /**
-     * @var ExtensionManager
-     */
-    private $extensionManager;
 
     /**
      * @var OptionBuilderInterface
      */
     private $optionBuilder;
 
-    /**
-     * @param SectionManager $sectionManager
-     * @param ExtensionManager $extensionManager
-     */
     public function __construct(
         OptionBuilderInterface $optionBuilder,
-        SectionManager $sectionManager,
-        ExtensionManager $extensionManager,
         $parameters
     ) {
         $this->optionBuilder = $optionBuilder;
-        $this->sectionManager = $sectionManager;
-        $this->extensionManager = $extensionManager;
         $this->parameters = $parameters;
     }
 
-    public function init()
+    public function initOptionManager()
     {
-        add_action( "redux/extensions/mozart-options/before", array( $this, 'loadExtensions' ) );
-
-        $this->sections = $this->sectionManager->getSections();
-
         if (!isset( $this->parameters['opt_name'] )) {
             return;
         }
 
-        $this->optionBuilder->boot( $this->sections, $this->parameters );
+        $this->optionBuilder->boot( $this->parameters );
         $this->setOptions();
         $this->startHooks();
-    }
-
-    public function loadExtensions()
-    {
-        foreach ($this->extensionManager->getExtensions() as $extension) {
-            $extension->boot();
-        }
     }
 
     public function getBuilder()

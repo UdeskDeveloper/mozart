@@ -5,7 +5,7 @@
 
 namespace Mozart\Bundle\NucleusBundle\Option\Section;
 
-use Mozart\Bundle\OptionBundle\OptionSection;
+use Mozart\Component\Option\Section\OptionSection;
 
 /**
  * Class MozartSection

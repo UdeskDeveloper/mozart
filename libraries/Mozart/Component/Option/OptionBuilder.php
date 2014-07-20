@@ -6,7 +6,9 @@
 namespace Mozart\Component\Option;
 
 use Mozart\Component\Debug\SystemInfo;
-use Symfony\Component\DependencyInjection\Container;
+use Mozart\Component\Support\Str;
+use Mozart\Component\Option\Extension\ExtensionManager;
+use Mozart\Component\Option\Section\SectionManager;
 
 /**
  * Class OptionBuilder
@@ -78,7 +80,7 @@ class OptionBuilder implements OptionBuilderInterface
     /**
      * @var array
      */
-    public $sections = array(); // Sections and fields
+    protected $sections = array(); // Sections and fields
     /**
      * @var array
      */
@@ -171,7 +173,7 @@ class OptionBuilder implements OptionBuilderInterface
     /**
      * @var array
      */
-    public $args = array();
+    public $params = array();
 
     /**
      * @var bool
@@ -204,34 +206,55 @@ class OptionBuilder implements OptionBuilderInterface
     protected $tracker;
 
     /**
+     * @var ExtensionManager
+     */
+    private $extensionManager;
+    /**
+     * @var SectionManager
+     */
+    private $sectionManager;
+
+    /**
      * @param Importer $importer
      * @param Debugger $debugger
      * @param Tracker $tracker
+     * @param ExtensionManager $extensionManager
+     * @param SectionManager $sectionManager
      */
-    public function __construct( Importer $importer, Debugger $debugger, Tracker $tracker )
-    {
+    public function __construct(
+        Importer $importer,
+        Debugger $debugger,
+        Tracker $tracker,
+        ExtensionManager $extensionManager,
+        SectionManager $sectionManager
+    ) {
         $this->importer = $importer;
         $this->debugger = $debugger;
         $this->tracker = $tracker;
+        $this->extensionManager = $extensionManager;
+        $this->sectionManager = $sectionManager;
     }
 
     /**
-     * @param array $sections
-     * @param array $args
+     * @param array $params
      */
-    public function boot( $sections = array(), $args = array() )
+    public function boot( $params = array() )
     {
         // Set values
-        $this->args = array_merge( $args, $this->getDefaultArgs() );
+        $this->params = array_merge( $params, $this->getDefaultArgs() );
 
-        if (empty( $this->args['opt_name'] )) {
+        if (empty( $this->params['opt_name'] )) {
             return false;
         }
 
+        $this->sections = $this->sectionManager->getSections();
+
         // Set the default values
-        if ($this->args['global_variable'] == "" && $this->args['global_variable'] !== false) {
-            $this->args['global_variable'] = str_replace( '-', '_', $this->args['opt_name'] );
+        if ($this->params['global_variable'] == "" && $this->params['global_variable'] !== false) {
+            $this->params['global_variable'] = str_replace( '-', '_', $this->params['opt_name'] );
         }
+
+        $this->loadExtensions();
 
         $this->loadTranslations();
 
@@ -244,7 +267,7 @@ class OptionBuilder implements OptionBuilderInterface
         add_action( 'admin_menu', array( $this, '_options_page' ) );
 
         // Add a network menu
-        if ($this->args['database'] == "network" && $this->args['network_admin']) {
+        if ($this->params['database'] == "network" && $this->params['network_admin']) {
             add_action( 'network_admin_menu', array( $this, '_options_page' ) );
         }
 
@@ -255,7 +278,7 @@ class OptionBuilder implements OptionBuilderInterface
         add_action( 'admin_init', array( $this, '_register_settings' ) );
 
         // Display admin notices in dev_mode
-        if (true == $this->args['dev_mode']) {
+        if (true == $this->params['dev_mode']) {
             $this->debugger->init( $this );
         }
 
@@ -266,7 +289,7 @@ class OptionBuilder implements OptionBuilderInterface
         add_action( 'admin_init', array( 'Utils\Option', 'dismissAdminNotice' ), 9 );
 
         // Enqueue the admin page CSS and JS
-        if (isset( $_GET['page'] ) && $_GET['page'] == $this->args['page_slug']) {
+        if (isset( $_GET['page'] ) && $_GET['page'] == $this->params['page_slug']) {
             add_action( 'admin_enqueue_scripts', array( $this, '_enqueue' ), 1 );
         }
 
@@ -278,9 +301,9 @@ class OptionBuilder implements OptionBuilderInterface
 
         $this->importer->init( $this );
 
-        if ($this->args['database'] == "network" && $this->args['network_admin']) {
+        if ($this->params['database'] == "network" && $this->params['network_admin']) {
             add_action(
-                'network_admin_edit_redux_' . $this->args['opt_name'],
+                'network_admin_edit_redux_' . $this->params['opt_name'],
                 array(
                     $this,
                     'save_network_page'
@@ -290,6 +313,14 @@ class OptionBuilder implements OptionBuilderInterface
             );
             add_action( 'admin_bar_menu', array( $this, 'network_admin_bar' ), 999 );
 
+        }
+    }
+
+    protected function loadExtensions()
+    {
+
+        foreach ($this->extensionManager->getExtensions() as $extension) {
+            $extension->boot();
         }
     }
 
@@ -400,14 +431,14 @@ class OptionBuilder implements OptionBuilderInterface
      */
     public function network_admin_bar( \WP_Admin_Bar $wp_admin_bar )
     {
-        $args = array(
-            'id'     => $this->args['opt_name'] . '_network_admin',
-            'title'  => $this->args['menu_title'],
+        $params = array(
+            'id'     => $this->params['opt_name'] . '_network_admin',
+            'title'  => $this->params['menu_title'],
             'parent' => 'network-admin',
-            'href'   => network_admin_url( 'settings.php' ) . '?page=' . $this->args['page_slug'],
+            'href'   => network_admin_url( 'settings.php' ) . '?page=' . $this->params['page_slug'],
             'meta'   => array( 'class' => 'redux-network-admin' )
         );
-        $wp_admin_bar->add_node( $args );
+        $wp_admin_bar->add_node( $params );
 
     }
 
@@ -430,7 +461,7 @@ class OptionBuilder implements OptionBuilderInterface
      */
     public function save_network_page()
     {
-        $data = $this->_validate_options( $_POST[$this->args['opt_name']] );
+        $data = $this->_validate_options( $_POST[$this->params['opt_name']] );
 
         if (!empty( $data )) {
             $this->set_options( $data );
@@ -439,7 +470,7 @@ class OptionBuilder implements OptionBuilderInterface
         wp_redirect(
             add_query_arg(
                 array(
-                    'page'    => $this->args['page_slug'],
+                    'page'    => $this->params['page_slug'],
                     'updated' => 'true'
                 ),
                 network_admin_url( 'settings.php' )
@@ -473,7 +504,7 @@ class OptionBuilder implements OptionBuilderInterface
      */
     public function _get_default( $opt_name, $default = null )
     {
-        if ($this->args['default_show'] == true) {
+        if ($this->params['default_show'] == true) {
 
             if (empty( $this->options_defaults )) {
                 $this->_default_values(); // fill cache
@@ -527,8 +558,8 @@ class OptionBuilder implements OptionBuilderInterface
      */
     public function set_global_variable()
     {
-        if ($this->args['global_variable']) {
-            $option_global = $this->args['global_variable'];
+        if ($this->params['global_variable']) {
+            $option_global = $this->params['global_variable'];
 
             if (isset( $this->transients['last_save'] )) {
                 // Deprecated
@@ -561,20 +592,20 @@ class OptionBuilder implements OptionBuilderInterface
         if (!empty( $value )) {
             $this->options = $value;
 
-            if ($this->args['database'] === 'transient') {
-                set_transient( $this->args['opt_name'] . '-transient', $value, $this->args['transient_time'] );
-            } elseif ($this->args['database'] === 'theme_mods') {
-                set_theme_mod( $this->args['opt_name'] . '-mods', $value );
-            } elseif ($this->args['database'] === 'theme_mods_expanded') {
+            if ($this->params['database'] === 'transient') {
+                set_transient( $this->params['opt_name'] . '-transient', $value, $this->params['transient_time'] );
+            } elseif ($this->params['database'] === 'theme_mods') {
+                set_theme_mod( $this->params['opt_name'] . '-mods', $value );
+            } elseif ($this->params['database'] === 'theme_mods_expanded') {
                 foreach ($value as $k => $v) {
                     set_theme_mod( $k, $v );
                 }
-            } elseif ($this->args['database'] === 'network') {
+            } elseif ($this->params['database'] === 'network') {
                 // Strip those slashes!
                 $value = json_decode( stripslashes( json_encode( $value ) ), true );
-                update_site_option( $this->args['opt_name'], $value );
+                update_site_option( $this->params['opt_name'], $value );
             } else {
-                update_option( $this->args['opt_name'], $value );
+                update_option( $this->params['opt_name'], $value );
             }
 
             // Store the changed values in the transient
@@ -611,17 +642,17 @@ class OptionBuilder implements OptionBuilderInterface
             $defaults = $this->defaults;
         }
 
-        if ($this->args['database'] === "transient") {
-            $result = get_transient( $this->args['opt_name'] . '-transient' );
-        } elseif ($this->args['database'] === "theme_mods") {
-            $result = get_theme_mod( $this->args['opt_name'] . '-mods' );
-        } elseif ($this->args['database'] === 'theme_mods_expanded') {
+        if ($this->params['database'] === "transient") {
+            $result = get_transient( $this->params['opt_name'] . '-transient' );
+        } elseif ($this->params['database'] === "theme_mods") {
+            $result = get_theme_mod( $this->params['opt_name'] . '-mods' );
+        } elseif ($this->params['database'] === 'theme_mods_expanded') {
             $result = get_theme_mods();
-        } elseif ($this->args['database'] === 'network') {
-            $result = get_site_option( $this->args['opt_name'], array() );
+        } elseif ($this->params['database'] === 'network') {
+            $result = get_site_option( $this->params['opt_name'], array() );
             $result = json_decode( stripslashes( json_encode( $result ) ), true );
         } else {
-            $result = get_option( $this->args['opt_name'], array() );
+            $result = get_option( $this->params['opt_name'], array() );
         }
 
         if (empty( $result ) && !empty( $defaults )) {
@@ -636,7 +667,7 @@ class OptionBuilder implements OptionBuilderInterface
          *
          * @param mixed $value option values
          */
-        $this->options = apply_filters( "redux/options/{$this->args['opt_name']}/options", $this->options );
+        $this->options = apply_filters( "redux/options/{$this->params['opt_name']}/options", $this->options );
 
         // Get transient values
         $this->get_transients();
@@ -649,21 +680,21 @@ class OptionBuilder implements OptionBuilderInterface
      * Get Wordpress specific data from the DB and return in a usable array
      *
      */
-    public function get_wordpress_data( $type = false, $args = array() )
+    public function get_wordpress_data( $type = false, $params = array() )
     {
         $data = "";
 
-        $argsKey = "";
-        foreach ($args as $key => $value) {
+        $paramsKey = "";
+        foreach ($params as $key => $value) {
             if (!is_array( $value )) {
-                $argsKey .= $value . "-";
+                $paramsKey .= $value . "-";
             } else {
-                $argsKey .= implode( "-", $value );
+                $paramsKey .= implode( "-", $value );
             }
         }
 
-        if (empty( $data ) && isset( $this->wp_data[$type . $argsKey] )) {
-            $data = $this->wp_data[$type . $argsKey];
+        if (empty( $data ) && isset( $this->wp_data[$type . $paramsKey] )) {
+            $data = $this->wp_data[$type . $paramsKey];
         }
 
         if (empty( $data ) && !empty( $type )) {
@@ -672,58 +703,58 @@ class OptionBuilder implements OptionBuilderInterface
              * Use data from Wordpress to populate options array
              **/
             if (!empty( $type ) && empty( $data )) {
-                if (empty( $args )) {
-                    $args = array();
+                if (empty( $params )) {
+                    $params = array();
                 }
 
                 $data = array();
-                $args = wp_parse_args( $args, array() );
+                $params = wp_parse_params( $params, array() );
 
                 switch ($type) {
                     case "categories":
                     case "category":
-                        $cats = get_categories( $args );
+                        $cats = get_categories( $params );
                         foreach ((array)$cats as $cat) {
                             $data[$cat->term_id] = $cat->name;
                         }
                         break;
                     case "menus":
                     case "menu":
-                        $menus = wp_get_nav_menus( $args );
+                        $menus = wp_get_nav_menus( $params );
                         foreach ((array)$menus as $item) {
                             $data[$item->term_id] = $item->name;
                         }
                         break;
                     case "pages":
                     case "page":
-                        if (!isset( $args['posts_per_page'] )) {
-                            $args['posts_per_page'] = 20;
+                        if (!isset( $params['posts_per_page'] )) {
+                            $params['posts_per_page'] = 20;
                         }
-                        $pages = get_pages( $args );
+                        $pages = get_pages( $params );
                         foreach ((array)$pages as $page) {
                             $data[$page->ID] = $page->post_title;
                         }
                         break;
                     case "terms":
                     case "term":
-                        $taxonomies = $args['taxonomies'];
-                        unset( $args['taxonomies'] );
+                        $taxonomies = $params['taxonomies'];
+                        unset( $params['taxonomies'] );
 
-                        $terms = get_terms( $taxonomies, $args ); // this will get nothing
+                        $terms = get_terms( $taxonomies, $params ); // this will get nothing
                         foreach ((array)$terms as $term) {
                             $data[$term->term_id] = $term->name;
                         }
                         break;
                     case "taxonomy":
                     case "taxonomies":
-                        $taxonomies = get_taxonomies( $args );
+                        $taxonomies = get_taxonomies( $params );
                         foreach ((array)$taxonomies as $key => $taxonomy) {
                             $data[$key] = $taxonomy;
                         }
                         break;
                     case "posts":
                     case "post":
-                        $posts = get_posts( $args );
+                        $posts = get_posts( $params );
                         foreach ((array)$posts as $post) {
                             $data[$post->ID] = $post->post_title;
                         }
@@ -736,10 +767,10 @@ class OptionBuilder implements OptionBuilderInterface
                             'public'              => true,
                             'exclude_from_search' => false,
                         );
-                        $args = wp_parse_args( $args, $defaults );
+                        $params = wp_parse_params( $params, $defaults );
                         $output = 'names';
                         $operator = 'and';
-                        $post_types = get_post_types( $args, $output, $operator );
+                        $post_types = get_post_types( $params, $output, $operator );
 
                         ksort( $post_types );
 
@@ -753,7 +784,7 @@ class OptionBuilder implements OptionBuilderInterface
                         break;
                     case "tags":
                     case "tag": // NOT WORKING!
-                        $tags = get_tags( $args );
+                        $tags = get_tags( $params );
                         foreach ((array)$tags as $tag) {
                             $data[$tag->term_id] = $tag->name;
                         }
@@ -803,14 +834,14 @@ class OptionBuilder implements OptionBuilderInterface
                         }
                         break;
                     case "callback":
-                        if (!is_array( $args )) {
-                            $args = array( $args );
+                        if (!is_array( $params )) {
+                            $params = array( $params );
                         }
-                        $data = call_user_func( $args[0] );
+                        $data = call_user_func( $params[0] );
                         break;
                 }
             }
-            $this->wp_data[$type . $argsKey] = $data;
+            $this->wp_data[$type . $paramsKey] = $data;
         }
 
         return $data;
@@ -877,14 +908,14 @@ class OptionBuilder implements OptionBuilderInterface
                                     $field['data']
                                 )
                             ) {
-                                if (!isset( $field['args'] )) {
-                                    $field['args'] = array();
+                                if (!isset( $field['params'] )) {
+                                    $field['params'] = array();
                                 }
                                 foreach ($field['data'] as $key => $data) {
-                                    if (!isset( $field['args'][$key] )) {
-                                        $field['args'][$key] = array();
+                                    if (!isset( $field['params'][$key] )) {
+                                        $field['params'][$key] = array();
                                     }
-                                    $field['options'][$key] = $this->get_wordpress_data( $data, $field['args'][$key] );
+                                    $field['options'][$key] = $this->get_wordpress_data( $data, $field['params'][$key] );
                                 }
                             }
                             $this->options_defaults[$field['id']] = $field['options'];
@@ -901,7 +932,7 @@ class OptionBuilder implements OptionBuilderInterface
          */
         $this->transients['changed_values'] = isset( $this->transients['changed_values'] ) ? $this->transients['changed_values'] : array();
         $this->options_defaults = apply_filters(
-            "redux/options/{$this->args['opt_name']}/defaults",
+            "redux/options/{$this->params['opt_name']}/defaults",
             $this->options_defaults,
             $this->transients['changed_values']
         );
@@ -1109,7 +1140,7 @@ class OptionBuilder implements OptionBuilderInterface
                         $addMenu = true;
                     }
                     // custom menu
-                } elseif (isset( $submenu[$this->args['page_parent']] )) {
+                } elseif (isset( $submenu[$this->params['page_parent']] )) {
                     $addMenu = true;
                 }
 
@@ -1144,27 +1175,27 @@ class OptionBuilder implements OptionBuilderInterface
     {
         $this->importer->in_field();
 
-        if ($this->args['menu_type'] == 'submenu') {
+        if ($this->params['menu_type'] == 'submenu') {
             $this->add_submenu(
-                $this->args['page_parent'],
-                $this->args['page_title'],
-                $this->args['menu_title'],
-                $this->args['page_permissions'],
-                $this->args['page_slug']
+                $this->params['page_parent'],
+                $this->params['page_title'],
+                $this->params['menu_title'],
+                $this->params['page_permissions'],
+                $this->params['page_slug']
             );
 
         } else {
             $this->page = add_menu_page(
-                $this->args['page_title'],
-                $this->args['menu_title'],
-                $this->args['page_permissions'],
-                $this->args['page_slug'],
+                $this->params['page_title'],
+                $this->params['menu_title'],
+                $this->params['page_permissions'],
+                $this->params['page_slug'],
                 array( &$this, '_options_page_html' ),
-                $this->args['menu_icon'],
-                $this->args['page_priority']
+                $this->params['menu_icon'],
+                $this->params['page_priority']
             );
 
-            if (true === $this->args['allow_sub_menu']) {
+            if (true === $this->params['allow_sub_menu']) {
                 if (!isset( $section['type'] ) || $section['type'] != 'divide') {
                     foreach ($this->sections as $k => $section) {
                         $canBeSubSection = ( $k > 0 && ( !isset( $this->sections[( $k )]['type'] ) || $this->sections[( $k )]['type'] != "divide" ) ) ? true : false;
@@ -1182,35 +1213,35 @@ class OptionBuilder implements OptionBuilderInterface
                         }
 
                         add_submenu_page(
-                            $this->args['page_slug'],
+                            $this->params['page_slug'],
                             $section['title'],
                             $section['title'],
-                            $this->args['page_permissions'],
-                            $this->args['page_slug'] . '&tab=' . $k,
+                            $this->params['page_permissions'],
+                            $this->params['page_slug'] . '&tab=' . $k,
                             //create_function( '$a', "return null;" )
                             '__return_null'
                         );
                     }
 
                     // Remove parent submenu item instead of adding null item.
-                    remove_submenu_page( $this->args['page_slug'], $this->args['page_slug'] );
+                    remove_submenu_page( $this->params['page_slug'], $this->params['page_slug'] );
                 }
 
-                if (true == $this->args['show_importer'] && false == $this->importer->is_field) {
+                if (true == $this->params['show_importer'] && false == $this->importer->is_field) {
                     $this->importer->add_submenu();
                 }
 
-                if (true == $this->args['dev_mode']) {
+                if (true == $this->params['dev_mode']) {
                     $this->debugger->add_submenu();
                 }
 
-                if (true == $this->args['system_info']) {
+                if (true == $this->params['system_info']) {
                     add_submenu_page(
-                        $this->args['page_slug'],
+                        $this->params['page_slug'],
                         __( 'System Info', 'mozart-options' ),
                         __( 'System Info', 'mozart-options' ),
-                        $this->args['page_permissions'],
-                        $this->args['page_slug'] . '&tab=system_info_default',
+                        $this->params['page_permissions'],
+                        $this->params['page_slug'] . '&tab=system_info_default',
                         '__return_null'
                     );
                 }
@@ -1233,48 +1264,48 @@ class OptionBuilder implements OptionBuilderInterface
         $ct = wp_get_theme();
         $theme_data = $ct;
 
-        if (!is_super_admin() || !is_admin_bar_showing() || !$this->args['admin_bar']) {
+        if (!is_super_admin() || !is_admin_bar_showing() || !$this->params['admin_bar']) {
             return;
         }
 
         if ($menu) {
             foreach ($menu as $menu_item) {
-                if (isset( $menu_item[2] ) && $menu_item[2] === $this->args["page_slug"]) {
-                    $nodeargs = array(
+                if (isset( $menu_item[2] ) && $menu_item[2] === $this->params["page_slug"]) {
+                    $nodeparams = array(
                         'id'    => $menu_item[2],
                         'title' => "<span class='ab-icon dashicons-admin-generic'></span>" . $menu_item[0],
                         'href'  => admin_url( 'admin.php?page=' . $menu_item[2] ),
                         'meta'  => array()
                     );
-                    $wp_admin_bar->add_node( $nodeargs );
+                    $wp_admin_bar->add_node( $nodeparams );
 
                     break;
                 }
             }
 
-            if (isset( $submenu[$this->args["page_slug"]] ) && is_array( $submenu[$this->args["page_slug"]] )) {
-                foreach ($submenu[$this->args["page_slug"]] as $index => $redux_options_submenu) {
-                    $subnodeargs = array(
-                        'id'     => $this->args["page_slug"] . '_' . $index,
+            if (isset( $submenu[$this->params["page_slug"]] ) && is_array( $submenu[$this->params["page_slug"]] )) {
+                foreach ($submenu[$this->params["page_slug"]] as $index => $redux_options_submenu) {
+                    $subnodeparams = array(
+                        'id'     => $this->params["page_slug"] . '_' . $index,
                         'title'  => $redux_options_submenu[0],
-                        'parent' => $this->args["page_slug"],
+                        'parent' => $this->params["page_slug"],
                         'href'   => admin_url( 'admin.php?page=' . $redux_options_submenu[2] ),
                     );
 
-                    $wp_admin_bar->add_node( $subnodeargs );
+                    $wp_admin_bar->add_node( $subnodeparams );
                 }
             }
         } else {
-            $nodeargs = array(
-                'id'    => $this->args["page_slug"],
+            $nodeparams = array(
+                'id'    => $this->params["page_slug"],
                 'title' => "<span class='ab-icon dashicons-admin-generic'></span>" . $theme_data->get(
                         'Name'
                     ) . " " . __( 'Options', 'mozart-options-demo' ),
-                'href'  => admin_url( 'admin.php?page=' . $this->args["page_slug"] ),
+                'href'  => admin_url( 'admin.php?page=' . $this->params["page_slug"] ),
                 'meta'  => array()
             );
 
-            $wp_admin_bar->add_node( $nodeargs );
+            $wp_admin_bar->add_node( $nodeparams );
         }
     }
 
@@ -1285,7 +1316,7 @@ class OptionBuilder implements OptionBuilderInterface
      */
     public function _output_css()
     {
-        if ($this->args['output'] == false && $this->args['compiler'] == false) {
+        if ($this->params['output'] == false && $this->params['compiler'] == false) {
             return;
         }
 
@@ -1293,7 +1324,7 @@ class OptionBuilder implements OptionBuilderInterface
             return;
         }
 
-        if (!empty( $this->outputCSS ) && ( $this->args['output_tag'] == true || ( isset( $_POST['customized'] ) ) )) {
+        if (!empty( $this->outputCSS ) && ( $this->params['output_tag'] == true || ( isset( $_POST['customized'] ) ) )) {
             echo '<style type="text/css" title="dynamic-css" class="options-output">' . $this->outputCSS . '</style>';
         }
     }
@@ -1305,7 +1336,7 @@ class OptionBuilder implements OptionBuilderInterface
      */
     public function _enqueue_output()
     {
-        if ($this->args['output'] == false && $this->args['compiler'] == false) {
+        if ($this->params['output'] == false && $this->params['compiler'] == false) {
             return;
         }
 
@@ -1317,7 +1348,7 @@ class OptionBuilder implements OptionBuilderInterface
             if (isset( $section['fields'] )) {
                 foreach ($section['fields'] as $fieldk => $field) {
                     if (isset( $field['type'] ) && $field['type'] != "callback") {
-                        $field_class = "Mozart\\Component\\Option\\Field\\" . Container::camelize( $field['type'] );
+                        $field_class = "Mozart\\Component\\Form\\Field\\" . Str::camel( $field['type'] );
                         if (!isset( $field['compiler'] )) {
                             $field['compiler'] = "";
                         }
@@ -1335,7 +1366,7 @@ class OptionBuilder implements OptionBuilderInterface
                                 'output'
                             ) && $this->_can_output_css( $field )
                         ) {
-                            $field = apply_filters( "redux/field/{$this->args['opt_name']}/output_css", $field );
+                            $field = apply_filters( "redux/field/{$this->params['opt_name']}/output_css", $field );
 
                             if (!empty( $field['output'] ) && !is_array( $field['output'] )) {
                                 $field['output'] = array( $field['output'] );
@@ -1359,14 +1390,14 @@ class OptionBuilder implements OptionBuilderInterface
         }
 
         if (!empty( $this->typography ) && !empty( $this->typography ) && filter_var(
-                $this->args['output'],
+                $this->params['output'],
                 FILTER_VALIDATE_BOOLEAN
             )
         ) {
             $version = !empty( $this->transients['last_save'] ) ? $this->transients['last_save'] : '';
             $typography = new Fields\Typography( null, null, $this );
 
-            if ($this->args['async_typography'] && !empty( $this->typography )) {
+            if ($this->params['async_typography'] && !empty( $this->typography )) {
                 $families = array();
                 foreach ($this->typography as $key => $value) {
                     $families[] = $key;
@@ -1374,11 +1405,11 @@ class OptionBuilder implements OptionBuilderInterface
 
                 ?>
                 <style>.wf-loading *, .wf-inactive * {
-                        visibility: hidden;
+                        visibility : hidden;
                     }
 
                     .wf-active * {
-                        visibility: visible;
+                        visibility : visible;
                     }</style>
                 <script>
                     /* You can add more configuration options to webfontloader by previously defining the WebFontConfig with your options */
@@ -1522,7 +1553,7 @@ class OptionBuilder implements OptionBuilderInterface
         wp_register_style(
             'jquery-ui-css',
             apply_filters(
-                "redux/page/{$this->args['opt_name']}/enqueue/jquery-ui-css",
+                "redux/page/{$this->params['opt_name']}/enqueue/jquery-ui-css",
                 self::$_url . 'assets/css/vendor/jquery-ui-bootstrap/jquery-ui-1.10.0.custom.css'
             ),
             '',
@@ -1629,7 +1660,7 @@ class OptionBuilder implements OptionBuilderInterface
 
         // Embed the compress version unless in dev mode
         // dev_mode = true
-        if (isset( $this->args['dev_mode'] ) && $this->args['dev_mode'] == true) {
+        if (isset( $this->params['dev_mode'] ) && $this->params['dev_mode'] == true) {
             wp_enqueue_style( 'admin-css' );
             wp_register_script(
                 'redux-vendor',
@@ -1646,7 +1677,7 @@ class OptionBuilder implements OptionBuilderInterface
 
         $depArray = array( 'jquery', 'qtip-js', 'serializeForm-js', );
 
-        if (true == $this->args['dev_mode']) {
+        if (true == $this->params['dev_mode']) {
             array_push( $depArray, 'redux-vendor' );
         }
 
@@ -1665,7 +1696,7 @@ class OptionBuilder implements OptionBuilderInterface
                         continue;
                     }
 
-                    $field_class = "Mozart\\Component\\Option\\Fields\\" . Container::camelize( $field['type'] );
+                    $field_class = "Mozart\\Component\\Form\\Field\\" . Str::camel( $field['type'] );
 
                     if (false === class_exists( $field_class )) {
                         if (false === class_exists( $field_class . 'Field' )) {
@@ -1695,7 +1726,7 @@ class OptionBuilder implements OptionBuilderInterface
                         // Checking for extension field AND dev_mode = false OR dev_mode = true
                         // Since extension fields use 'extension_dir' exclusively, we can detect them here.
                         // Also checking for dev_mode = true doesn't mess up the JS combinine.
-                        //if ( /*$this->args['dev_mode'] === false && */ isset($theField->extension_dir) && (!'' == $theField->extension_dir) /* || ($this->args['dev_mode'] === true) */) {
+                        //if ( /*$this->params['dev_mode'] === false && */ isset($theField->extension_dir) && (!'' == $theField->extension_dir) /* || ($this->params['dev_mode'] === true) */) {
                         $theField->enqueue();
                         //}
                     }
@@ -1753,7 +1784,7 @@ class OptionBuilder implements OptionBuilderInterface
          * @param       string        save_pending string
          */
         $save_pending = apply_filters(
-            "redux/{$this->args['opt_name']}/localize/save_pending",
+            "redux/{$this->params['opt_name']}/localize/save_pending",
             __( 'You have changes that are not saved. Would you like to save them now?', 'mozart-options' )
         );
 
@@ -1762,7 +1793,7 @@ class OptionBuilder implements OptionBuilderInterface
          * @param       string        reset all string
          */
         $reset_all = apply_filters(
-            "redux/{$this->args['opt_name']}/localize/reset",
+            "redux/{$this->params['opt_name']}/localize/reset",
             __( 'Are you sure? Resetting will lose all custom values.', 'mozart-options' )
         );
 
@@ -1771,7 +1802,7 @@ class OptionBuilder implements OptionBuilderInterface
          * @param       string        reset section string
          */
         $reset_section = apply_filters(
-            "redux/{$this->args['opt_name']}/localize/reset_section",
+            "redux/{$this->params['opt_name']}/localize/reset_section",
             __( 'Are you sure? Resetting will lose all custom values in this section.', 'mozart-options' )
         );
 
@@ -1781,24 +1812,24 @@ class OptionBuilder implements OptionBuilderInterface
          * @param       string        preset confirm string
          */
         $preset_confirm = apply_filters(
-            "redux/{$this->args['opt_name']}/localize/preset",
+            "redux/{$this->params['opt_name']}/localize/preset",
             __(
                 'Your current options will be replaced with the values of this preset. Would you like to proceed?',
                 'mozart-options'
             )
         );
 
-        $this->localize_data['args'] = array(
+        $this->localize_data['params'] = array(
             'save_pending'          => $save_pending,
             'reset_confirm'         => $reset_all,
             'reset_section_confirm' => $reset_section,
             'preset_confirm'        => $preset_confirm,
             'please_wait'           => __( 'Please Wait', 'mozart-options' ),
-            'opt_name'              => $this->args['opt_name'],
-            'slug'                  => $this->args['page_slug'],
-            'hints'                 => $this->args['hints'],
-            'disable_save_warn'     => $this->args['disable_save_warn'],
-            'class'                 => $this->args['class'],
+            'opt_name'              => $this->params['opt_name'],
+            'slug'                  => $this->params['page_slug'],
+            'hints'                 => $this->params['hints'],
+            'disable_save_warn'     => $this->params['disable_save_warn'],
+            'class'                 => $this->params['class'],
         );
 
         // Construct the errors array.
@@ -1877,8 +1908,8 @@ class OptionBuilder implements OptionBuilderInterface
 
         $screen = get_current_screen();
 
-        if (is_array( $this->args['help_tabs'] )) {
-            foreach ($this->args['help_tabs'] as $tab) {
+        if (is_array( $this->params['help_tabs'] )) {
+            foreach ($this->params['help_tabs'] as $tab) {
                 $screen->add_help_tab( $tab );
             }
         }
@@ -1916,7 +1947,7 @@ class OptionBuilder implements OptionBuilderInterface
             $url = '<a class="redux_hint_status" href="?dismiss=' . $dismiss . '&amp;id=hints&amp;page=' . $curPage . '&amp;tab=' . $curTab . '">' . $s . ' hints</a>';
 
             $event = 'moving the mouse over';
-            if ('click' == $this->args['hints']['tip_effect']['show']['event']) {
+            if ('click' == $this->params['hints']['tip_effect']['show']['event']) {
                 $event = 'clicking';
             }
 
@@ -1936,17 +1967,17 @@ class OptionBuilder implements OptionBuilderInterface
         }
 
         // Sidebar text
-        if ($this->args['help_sidebar'] != '') {
+        if ($this->params['help_sidebar'] != '') {
 
             // Specify users text from arguments
-            $screen->set_help_sidebar( $this->args['help_sidebar'] );
+            $screen->set_help_sidebar( $this->params['help_sidebar'] );
         } else {
 
             // If sidebar text is empty and hints are active, display text
             // about hints.
             if (true == $this->show_hints) {
                 $screen->set_help_sidebar(
-                    '<p><strong>Redux Framework</strong><br/><br/>Hint Tooltip Preferences</p>'
+                    '<p><strong>Options</strong><br/><br/>Hint Tooltip Preferences</p>'
                 );
             }
         }
@@ -1954,11 +1985,11 @@ class OptionBuilder implements OptionBuilderInterface
 
     /**
      * Return footer text
-     * @return      string $this->args['footer_credit']
+     * @return      string $this->params['footer_credit']
      */
     public function admin_footer_text()
     {
-        return $this->args['footer_credit'];
+        return $this->params['footer_credit'];
     }
 
     /**
@@ -2033,7 +2064,7 @@ class OptionBuilder implements OptionBuilderInterface
         $th = "";
 
         if (isset( $field['title'] ) && isset( $field['type'] ) && $field['type'] !== "info" && $field['type'] !== "section") {
-            $default_mark = ( !empty( $field['default'] ) && isset( $this->options[$field['id']] ) && $this->options[$field['id']] == $field['default'] && !empty( $this->args['default_mark'] ) && isset( $field['default'] ) ) ? $this->args['default_mark'] : '';
+            $default_mark = ( !empty( $field['default'] ) && isset( $this->options[$field['id']] ) && $this->options[$field['id']] == $field['default'] && !empty( $this->params['default_mark'] ) && isset( $field['default'] ) ) ? $this->params['default_mark'] : '';
 
             // If a hint is specified in the field, process it.
             if (isset( $field['hint'] ) && !'' == $field['hint']) {
@@ -2047,12 +2078,12 @@ class OptionBuilder implements OptionBuilderInterface
 
                     // Set hand cursor for clickable hints
                     $pointer = '';
-                    if (isset( $this->args['hints']['tip_effect']['show']['event'] ) && 'click' == $this->args['hints']['tip_effect']['show']['event']) {
+                    if (isset( $this->params['hints']['tip_effect']['show']['event'] ) && 'click' == $this->params['hints']['tip_effect']['show']['event']) {
                         $pointer = 'pointer';
                     }
 
                     $size = '16px';
-                    if ('large' == $this->args['hints']['icon_size']) {
+                    if ('large' == $this->params['hints']['icon_size']) {
                         $size = '18px';
                     }
 
@@ -2060,15 +2091,15 @@ class OptionBuilder implements OptionBuilderInterface
                     $titleParam = isset( $field['hint']['title'] ) ? $field['hint']['title'] : '';
                     $contentParam = isset( $field['hint']['content'] ) ? $field['hint']['content'] : '';
 
-                    $hint_color = isset( $this->args['hints']['icon_color'] ) ? $this->args['hints']['icon_color'] : '#d3d3d3';
+                    $hint_color = isset( $this->params['hints']['icon_color'] ) ? $this->params['hints']['icon_color'] : '#d3d3d3';
 
                     // Set hint html with appropriate position css
-                    $hint = '<div class="redux-hint-qtip" style="float:' . $this->args['hints']['icon_position'] . '; font-size: ' . $size . '; color:' . $hint_color . '; cursor: ' . $pointer . ';" qtip-title="' . $titleParam . '" qtip-content="' . $contentParam . '"><i class="el-icon-question-sign"></i>&nbsp&nbsp</div>';
+                    $hint = '<div class="redux-hint-qtip" style="float:' . $this->params['hints']['icon_position'] . '; font-size: ' . $size . '; color:' . $hint_color . '; cursor: ' . $pointer . ';" qtip-title="' . $titleParam . '" qtip-content="' . $contentParam . '"><i class="el-icon-question-sign"></i>&nbsp&nbsp</div>';
                 }
             }
 
             if (!empty( $field['title'] )) {
-                if ('left' == $this->args['hints']['icon_position']) {
+                if ('left' == $this->params['hints']['icon_position']) {
                     $th = $hint . $field['title'] . $default_mark . "";
                 } else {
                     $th = $field['title'] . $default_mark . "" . $hint;
@@ -2084,7 +2115,7 @@ class OptionBuilder implements OptionBuilderInterface
             $th = '<div class="redux_field_th">' . $th . '</div>';
         }
 
-        if ($this->args['default_show'] === true && isset( $field['default'] ) && isset( $this->options[$field['id']] ) && $this->options[$field['id']] != $field['default'] && $field['type'] !== "info" && $field['type'] !== "group" && $field['type'] !== "section" && $field['type'] !== "editor" && $field['type'] !== "ace_editor") {
+        if ($this->params['default_show'] === true && isset( $field['default'] ) && isset( $this->options[$field['id']] ) && $this->options[$field['id']] != $field['default'] && $field['type'] !== "info" && $field['type'] !== "group" && $field['type'] !== "section" && $field['type'] !== "editor" && $field['type'] !== "ace_editor") {
             $th .= $this->get_default_output_string( $field );
         }
 
@@ -2104,8 +2135,8 @@ class OptionBuilder implements OptionBuilderInterface
         }
 
         register_setting(
-            $this->args['opt_name'] . '_group',
-            $this->args['opt_name'],
+            $this->params['opt_name'] . '_group',
+            $this->params['opt_name'],
             array(
                 $this,
                 '_validate_options'
@@ -2127,7 +2158,7 @@ class OptionBuilder implements OptionBuilderInterface
 
             $display = true;
 
-            if (isset( $_GET['page'] ) && $_GET['page'] == $this->args['page_slug']) {
+            if (isset( $_GET['page'] ) && $_GET['page'] == $this->params['page_slug']) {
                 if (isset( $section['panel'] ) && $section['panel'] == false) {
                     $display = false;
                 }
@@ -2140,14 +2171,14 @@ class OptionBuilder implements OptionBuilderInterface
             /**
              * @param array $section section configuration
              */
-            $section = apply_filters( "redux-section-{$k}-modifier-{$this->args['opt_name']}", $section );
+            $section = apply_filters( "redux-section-{$k}-modifier-{$this->params['opt_name']}", $section );
 
             /**
              * @param array $section section configuration
              */
             if (isset( $section['id'] )) {
                 $section = apply_filters(
-                    "redux/options/{$this->args['opt_name']}/section/{$section['id']}",
+                    "redux/options/{$this->params['opt_name']}/section/{$section['id']}",
                     $section
                 );
             }
@@ -2179,13 +2210,13 @@ class OptionBuilder implements OptionBuilderInterface
             }
 
             add_settings_section(
-                $this->args['opt_name'] . $k . '_section',
+                $this->params['opt_name'] . $k . '_section',
                 $heading,
                 array(
                     &$this,
                     '_section_desc'
                 ),
-                $this->args['opt_name'] . $k . '_section_group'
+                $this->params['opt_name'] . $k . '_section_group'
             );
 
             $sectionIndent = false;
@@ -2203,12 +2234,12 @@ class OptionBuilder implements OptionBuilderInterface
                      * @param array $field field config
                      */
                     $field = apply_filters(
-                        "redux/options/{$this->args['opt_name']}/field/{$field['id']}/register",
+                        "redux/options/{$this->params['opt_name']}/field/{$field['id']}/register",
                         $field
                     );
 
                     $display = true;
-                    if (isset( $_GET['page'] ) && $_GET['page'] == $this->args['page_slug']) {
+                    if (isset( $_GET['page'] ) && $_GET['page'] == $this->params['page_slug']) {
                         if (isset( $field['panel'] ) && $field['panel'] == false) {
                             $display = false;
                         }
@@ -2251,7 +2282,7 @@ class OptionBuilder implements OptionBuilderInterface
 
                     $th = $this->get_header_html( $field );
 
-                    $field['name'] = $this->args['opt_name'] . '[' . $field['id'] . ']';
+                    $field['name'] = $this->params['opt_name'] . '[' . $field['id'] . ']';
 
                     // Set the default value if present
                     $this->options_defaults[$field['id']] = isset( $this->options_defaults[$field['id']] ) ? $this->options_defaults[$field['id']] : '';
@@ -2347,7 +2378,7 @@ class OptionBuilder implements OptionBuilderInterface
                         }
                     }
                     if (true == $doUpdate && !isset( $this->never_save_to_db )) {
-                        if ($this->args['save_defaults']) { // Only save that to the DB if allowed to
+                        if ($this->params['save_defaults']) { // Only save that to the DB if allowed to
                             $runUpdate = true;
                         }
                     }
@@ -2360,7 +2391,7 @@ class OptionBuilder implements OptionBuilderInterface
                     /**
                      * @param array $field field config
                      */
-                    $field = apply_filters( "redux/options/{$this->args['opt_name']}/field/{$field['id']}", $field );
+                    $field = apply_filters( "redux/options/{$this->params['opt_name']}/field/{$field['id']}", $field );
 
                     if (empty( $field ) || !$field || $field == false) {
                         unset( $this->sections[$k]['fields'][$fieldk] );
@@ -2387,7 +2418,7 @@ class OptionBuilder implements OptionBuilderInterface
 
                     $this->sections[$k]['fields'][$fieldk] = $field;
 
-                    if (isset( $this->args['display_source'] )) {
+                    if (isset( $this->params['display_source'] )) {
                         $th .= '<div id="' . $field['id'] . '-settings" style="display:none;"><pre>' . var_export(
                                 $this->sections[$k]['fields'][$fieldk],
                                 true
@@ -2401,8 +2432,8 @@ class OptionBuilder implements OptionBuilderInterface
                         "{$fieldk}_field",
                         $th,
                         array( &$this, '_field_input' ),
-                        "{$this->args['opt_name']}{$k}_section_group",
-                        "{$this->args['opt_name']}{$k}_section",
+                        "{$this->params['opt_name']}{$k}_section_group",
+                        "{$this->params['opt_name']}{$k}_section",
                         $field
                     ); // checkbox
                 }
@@ -2414,7 +2445,7 @@ class OptionBuilder implements OptionBuilderInterface
         }
 
         if (isset( $this->transients['run_compiler'] ) && $this->transients['run_compiler']) {
-            $this->args['output_tag'] = false;
+            $this->params['output_tag'] = false;
             $this->_enqueue_output();
 
             unset( $this->transients['run_compiler'] );
@@ -2428,7 +2459,7 @@ class OptionBuilder implements OptionBuilderInterface
     public function get_transients()
     {
         if (!isset( $this->transients )) {
-            $this->transients = get_option( $this->args['opt_name'] . '-transients', array() );
+            $this->transients = get_option( $this->params['opt_name'] . '-transients', array() );
             $this->transients_check = $this->transients;
         }
     }
@@ -2439,7 +2470,7 @@ class OptionBuilder implements OptionBuilderInterface
     public function set_transients()
     {
         if (!isset( $this->transients ) || !isset( $this->transients_check ) || $this->transients != $this->transients_check) {
-            update_option( $this->args['opt_name'] . '-transients', $this->transients );
+            update_option( $this->params['opt_name'] . '-transients', $this->transients );
             $this->transients_check = $this->transients;
         }
     }
@@ -2508,13 +2539,13 @@ class OptionBuilder implements OptionBuilderInterface
                 $_COOKIE['redux_current_tab'] = 1;
 
                 unset( $plugin_options['defaults'], $plugin_options['compiler'], $plugin_options['import'], $plugin_options['import_code'] );
-                if ($this->args['database'] == 'transient' || $this->args['database'] == 'theme_mods' || $this->args['database'] == 'theme_mods_expanded' || $this->args['database'] == 'network') {
+                if ($this->params['database'] == 'transient' || $this->params['database'] == 'theme_mods' || $this->params['database'] == 'theme_mods_expanded' || $this->params['database'] == 'network') {
                     $this->set_options( $plugin_options );
 
                     return false;
                 }
 
-                $plugin_options = wp_parse_args( $imported_options, $plugin_options );
+                $plugin_options = wp_parse_params( $imported_options, $plugin_options );
                 $this->set_transients(); // Update the transients
 
                 return $plugin_options;
@@ -2605,7 +2636,7 @@ class OptionBuilder implements OptionBuilderInterface
         }
 
         unset( $plugin_options['defaults'], $plugin_options['defaults_section'], $plugin_options['import'], $plugin_options['import_code'], $plugin_options['import_link'], $plugin_options['compiler'], $plugin_options['redux-section'] );
-        if ($this->args['database'] == 'transient' || $this->args['database'] == 'theme_mods' || $this->args['database'] == 'theme_mods_expanded') {
+        if ($this->params['database'] == 'transient' || $this->params['database'] == 'theme_mods' || $this->params['database'] == 'theme_mods_expanded') {
             $this->set_options( $plugin_options );
 
             return;
@@ -2613,7 +2644,7 @@ class OptionBuilder implements OptionBuilderInterface
 
         if (defined( 'WP_CACHE' ) && WP_CACHE && class_exists( 'W3_ObjectCache' )) {
             $w3 = W3_ObjectCache::instance();
-            $key = $w3->_get_cache_key( $this->args['opt_name'] . '-transients', 'transient' );
+            $key = $w3->_get_cache_key( $this->params['opt_name'] . '-transients', 'transient' );
             $w3->delete( $key, 'transient', true );
         }
 
@@ -2689,7 +2720,7 @@ class OptionBuilder implements OptionBuilderInterface
                              * @param string $class_file validation class file path
                              */
                             $class_file = apply_filters(
-                                "redux/validate/{$this->args['opt_name']}/class/{$field['validate']}",
+                                "redux/validate/{$this->params['opt_name']}/class/{$field['validate']}",
                                 self::$_dir . "src/validation/{$field['validate']}/validation_{$field['validate']}.php",
                                 $class_file
                             );
@@ -2799,7 +2830,7 @@ class OptionBuilder implements OptionBuilderInterface
 
         $section['class'] = isset( $section['class'] ) ? ' ' . $section['class'] : '';
 
-        if (isset( $_GET['page'] ) && $_GET['page'] == $this->args['page_slug']) {
+        if (isset( $_GET['page'] ) && $_GET['page'] == $this->params['page_slug']) {
             if (isset( $section['panel'] ) && $section['panel'] == false) {
                 $display = false;
             }
@@ -2814,14 +2845,14 @@ class OptionBuilder implements OptionBuilderInterface
         }
 
         $string = "";
-        if (( isset( $this->args['icon_type'] ) && $this->args['icon_type'] == 'image' ) || ( isset( $section['icon_type'] ) && $section['icon_type'] == 'image' )) {
-            //if ( !empty( $this->args['icon_type'] ) && $this->args['icon_type'] == 'image' ) {
+        if (( isset( $this->params['icon_type'] ) && $this->params['icon_type'] == 'image' ) || ( isset( $section['icon_type'] ) && $section['icon_type'] == 'image' )) {
+            //if ( !empty( $this->params['icon_type'] ) && $this->params['icon_type'] == 'image' ) {
             $icon = ( !isset( $section['icon'] ) ) ? '' : '<img class="image_icon_type" src="' . $section['icon'] . '" /> ';
         } else {
             if (!empty( $section['icon_class'] )) {
                 $icon_class = ' ' . $section['icon_class'];
-            } elseif (!empty( $this->args['default_icon_class'] )) {
-                $icon_class = ' ' . $this->args['default_icon_class'];
+            } elseif (!empty( $this->params['default_icon_class'] )) {
+                $icon_class = ' ' . $this->params['default_icon_class'];
             } else {
                 $icon_class = '';
             }
@@ -2856,7 +2887,7 @@ class OptionBuilder implements OptionBuilderInterface
                     $nextK += 1;
                     $display = true;
 
-                    if (isset( $_GET['page'] ) && $_GET['page'] == $this->args['page_slug']) {
+                    if (isset( $_GET['page'] ) && $_GET['page'] == $this->params['page_slug']) {
                         if (isset( $sections[$nextK]['panel'] ) && $sections[$nextK]['panel'] == false) {
                             $display = false;
                         }
@@ -2872,14 +2903,14 @@ class OptionBuilder implements OptionBuilderInterface
                             continue;
                         }
 
-                        if (( isset( $this->args['icon_type'] ) && $this->args['icon_type'] == 'image' ) || ( isset( $sections[$nextK]['icon_type'] ) && $sections[$nextK]['icon_type'] == 'image' )) {
-                            //if ( !empty( $this->args['icon_type'] ) && $this->args['icon_type'] == 'image' ) {
+                        if (( isset( $this->params['icon_type'] ) && $this->params['icon_type'] == 'image' ) || ( isset( $sections[$nextK]['icon_type'] ) && $sections[$nextK]['icon_type'] == 'image' )) {
+                            //if ( !empty( $this->params['icon_type'] ) && $this->params['icon_type'] == 'image' ) {
                             $icon = ( !isset( $sections[$nextK]['icon'] ) ) ? '' : '<img class="image_icon_type" src="' . $sections[$nextK]['icon'] . '" /> ';
                         } else {
                             if (!empty( $sections[$nextK]['icon_class'] )) {
                                 $icon_class = ' ' . $sections[$nextK]['icon_class'];
-                            } elseif (!empty( $this->args['default_icon_class'] )) {
-                                $icon_class = ' ' . $this->args['default_icon_class'];
+                            } elseif (!empty( $this->params['default_icon_class'] )) {
+                                $icon_class = ' ' . $this->params['default_icon_class'];
                             } else {
                                 $icon_class = '';
                             }
@@ -2926,50 +2957,50 @@ class OptionBuilder implements OptionBuilderInterface
             ) . '" />';
 
         // Main container
-        $expanded = ( $this->args['open_expanded'] ) ? ' fully-expanded' : '';
+        $expanded = ( $this->params['open_expanded'] ) ? ' fully-expanded' : '';
 
-        echo '<div class="redux-container' . $expanded . ( !empty( $this->args['class'] ) ? ' ' . $this->args['class'] : '' ) . '">';
+        echo '<div class="redux-container' . $expanded . ( !empty( $this->params['class'] ) ? ' ' . $this->params['class'] : '' ) . '">';
         $url = './options.php';
-        if ($this->args['database'] == "network" && $this->args['network_admin']) {
+        if ($this->params['database'] == "network" && $this->params['network_admin']) {
             if (is_network_admin()) {
-                $url = './edit.php?action=redux_' . $this->args['opt_name'];
+                $url = './edit.php?action=redux_' . $this->params['opt_name'];
             }
         }
         echo '<form method="post" action="' . $url . '" enctype="multipart/form-data" id="redux-form-wrapper">';
-        echo '<input type="hidden" id="redux-compiler-hook" name="' . $this->args['opt_name'] . '[compiler]" value="" />';
-        echo '<input type="hidden" id="currentSection" name="' . $this->args['opt_name'] . '[redux-section]" value="" />';
+        echo '<input type="hidden" id="redux-compiler-hook" name="' . $this->params['opt_name'] . '[compiler]" value="" />';
+        echo '<input type="hidden" id="currentSection" name="' . $this->params['opt_name'] . '[redux-section]" value="" />';
 
-        settings_fields( "{$this->args['opt_name']}_group" );
+        settings_fields( "{$this->params['opt_name']}_group" );
 
         // Last tab?
         $this->options['last_tab'] = ( isset( $_GET['tab'] ) && !isset( $this->transients['last_save_mode'] ) ) ? $_GET['tab'] : '';
 
-        echo '<input type="hidden" id="last_tab" name="' . $this->args['opt_name'] . '[last_tab]" value="' . $this->options['last_tab'] . '" />';
+        echo '<input type="hidden" id="last_tab" name="' . $this->params['opt_name'] . '[last_tab]" value="' . $this->options['last_tab'] . '" />';
 
         // Header area
         echo '<div id="redux-header">';
 
-        if (!empty( $this->args['display_name'] )) {
+        if (!empty( $this->params['display_name'] )) {
             echo '<div class="display_header">';
-            echo '<h2>' . $this->args['display_name'] . '</h2>';
+            echo '<h2>' . $this->params['display_name'] . '</h2>';
 
-            if (!empty( $this->args['display_version'] )) {
-                echo '<span>' . $this->args['display_version'] . '</span>';
+            if (!empty( $this->params['display_version'] )) {
+                echo '<span>' . $this->params['display_version'] . '</span>';
             }
 
             echo '</div>';
         }
 
         // Page icon
-        echo '<div id="' . $this->args['page_icon'] . '" class="icon32"></div>';
+        echo '<div id="' . $this->params['page_icon'] . '" class="icon32"></div>';
 
         echo '<div class="clear"></div>';
         echo '</div>';
 
         // Intro text
-        if (isset( $this->args['intro_text'] )) {
+        if (isset( $this->params['intro_text'] )) {
             echo '<div id="redux-intro-text">';
-            echo $this->args['intro_text'];
+            echo $this->params['intro_text'];
             echo '</div>';
         }
 
@@ -2977,7 +3008,7 @@ class OptionBuilder implements OptionBuilderInterface
         echo '<div id="redux-sticky">';
         echo '<div id="info_bar">';
 
-        $expanded = ( $this->args['open_expanded'] ) ? ' expanded' : '';
+        $expanded = ( $this->params['open_expanded'] ) ? ' expanded' : '';
 
         echo '<a href="javascript:void(0);" class="expand_options' . $expanded . '">' . __(
                 'Expand',
@@ -2986,19 +3017,19 @@ class OptionBuilder implements OptionBuilderInterface
         echo '<div class="redux-action_bar">';
         submit_button( __( 'Save Changes', 'mozart-options' ), 'primary', 'redux_save', false );
 
-        if (false === $this->args['hide_reset']) {
+        if (false === $this->params['hide_reset']) {
             echo '&nbsp;';
             submit_button(
                 __( 'Reset Section', 'mozart-options' ),
                 'secondary',
-                $this->args['opt_name'] . '[defaults-section]',
+                $this->params['opt_name'] . '[defaults-section]',
                 false
             );
             echo '&nbsp;';
             submit_button(
                 __( 'Reset All', 'mozart-options' ),
                 'secondary',
-                $this->args['opt_name'] . '[defaults]',
+                $this->params['opt_name'] . '[defaults]',
                 false
             );
         }
@@ -3014,23 +3045,23 @@ class OptionBuilder implements OptionBuilderInterface
 
             if ($this->transients['last_save_mode'] == "import") {
                 echo '<div class="admin-notice notice-blue saved_notice"><strong>' . apply_filters(
-                        "redux-imported-text-{$this->args['opt_name']}",
+                        "redux-imported-text-{$this->params['opt_name']}",
                         __( 'Settings Imported!', 'mozart-options' )
                     ) . '</strong></div>';
             } elseif ($this->transients['last_save_mode'] == "defaults") {
                 echo '<div class="saved_notice admin-notice notice-yellow"><strong>' . apply_filters(
-                        "redux-defaults-text-{$this->args['opt_name']}",
+                        "redux-defaults-text-{$this->params['opt_name']}",
                         __( 'All Defaults Restored!', 'mozart-options' )
                     ) . '</strong></div>';
             } elseif ($this->transients['last_save_mode'] == "defaults_section") {
 
                 echo '<div class="saved_notice admin-notice notice-yellow"><strong>' . apply_filters(
-                        "redux-defaults-section-text-{$this->args['opt_name']}",
+                        "redux-defaults-section-text-{$this->params['opt_name']}",
                         __( 'Section Defaults Restored!', 'mozart-options' )
                     ) . '</strong></div>';
             } else {
                 echo '<div class="saved_notice admin-notice notice-green"><strong>' . apply_filters(
-                        "redux-saved-text-{$this->args['opt_name']}",
+                        "redux-saved-text-{$this->params['opt_name']}",
                         __( 'Settings Saved!', 'mozart-options' )
                     ) . '</strong></div>';
             }
@@ -3039,7 +3070,7 @@ class OptionBuilder implements OptionBuilderInterface
         }
 
         echo '<div class="redux-save-warn notice-yellow"><strong>' . apply_filters(
-                "redux-changed-text-{$this->args['opt_name']}",
+                "redux-changed-text-{$this->params['opt_name']}",
                 __( 'Settings have changed, you should save them!', 'mozart-options' )
             ) . '</strong></div>';
 
@@ -3082,23 +3113,23 @@ class OptionBuilder implements OptionBuilderInterface
         }
 
         // Import / Export tab
-        if (true == $this->args['show_importer'] && false == $this->importer->is_field) {
+        if (true == $this->params['show_importer'] && false == $this->importer->is_field) {
             $this->importer->render_tab();
         }
 
         // Debug tab
-        if ($this->args['dev_mode'] == true) {
+        if ($this->params['dev_mode'] == true) {
             $this->debugger->render_tab();
         }
 
-        if ($this->args['system_info'] === true) {
+        if ($this->params['system_info'] === true) {
             echo '<li id="system_info_default_section_group_li" class="redux-group-tab-link-li">';
 
-            if (!empty( $this->args['icon_type'] ) && $this->args['icon_type'] == 'image') {
-                $icon = ( !isset( $this->args['system_info_icon'] ) ) ? '' : '<img src="' . $this->args['system_info_icon'] . '" /> ';
+            if (!empty( $this->params['icon_type'] ) && $this->params['icon_type'] == 'image') {
+                $icon = ( !isset( $this->params['system_info_icon'] ) ) ? '' : '<img src="' . $this->params['system_info_icon'] . '" /> ';
             } else {
-                $icon_class = ( !isset( $this->args['system_info_icon_class'] ) ) ? '' : ' ' . $this->args['system_info_icon_class'];
-                $icon = ( !isset( $this->args['system_info_icon'] ) ) ? '<i class="el-icon-info-sign' . $icon_class . '"></i>' : '<i class="icon-' . $this->args['system_info_icon'] . $icon_class . '"></i> ';
+                $icon_class = ( !isset( $this->params['system_info_icon_class'] ) ) ? '' : ' ' . $this->params['system_info_icon_class'];
+                $icon = ( !isset( $this->params['system_info_icon'] ) ) ? '<i class="el-icon-info-sign' . $icon_class . '"></i>' : '<i class="icon-' . $this->params['system_info_icon'] . $icon_class . '"></i> ';
             }
 
             echo '<a href="javascript:void(0);" id="system_info_default_section_group_li_a" class="redux-group-tab-link-a custom-tab" data-rel="system_info_default">' . $icon . ' <span class="group_title">' . __(
@@ -3123,34 +3154,34 @@ class OptionBuilder implements OptionBuilderInterface
 
             // Don't display in the
             $display = true;
-            if (isset( $_GET['page'] ) && $_GET['page'] == $this->args['page_slug']) {
+            if (isset( $_GET['page'] ) && $_GET['page'] == $this->params['page_slug']) {
                 if (isset( $section['panel'] ) && $section['panel'] == "false") {
                     $display = false;
                 }
             }
 
             if ($display) {
-                do_settings_sections( $this->args['opt_name'] . $k . '_section_group' );
+                do_settings_sections( $this->params['opt_name'] . $k . '_section_group' );
             }
             echo "</div>";
         }
 
         // Import / Export output
-        if (true == $this->args['show_importer'] && false == $this->importer->is_field) {
+        if (true == $this->params['show_importer'] && false == $this->importer->is_field) {
             $this->importer->enqueue();
 
-            echo '<fieldset id="' . $this->args['opt_name'] . '-importer_core" class="redux-field-container redux-field redux-field-init redux-container-importer" data-id="importer_core" data-type="importer">';
+            echo '<fieldset id="' . $this->params['opt_name'] . '-importer_core" class="redux-field-container redux-field redux-field-init redux-container-importer" data-id="importer_core" data-type="importer">';
             $this->importer->render();
             echo '</fieldset>';
 
         }
 
         // Debug object output
-        if ($this->args['dev_mode'] == true) {
+        if ($this->params['dev_mode'] == true) {
             $this->debugger->render();
         }
 
-        if ($this->args['system_info'] === true) {
+        if ($this->params['system_info'] === true) {
             echo '<div id="system_info_default_section_group' . '" class="redux-group-tab">';
             echo '<h3>' . __( 'System Info', 'mozart-options' ) . '</h3>';
 
@@ -3168,10 +3199,10 @@ class OptionBuilder implements OptionBuilderInterface
         echo '<div id="redux-sticky-padder" style="display: none;">&nbsp;</div>';
         echo '<div id="redux-footer-sticky"><div id="redux-footer">';
 
-        if (isset( $this->args['share_icons'] )) {
+        if (isset( $this->params['share_icons'] )) {
             echo '<div id="redux-share">';
 
-            foreach ($this->args['share_icons'] as $link) {
+            foreach ($this->params['share_icons'] as $link) {
                 // SHIM, use URL now
                 if (isset( $link['link'] ) && !empty( $link['link'] )) {
                     $link['url'] = $link['link'];
@@ -3195,19 +3226,19 @@ class OptionBuilder implements OptionBuilderInterface
         echo '<div class="redux-action_bar">';
         submit_button( __( 'Save Changes', 'mozart-options' ), 'primary', 'redux_save', false );
 
-        if (false === $this->args['hide_reset']) {
+        if (false === $this->params['hide_reset']) {
             echo '&nbsp;';
             submit_button(
                 __( 'Reset Section', 'mozart-options' ),
                 'secondary',
-                $this->args['opt_name'] . '[defaults-section]',
+                $this->params['opt_name'] . '[defaults-section]',
                 false
             );
             echo '&nbsp;';
             submit_button(
                 __( 'Reset All', 'mozart-options' ),
                 'secondary',
-                $this->args['opt_name'] . '[defaults]',
+                $this->params['opt_name'] . '[defaults]',
                 false
             );
         }
@@ -3221,13 +3252,13 @@ class OptionBuilder implements OptionBuilderInterface
         echo '</form>';
         echo '</div></div>';
 
-        echo ( isset( $this->args['footer_text'] ) ) ? '<div id="redux-sub-footer">' . $this->args['footer_text'] . '</div>' : '';
+        echo ( isset( $this->params['footer_text'] ) ) ? '<div id="redux-sub-footer">' . $this->params['footer_text'] . '</div>' : '';
 
 
         echo '<div class="clear"></div>';
         echo '</div><!--wrap-->';
 
-        if ($this->args['dev_mode'] == true) {
+        if ($this->params['dev_mode'] == true) {
             if (current_user_can( 'administrator' )) {
                 global $wpdb;
                 echo "<br /><pre>";
@@ -3237,7 +3268,7 @@ class OptionBuilder implements OptionBuilderInterface
 
             echo '<br /><div class="redux-timer">' . get_num_queries() . ' queries in ' . timer_stop(
                     0
-                ) . ' seconds<br/>Redux is currently set to developer mode.</div>';
+                ) . ' seconds</div>';
         }
 
         $this->set_transients();
@@ -3253,7 +3284,7 @@ class OptionBuilder implements OptionBuilderInterface
      */
     public function _section_desc( $section )
     {
-        $id = trim( rtrim( $section['id'], '_section' ), $this->args['opt_name'] );
+        $id = trim( rtrim( $section['id'], '_section' ), $this->params['opt_name'] );
 
         if (isset( $this->sections[$id]['desc'] ) && !empty( $this->sections[$id]['desc'] )) {
             echo '<div class="redux-section-desc">' . $this->sections[$id]['desc'] . '</div>';
@@ -3282,7 +3313,7 @@ class OptionBuilder implements OptionBuilderInterface
 
             // If the field is set not to display in the panel
             $display = true;
-            if (isset( $_GET['page'] ) && $_GET['page'] == $this->args['page_slug']) {
+            if (isset( $_GET['page'] ) && $_GET['page'] == $this->params['page_slug']) {
                 if (isset( $field['panel'] ) && $field['panel'] == false) {
                     $display = false;
                 }
@@ -3292,7 +3323,7 @@ class OptionBuilder implements OptionBuilderInterface
                 return;
             }
 
-            $field_class = "Mozart\\Component\\Option\\Fields\\" . Container::camelize( $field['type'] );
+            $field_class = "Mozart\\Component\\Form\\Field\\" . Str::camel( $field['type'] );
 
             if (false === class_exists( $field_class )) {
                 if (false === class_exists( $field_class . 'Field' )) {
@@ -3320,7 +3351,7 @@ class OptionBuilder implements OptionBuilderInterface
              * @param array $field field data
              */
             $_render = apply_filters(
-                "redux/field/{$this->args['opt_name']}/{$field['type']}/render/after",
+                "redux/field/{$this->params['opt_name']}/{$field['type']}/render/after",
                 $render,
                 $field
             );
@@ -3339,7 +3370,7 @@ class OptionBuilder implements OptionBuilderInterface
             $this->check_dependencies( $field );
 
             if (!isset( $field['fields'] ) || empty( $field['fields'] )) {
-                echo '<fieldset id="' . $this->args['opt_name'] . '-' . $field['id'] . '" class="redux-field-container redux-field redux-field-init redux-container-' . $field['type'] . ' ' . $class_string . '" data-id="' . $field['id'] . '" ' . $data_string . ' data-type="' . $field['type'] . '">';
+                echo '<fieldset id="' . $this->params['opt_name'] . '-' . $field['id'] . '" class="redux-field-container redux-field redux-field-init redux-container-' . $field['type'] . ' ' . $class_string . '" data-id="' . $field['id'] . '" ' . $data_string . ' data-type="' . $field['type'] . '">';
             }
 
             echo $_render;
@@ -3375,14 +3406,14 @@ class OptionBuilder implements OptionBuilderInterface
         if (!empty( $field['required'] )) {
             if (isset( $field['required'][0] )) {
                 if (!is_array( $field['required'][0] ) && count( $field['required'] ) == 3) {
-                    $parentValue = $GLOBALS[$this->args['global_variable']][$field['required'][0]];
+                    $parentValue = $GLOBALS[$this->params['global_variable']][$field['required'][0]];
                     $checkValue = $field['required'][2];
                     $operation = $field['required'][1];
                     $return = $this->compareValueDependencies( $parentValue, $checkValue, $operation );
                 } elseif (is_array( $field['required'][0] )) {
                     foreach ($field['required'] as $required) {
                         if (!is_array( $required[0] ) && count( $required ) == 3) {
-                            $parentValue = $GLOBALS[$this->args['global_variable']][$required[0]];
+                            $parentValue = $GLOBALS[$this->params['global_variable']][$required[0]];
                             $checkValue = $required[2];
                             $operation = $required[1];
                             $return = $this->compareValueDependencies( $parentValue, $checkValue, $operation );
