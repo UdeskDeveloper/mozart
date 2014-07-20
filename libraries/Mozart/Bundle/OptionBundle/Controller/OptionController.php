@@ -23,7 +23,6 @@ class OptionController
      */
     protected $options = array();
 
-
     /**
      * @var OptionBuilderInterface
      */
@@ -103,6 +102,56 @@ class OptionController
      */
     public function startHooks()
     {
+        // Options page
+        add_action( 'admin_menu', array( $this->optionBuilder, '_options_page' ) );
+
+        // Add a network menu
+        if ($this->optionBuilder->getParam( 'database' ) == "network"
+            && $this->optionBuilder->getParam( 'network_admin' )
+        ) {
+            add_action( 'network_admin_menu', array( $this->optionBuilder, '_options_page' ) );
+        }
+
+        // Admin Bar menu
+        add_action( 'admin_bar_menu', array( $this->optionBuilder, '_admin_bar_menu' ), 999 );
+
+        // Register setting
+        add_action( 'admin_init', array( $this->optionBuilder, '_register_settings' ) );
+
+
+        // Display admin notices
+        add_action( 'admin_notices', array( 'Mozart\Component\Option\Utils\OptionUtil', 'adminNotices' ) );
+
+        // Check for dismissed admin notices.
+        add_action( 'admin_init', array( 'Mozart\Component\Option\Utils\OptionUtil', 'dismissAdminNotice' ), 9 );
+
+        // Enqueue the admin page CSS and JS
+        if (isset( $_GET['page'] ) && $_GET['page'] == $this->optionBuilder->getParam( 'page_slug' )) {
+            add_action( 'admin_enqueue_scripts', array( $this->optionBuilder, '_enqueue' ), 1 );
+        }
+
+        // Output dynamic CSS
+        add_action( 'wp_head', array( $this->optionBuilder, '_output_css' ), 150 );
+
+        // Enqueue dynamic CSS and Google fonts
+        add_action( 'wp_enqueue_scripts', array( $this->optionBuilder, '_enqueue_output' ), 150 );
+
+
+        if ($this->optionBuilder->getParam( 'database' ) == "network"
+            && $this->optionBuilder->getParam( 'network_admin' )
+        ) {
+            add_action(
+                'network_admin_edit_redux_' . $this->optionBuilder->getParam( 'opt_name' ),
+                array(
+                    $this->optionBuilder,
+                    'save_network_page'
+                ),
+                10,
+                0
+            );
+            add_action( 'admin_bar_menu', array( $this->optionBuilder, 'network_admin_bar' ), 999 );
+
+        }
         add_action( 'wp_loaded', array( $this, 'options_toggle_check' ) );
 
         // Activate plugin when new blog is added
@@ -292,4 +341,5 @@ class OptionController
          * );
          */
     }
+
 }
