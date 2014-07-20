@@ -1,6 +1,8 @@
 <?php
 namespace Mozart\Component\Option;
 
+use Mozart\Component\Option\Utils\OptionUtil;
+
 class Importer
 {
     private $enabled = false;
@@ -150,7 +152,7 @@ class Importer
 
     public function in_field()
     {
-        $this->enabled = Utils\Option::isFieldInUse( $this->builder, 'import_export' );
+        $this->enabled = OptionUtil::isFieldInUse( $this->builder, 'import_export' );
     }
 
     public function render_tab()
