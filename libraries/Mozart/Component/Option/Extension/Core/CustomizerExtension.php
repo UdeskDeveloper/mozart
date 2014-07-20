@@ -46,9 +46,8 @@ class CustomizerExtension implements ExtensionInterface
      * @param OptionBuilderInterface $builder
      * @param RequestStack $request
      */
-    public function __construct( OptionBuilderInterface $builder, RequestStack $requestStack )
+    public function __construct( RequestStack $requestStack )
     {
-        $this->builder = $builder;
         $this->currentPage = $GLOBALS['pagenow'];
         $this->requestStack = $requestStack;
     }
@@ -56,8 +55,9 @@ class CustomizerExtension implements ExtensionInterface
     /**
      * Boot the extension
      */
-    public function boot()
+    public function extend( OptionBuilderInterface $builder )
     {
+        $this->builder = $builder;
 
         if ($this->currentPage !== "customize.php"
             && $this->currentPage !== "admin-ajax.php"
@@ -261,9 +261,6 @@ class CustomizerExtension implements ExtensionInterface
                     $option['default'] = $this->options_defaults['option']['id'];
                 }
 
-                //$option['id'] = $this->builder->args['opt_name'].'['.$option['id'].']';
-                //echo $option['id'];
-
                 if (!isset( $option['default'] )) {
                     $option['default'] = "";
                 }
@@ -432,15 +429,6 @@ class CustomizerExtension implements ExtensionInterface
                 }
             }
         }
-
-        /*
-          title_tagline - Site Title & Tagline
-          colors - Colors
-          header_image - Header Image
-          background_image - Background Image
-          nav - Navigation
-          static_front_page - Static Front Page
-         */
     }
 
     /**
@@ -449,7 +437,6 @@ class CustomizerExtension implements ExtensionInterface
     public function customizer_save_before( $plugin_options )
     {
         $this->before_save = $this->builder->options;
-        //$parent->_field_input( $plugin_options );
     }
 
     /**
@@ -457,7 +444,6 @@ class CustomizerExtension implements ExtensionInterface
      */
     public function customizer_save_after( \WP_Customize_Manager $wp_customize )
     {
-        //if ( isset( $this->request['customized'] ) ) {
         $options = json_decode( stripslashes_deep( $this->request['customized'] ), true );
         $compiler = false;
         $changed = array();
@@ -496,11 +482,6 @@ class CustomizerExtension implements ExtensionInterface
                 $this->builder->compilerCSS
             );
         }
-
-        //}
-        //      print_r($wp_customize);
-        //exit();
-        //return $wp_customize;
     }
 
     /**

@@ -31,5 +31,4 @@ services:
         tags:
             - { name: mozart.option.extension }
         arguments:
-            - @mozart.option.builder
             - @request_stack

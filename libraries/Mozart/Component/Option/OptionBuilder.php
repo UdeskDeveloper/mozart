@@ -320,7 +320,7 @@ class OptionBuilder implements OptionBuilderInterface
     {
 
         foreach ($this->extensionManager->getExtensions() as $extension) {
-            $extension->boot();
+            $extension->boot( $this );
         }
     }
 
@@ -915,7 +915,10 @@ class OptionBuilder implements OptionBuilderInterface
                                     if (!isset( $field['params'][$key] )) {
                                         $field['params'][$key] = array();
                                     }
-                                    $field['options'][$key] = $this->get_wordpress_data( $data, $field['params'][$key] );
+                                    $field['options'][$key] = $this->get_wordpress_data(
+                                        $data,
+                                        $field['params'][$key]
+                                    );
                                 }
                             }
                             $this->options_defaults[$field['id']] = $field['options'];
