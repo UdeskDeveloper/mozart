@@ -3,7 +3,8 @@ namespace Mozart\Component\Option;
 
 class Importer
 {
-    public $is_field = false;
+    private $enabled = false;
+
     public $field_args = array();
 
     private $builder;
@@ -131,9 +132,25 @@ class Importer
         }
     }
 
+    /**
+     * @return boolean
+     */
+    public function isEnabled()
+    {
+        return $this->enabled;
+    }
+
+    /**
+     * @param boolean $enabled
+     */
+    public function setEnabled( $enabled )
+    {
+        $this->enabled = $enabled;
+    }
+
     public function in_field()
     {
-        $this->is_field = Utils\Option::isFieldInUse( $this->builder, 'import_export' );
+        $this->enabled = Utils\Option::isFieldInUse( $this->builder, 'import_export' );
     }
 
     public function render_tab()
