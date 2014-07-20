@@ -1,19 +1,29 @@
 <?php
 namespace Mozart\Component\Option;
 
+/**
+ * Class Tracker
+ * @package Mozart\Component\Option
+ */
 class Tracker
 {
+    /**
+     * @var array
+     */
     public $options = array();
-    public $builder;
+    /**
+     * @var OptionBuilderInterface
+     */
+    private $builder;
 
-    public function load( $builder )
+    /**
+     * @param OptionBuilderInterface $builder
+     */
+    public function load( OptionBuilderInterface $builder )
     {
         $this->builder = $builder;
 
-
         $this->options = get_option( 'mozart-options-tracking' );
-        $this->options['dev_mode'] = $builder->args['dev_mode'];
-
 
         if (!isset( $this->options['hash'] ) || !$this->options['hash'] || empty( $this->options['hash'] )) {
             $this->options['hash'] = md5( network_site_url() . '-' . $_SERVER['REMOTE_ADDR'] );
@@ -55,6 +65,9 @@ class Tracker
         }
     }
 
+    /**
+     *
+     */
     function _enqueue_tracking()
     {
         wp_enqueue_style( 'wp-pointer' );
@@ -65,6 +78,9 @@ class Tracker
         add_action( 'admin_print_footer_scripts', array( $this, 'tracking_request' ) );
     }
 
+    /**
+     *
+     */
     function _enqueue_newsletter()
     {
         wp_enqueue_style( 'wp-pointer' );
@@ -285,6 +301,9 @@ class Tracker
     <?php
     }
 
+    /**
+     * @return array
+     */
     function trackingObject()
     {
         global $blog_id, $wpdb;
@@ -420,12 +439,18 @@ class Tracker
         }
     }
 
+    /**
+     *
+     */
     function tracking_arg()
     {
         echo md5( AUTH_KEY . SECURE_AUTH_KEY . '-redux' );
         die();
     }
 
+    /**
+     *
+     */
     function support_args()
     {
         header( "Expires: Mon, 26 Jul 1997 05:00:00 GMT" );
@@ -501,6 +526,9 @@ function redux_tracking_additions( $options )
 
 add_filter( 'redux/tracking/options', 'redux_tracking_additions' );
 
+/**
+ *
+ */
 function redux_allow_tracking_callback()
 {
     // Verify that the incoming request is coming with the security nonce
