@@ -76,7 +76,7 @@ class OptionBuilder implements OptionBuilderInterface
     /**
      * @var array
      */
-    protected $sections = array(); // Sections and fields
+    protected $sections = array();
     /**
      * @var array
      */
@@ -242,7 +242,7 @@ class OptionBuilder implements OptionBuilderInterface
             return false;
         }
 
-        $this->sections = $this->sectionManager->getSections();
+        $this->setSections( $this->sectionManager->getSections() );
 
         if ($this->params['global_variable'] == "" && $this->params['global_variable'] !== false) {
             $this->params['global_variable'] = str_replace( '-', '_', $this->params['opt_name'] );
@@ -256,6 +256,13 @@ class OptionBuilder implements OptionBuilderInterface
         $this->loadOptions();
 
         $this->tracker->load( $this );
+
+        // Display admin notices in dev_mode
+        if (true == $this->params['dev_mode']) {
+            $this->debugger->init( $this );
+        }
+
+        $this->importer->init( $this );
 
         // Options page
         add_action( 'admin_menu', array( $this, '_options_page' ) );
@@ -271,10 +278,6 @@ class OptionBuilder implements OptionBuilderInterface
         // Register setting
         add_action( 'admin_init', array( $this, '_register_settings' ) );
 
-        // Display admin notices in dev_mode
-        if (true == $this->params['dev_mode']) {
-            $this->debugger->init( $this );
-        }
 
         // Display admin notices
         add_action( 'admin_notices', array( 'Utils\Option', 'adminNotices' ) );
@@ -293,7 +296,6 @@ class OptionBuilder implements OptionBuilderInterface
         // Enqueue dynamic CSS and Google fonts
         add_action( 'wp_enqueue_scripts', array( &$this, '_enqueue_output' ), 150 );
 
-        $this->importer->init( $this );
 
         if ($this->params['database'] == "network" && $this->params['network_admin']) {
             add_action(
@@ -308,6 +310,23 @@ class OptionBuilder implements OptionBuilderInterface
             add_action( 'admin_bar_menu', array( $this, 'network_admin_bar' ), 999 );
 
         }
+    }
+
+    /**
+     * @return array
+     */
+    public function getSections()
+    {
+        return $this->sections;
+    }
+
+    /**
+     * @param array $sections
+     */
+    public function setSections( $sections )
+    {
+
+        $this->sections = $sections;
     }
 
     protected function loadExtensions()
@@ -868,10 +887,10 @@ class OptionBuilder implements OptionBuilderInterface
      */
     public function _default_values()
     {
-        if (!is_null( $this->sections ) && is_null( $this->options_defaults )) {
+        if (!is_null( $this->getSections() ) && is_null( $this->options_defaults )) {
 
             // fill the cache
-            foreach ($this->sections as $sk => $section) {
+            foreach ($this->getSections() as $sk => $section) {
                 if (!isset( $section['id'] )) {
                     if (!is_numeric( $sk ) || !isset( $section['title'] )) {
                         $section['id'] = $sk;
@@ -946,9 +965,9 @@ class OptionBuilder implements OptionBuilderInterface
     public function _fold_values()
     {
 
-        if (!is_null( $this->sections )) {
+        if (!is_null( $this->getSections() )) {
 
-            foreach ($this->sections as $section) {
+            foreach ($this->getSections() as $section) {
                 if (isset( $section['fields'] )) {
                     foreach ($section['fields'] as $field) {
                         //if we have required option in group field
@@ -1196,7 +1215,7 @@ class OptionBuilder implements OptionBuilderInterface
 
             if (true === $this->params['allow_sub_menu']) {
                 if (!isset( $section['type'] ) || $section['type'] != 'divide') {
-                    foreach ($this->sections as $k => $section) {
+                    foreach ($this->getSections() as $k => $section) {
                         $canBeSubSection = ( $k > 0 && ( !isset( $this->sections[( $k )]['type'] ) || $this->sections[( $k )]['type'] != "divide" ) ) ? true : false;
 
                         if (!isset( $section['title'] ) || ( $canBeSubSection && ( isset( $section['subsection'] ) && $section['subsection'] == true ) )) {
@@ -1339,7 +1358,7 @@ class OptionBuilder implements OptionBuilderInterface
             return;
         }
 
-        foreach ($this->sections as $k => $section) {
+        foreach ($this->getSections() as $k => $section) {
             if (isset( $section['type'] ) && ( $section['type'] == 'divide' )) {
                 continue;
             }
@@ -1688,7 +1707,7 @@ class OptionBuilder implements OptionBuilderInterface
             true
         );
 
-        foreach ($this->sections as $section) {
+        foreach ($this->getSections() as $section) {
             if (isset( $section['fields'] )) {
                 foreach ($section['fields'] as $field) {
                     if (!isset( $field['type'] ) || $field['type'] == 'callback') {
@@ -2142,7 +2161,7 @@ class OptionBuilder implements OptionBuilderInterface
             )
         );
 
-        if (is_null( $this->sections )) {
+        if (is_null( $this->getSections() )) {
             return;
         }
 
@@ -2150,7 +2169,7 @@ class OptionBuilder implements OptionBuilderInterface
 
         $runUpdate = false;
 
-        foreach ($this->sections as $k => $section) {
+        foreach ($this->getSections() as $k => $section) {
             if (isset( $section['type'] ) && $section['type'] == 'divide') {
                 continue;
             }
@@ -2613,7 +2632,7 @@ class OptionBuilder implements OptionBuilderInterface
         $this->transients['last_save_mode'] = "normal"; // Last save mode
 
         // Validate fields (if needed)
-        $plugin_options = $this->_validate_values( $plugin_options, $this->options, $this->sections );
+        $plugin_options = $this->_validate_values( $plugin_options, $this->options, $this->getSections() );
 
         if (!empty( $this->errors ) || !empty( $this->warnings )) {
             $this->transients['notices'] = array( 'errors' => $this->errors, 'warnings' => $this->warnings );
@@ -2840,7 +2859,7 @@ class OptionBuilder implements OptionBuilderInterface
         }
 
         if (empty( $sections )) {
-            $sections = $this->sections;
+            $sections = $this->getSections();
         }
 
         $string = "";
@@ -3091,7 +3110,7 @@ class OptionBuilder implements OptionBuilderInterface
         echo '<div class="redux-sidebar">';
         echo '<ul class="redux-group-menu">';
 
-        foreach ($this->sections as $k => $section) {
+        foreach ($this->getSections() as $k => $section) {
             $title = isset( $section['title'] ) ? $section['title'] : '';
 
             $skip_sec = false;
@@ -3143,7 +3162,7 @@ class OptionBuilder implements OptionBuilderInterface
 
         echo '<div class="redux-main">';
 
-        foreach ($this->sections as $k => $section) {
+        foreach ($this->getSections() as $k => $section) {
             if (isset( $section['customizer_only'] ) && $section['customizer_only'] == true) {
                 continue;
             }

@@ -182,7 +182,7 @@ class CustomizerExtension implements ExtensionInterface
             'option'  => -500,
         );
 
-        foreach ($this->builder->sections as $section) {
+        foreach ($this->builder->getSections() as $section) {
 
             // Not a type that should go on the customizer
             if (empty( $section['fields'] ) || ( isset( $section['type'] ) && $section['type'] == "divide" )) {
@@ -566,7 +566,7 @@ class CustomizerExtension implements ExtensionInterface
 
         do_action( 'redux-enqueue-' . $this->builder->args['opt_name'] );
 
-        foreach ($this->builder->sections as $section) {
+        foreach ($this->builder->getSections() as $section) {
             if (isset( $section['fields'] )) {
                 foreach ($section['fields'] as $field) {
                     if (isset( $field['type'] )) {

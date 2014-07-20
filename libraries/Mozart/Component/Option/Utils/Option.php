@@ -276,7 +276,7 @@ class Option {
 
     public static function tabFromField($parent, $field)
     {
-        foreach ($parent->sections as $k => $section) {
+        foreach ($parent->getSections() as $k => $section) {
             if ( ! isset( $section['title'] ) ) {
                 continue;
             }
@@ -303,7 +303,7 @@ class Option {
 
     public static function isFieldInUse($parent, $field)
     {
-        foreach ($parent->sections as $k => $section) {
+        foreach ($parent->getSections() as $k => $section) {
             if ( ! isset( $section['title'] ) ) {
                 continue;
             }

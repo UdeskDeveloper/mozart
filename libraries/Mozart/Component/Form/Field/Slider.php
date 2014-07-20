@@ -17,7 +17,7 @@ class Slider extends Field
 
     function __construct( $field = array(), $value = '', $parent )
     {
-        //parent::__construct( $parent->sections, $parent->args );
+        //parent::__construct( $parent->getSections(), $parent->args );
         $this->parent = $parent;
         $this->field = $field;
         $this->value = $value;
