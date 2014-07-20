@@ -9,8 +9,8 @@ class Checkbox extends Field
      * Field Constructor.
      * Required - must call the parent constructor, then assign field and value to vars, and obviously call the render field function
      *
-     * @since       1.0.0
-     * @access      public
+     *
+     *
      * @return      void
      */
     function __construct( $field = array(), $value = '', $parent )
@@ -24,8 +24,8 @@ class Checkbox extends Field
      * Field Render Function.
      * Takes the vars and outputs the HTML for the field in the settings
      *
-     * @since       1.0.0
-     * @access      public
+     *
+     *
      * @return      void
      */
     public function render()
@@ -117,8 +117,8 @@ class Checkbox extends Field
      * Enqueue Function.
      * If this field requires any scripts, or css define this function and register/enqueue the scripts/css
      *
-     * @since       1.0.0
-     * @access      public
+     *
+     *
      * @return      void
      */
     public function enqueue()

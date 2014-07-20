@@ -235,8 +235,8 @@ class Slides extends Field
      * Enqueue Function.
      * If this field requires any scripts, or css define this function and register/enqueue the scripts/css
      *
-     * @since       1.0.0
-     * @access      public
+     *
+     *
      * @return      void
      */
     public function enqueue()

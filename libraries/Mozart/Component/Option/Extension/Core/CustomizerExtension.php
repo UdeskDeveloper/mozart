@@ -506,8 +506,8 @@ class CustomizerExtension implements ExtensionInterface
     /**
      * Enqueue CSS/JS for preview pane
      *
-     * @since       1.0.0
-     * @access      public
+     *
+     *
      * @global      $wp_styles
      * @return void
      */
@@ -544,8 +544,8 @@ class CustomizerExtension implements ExtensionInterface
     /**
      * Enqueue CSS/JS for the customizer controls
      *
-     * @since       1.0.0
-     * @access      public
+     *
+     *
      * @global      $wp_styles
      * @return void
      */
