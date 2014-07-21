@@ -190,28 +190,6 @@ class Importer
         );
     }
 
-    public function enqueue()
-    {
-        wp_enqueue_script(
-            'redux-field-import-export-js',
-            \Mozart::parameter(
-                'wp.plugin.uri'
-            ) . '/mozart/public/bundles/mozart/option/js/import_export/import_export.js',
-            array( 'jquery', 'redux-js' ),
-            time(),
-            true
-        );
-
-        wp_enqueue_style(
-            'redux-field-import-export-css',
-            \Mozart::parameter(
-                'wp.plugin.uri'
-            ) . '/mozart/public/bundles/mozart/option/css/import_export/import_export.css',
-            time(),
-            true
-        );
-    }
-
     public function link_options()
     {
         if (!isset( $_GET['secret'] ) || $_GET['secret'] != md5(

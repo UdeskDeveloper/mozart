@@ -1,6 +1,7 @@
 services:
     mozart.option.importer:
         class: Mozart\Component\Option\Importer
+
     mozart.option.debugger:
         class: Mozart\Component\Option\Debugger
     mozart.option.tracker:
@@ -13,6 +14,8 @@ services:
             - @mozart.option.tracker
             - @mozart.option.extensionmanager
             - @mozart.option.sectionmanager
+            - %wp.plugin.uri%/mozart
+            - %wp.plugin.dir%/mozart
     mozart.option.manager:
         class: Mozart\Bundle\OptionBundle\Model\OptionManager
         arguments:

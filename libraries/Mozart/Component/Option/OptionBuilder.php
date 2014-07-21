@@ -210,25 +210,34 @@ class OptionBuilder implements OptionBuilderInterface
      */
     private $sectionManager;
 
+    private $mozartRootUrl;
+    private $mozartRootDir;
+
     /**
-     * @param Importer         $importer
-     * @param Debugger         $debugger
-     * @param Tracker          $tracker
+     * @param Importer $importer
+     * @param Debugger $debugger
+     * @param Tracker $tracker
      * @param ExtensionManager $extensionManager
-     * @param SectionManager   $sectionManager
+     * @param SectionManager $sectionManager
+     * @param $mozartRootUrl
+     * @param $mozartRootDir
      */
     public function __construct(
         Importer $importer,
         Debugger $debugger,
         Tracker $tracker,
         ExtensionManager $extensionManager,
-        SectionManager $sectionManager
+        SectionManager $sectionManager,
+        $mozartRootUrl,
+        $mozartRootDir
     ) {
         $this->importer = $importer;
         $this->debugger = $debugger;
         $this->tracker = $tracker;
         $this->extensionManager = $extensionManager;
         $this->sectionManager = $sectionManager;
+        $this->mozartRootUrl = $mozartRootUrl;
+        $this->mozartRootDir = $mozartRootDir;
     }
 
     /**
@@ -279,7 +288,7 @@ class OptionBuilder implements OptionBuilderInterface
     /**
      * @param array $field
      */
-    public function addField($field)
+    public function addField( $field )
     {
         // Detect what field types are being used
         if (!isset( $this->fields[$field['type']][$field['id']] )) {
@@ -300,7 +309,7 @@ class OptionBuilder implements OptionBuilderInterface
     /**
      * @param array $sections
      */
-    public function setSections($sections)
+    public function setSections( $sections )
     {
 
         $this->sections = $sections;
@@ -318,7 +327,7 @@ class OptionBuilder implements OptionBuilderInterface
      * @param $param
      * @return array
      */
-    public function getParam($param)
+    public function getParam( $param )
     {
         return $this->params[$param];
     }
@@ -436,7 +445,7 @@ class OptionBuilder implements OptionBuilderInterface
     /**
      * @param \WP_Admin_Bar $wp_admin_bar
      */
-    public function adminBarMenuForNetwork(\WP_Admin_Bar $wp_admin_bar)
+    public function adminBarMenuForNetwork( \WP_Admin_Bar $wp_admin_bar )
     {
         $params = array(
             'id'     => $this->params['opt_name'] . '_network_admin',
@@ -454,7 +463,7 @@ class OptionBuilder implements OptionBuilderInterface
      *
      * @return array|string
      */
-    public function stripslashes_deep($value)
+    public function stripslashes_deep( $value )
     {
         $value = is_array( $value ) ?
             array_map( 'stripslashes_deep', $value ) :
@@ -495,7 +504,7 @@ class OptionBuilder implements OptionBuilderInterface
 
         if (strpos( $locale, '_' ) === false) {
             if (file_exists(
-                \Mozart::parameter( 'wp.plugin.dir' ) . '/mozart/translations/option/' . strtolower(
+                $this->mozartRootDir . '/translations/option/' . strtolower(
                     $locale
                 ) . '_' . strtoupper( $locale ) . '.mo'
             )) {
@@ -504,7 +513,7 @@ class OptionBuilder implements OptionBuilderInterface
         }
         load_textdomain(
             'mozart-options',
-            \Mozart::parameter( 'wp.plugin.dir' ) . '/mozart/translations/option/' . $locale . '.mo'
+            $this->mozartRootDir . '/translations/option/' . $locale . '.mo'
         );
     }
 
@@ -512,11 +521,11 @@ class OptionBuilder implements OptionBuilderInterface
      * This is used to return the default value if default_show is set
      *
      * @param string $opt_name The option name to return
-     * @param mixed  $default  (null)  The value to return if default not set
+     * @param mixed $default (null)  The value to return if default not set
      *
      * @return mixed $default
      */
-    public function getDefaultOption($opt_name, $default = null)
+    public function getDefaultOption( $opt_name, $default = null )
     {
         if ($this->params['default_show'] == true) {
 
@@ -537,11 +546,11 @@ class OptionBuilder implements OptionBuilderInterface
      * This is used to return and option value from the options array
      *
      * @param string $opt_name The option name to return
-     * @param mixed  $default  (null) The value to return if option not set
+     * @param mixed $default (null) The value to return if option not set
      *
      * @return mixed
      */
-    public function getOption($opt_name, $default = null)
+    public function getOption( $opt_name, $default = null )
     {
         return ( !empty( $this->options[$opt_name] ) ) ? $this->options[$opt_name] : $this->getDefaultOption(
             $opt_name,
@@ -553,11 +562,11 @@ class OptionBuilder implements OptionBuilderInterface
      * This is used to set an arbitrary option in the options array
      *
      * @param string $opt_name The name of the option being added
-     * @param mixed  $value    The value of the option being added
+     * @param mixed $value The value of the option being added
      *
      * @return void
      */
-    public function setOption($opt_name = '', $value = '')
+    public function setOption( $opt_name = '', $value = '' )
     {
         if ($opt_name != '') {
             $this->options[$opt_name] = $value;
@@ -599,7 +608,7 @@ class OptionBuilder implements OptionBuilderInterface
      *
      * @param mixed $value the value of the option being added
      */
-    public function setOptions($value = '')
+    public function setOptions( $value = '' )
     {
         $this->transients['last_save'] = time();
 
@@ -689,8 +698,8 @@ class OptionBuilder implements OptionBuilderInterface
 
     /**
      * Get Wordpress specific data from the DB and return in a usable array
-     * @param  bool         $type
-     * @param  array        $params
+     * @param  bool $type
+     * @param  array $params
      * @return array|string
      */
     public function get_wordpress_data( $type = false, $params = array() )
@@ -722,14 +731,14 @@ class OptionBuilder implements OptionBuilderInterface
                     case "categories":
                     case "category":
                         $cats = get_categories( $params );
-                        foreach ((array) $cats as $cat) {
+                        foreach ((array)$cats as $cat) {
                             $data[$cat->term_id] = $cat->name;
                         }
                         break;
                     case "menus":
                     case "menu":
                         $menus = wp_get_nav_menus( $params );
-                        foreach ((array) $menus as $item) {
+                        foreach ((array)$menus as $item) {
                             $data[$item->term_id] = $item->name;
                         }
                         break;
@@ -739,7 +748,7 @@ class OptionBuilder implements OptionBuilderInterface
                             $params['posts_per_page'] = 20;
                         }
                         $pages = get_pages( $params );
-                        foreach ((array) $pages as $page) {
+                        foreach ((array)$pages as $page) {
                             $data[$page->ID] = $page->post_title;
                         }
                         break;
@@ -749,21 +758,21 @@ class OptionBuilder implements OptionBuilderInterface
                         unset( $params['taxonomies'] );
 
                         $terms = get_terms( $taxonomies, $params ); // this will get nothing
-                        foreach ((array) $terms as $term) {
+                        foreach ((array)$terms as $term) {
                             $data[$term->term_id] = $term->name;
                         }
                         break;
                     case "taxonomy":
                     case "taxonomies":
                         $taxonomies = get_taxonomies( $params );
-                        foreach ((array) $taxonomies as $key => $taxonomy) {
+                        foreach ((array)$taxonomies as $key => $taxonomy) {
                             $data[$key] = $taxonomy;
                         }
                         break;
                     case "posts":
                     case "post":
                         $posts = get_posts( $params );
-                        foreach ((array) $posts as $post) {
+                        foreach ((array)$posts as $post) {
                             $data[$post->ID] = $post->post_title;
                         }
                         break;
@@ -794,7 +803,7 @@ class OptionBuilder implements OptionBuilderInterface
                     case "tags":
                     case "tag": // NOT WORKING!
                         $tags = get_tags( $params );
-                        foreach ((array) $tags as $tag) {
+                        foreach ((array)$tags as $tag) {
                             $data[$tag->term_id] = $tag->name;
                         }
                         break;
@@ -859,11 +868,11 @@ class OptionBuilder implements OptionBuilderInterface
      * This is used to echo and option value from the options array
      *
      * @param string $opt_name The name of the option being shown
-     * @param mixed  $default  The value to show if $opt_name isn't set
+     * @param mixed $default The value to show if $opt_name isn't set
      *
      * @return void
      */
-    public function show($opt_name, $default = '')
+    public function show( $opt_name, $default = '' )
     {
         $option = $this->getOption( $opt_name );
         if (!is_array( $option ) && $option != '') {
@@ -1014,7 +1023,7 @@ class OptionBuilder implements OptionBuilderInterface
      *
      * @return array
      */
-    public function get_fold($field)
+    public function get_fold( $field )
     {
         if (!is_array( $field['required'] )) {
 
@@ -1089,7 +1098,7 @@ class OptionBuilder implements OptionBuilderInterface
      * @param $page_slug
      * @return void
      */
-    private function add_submenu($page_parent, $page_title, $menu_title, $page_permissions, $page_slug)
+    private function add_submenu( $page_parent, $page_title, $menu_title, $page_permissions, $page_slug )
     {
         global $submenu;
 
@@ -1421,7 +1430,7 @@ class OptionBuilder implements OptionBuilderInterface
                     }</style>
                 <script>
                     /* You can add more configuration options to webfontloader by previously defining the WebFontConfig with your options */
-                    if (typeof WebFontConfig === "undefined") {
+                    if ( typeof WebFontConfig === "undefined" ) {
                         WebFontConfig = {};
                     }
                     WebFontConfig['google'] = {families: [<?php echo $typography->makeGoogleWebfontString( $this->typography )?>]};
@@ -1460,7 +1469,25 @@ class OptionBuilder implements OptionBuilderInterface
     {
         global $wp_styles;
 
-        // Select2 business.  Fields:  Background, Border, Dimensions, Select, Slider, Typography
+        if ($this->importer->isEnabled()) {
+
+            wp_enqueue_script(
+                'redux-field-import-export-js',
+                $this->mozartRootUrl . '/public/bundles/mozart/option/js/import_export/import_export.js',
+                array( 'jquery', 'redux-js' ),
+                time(),
+                true
+            );
+
+            wp_enqueue_style(
+                'redux-field-import-export-css',
+                $this->mozartRootUrl . '/public/bundles/mozart/option/css/import_export/import_export.css',
+                time(),
+                true
+            );
+        }
+
+
         if (OptionUtil::isFieldInUseByType(
             $this->getFields(),
             array(
@@ -1481,9 +1508,11 @@ class OptionBuilder implements OptionBuilderInterface
             // select2 CSS
             wp_register_style(
                 'select2-css',
-                \Mozart::parameter('wp.plugin.uri') . '/mozart/public/bundles/mozart/option/js/vendor/select2/select2.css',
+                $this->mozartRootUrl . '/public/bundles/mozart/option/js/vendor/select2/select2.css',
                 array(),
-                filemtime( \Mozart::parameter('wp.plugin.dir') . '/mozart/public/bundles/mozart/option/js/vendor/select2/select2.css' ),
+                filemtime(
+                    $this->mozartRootDir . '/public/bundles/mozart/option/js/vendor/select2/select2.css'
+                ),
                 'all'
             );
 
@@ -1492,17 +1521,21 @@ class OptionBuilder implements OptionBuilderInterface
             // JS
             wp_register_script(
                 'select2-sortable-js',
-                \Mozart::parameter('wp.plugin.uri') . '/mozart/public/bundles/mozart/option/js/vendor/select2.sortable.min.js',
+                $this->mozartRootUrl . '/public/bundles/mozart/option/js/vendor/select2.sortable.min.js',
                 array( 'jquery' ),
-                filemtime( \Mozart::parameter('wp.plugin.dir') . '/mozart/public/bundles/mozart/option/js/vendor/select2.sortable.min.js' ),
+                filemtime(
+                    $this->mozartRootDir . '/public/bundles/mozart/option/js/vendor/select2.sortable.min.js'
+                ),
                 true
             );
 
             wp_register_script(
                 'select2-js',
-                \Mozart::parameter('wp.plugin.uri') . '/mozart/public/bundles/mozart/option/js/vendor/select2/select2.min.js',
+                $this->mozartRootUrl . '/public/bundles/mozart/option/js/vendor/select2/select2.min.js',
                 array( 'jquery', 'select2-sortable-js' ),
-                filemtime( \Mozart::parameter('wp.plugin.dir') . '/mozart/public/bundles/mozart/option/js/vendor/select2/select2.min.js' ),
+                filemtime(
+                    $this->mozartRootDir . '/public/bundles/mozart/option/js/vendor/select2/select2.min.js'
+                ),
                 true
             );
 
@@ -1511,59 +1544,60 @@ class OptionBuilder implements OptionBuilderInterface
 
         wp_register_style(
             'redux-css',
-            \Mozart::parameter('wp.plugin.uri') . '/mozart/public/bundles/mozart/option/css/redux.css',
+            $this->mozartRootUrl . '/public/bundles/mozart/option/css/redux.css',
             array( 'farbtastic' ),
-            filemtime( \Mozart::parameter('wp.plugin.dir') . '/mozart/public/bundles/mozart/option/css/redux.css' ),
+            filemtime( $this->mozartRootDir . '/public/bundles/mozart/option/css/redux.css' ),
             'all'
         );
 
         wp_register_style(
             'admin-css',
-            \Mozart::parameter('wp.plugin.uri') . '/mozart/public/bundles/mozart/option/css/admin.css',
+            $this->mozartRootUrl . '/public/bundles/mozart/option/css/admin.css',
             array( 'farbtastic' ),
-            filemtime( \Mozart::parameter('wp.plugin.dir') . '/mozart/public/bundles/mozart/option/css/admin.css' ),
+            filemtime( $this->mozartRootDir . '/public/bundles/mozart/option/css/admin.css' ),
             'all'
         );
 
         wp_register_style(
             'redux-elusive-icon',
-            \Mozart::parameter('wp.plugin.uri') . '/mozart/public/bundles/mozart/option/css/vendor/elusive-icons/elusive-webfont.css',
+            $this->mozartRootUrl . '/public/bundles/mozart/option/css/vendor/elusive-icons/elusive-webfont.css',
             array(),
-            filemtime( \Mozart::parameter('wp.plugin.dir') . '/mozart/public/bundles/mozart/option/css/vendor/elusive-icons/elusive-webfont.css' ),
+            filemtime(
+                $this->mozartRootDir . '/public/bundles/mozart/option/css/vendor/elusive-icons/elusive-webfont.css'
+            ),
             'all'
         );
 
         wp_register_style(
             'redux-elusive-icon-ie7',
-            \Mozart::parameter('wp.plugin.uri') . '/mozart/public/bundles/mozart/option/css/vendor/elusive-icons/elusive-webfont-ie7.css',
+            $this->mozartRootUrl . '/public/bundles/mozart/option/css/vendor/elusive-icons/elusive-webfont-ie7.css',
             array(),
-            filemtime( \Mozart::parameter('wp.plugin.dir') . '/mozart/public/bundles/mozart/option/css/vendor/elusive-icons/elusive-webfont-ie7.css' ),
+            filemtime(
+                $this->mozartRootDir . '/public/bundles/mozart/option/css/vendor/elusive-icons/elusive-webfont-ie7.css'
+            ),
             'all'
         );
 
         wp_register_style(
             'qtip-css',
-            \Mozart::parameter('wp.plugin.uri') . '/mozart/public/bundles/mozart/option/css/vendor/qtip/jquery.qtip.css',
+            $this->mozartRootUrl . '/public/bundles/mozart/option/css/vendor/qtip/jquery.qtip.css',
             array(),
-            filemtime( \Mozart::parameter('wp.plugin.dir') . '/mozart/public/bundles/mozart/option/css/vendor/qtip/jquery.qtip.css' ),
+            filemtime(
+                $this->mozartRootDir . '/public/bundles/mozart/option/css/vendor/qtip/jquery.qtip.css'
+            ),
             'all'
         );
 
         $wp_styles->add_data( 'redux-elusive-icon-ie7', 'conditional', 'lte IE 7' );
 
-        /**
-         * jQuery UI stylesheet src
-         * @param string  bundled stylesheet src
-         */
         wp_register_style(
             'jquery-ui-css',
-            apply_filters(
-                "redux/page/{$this->params['opt_name']}/enqueue/jquery-ui-css",
-                \Mozart::parameter('wp.plugin.uri') . '/mozart/public/bundles/mozart/option/css/vendor/jquery-ui-bootstrap/jquery-ui-1.10.0.custom.css'
-            ),
+            $this->mozartRootUrl . '/public/bundles/mozart/option/css/vendor/jquery-ui-bootstrap/jquery-ui-1.10.0.custom.css'
+            ,
             '',
-            filemtime( \Mozart::parameter('wp.plugin.dir') . '/mozart/public/bundles/mozart/option/css/vendor/jquery-ui-bootstrap/jquery-ui-1.10.0.custom.css' ),
-            // todo - version should be based on above post-filter src
+            filemtime(
+                $this->mozartRootDir . '/public/bundles/mozart/option/css/vendor/jquery-ui-bootstrap/jquery-ui-1.10.0.custom.css'
+            ),
             'all'
         );
 
@@ -1576,9 +1610,9 @@ class OptionBuilder implements OptionBuilderInterface
         if (is_rtl()) {
             wp_register_style(
                 'redux-rtl-css',
-                \Mozart::parameter('wp.plugin.uri') . '/mozart/public/bundles/mozart/option/css/rtl.css',
+                $this->mozartRootUrl . '/public/bundles/mozart/option/css/rtl.css',
                 '',
-                filemtime( \Mozart::parameter('wp.plugin.dir') . '/mozart/public/bundles/mozart/option/css/rtl.css' ),
+                filemtime( $this->mozartRootDir . '/public/bundles/mozart/option/css/rtl.css' ),
                 'all'
             );
             wp_enqueue_style( 'redux-rtl-css' );
@@ -1629,9 +1663,11 @@ class OptionBuilder implements OptionBuilderInterface
 
             wp_register_style(
                 'color-picker-css',
-                \Mozart::parameter('wp.plugin.uri') . '/mozart/public/bundles/mozart/option/css/color-picker/color-picker.css',
+                $this->mozartRootUrl . '/public/bundles/mozart/option/css/color-picker/color-picker.css',
                 array(),
-                filemtime( \Mozart::parameter('wp.plugin.dir') . '/mozart/public/bundles/mozart/option/css/color-picker/color-picker.css' ),
+                filemtime(
+                    $this->mozartRootDir . '/public/bundles/mozart/option/css/color-picker/color-picker.css'
+                ),
                 'all'
             );
 
@@ -1649,7 +1685,7 @@ class OptionBuilder implements OptionBuilderInterface
 
         wp_register_script(
             'qtip-js',
-            \Mozart::parameter('wp.plugin.uri') . '/mozart/public/bundles/mozart/option/js/vendor/qtip/jquery.qtip.js',
+            $this->mozartRootUrl . '/public/bundles/mozart/option/js/vendor/qtip/jquery.qtip.js',
             array( 'jquery' ),
             '2.2.0',
             true
@@ -1657,7 +1693,7 @@ class OptionBuilder implements OptionBuilderInterface
 
         wp_register_script(
             'serializeForm-js',
-            \Mozart::parameter('wp.plugin.uri') . '/mozart/public/bundles/mozart/option/js/vendor/jquery.serializeForm.js',
+            $this->mozartRootUrl . '/public/bundles/mozart/option/js/vendor/jquery.serializeForm.js',
             array( 'jquery' ),
             '1.0.0',
             true
@@ -1669,9 +1705,11 @@ class OptionBuilder implements OptionBuilderInterface
             wp_enqueue_style( 'admin-css' );
             wp_register_script(
                 'redux-vendor',
-                \Mozart::parameter('wp.plugin.uri') . '/mozart/public/bundles/mozart/option/js/vendor.min.js',
+                $this->mozartRootUrl . '/public/bundles/mozart/option/js/vendor.min.js',
                 array( 'jquery' ),
-                filemtime( \Mozart::parameter('wp.plugin.dir') . '/mozart/public/bundles/mozart/option/js/vendor.min.js' ),
+                filemtime(
+                    $this->mozartRootDir . '/public/bundles/mozart/option/js/vendor.min.js'
+                ),
                 true
             );
 
@@ -1688,9 +1726,9 @@ class OptionBuilder implements OptionBuilderInterface
 
         wp_register_script(
             'redux-js',
-            \Mozart::parameter('wp.plugin.uri') . '/mozart/public/bundles/mozart/option/js/redux.js',
+            $this->mozartRootUrl . '/public/bundles/mozart/option/js/redux.js',
             $depArray,
-            filemtime( \Mozart::parameter('wp.plugin.dir') . '/mozart/public/bundles/mozart/option/js/redux.js' ),
+            filemtime( $this->mozartRootDir . '/public/bundles/mozart/option/js/redux.js' ),
             true
         );
 
@@ -1962,7 +2000,7 @@ class OptionBuilder implements OptionBuilderInterface
      * @param $field
      * @return string default_output
      */
-    public function get_default_output_string($field)
+    public function get_default_output_string( $field )
     {
         $default_output = "";
 
@@ -2020,7 +2058,7 @@ class OptionBuilder implements OptionBuilderInterface
      * @param $field
      * @return string
      */
-    public function get_header_html($field)
+    public function get_header_html( $field )
     {
         global $current_user;
 
@@ -2434,7 +2472,7 @@ class OptionBuilder implements OptionBuilderInterface
      *
      * @return array|mixed|string|void
      */
-    public function _validate_options($plugin_options)
+    public function _validate_options( $plugin_options )
     {
         if (!empty( $this->hidden_perm_fields ) && is_array( $this->hidden_perm_fields )) {
             foreach ($this->hidden_perm_fields as $id => $data) {
@@ -2614,7 +2652,7 @@ class OptionBuilder implements OptionBuilderInterface
      *
      * @return array $plugin_options
      */
-    public function _validate_values($plugin_options, $options, $sections)
+    public function _validate_values( $plugin_options, $options, $sections )
     {
         foreach ($sections as $k => $section) {
             if (isset( $section['fields'] )) {
@@ -3104,8 +3142,6 @@ class OptionBuilder implements OptionBuilderInterface
 
         // Import / Export output
         if (true == $this->params['show_importer'] && false == $this->importer->isEnabled()) {
-            $this->importer->enqueue();
-
             echo '<fieldset id="' . $this->params['opt_name'] . '-importer_core" class="redux-field-container redux-field redux-field-init redux-container-importer" data-id="importer_core" data-type="importer">';
             $this->importer->render();
             echo '</fieldset>';
@@ -3232,7 +3268,7 @@ class OptionBuilder implements OptionBuilderInterface
      * Field HTML OUTPUT.
      * Gets option from options array, then calls the specific field type class - allows extending by other devs
      *
-     * @param array  $field
+     * @param array $field
      * @param string $v
      *
      * @return void
@@ -3319,7 +3355,7 @@ class OptionBuilder implements OptionBuilderInterface
      *
      * @return bool
      */
-    public function _can_output_css($field)
+    public function _can_output_css( $field )
     {
         $return = true;
 
@@ -3424,7 +3460,7 @@ class OptionBuilder implements OptionBuilderInterface
      *
      * @return bool
      */
-    public function compareValueDependencies($parentValue, $checkValue, $operation)
+    public function compareValueDependencies( $parentValue, $checkValue, $operation )
     {
         $return = false;
 
@@ -3539,7 +3575,7 @@ class OptionBuilder implements OptionBuilderInterface
      * @param $field
      * @param $data
      */
-    public function checkRequiredDependencies($field, $data)
+    public function checkRequiredDependencies( $field, $data )
     {
         //required field must not be hidden. otherwise hide this one by default
 
