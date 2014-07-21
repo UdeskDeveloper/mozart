@@ -15,7 +15,7 @@ class Importer
     {
         $this->builder = $builder;
 
-        $this->enabled = OptionUtil::isFieldInUse( $this->builder->getSections(), 'import_export' );
+        $this->checkEnabled() ;
 
         add_action( "wp_ajax_redux_link_options", array( $this, "link_options" ) );
         add_action( "wp_ajax_nopriv_redux_link_options", array( $this, "link_options" ) );
@@ -153,6 +153,11 @@ class Importer
         $this->enabled = $enabled;
     }
 
+    public function checkEnabled()
+    {
+        $this->setEnabled( OptionUtil::isFieldInUse( $this->builder->getSections(), 'import_export' ) );
+    }
+
     public function render_tab()
     {
         echo '<li id="import_export_default_section_group_li" class="redux-group-tab-link-li">';
@@ -189,7 +194,9 @@ class Importer
     {
         wp_enqueue_script(
             'redux-field-import-export-js',
-            \Mozart::parameter('wp.plugin.uri') . '/mozart/public/bundles/mozart/option/js/import_export/import_export.js',
+            \Mozart::parameter(
+                'wp.plugin.uri'
+            ) . '/mozart/public/bundles/mozart/option/js/import_export/import_export.js',
             array( 'jquery', 'redux-js' ),
             time(),
             true
@@ -197,7 +204,9 @@ class Importer
 
         wp_enqueue_style(
             'redux-field-import-export-css',
-            \Mozart::parameter('wp.plugin.uri') . '/mozart/public/bundles/mozart/option/css/import_export/import_export.css',
+            \Mozart::parameter(
+                'wp.plugin.uri'
+            ) . '/mozart/public/bundles/mozart/option/css/import_export/import_export.css',
             time(),
             true
         );

@@ -264,6 +264,7 @@ class OptionBuilder implements OptionBuilderInterface
 
         $this->importer->init( $this );
 
+        return true;
     }
 
     /**
@@ -1170,7 +1171,7 @@ class OptionBuilder implements OptionBuilderInterface
      */
     public function _options_page()
     {
-        $this->importer->in_field();
+        $this->importer->checkEnabled();
 
         if ($this->params['menu_type'] == 'submenu') {
             $this->add_submenu(
@@ -1224,7 +1225,7 @@ class OptionBuilder implements OptionBuilderInterface
                     remove_submenu_page( $this->params['page_slug'], $this->params['page_slug'] );
                 }
 
-                if (true == $this->params['show_importer'] && false == $this->importer->is_field) {
+                if (true == $this->params['show_importer'] && false == $this->importer->isEnabled()) {
                     $this->importer->add_submenu();
                 }
 
@@ -3056,7 +3057,7 @@ class OptionBuilder implements OptionBuilderInterface
         }
 
         // Import / Export tab
-        if (true == $this->params['show_importer'] && false == $this->importer->is_field) {
+        if (true == $this->params['show_importer'] && false == $this->importer->isEnabled()) {
             $this->importer->render_tab();
         }
 
@@ -3110,7 +3111,7 @@ class OptionBuilder implements OptionBuilderInterface
         }
 
         // Import / Export output
-        if (true == $this->params['show_importer'] && false == $this->importer->is_field) {
+        if (true == $this->params['show_importer'] && false == $this->importer->isEnabled()) {
             $this->importer->enqueue();
 
             echo '<fieldset id="' . $this->params['opt_name'] . '-importer_core" class="redux-field-container redux-field redux-field-init redux-container-importer" data-id="importer_core" data-type="importer">';
