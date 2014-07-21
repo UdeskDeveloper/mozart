@@ -40,30 +40,22 @@ class Typography extends Field
      */
     private $user_fonts = true;
 
-    /**
-     * Field Constructor.
-     *
-     * Required - must call the parent constructor, then assign field and value to vars, and obviously call the render field function
-     * @param array $field
-     * @param string $value
-     * @param $parent
-     */
-    public function __construct( $field = array(), $value = '', $parent )
-    {
-        $this->parent = $parent;
-        $this->field = $field;
-        $this->value = $value;
+    private $googleFontsDir;
 
+    private $googleFontsJsonFile;
+
+    protected function initialize()
+    {
         // Set upload dir path for google fonts
-        $this->font_dir = \Mozart::parameter( 'wp.upload.basedir' ) . '/Mozart/Fonts';
+        $this->googleFontsDir = \Mozart::parameter( 'wp.upload.basedir' ) . '/Mozart/Fonts';
         $filesystem = new Filesystem();
 
-        if (false === $filesystem->exists( $this->font_dir )) {
-            $filesystem->mkdir( $this->font_dir, FS_CHMOD_DIR );
+        if (false === $filesystem->exists( $this->googleFontsDir )) {
+            $filesystem->mkdir( $this->googleFontsDir );
         }
 
         // Set google font file variables
-        $this->googleFontsJsonFile = $this->font_dir . 'googlefonts.json';
+        $this->googleFontsJsonFile = $this->googleFontsDir . '/googlefonts.json';
 
         // Move installed googlefonts.json to upload location, if not exists
         if (!$filesystem->exists( $this->googleFontsJsonFile )) {
@@ -71,7 +63,7 @@ class Typography extends Field
                 \Mozart::parameter(
                     'wp.plugin.dir'
                 ) . '/mozart/public/bundles/mozart/option/fields/typography/googlefonts.json',
-                $this->font_dir . '/googlefonts.json',
+                $this->googleFontsDir . '/googlefonts.json',
                 false
             );
         }
@@ -97,7 +89,7 @@ class Typography extends Field
             'google'          => true,
             'update_weekly'   => false, // Enable to force updates of Google Fonts to be weekly
         );
-        $this->field = wp_parse_args( $this->field, $defaults );
+        $this->field = array_merge( $defaults, $this->field );
 
         // Set value defaults.
         $defaults = array(
@@ -119,7 +111,7 @@ class Typography extends Field
             'color'           => '',
             'font-size'       => '',
         );
-        $this->value = wp_parse_args( $this->value, $defaults );
+        $this->value = array_merge( $defaults, $this->value );
 
         // Get the google array
         $this->getGoogleArray();
@@ -131,7 +123,6 @@ class Typography extends Field
 
         // Localize std fonts
         $this->localizeStdFonts();
-
     }
 
     /**
@@ -139,7 +130,7 @@ class Typography extends Field
      * @param  string $value
      * @return array
      */
-    public function localize($field, $value = "")
+    public function localize( $field, $value = "" )
     {
         $params = array();
 
@@ -227,7 +218,7 @@ class Typography extends Field
 
             // Is selected font a Google font
             $isGoogleFont = '0';
-            if (isset( $this->parent->fonts['google'][$fontFamily[0]] )) {
+            if (isset( $this->builder->fonts['google'][$fontFamily[0]] )) {
                 $isGoogleFont = '1';
             }
 
@@ -651,7 +642,7 @@ class Typography extends Field
             if (isset( $this->field['preview']['always_display'] )) {
                 if (true === filter_var( $this->field['preview']['always_display'], FILTER_VALIDATE_BOOLEAN )) {
                     if ($isGoogleFont == true) {
-                        $this->parent->typography_preview[$fontFamily[0]] = array(
+                        $this->builder->typography_preview[$fontFamily[0]] = array(
                             'font-style' => array( $this->value['font-weight'] . $this->value['font-style'] ),
                             'subset'     => array( $this->value['subset'] )
                         );
@@ -663,7 +654,7 @@ class Typography extends Field
 
                         wp_register_style(
                             'redux-typography-preview',
-                            $protocol . $this->makeGoogleWebfontLink( $this->parent->typography_preview ),
+                            $protocol . $this->makeGoogleWebfontLink( $this->builder->typography_preview ),
                             '',
                             time()
                         );
@@ -730,7 +721,7 @@ class Typography extends Field
      * @param $fonts
      * @return string
      */
-    public function makeGoogleWebfontLink($fonts)
+    public function makeGoogleWebfontLink( $fonts )
     {
         $link = "";
         $subsets = array();
@@ -773,7 +764,7 @@ class Typography extends Field
      * @param $fonts
      * @return string
      */
-    public function makeGoogleWebfontString($fonts)
+    public function makeGoogleWebfontString( $fonts )
     {
         $link = "";
         $subsets = array();
@@ -859,7 +850,7 @@ class Typography extends Field
                 }
                 $style .= $key . ':' . $value . ';';
             }
-            if (isset( $this->parent->args['async_typography'] ) && $this->parent->args['async_typography']) {
+            if (isset( $this->builder->args['async_typography'] ) && $this->builder->args['async_typography']) {
                 $style .= 'visibility: hidden;';
             }
         }
@@ -867,12 +858,12 @@ class Typography extends Field
         if (!empty( $style )) {
             if (!empty( $this->field['output'] ) && is_array( $this->field['output'] )) {
                 $keys = implode( ",", $this->field['output'] );
-                $this->parent->outputCSS .= $keys . "{" . $style . '}';
+                $this->builder->outputCSS .= $keys . "{" . $style . '}';
             }
 
             if (!empty( $this->field['compiler'] ) && is_array( $this->field['compiler'] )) {
                 $keys = implode( ",", $this->field['compiler'] );
-                $this->parent->compilerCSS .= $keys . "{" . $style . '}';
+                $this->builder->compilerCSS .= $keys . "{" . $style . '}';
             }
         }
         // Google only stuff!
@@ -922,16 +913,16 @@ class Typography extends Field
                     $font['font-family'] = str_replace( ' ', '+', $font['font-family'] );
 
                     // Push data to parent typography variable.
-                    if (empty( $this->parent->typography[$font['font-family']] )) {
-                        $this->parent->typography[$font['font-family']] = array();
+                    if (empty( $this->builder->typography[$font['font-family']] )) {
+                        $this->builder->typography[$font['font-family']] = array();
                     }
 
                     if (isset( $this->field['all_styles'] )) {
                         if (!isset( $font['font-options'] ) || empty( $font['font-options'] )) {
                             $this->getGoogleArray();
 
-                            if (isset( $this->parent->googleArray ) && !empty( $this->parent->googleArray ) && isset( $this->parent->googleArray[$family] )) {
-                                $font['font-options'] = $this->parent->googleArray[$family];
+                            if (isset( $this->builder->googleArray ) && !empty( $this->builder->googleArray ) && isset( $this->builder->googleArray[$family] )) {
+                                $font['font-options'] = $this->builder->googleArray[$family];
                             }
                         } else {
                             $font['font-options'] = json_decode( $font['font-options'], true );
@@ -944,19 +935,19 @@ class Typography extends Field
                         )
                     ) {
                         if (isset( $font['font-options'] ) && !empty( $font['font-options']['variants'] )) {
-                            if (!isset( $this->parent->typography[$font['font-family']]['all-styles'] ) || empty( $this->parent->typography[$font['font-family']]['all-styles'] )) {
-                                $this->parent->typography[$font['font-family']]['all-styles'] = array();
+                            if (!isset( $this->builder->typography[$font['font-family']]['all-styles'] ) || empty( $this->builder->typography[$font['font-family']]['all-styles'] )) {
+                                $this->builder->typography[$font['font-family']]['all-styles'] = array();
                                 foreach ($font['font-options']['variants'] as $variant) {
-                                    $this->parent->typography[$font['font-family']]['all-styles'][] = $variant['id'];
+                                    $this->builder->typography[$font['font-family']]['all-styles'][] = $variant['id'];
                                 }
                             }
                         }
                     }
 
                     if (!empty( $font['font-weight'] )) {
-                        if (empty( $this->parent->typography[$font['font-family']]['font-weight'] ) || !in_array(
+                        if (empty( $this->builder->typography[$font['font-family']]['font-weight'] ) || !in_array(
                                 $font['font-weight'],
-                                $this->parent->typography[$font['font-family']]['font-weight']
+                                $this->builder->typography[$font['font-family']]['font-weight']
                             )
                         ) {
                             $style = $font['font-weight'];
@@ -966,22 +957,22 @@ class Typography extends Field
                             $style .= $font['font-style'];
                         }
 
-                        if (empty( $this->parent->typography[$font['font-family']]['font-style'] ) || !in_array(
+                        if (empty( $this->builder->typography[$font['font-family']]['font-style'] ) || !in_array(
                                 $style,
-                                $this->parent->typography[$font['font-family']]['font-style']
+                                $this->builder->typography[$font['font-family']]['font-style']
                             )
                         ) {
-                            $this->parent->typography[$font['font-family']]['font-style'][] = $style;
+                            $this->builder->typography[$font['font-family']]['font-style'][] = $style;
                         }
                     }
 
                     if (!empty( $font['subsets'] )) {
-                        if (empty( $this->parent->typography[$font['font-family']]['subset'] ) || !in_array(
+                        if (empty( $this->builder->typography[$font['font-family']]['subset'] ) || !in_array(
                                 $font['subsets'],
-                                $this->parent->typography[$font['font-family']]['subset']
+                                $this->builder->typography[$font['font-family']]['subset']
                             )
                         ) {
-                            $this->parent->typography[$font['font-family']]['subset'][] = $font['subsets'];
+                            $this->builder->typography[$font['font-family']]['subset'][] = $font['subsets'];
                         }
                     }
                 } // !array_key_exists
@@ -995,17 +986,17 @@ class Typography extends Field
     private function localizeStdFonts()
     {
         if (false == $this->user_fonts) {
-            if (isset( $this->parent->fonts['std'] ) && !empty( $this->parent->fonts['std'] )) {
+            if (isset( $this->builder->fonts['std'] ) && !empty( $this->builder->fonts['std'] )) {
                 return;
             }
 
-            $this->parent->font_groups['std'] = array(
+            $this->builder->font_groups['std'] = array(
                 'text'     => __( 'Standard Fonts', 'mozart-options' ),
                 'children' => array(),
             );
 
             foreach ($this->field['fonts'] as $font => $extra) {
-                $this->parent->font_groups['std']['children'][] = array(
+                $this->builder->font_groups['std']['children'][] = array(
                     'id'          => $font,
                     'text'        => $font,
                     'data-google' => 'false',
@@ -1013,26 +1004,19 @@ class Typography extends Field
             }
         }
 
-        if ($this->field['custom_fonts'] !== false) {
-            $this->field['custom_fonts'] = apply_filters(
-                "redux/{$this->parent->args['opt_name']}/field/typography/custom_fonts",
-                array()
-            );
+        if (!empty( $this->field['custom_fonts'] )) {
+            foreach ($this->field['custom_fonts'] as $group => $fonts) {
+                $this->builder->font_groups['customfonts'] = array(
+                    'text'     => $group,
+                    'children' => array(),
+                );
 
-            if (!empty( $this->field['custom_fonts'] )) {
-                foreach ($this->field['custom_fonts'] as $group => $fonts) {
-                    $this->parent->font_groups['customfonts'] = array(
-                        'text'     => $group,
-                        'children' => array(),
+                foreach ($fonts as $family => $v) {
+                    $this->builder->font_groups['customfonts']['children'][] = array(
+                        'id'          => $family,
+                        'text'        => $family,
+                        'data-google' => 'false',
                     );
-
-                    foreach ($fonts as $family => $v) {
-                        $this->parent->font_groups['customfonts']['children'][] = array(
-                            'id'          => $family,
-                            'text'        => $family,
-                            'data-google' => 'false',
-                        );
-                    }
                 }
             }
         }
@@ -1046,14 +1030,14 @@ class Typography extends Field
     public function getGoogleArray()
     {
         // Is already present?
-        if (isset( $this->parent->fonts['google'] ) && !empty( $this->parent->fonts['google'] )) {
+        if (isset( $this->builder->fonts['google'] ) && !empty( $this->builder->fonts['google'] )) {
             return;
         }
 
         $filesystem = new Filesystem();
 
         // Weekly update
-        if (isset( $this->field['update_weekly'] ) && $this->field['update_weekly'] === true && $this->field['google'] === true && !empty( $this->parent->args['google_api_key'] )) {
+        if (isset( $this->field['update_weekly'] ) && $this->field['update_weekly'] === true && $this->field['google'] === true && !empty( $this->builder->args['google_api_key'] )) {
             if ($filesystem->exists( $this->googleFontsJsonFile )) {
 
                 // Keep the fonts updated weekly
@@ -1070,33 +1054,35 @@ class Typography extends Field
                 apply_filters(
                     'redux-google-fonts-api-url',
                     'https://www.googleapis.com/webfonts/v1/webfonts?key='
-                ) . $this->parent->args['google_api_key'],
+                ) . $this->builder->args['google_api_key'],
                 array( 'sslverify' => false )
             );
 
             if (!is_wp_error( $result ) && $result['response']['code'] == 200) {
                 $result = json_decode( $result['body'] );
                 foreach ($result->items as $font) {
-                    $this->parent->googleArray[$font->family] = array(
+                    $this->builder->googleArray[$font->family] = array(
                         'variants' => $this->getVariants( $font->variants ),
                         'subsets'  => $this->getSubsets( $font->subsets )
                     );
                 }
 
-                if (!empty( $this->parent->googleArray )) {
+                if (!empty( $this->builder->googleArray )) {
                     $filesystem->dumpFile(
                         $this->googleFontsJsonFile,
-                        json_encode( $this->parent->googleArray ),
+                        json_encode( $this->builder->googleArray ),
                         FS_CHMOD_FILE
                     );
                 }
             }
         }
 
-        if (!isset( $this->parent->fonts['google'] ) || empty( $this->parent->fonts['google'] )) {
+        if (!isset( $this->builder->fonts['google'] ) || empty( $this->builder->fonts['google'] )) {
 
             if (!stream_is_local( $this->googleFontsJsonFile )) {
-                throw new InvalidResourceException( sprintf( 'This is not a local file "%s".', $this->googleFontsJsonFile ) );
+                throw new InvalidResourceException(
+                    sprintf( 'This is not a local file "%s".', $this->googleFontsJsonFile )
+                );
             }
 
             if (!file_exists( $this->googleFontsJsonFile )) {
@@ -1115,18 +1101,18 @@ class Typography extends Field
                 $fonts = array();
             }
 
-            $this->parent->fonts['google'] = $fonts;
-            $this->parent->googleArray = $fonts;
+            $this->builder->fonts['google'] = $fonts;
+            $this->builder->googleArray = $fonts;
 
             // optgroup
-            $this->parent->font_groups['google'] = array(
+            $this->builder->font_groups['google'] = array(
                 'text'     => __( 'Google Webfonts', 'mozart-options' ),
                 'children' => array(),
             );
 
             // options
-            foreach ($this->parent->fonts['google'] as $font => $extra) {
-                $this->parent->font_groups['google']['children'][] = array(
+            foreach ($this->builder->fonts['google'] as $font => $extra) {
+                $this->builder->font_groups['google']['children'][] = array(
                     'id'          => $font,
                     'text'        => $font,
                     'data-google' => 'true'
@@ -1144,7 +1130,7 @@ class Typography extends Field
      *
      * @return string Message string
      */
-    private function getJSONErrorMessage($errorCode)
+    private function getJSONErrorMessage( $errorCode )
     {
         switch ($errorCode) {
             case JSON_ERROR_DEPTH:
@@ -1169,7 +1155,7 @@ class Typography extends Field
      * @param $var
      * @return array
      */
-    private function getSubsets($var)
+    private function getSubsets( $var )
     {
         $result = array();
 
@@ -1199,7 +1185,7 @@ class Typography extends Field
      * @param $var
      * @return array
      */
-    private function getVariants($var)
+    private function getVariants( $var )
     {
         $result = array();
         $italic = array();

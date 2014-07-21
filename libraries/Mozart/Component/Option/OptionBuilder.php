@@ -1356,7 +1356,7 @@ class OptionBuilder implements OptionBuilderInterface
                     }
 
                     $value = isset( $this->options[$field['id']] ) ? $this->options[$field['id']] : '';
-                    $enqueue = new $fieldClass( $field, $value, $this );
+                    $enqueue = new $fieldClass( $this, $field, $value );
 
                     if (( ( isset( $field['output'] ) && !empty( $field['output'] ) ) || ( isset( $field['compiler'] ) && !empty( $field['compiler'] ) ) || $field['type'] == "typography" || $field['type'] == "icon_select" )) {
                         $enqueue->output();
@@ -1720,10 +1720,12 @@ class OptionBuilder implements OptionBuilderInterface
                     ) {
                         continue;
                     }
+
                     if (!isset( $this->options[$field['id']] )) {
                         $this->options[$field['id']] = "";
                     }
-                    $theField = new $fieldClass( $field, $this->options[$field['id']], $this );
+
+                    $theField = new $fieldClass( $this, $field, $this->options[$field['id']] );
 
                     // Move dev_mode check to a new if/then block
                     if (!wp_script_is(

@@ -5,18 +5,8 @@ use Mozart\Component\Form\Field;
 
 class LinkColor extends Field
 {
-    /**
-     * Field Constructor.
-     * Required - must call the parent constructor, then assign field and value to vars, and obviously call the render field function
-     *
-     * @return void
-     */
-    public function __construct( $field = array(), $value = '', $parent )
+    protected function initialize()
     {
-        $this->parent = $parent;
-        $this->field = $field;
-        $this->value = $value;
-
         $defaults = array(
             'regular' => true,
             'hover'   => true,
@@ -42,11 +32,10 @@ class LinkColor extends Field
         }
     }
 
+
     /**
      * Field Render Function.
      * Takes the vars and outputs the HTML for the field in the settings
-     *
-     *
      *
      * @return void
      */
@@ -152,7 +141,7 @@ class LinkColor extends Field
                     }
                 }
 
-                $this->parent->outputCSS .= $styleString;
+                $this->builder->outputCSS .= $styleString;
             }
 
             if (!empty( $this->field['compiler'] ) && is_array( $this->field['compiler'] )) {
@@ -176,7 +165,7 @@ class LinkColor extends Field
                         }
                     }
                 }
-                $this->parent->compilerCSS .= $styleString;
+                $this->builder->compilerCSS .= $styleString;
             }
         }
     }

@@ -31,20 +31,6 @@ class ButtonSet extends Field
         'id' => 'Identifier',
     );
 
-    /**
-     * Field Constructor.
-     * Required - must call the parent constructor, then assign field and value to vars, and obviously call the render field function
-     *
-     *
-     *
-     * @return void
-     */
-    public function __construct( $field = array(), $value = '', $parent )
-    {
-        $this->parent = $parent;
-        $this->field = $field;
-        $this->value = $value;
-    }
 
     /**
      * Field Render Function.

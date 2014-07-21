@@ -6,18 +6,8 @@ use Mozart\Component\Form\Field;
 
 class ImportExport extends Field
 {
-    /**
-     * Field Constructor.
-     * Required - must call the parent constructor, then assign field and value to vars, and obviously call the render field function
-     *
-     * @return void
-     */
-    public function __construct( $field = array(), $value = '', $parent )
+    protected function initialize()
     {
-        $this->parent = $parent;
-        $this->field = $field;
-        $this->value = $value;
-
         if (!isset( $this->field['full_width'] )) {
             $this->field['full_width'] = true;
         }
@@ -26,8 +16,9 @@ class ImportExport extends Field
             'full_width' => $this->field['full_width']
         );
 
-        $this->parent->import_export->field_args = $args;
+        $this->builder->import_export->field_args = $args;
     }
+
 
     /**
      * Field Render Function.
@@ -37,7 +28,7 @@ class ImportExport extends Field
      */
     public function render()
     {
-        $this->parent->import_export->render();
+        $this->builder->import_export->render();
     }
 
     /**
@@ -48,6 +39,6 @@ class ImportExport extends Field
      */
     public function enqueue()
     {
-        $this->parent->import_export->enqueue();
+        $this->builder->import_export->enqueue();
     }
 }

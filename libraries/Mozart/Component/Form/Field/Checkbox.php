@@ -6,21 +6,6 @@ use Mozart\Component\Form\Field;
 class Checkbox extends Field
 {
     /**
-     * Field Constructor.
-     * Required - must call the parent constructor, then assign field and value to vars, and obviously call the render field function
-     *
-     *
-     *
-     * @return void
-     */
-    public function __construct( $field = array(), $value = '', $parent )
-    {
-        $this->parent = $parent;
-        $this->field = $field;
-        $this->value = $value;
-    }
-
-    /**
      * Field Render Function.
      * Takes the vars and outputs the HTML for the field in the settings
      *
@@ -62,7 +47,7 @@ class Checkbox extends Field
 
                 echo '<li>';
                 echo '<label for="' . strtr(
-                        $this->parent->args['opt_name'] . '[' . $this->field['id'] . '][' . $k . ']',
+                        $this->builder->args['opt_name'] . '[' . $this->field['id'] . '][' . $k . ']',
                         array(
                             '[' => '_',
                             ']' => ''
@@ -70,7 +55,7 @@ class Checkbox extends Field
                     ) . '_' . array_search( $k, array_keys( $this->field['options'] ) ) . '">';
                 echo '<input type="hidden" class="checkbox-check" data-val="1" name="' . $this->field['name'] . '[' . $k . ']' . $this->field['name_suffix'] . '" value="' . $this->value[$k] . '" ' . '/>';
                 echo '<input type="checkbox" class="checkbox ' . $this->field['class'] . '" id="' . strtr(
-                        $this->parent->args['opt_name'] . '[' . $this->field['id'] . '][' . $k . ']',
+                        $this->builder->args['opt_name'] . '[' . $this->field['id'] . '][' . $k . ']',
                         array(
                             '[' => '_',
                             ']' => ''
@@ -88,7 +73,7 @@ class Checkbox extends Field
         } elseif (empty( $this->field['data'] )) {
 
             echo ( !empty( $this->field['desc'] ) ) ? ' <ul class="data-full"><li><label for="' . strtr(
-                    $this->parent->args['opt_name'] . '[' . $this->field['id'] . ']',
+                    $this->builder->args['opt_name'] . '[' . $this->field['id'] . ']',
                     array(
                         '[' => '_',
                         ']' => ''
@@ -99,7 +84,7 @@ class Checkbox extends Field
             //$ch_value = 1; // checked($this->value, '1', false) == "" ? "0" : "1";
             echo '<input type="hidden" class="checkbox-check" data-val="1" name="' . $this->field['name'] . $this->field['name_suffix'] . '" value="' . $this->value . '" ' . '/>';
             echo '<input type="checkbox" id="' . strtr(
-                    $this->parent->args['opt_name'] . '[' . $this->field['id'] . ']',
+                    $this->builder->args['opt_name'] . '[' . $this->field['id'] . ']',
                     array(
                         '[' => '_',
                         ']' => ''

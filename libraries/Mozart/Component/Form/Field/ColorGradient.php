@@ -6,25 +6,8 @@ use Mozart\Component\Form\Field;
 class ColorGradient extends Field
 {
     /**
-     * Field Constructor.
-     * Required - must call the parent constructor, then assign field and value to vars, and obviously call the render field function
-     *
-     *
-     *
-     * @return void
-     */
-    public function __construct( $field = array(), $value = '', $parent )
-    {
-        $this->parent = $parent;
-        $this->field = $field;
-        $this->value = $value;
-    }
-
-    /**
      * Field Render Function.
      * Takes the vars and outputs the HTML for the field in the settings
-     *
-     *
      *
      * @return void
      */

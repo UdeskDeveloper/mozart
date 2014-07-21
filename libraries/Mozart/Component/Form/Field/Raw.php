@@ -6,18 +6,6 @@ use Mozart\Component\Form\Field;
 class Raw extends Field
 {
     /**
-     * Field Constructor.
-     * Required - must call the parent constructor, then assign field and value to vars, and obviously call the render field function
-     *
-     */
-    public function __construct( $field = array(), $value = '', $parent )
-    {
-        $this->parent = $parent;
-        $this->field = $field;
-        $this->value = $value;
-    }
-
-    /**
      * Field Render Function.
      * Takes the vars and outputs the HTML for the field in the settings
      *
@@ -35,11 +23,11 @@ class Raw extends Field
         // The following could needs to be omitted if align is true.
         // Only print it if allign is false.
         if (false == $doAlign) {
-            echo '<style>#' . $this->parent->args['opt_name'] . '-' . $this->field['id'] . ' {padding: 0;}</style>';
+            echo '<style>#' . $this->builder->args['opt_name'] . '-' . $this->field['id'] . ' {padding: 0;}</style>';
             echo '</td></tr></table><table class="form-table no-border redux-group-table redux-raw-table" style="margin-top: -20px; overflow: auto;"><tbody><tr><td>';
         }
 
-        echo '<fieldset id="' . $this->parent->args['opt_name'] . '-' . $this->field['id'] . '" class="redux-field redux-container-' . $this->field['type'] . ' ' . $this->field['class'] . '" data-id="' . $this->field['id'] . '">';
+        echo '<fieldset id="' . $this->builder->args['opt_name'] . '-' . $this->field['id'] . '" class="redux-field redux-container-' . $this->field['type'] . ' ' . $this->field['class'] . '" data-id="' . $this->field['id'] . '">';
 
         if (!empty( $this->field['include'] ) && file_exists( $this->field['include'] )) {
             include( $this->field['include'] );
@@ -53,7 +41,7 @@ class Raw extends Field
             }
         }
 
-        do_action( 'redux-field-raw-' . $this->parent->args['opt_name'] . '-' . $this->field['id'] );
+        do_action( 'redux-field-raw-' . $this->builder->args['opt_name'] . '-' . $this->field['id'] );
 
         echo '</fieldset>';
 

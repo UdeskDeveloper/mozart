@@ -5,17 +5,6 @@ use Mozart\Component\Form\Field;
 
 class AceEditor extends Field
 {
-    /**
-     * Field Constructor.
-     * Required - must call the parent constructor, then assign field and value to vars, and obviously call the render field function
-     *
-     */
-    public function __construct( $field = array(), $value = '', $parent )
-    {
-        $this->parent = $parent;
-        $this->field = $field;
-        $this->value = trim( $value );
-    }
 
     /**
      * Field Render Function.

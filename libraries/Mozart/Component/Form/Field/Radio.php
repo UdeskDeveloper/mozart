@@ -6,18 +6,6 @@ use Mozart\Component\Form\Field;
 class Radio extends Field
 {
     /**
-     * Field Constructor.
-     * Required - must call the parent constructor, then assign field and value to vars, and obviously call the render field function
-     *
-     */
-    public function __construct( $field = array(), $value = '', $parent )
-    {
-        $this->parent = $parent;
-        $this->field = $field;
-        $this->value = $value;
-    }
-
-    /**
      * Field Render Function.
      * Takes the vars and outputs the HTML for the field in the settings
      *
@@ -28,7 +16,7 @@ class Radio extends Field
             if (empty( $this->field['args'] )) {
                 $this->field['args'] = array();
             }
-            $this->field['options'] = $this->parent->get_wordpress_data( $this->field['data'], $this->field['args'] );
+            $this->field['options'] = $this->builder->get_wordpress_data( $this->field['data'], $this->field['args'] );
         }
 
         $this->field['data_class'] = ( isset( $this->field['multi_layout'] ) ) ? 'data-' . $this->field['multi_layout'] : 'data-full';

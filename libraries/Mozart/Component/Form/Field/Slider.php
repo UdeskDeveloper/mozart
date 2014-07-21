@@ -3,6 +3,10 @@ namespace Mozart\Component\Form\Field;
 
 use Mozart\Component\Form\Field;
 
+/**
+ * Class Slider
+ * @package Mozart\Component\Form\Field
+ */
 class Slider extends Field
 {
     /**
@@ -11,16 +15,24 @@ class Slider extends Field
      *
      */
     private $display_none = 0;
+    /**
+     * @var int
+     */
     private $display_label = 1;
+    /**
+     * @var int
+     */
     private $display_text = 2;
+    /**
+     * @var int
+     */
     private $display_select = 3;
 
-    public function __construct( $field = array(), $value = '', $parent )
+    /**
+     *
+     */
+    protected function initialize()
     {
-        //parent::__construct( $parent->getSections(), $parent->args );
-        $this->parent = $parent;
-        $this->field = $field;
-        $this->value = $value;
 
         // Set defaults
         $defaults = array(
@@ -74,7 +86,12 @@ class Slider extends Field
         }
     }
 
-    private function cleanVal($var)
+
+    /**
+     * @param $var
+     * @return float|int
+     */
+    private function cleanVal( $var )
     {
         if (is_float( $var )) {
             $cleanVar = floatval( $var );
@@ -85,7 +102,11 @@ class Slider extends Field
         return $cleanVar;
     }
 
-    private function cleanDefault($val)
+    /**
+     * @param $val
+     * @return float|int
+     */
+    private function cleanDefault( $val )
     {
         if (empty( $val ) && !empty( $this->field['default'] ) && $this->cleanVal( $this->field['min'] ) >= 1) {
             $val = $this->cleanVal( $this->field['default'] );
@@ -109,7 +130,11 @@ class Slider extends Field
         return $val;
     }
 
-    private function cleanDefaultArray($val)
+    /**
+     * @param $val
+     * @return mixed
+     */
+    private function cleanDefaultArray( $val )
     {
         $one = $this->value[1];
         $two = $this->value[2];
@@ -246,7 +271,7 @@ class Slider extends Field
 
         $fieldID = $this->field['id'];
         $fieldName = $this->field['name'];
-        //$fieldName = $this->parent->args['opt_name'] . '[' . $this->field['id'] . ']';
+        //$fieldName = $this->builder->args['opt_name'] . '[' . $this->field['id'] . ']';
 
         // Set handle number variable.
         $twoHandles = false;

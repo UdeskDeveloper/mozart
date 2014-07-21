@@ -6,18 +6,6 @@ use Mozart\Component\Form\Field;
 class Select extends Field
 {
     /**
-     * Field Constructor.
-     * Required - must call the parent constructor, then assign field and value to vars, and obviously call the render field function
-     *
-     */
-    public function __construct( $field = array(), $value = '', $parent )
-    {
-        $this->parent = $parent;
-        $this->field = $field;
-        $this->value = $value;
-    }
-
-    /**
      * Field Render Function.
      * Takes the vars and outputs the HTML for the field in the settings
      *
@@ -51,7 +39,7 @@ class Select extends Field
                  * @param  array $icon_file File for the icons
                  */
                 $icons_file = apply_filters(
-                    "redux/{$this->parent->args['opt_name']}/field/font/icons/file",
+                    "redux/{$this->builder->args['opt_name']}/field/font/icons/file",
                     $icons_file
                 );
                 if (file_exists( $icons_file )) {
@@ -59,7 +47,7 @@ class Select extends Field
                 }
             }
 
-            $this->field['options'] = $this->parent->get_wordpress_data( $this->field['data'], $this->field['args'] );
+            $this->field['options'] = $this->builder->get_wordpress_data( $this->field['data'], $this->field['args'] );
         }
 
         if (!empty( $this->field['data'] ) && ( $this->field['data'] == "elusive-icons" || $this->field['data'] == "elusive-icon" || $this->field['data'] == "elusive" )) {

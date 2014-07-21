@@ -6,25 +6,8 @@ use Mozart\Component\Form\Field;
 class ImageSelect extends Field
 {
     /**
-     * Field Constructor.
-     * Required - must call the parent constructor, then assign field and value to vars, and obviously call the render field function
-     *
-     *
-     *
-     * @return void
-     */
-    public function __construct( $field = array(), $value = '', $parent )
-    {
-        $this->parent = $parent;
-        $this->field = $field;
-        $this->value = $value;
-    }
-
-    /**
      * Field Render Function.
      * Takes the vars and outputs the HTML for the field in the settings
-     *
-     *
      *
      * @return void
      */
@@ -101,11 +84,11 @@ class ImageSelect extends Field
                             $selected = false;
                         } else {
                             foreach ($v['presets'] as $pk => $pv) {
-                                if (empty( $pv ) && isset( $this->parent->options[$pk] ) && !empty( $this->parent->options[$pk] )) {
+                                if (empty( $pv ) && isset( $this->builder->options[$pk] ) && !empty( $this->builder->options[$pk] )) {
                                     $selected = false;
-                                } elseif (!empty( $pv ) && !isset( $this->parent->options[$pk] )) {
+                                } elseif (!empty( $pv ) && !isset( $this->builder->options[$pk] )) {
                                     $selected = false;
-                                } elseif (isset( $this->parent->options[$pk] ) && $this->parent->options[$pk] != $pv) {
+                                } elseif (isset( $this->builder->options[$pk] ) && $this->builder->options[$pk] != $pv) {
                                     $selected = false;
                                 }
 
@@ -235,13 +218,13 @@ class ImageSelect extends Field
             if (!empty( $this->field['output'] ) && is_array( $this->field['output'] )) {
                 $keys = implode( ",", $this->field['output'] );
                 $style = $keys . "{" . $style . '}';
-                $this->parent->outputCSS .= $style;
+                $this->builder->outputCSS .= $style;
             }
 
             if (!empty( $this->field['compiler'] ) && is_array( $this->field['compiler'] )) {
                 $keys = implode( ",", $this->field['compiler'] );
                 $style = $keys . "{" . $style . '}';
-                $this->parent->compilerCSS .= $style;
+                $this->builder->compilerCSS .= $style;
             }
         }
     }

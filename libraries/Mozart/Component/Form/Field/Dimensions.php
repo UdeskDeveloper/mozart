@@ -7,18 +7,6 @@ use Mozart\Component\Option\Utils;
 class Dimensions extends Field
 {
     /**
-     * Field Constructor.
-     * Required - must call the parent constructor, then assign field and value to vars, and obviously call the render field function
-     *
-     */
-    public function __construct( $field = array(), $value = '', $parent )
-    {
-        $this->parent = $parent;
-        $this->field = $field;
-        $this->value = $value;
-    }
-
-    /**
      * Field Render Function.
      * Takes the vars and outputs the HTML for the field in the settings
      */
@@ -332,12 +320,12 @@ class Dimensions extends Field
         if (!empty( $style )) {
             if (!empty( $this->field['output'] ) && is_array( $this->field['output'] )) {
                 $keys = implode( ",", $this->field['output'] );
-                $this->parent->outputCSS .= $keys . "{" . $style . '}';
+                $this->builder->outputCSS .= $keys . "{" . $style . '}';
             }
 
             if (!empty( $this->field['compiler'] ) && is_array( $this->field['compiler'] )) {
                 $keys = implode( ",", $this->field['compiler'] );
-                $this->parent->compilerCSS .= $keys . "{" . $style . '}';
+                $this->builder->compilerCSS .= $keys . "{" . $style . '}';
             }
         }
     }

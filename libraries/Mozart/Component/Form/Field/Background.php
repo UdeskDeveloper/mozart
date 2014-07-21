@@ -6,21 +6,6 @@ use Mozart\Component\Form\Field;
 class Background extends Field
 {
     /**
-     * Field Constructor.
-     * Required - must call the parent constructor, then assign field and value to vars, and obviously call the render field function
-     *
-     * @since       3.1.5
-     *
-     * @return void
-     */
-    public function __construct( $field = array(), $value = '', $parent )
-    {
-        $this->parent = $parent;
-        $this->field = $field;
-        $this->value = $value;
-    }
-
-    /**
      * Field Render Function.
      * Takes the vars and outputs the HTML for the field in the settings
      *
@@ -295,11 +280,11 @@ class Background extends Field
                 'mozart-options'
             );
 
-            echo '<input placeholder="' . $placeholder . '" type="text" class="redux-background-input ' . $hide . 'upload ' . $this->field['class'] . '" name="' . $this->field['name'] . '[background-image]' . $this->field['name_suffix'] . '" id="' . $this->parent->args['opt_name'] . '[' . $this->field['id'] . '][background-image]" value="' . $this->value['background-image'] . '" />';
-            echo '<input type="hidden" class="upload-id ' . $this->field['class'] . '" name="' . $this->field['name'] . '[media][id]' . $this->field['name_suffix'] . '" id="' . $this->parent->args['opt_name'] . '[' . $this->field['id'] . '][media][id]" value="' . $this->value['media']['id'] . '" />';
-            echo '<input type="hidden" class="upload-height" name="' . $this->field['name'] . '[media][height]' . $this->field['name_suffix'] . '" id="' . $this->parent->args['opt_name'] . '[' . $this->field['id'] . '][media][height]" value="' . $this->value['media']['height'] . '" />';
-            echo '<input type="hidden" class="upload-width" name="' . $this->field['name'] . '[media][width]' . $this->field['name_suffix'] . '" id="' . $this->parent->args['opt_name'] . '[' . $this->field['id'] . '][media][width]" value="' . $this->value['media']['width'] . '" />';
-            echo '<input type="hidden" class="upload-thumbnail" name="' . $this->field['name'] . '[media][thumbnail]' . $this->field['name_suffix'] . '" id="' . $this->parent->args['opt_name'] . '[' . $this->field['id'] . '][media][thumbnail]" value="' . $this->value['media']['thumbnail'] . '" />';
+            echo '<input placeholder="' . $placeholder . '" type="text" class="redux-background-input ' . $hide . 'upload ' . $this->field['class'] . '" name="' . $this->field['name'] . '[background-image]' . $this->field['name_suffix'] . '" id="' . $this->builder->args['opt_name'] . '[' . $this->field['id'] . '][background-image]" value="' . $this->value['background-image'] . '" />';
+            echo '<input type="hidden" class="upload-id ' . $this->field['class'] . '" name="' . $this->field['name'] . '[media][id]' . $this->field['name_suffix'] . '" id="' . $this->builder->args['opt_name'] . '[' . $this->field['id'] . '][media][id]" value="' . $this->value['media']['id'] . '" />';
+            echo '<input type="hidden" class="upload-height" name="' . $this->field['name'] . '[media][height]' . $this->field['name_suffix'] . '" id="' . $this->builder->args['opt_name'] . '[' . $this->field['id'] . '][media][height]" value="' . $this->value['media']['height'] . '" />';
+            echo '<input type="hidden" class="upload-width" name="' . $this->field['name'] . '[media][width]' . $this->field['name_suffix'] . '" id="' . $this->builder->args['opt_name'] . '[' . $this->field['id'] . '][media][width]" value="' . $this->value['media']['width'] . '" />';
+            echo '<input type="hidden" class="upload-thumbnail" name="' . $this->field['name'] . '[media][thumbnail]' . $this->field['name_suffix'] . '" id="' . $this->builder->args['opt_name'] . '[' . $this->field['id'] . '][media][thumbnail]" value="' . $this->value['media']['thumbnail'] . '" />';
 
             //Preview
             $hide = '';
@@ -419,12 +404,12 @@ class Background extends Field
 
             if (!empty( $this->field['output'] ) && is_array( $this->field['output'] )) {
                 $keys = implode( ",", $this->field['output'] );
-                $this->parent->outputCSS .= $keys . "{" . $style . '}';
+                $this->builder->outputCSS .= $keys . "{" . $style . '}';
             }
 
             if (!empty( $this->field['compiler'] ) && is_array( $this->field['compiler'] )) {
                 $keys = implode( ",", $this->field['compiler'] );
-                $this->parent->compilerCSS .= $keys . "{" . $style . '}';
+                $this->builder->compilerCSS .= $keys . "{" . $style . '}';
             }
         }
     }

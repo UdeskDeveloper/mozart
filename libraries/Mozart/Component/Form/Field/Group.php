@@ -6,21 +6,6 @@ use Mozart\Component\Form\Field;
 class Group extends Field
 {
     /**
-     * Field Constructor.
-     * Required - must call the parent constructor, then assign field and value to vars, and obviously call the render field function
-     *
-     * @return void
-     */
-    public function __construct( $field = array(), $value = '', $parent )
-    {
-        //parent::__construct( $parent->getSections(), $parent->args );
-        $this->parent = $parent;
-        $this->field = $field;
-        $this->value = $value;
-
-    }
-
-    /**
      * Field Render Function.
      * Takes the vars and outputs the HTML for the field in the settings
      *
@@ -51,14 +36,14 @@ class Group extends Field
 
         echo '<table style="margin-top: 0;" class="redux-groups-accordion redux-group form-table no-border">';
 
-        //echo '<input type="hidden" class="slide-sort" data-name="' . $this->parent->args['opt_name'] . '[' . $this->field['id'] . '][@][slide_sort]" id="' . $this->field['id'] . '-slide_sort" value="" />';
+        //echo '<input type="hidden" class="slide-sort" data-name="' . $this->builder->args['opt_name'] . '[' . $this->field['id'] . '][@][slide_sort]" id="' . $this->field['id'] . '-slide_sort" value="" />';
         //$field_is_title = true;
         foreach ($this->field['fields'] as $key => $field) {
-            $field['name'] = $this->parent->args['opt_name'] . '[' . $field['id'] . ']';
+            $field['name'] = $this->builder->args['opt_name'] . '[' . $field['id'] . ']';
             echo '<tr valign="top">';
             $th = "";
             if (isset( $field['title'] ) && isset( $field['type'] ) && $field['type'] !== "info" && $field['type'] !== "group" && $field['type'] !== "section") {
-                $default_mark = ( isset( $field['default'] ) && !empty( $field['default'] ) && isset( $this->parent->options[$field['id']] ) && $this->parent->options[$field['id']] == $field['default'] && !empty( $this->parent->args['default_mark'] ) && isset( $field['default'] ) ) ? $this->parent->args['default_mark'] : '';
+                $default_mark = ( isset( $field['default'] ) && !empty( $field['default'] ) && isset( $this->builder->options[$field['id']] ) && $this->builder->options[$field['id']] == $field['default'] && !empty( $this->builder->args['default_mark'] ) && isset( $field['default'] ) ) ? $this->builder->args['default_mark'] : '';
                 if (!empty( $field['title'] )) {
                     $th = $field['title'] . $default_mark . "";
                 }
@@ -70,7 +55,7 @@ class Group extends Field
             // TITLE
             // Show if various
             //
-            $th .= $this->parent->get_default_output_string( $field ); // Get the default output string if set
+            $th .= $this->builder->get_default_output_string( $field ); // Get the default output string if set
 
             echo '<th scope="row"><div class="redux_field_th">' . $th . '</div></th>';
             echo '<td>';
@@ -85,7 +70,7 @@ class Group extends Field
             } else {
                 $value = "";
             }
-            $this->parent->_field_input( $field, $value );
+            $this->builder->_field_input( $field, $value );
             echo '</td></tr>';
         }
         echo '</table>';
@@ -95,7 +80,7 @@ class Group extends Field
             ) . ' ' . $this->field['groupname'] . '</a>';
         echo '</div></div>';
 
-        echo '</div><a href="javascript:void(0);" class="button redux-groups-add button-primary" rel-id="' . $this->field['id'] . '-ul" rel-name="' . $this->parent->args['opt_name'] . '[' . $this->field['id'] . '][slide_title][]">' . __(
+        echo '</div><a href="javascript:void(0);" class="button redux-groups-add button-primary" rel-id="' . $this->field['id'] . '-ul" rel-name="' . $this->builder->args['opt_name'] . '[' . $this->field['id'] . '][slide_title][]">' . __(
                 'Add',
                 'mozart-options'
             ) . ' ' . $this->field['groupname'] . '</a><br/>';
@@ -107,7 +92,7 @@ class Group extends Field
     public function support_multi($content, $field, $sort)
     {
         //convert name
-        $name = $this->parent->args['opt_name'] . '[' . $field['id'] . ']';
+        $name = $this->builder->args['opt_name'] . '[' . $field['id'] . ']';
         $content = str_replace( $name, $name . '[' . $sort . ']', $content );
         //we should add $sort to id to fix problem with select field
         $content = str_replace(
