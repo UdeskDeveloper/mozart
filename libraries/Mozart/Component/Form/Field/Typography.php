@@ -3,9 +3,18 @@ namespace Mozart\Component\Form\Field;
 
 use Mozart\Component\Form\Field;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Translation\Exception\InvalidResourceException;
+use Symfony\Component\Translation\Exception\NotFoundResourceException;
 
+/**
+ * Class Typography
+ * @package Mozart\Component\Form\Field
+ */
 class Typography extends Field
 {
+    /**
+     * @var array
+     */
     private $std_fonts = array(
         "Arial, Helvetica, sans-serif"                         => "Arial, Helvetica, sans-serif",
         "'Arial Black', Gadget, sans-serif"                    => "'Arial Black', Gadget, sans-serif",
@@ -26,6 +35,9 @@ class Typography extends Field
         "Verdana, Geneva, sans-serif"                          => "Verdana, Geneva, sans-serif",
     );
 
+    /**
+     * @var bool
+     */
     private $user_fonts = true;
 
     /**
@@ -48,10 +60,10 @@ class Typography extends Field
         }
 
         // Set google font file variables
-        $this->google_json = $this->font_dir . 'googlefonts.json';
+        $this->googleFontsJsonFile = $this->font_dir . 'googlefonts.json';
 
         // Move installed googlefonts.json to upload location, if not exists
-        if (!$filesystem->exists( $this->google_json )) {
+        if (!$filesystem->exists( $this->googleFontsJsonFile )) {
             $filesystem->copy(
                 \Mozart::parameter(
                     'wp.plugin.dir'
@@ -119,6 +131,11 @@ class Typography extends Field
 
     }
 
+    /**
+     * @param $field
+     * @param string $value
+     * @return array
+     */
     function localize( $field, $value = "" )
     {
         $params = array();
@@ -139,8 +156,6 @@ class Typography extends Field
      */
     function render()
     {
-        global $wp_filesystem;
-
         // Since fonts declared is CSS (@font-face) are not rendered in the preview,
         // they can be declared in a CSS file and passed here so they DO display in
         // font preview.  Do NOT pass style.css in your theme, as that will mess up
@@ -183,7 +198,6 @@ class Typography extends Field
         /* Font Family */
         if ($this->field['font-family'] === true) {
 
-            //if (filter_var($this->value['google'], FILTER_VALIDATE_BOOLEAN)) {
             if (filter_var( $this->value['google'], FILTER_VALIDATE_BOOLEAN )) {
 
                 // Divide and conquer
@@ -791,6 +805,9 @@ class Typography extends Field
         return "'" . $link . "'";
     }
 
+    /**
+     *
+     */
     function output()
     {
         $font = $this->value;
@@ -968,6 +985,9 @@ class Typography extends Field
         } // Typography not set
     }
 
+    /**
+     *
+     */
     private function localizeStdFonts()
     {
         if (false == $this->user_fonts) {
@@ -1021,30 +1041,27 @@ class Typography extends Field
      */
     function getGoogleArray()
     {
-        global $wp_filesystem;
-
         // Is already present?
         if (isset( $this->parent->fonts['google'] ) && !empty( $this->parent->fonts['google'] )) {
             return;
         }
 
+        $filesystem = new Filesystem();
+
         // Weekly update
         if (isset( $this->field['update_weekly'] ) && $this->field['update_weekly'] === true && $this->field['google'] === true && !empty( $this->parent->args['google_api_key'] )) {
-            if (file_exists( $this->google_json )) {
+            if ($filesystem->exists( $this->googleFontsJsonFile )) {
 
                 // Keep the fonts updated weekly
                 $weekback = strtotime( date( 'jS F Y', time() + ( 60 * 60 * 24 * -7 ) ) );
-                $last_updated = filemtime( $this->google_json );
+                $last_updated = filemtime( $this->googleFontsJsonFile );
                 if ($last_updated < $weekback) {
-                    unlink( $this->google_json );
+                    unlink( $this->googleFontsJsonFile );
                 }
             }
         }
 
-        // Initialize the Wordpress filesystem, no more using file_put_contents function
-        Redux_Functions::initWpFilesystem();
-
-        if (!file_exists( $this->google_json )) {
+        if (!$filesystem->exists( $this->googleFontsJsonFile )) {
             $result = wp_remote_get(
                 apply_filters(
                     'redux-google-fonts-api-url',
@@ -1063,43 +1080,81 @@ class Typography extends Field
                 }
 
                 if (!empty( $this->parent->googleArray )) {
-                    $wp_filesystem->put_contents(
-                        $this->google_json,
+                    $filesystem->dumpFile(
+                        $this->googleFontsJsonFile,
                         json_encode( $this->parent->googleArray ),
                         FS_CHMOD_FILE
-                    // predefined mode settings for WP files
                     );
                 }
-            } //if
+            }
         }
 
         if (!isset( $this->parent->fonts['google'] ) || empty( $this->parent->fonts['google'] )) {
-            $fonts = json_decode( $wp_filesystem->get_contents( $this->google_json ), true );
 
-            // Fallback if file_get_contents won't work for wordpress. MEDIATEMPLE
-            if (empty( $fonts )) {
-                $fonts = Utils\Option::curlRead( $this->google_json );
+            if (!stream_is_local( $this->googleFontsJsonFile )) {
+                throw new InvalidResourceException( sprintf( 'This is not a local file "%s".', $this->googleFontsJsonFile ) );
             }
 
-            if (isset( $fonts ) && !empty( $fonts ) && is_array( $fonts ) && $fonts != false) {
-                $this->parent->fonts['google'] = $fonts;
-                $this->parent->googleArray = $fonts;
+            if (!file_exists( $this->googleFontsJsonFile )) {
+                throw new NotFoundResourceException( sprintf( 'File "%s" not found.', $this->googleFontsJsonFile ) );
+            }
 
-                // optgroup
-                $this->parent->font_groups['google'] = array(
-                    'text'     => __( 'Google Webfonts', 'mozart-options' ),
-                    'children' => array(),
+            $fonts = json_decode( file_get_contents( $this->googleFontsJsonFile ), true );
+
+            if (0 < $errorCode = json_last_error()) {
+                throw new InvalidResourceException(
+                    sprintf( 'Error parsing JSON - %s', $this->getJSONErrorMessage( $errorCode ) )
                 );
-
-                // options
-                foreach ($this->parent->fonts['google'] as $font => $extra) {
-                    $this->parent->font_groups['google']['children'][] = array(
-                        'id'          => $font,
-                        'text'        => $font,
-                        'data-google' => 'true'
-                    );
-                }
             }
+
+            if (null === $fonts) {
+                $fonts = array();
+            }
+
+            $this->parent->fonts['google'] = $fonts;
+            $this->parent->googleArray = $fonts;
+
+            // optgroup
+            $this->parent->font_groups['google'] = array(
+                'text'     => __( 'Google Webfonts', 'mozart-options' ),
+                'children' => array(),
+            );
+
+            // options
+            foreach ($this->parent->fonts['google'] as $font => $extra) {
+                $this->parent->font_groups['google']['children'][] = array(
+                    'id'          => $font,
+                    'text'        => $font,
+                    'data-google' => 'true'
+                );
+            }
+
+        }
+    }
+
+
+    /**
+     * Translates JSON_ERROR_* constant into meaningful message.
+     *
+     * @param  int $errorCode Error code returned by json_last_error() call
+     *
+     * @return string  Message string
+     */
+    private function getJSONErrorMessage( $errorCode )
+    {
+        switch ($errorCode) {
+            case JSON_ERROR_DEPTH:
+                return 'Maximum stack depth exceeded';
+            case JSON_ERROR_STATE_MISMATCH:
+                return 'Underflow or the modes mismatch';
+            case JSON_ERROR_CTRL_CHAR:
+                return 'Unexpected control character found';
+            case JSON_ERROR_SYNTAX:
+                return 'Syntax error, malformed JSON';
+            case JSON_ERROR_UTF8:
+                return 'Malformed UTF-8 characters, possibly incorrectly encoded';
+            default:
+                return 'Unknown error';
         }
     }
 
