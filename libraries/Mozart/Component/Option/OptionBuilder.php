@@ -492,12 +492,17 @@ class OptionBuilder implements OptionBuilderInterface
 
         if (strpos( $locale, '_' ) === false) {
             if (file_exists(
-                \Mozart::parameter('wp.plugin.dir') . '/mozart/translations/option/' . strtolower( $locale ) . '_' . strtoupper( $locale ) . '.mo'
+                \Mozart::parameter( 'wp.plugin.dir' ) . '/mozart/translations/option/' . strtolower(
+                    $locale
+                ) . '_' . strtoupper( $locale ) . '.mo'
             )) {
                 $locale = strtolower( $locale ) . '_' . strtoupper( $locale );
             }
         }
-        load_textdomain( 'mozart-options', \Mozart::parameter('wp.plugin.dir') . '/mozart/translations/option/' . $locale . '.mo' );
+        load_textdomain(
+            'mozart-options',
+            \Mozart::parameter( 'wp.plugin.dir' ) . '/mozart/translations/option/' . $locale . '.mo'
+        );
     }
 
     /**
@@ -513,7 +518,7 @@ class OptionBuilder implements OptionBuilderInterface
         if ($this->params['default_show'] == true) {
 
             if (empty( $this->options_defaults )) {
-                $this->_default_values(); // fill cache
+                $this->getDefaultOptions(); // fill cache
             }
 
             $default = array_key_exists(
@@ -709,12 +714,7 @@ class OptionBuilder implements OptionBuilderInterface
              * Use data from Wordpress to populate options array
              **/
             if (!empty( $type ) && empty( $data )) {
-                if (empty( $params )) {
-                    $params = array();
-                }
-
                 $data = array();
-                $params = wp_parse_params( $params, array() );
 
                 switch ($type) {
                     case "categories":
@@ -773,7 +773,8 @@ class OptionBuilder implements OptionBuilderInterface
                             'public'              => true,
                             'exclude_from_search' => false,
                         );
-                        $params = wp_parse_params( $params, $defaults );
+                        $params = array_merge( $defaults, $params );
+
                         $output = 'names';
                         $operator = 'and';
                         $post_types = get_post_types( $params, $output, $operator );
@@ -809,8 +810,7 @@ class OptionBuilder implements OptionBuilderInterface
                     case "font-icon":
                     case "font-icons":
                     case "icons":
-
-                        foreach ($font_icons as $k) {
+                        foreach ($this->getFontIcons() as $k) {
                             $data[$k] = $k;
                         }
                         break;
@@ -874,9 +874,9 @@ class OptionBuilder implements OptionBuilderInterface
     /**
      * Get default options into an array suitable for the settings API
      *
-     * @return      array $this->options_defaults
+     * @return      array
      */
-    public function _default_values()
+    private function getDefaultOptions()
     {
         if (!is_null( $this->getSections() ) && is_null( $this->options_defaults )) {
 
@@ -2104,7 +2104,7 @@ class OptionBuilder implements OptionBuilderInterface
             return;
         }
 
-        $this->options_defaults = $this->_default_values();
+        $this->options_defaults = $this->getDefaultOptions();
 
         $runUpdate = false;
 
@@ -2502,8 +2502,8 @@ class OptionBuilder implements OptionBuilderInterface
                     return false;
                 }
 
-                $plugin_options = wp_parse_params( $imported_options, $plugin_options );
-                $this->set_transients(); // Update the transients
+                $plugin_options = array_merge( $plugin_options, $imported_options );
+                $this->set_transients();
 
                 return $plugin_options;
             }
@@ -2512,7 +2512,7 @@ class OptionBuilder implements OptionBuilderInterface
         // Reset all to defaults
         if (!empty( $plugin_options['defaults'] )) {
             if (empty( $this->options_defaults )) {
-                $this->options_defaults = $this->_default_values();
+                $this->options_defaults = $this->getDefaultOptions();
             }
 
             $plugin_options = $this->options_defaults;
@@ -2794,17 +2794,17 @@ class OptionBuilder implements OptionBuilderInterface
 
         $string = "";
         if (( isset( $this->params['icon_type'] ) && $this->params['icon_type'] == 'image' ) || ( isset( $section['icon_type'] ) && $section['icon_type'] == 'image' )) {
-                $icon = ( !isset( $section['icon'] ) ) ? '' : '<img class="image_icon_type" src="' . $section['icon'] . '" /> ';
+            $icon = ( !isset( $section['icon'] ) ) ? '' : '<img class="image_icon_type" src="' . $section['icon'] . '" /> ';
+        } else {
+            if (!empty( $section['icon_class'] )) {
+                $icon_class = ' ' . $section['icon_class'];
+            } elseif (!empty( $this->params['default_icon_class'] )) {
+                $icon_class = ' ' . $this->params['default_icon_class'];
             } else {
-                if (!empty( $section['icon_class'] )) {
-                    $icon_class = ' ' . $section['icon_class'];
-                } elseif (!empty( $this->params['default_icon_class'] )) {
-                    $icon_class = ' ' . $this->params['default_icon_class'];
-                } else {
-                    $icon_class = '';
-                }
-                $icon = ( !isset( $section['icon'] ) ) ? '<i class="el-icon-cog' . $icon_class . '"></i> ' : '<i class="' . $section['icon'] . $icon_class . '"></i> ';
+                $icon_class = '';
             }
+            $icon = ( !isset( $section['icon'] ) ) ? '<i class="el-icon-cog' . $icon_class . '"></i> ' : '<i class="' . $section['icon'] . $icon_class . '"></i> ';
+        }
 
         $canBeSubSection = ( $k > 0 && ( !isset( $sections[( $k )]['type'] ) || $sections[( $k )]['type'] != "divide" ) ) ? true : false;
 
@@ -2875,745 +2875,1050 @@ class OptionBuilder implements OptionBuilderInterface
             $string .= '</li>';
         }
 
-            return $string;
+        return $string;
+
+    }
+
+    /**
+     * HTML OUTPUT.
+     *
+     * @return      void
+     */
+    public
+    function _options_page_html()
+    {
+        echo '<div class="wrap"><h2></h2></div>'; // Stupid hack for Wordpress alerts and warnings
+
+        echo '<div class="clear"></div>';
+        echo '<div class="wrap">';
+
+        // Do we support JS?
+        echo '<noscript><div class="no-js">' . __(
+                'Warning- This options panel will not work properly without javascript!',
+                'mozart-options'
+            ) . '</div></noscript>';
+
+        // Security is vital!
+        echo '<input type="hidden" id="ajaxsecurity" name="security" value="' . wp_create_nonce(
+                'redux_ajax_nonce'
+            ) . '" />';
+
+        // Main container
+        $expanded = ( $this->params['open_expanded'] ) ? ' fully-expanded' : '';
+
+        echo '<div class="redux-container' . $expanded . ( !empty( $this->params['class'] ) ? ' ' . $this->params['class'] : '' ) . '">';
+        $url = './options.php';
+        if ($this->params['database'] == "network" && $this->params['network_admin']) {
+            if (is_network_admin()) {
+                $url = './edit.php?action=redux_' . $this->params['opt_name'];
+            }
+        }
+        echo '<form method="post" action="' . $url . '" enctype="multipart/form-data" id="redux-form-wrapper">';
+        echo '<input type="hidden" id="redux-compiler-hook" name="' . $this->params['opt_name'] . '[compiler]" value="" />';
+        echo '<input type="hidden" id="currentSection" name="' . $this->params['opt_name'] . '[redux-section]" value="" />';
+
+        settings_fields( "{$this->params['opt_name']}_group" );
+
+        // Last tab?
+        $this->options['last_tab'] = ( isset( $_GET['tab'] ) && !isset( $this->transients['last_save_mode'] ) ) ? $_GET['tab'] : '';
+
+        echo '<input type="hidden" id="last_tab" name="' . $this->params['opt_name'] . '[last_tab]" value="' . $this->options['last_tab'] . '" />';
+
+        // Header area
+        echo '<div id="redux-header">';
+
+        if (!empty( $this->params['display_name'] )) {
+            echo '<div class="display_header">';
+            echo '<h2>' . $this->params['display_name'] . '</h2>';
+
+            if (!empty( $this->params['display_version'] )) {
+                echo '<span>' . $this->params['display_version'] . '</span>';
+            }
+
+            echo '</div>';
+        }
+
+        // Page icon
+        echo '<div id="' . $this->params['page_icon'] . '" class="icon32"></div>';
+
+        echo '<div class="clear"></div>';
+        echo '</div>';
+
+        // Intro text
+        if (isset( $this->params['intro_text'] )) {
+            echo '<div id="redux-intro-text">';
+            echo $this->params['intro_text'];
+            echo '</div>';
+        }
+
+        // Stickybar
+        echo '<div id="redux-sticky">';
+        echo '<div id="info_bar">';
+
+        $expanded = ( $this->params['open_expanded'] ) ? ' expanded' : '';
+
+        echo '<a href="javascript:void(0);" class="expand_options' . $expanded . '">' . __(
+                'Expand',
+                'mozart-options'
+            ) . '</a>';
+        echo '<div class="redux-action_bar">';
+        submit_button( __( 'Save Changes', 'mozart-options' ), 'primary', 'redux_save', false );
+
+        if (false === $this->params['hide_reset']) {
+            echo '&nbsp;';
+            submit_button(
+                __( 'Reset Section', 'mozart-options' ),
+                'secondary',
+                $this->params['opt_name'] . '[defaults-section]',
+                false
+            );
+            echo '&nbsp;';
+            submit_button(
+                __( 'Reset All', 'mozart-options' ),
+                'secondary',
+                $this->params['opt_name'] . '[defaults]',
+                false
+            );
+        }
+
+        echo '</div>';
+
+        echo '<div class="redux-ajax-loading" alt="' . __( 'Working...', 'mozart-options' ) . '">&nbsp;</div>';
+        echo '<div class="clear"></div>';
+        echo '</div>';
+
+        // Warning bar
+        if (isset( $this->transients['last_save_mode'] )) {
+
+            if ($this->transients['last_save_mode'] == "import") {
+                echo '<div class="admin-notice notice-blue saved_notice"><strong>' . apply_filters(
+                        "redux-imported-text-{$this->params['opt_name']}",
+                        __( 'Settings Imported!', 'mozart-options' )
+                    ) . '</strong></div>';
+            } elseif ($this->transients['last_save_mode'] == "defaults") {
+                echo '<div class="saved_notice admin-notice notice-yellow"><strong>' . apply_filters(
+                        "redux-defaults-text-{$this->params['opt_name']}",
+                        __( 'All Defaults Restored!', 'mozart-options' )
+                    ) . '</strong></div>';
+            } elseif ($this->transients['last_save_mode'] == "defaults_section") {
+
+                echo '<div class="saved_notice admin-notice notice-yellow"><strong>' . apply_filters(
+                        "redux-defaults-section-text-{$this->params['opt_name']}",
+                        __( 'Section Defaults Restored!', 'mozart-options' )
+                    ) . '</strong></div>';
+            } else {
+                echo '<div class="saved_notice admin-notice notice-green"><strong>' . apply_filters(
+                        "redux-saved-text-{$this->params['opt_name']}",
+                        __( 'Settings Saved!', 'mozart-options' )
+                    ) . '</strong></div>';
+            }
+            unset( $this->transients['last_save_mode'] );
 
         }
 
-        /**
-         * HTML OUTPUT.
-         *
-         * @return      void
-         */
-        public
-        function _options_page_html()
-        {
-            echo '<div class="wrap"><h2></h2></div>'; // Stupid hack for Wordpress alerts and warnings
+        echo '<div class="redux-save-warn notice-yellow"><strong>' . apply_filters(
+                "redux-changed-text-{$this->params['opt_name']}",
+                __( 'Settings have changed, you should save them!', 'mozart-options' )
+            ) . '</strong></div>';
 
-            echo '<div class="clear"></div>';
-            echo '<div class="wrap">';
+        echo '<div class="redux-field-errors notice-red"><strong><span></span> ' . __(
+                'error(s) were found!',
+                'mozart-options'
+            ) . '</strong></div>';
 
-            // Do we support JS?
-            echo '<noscript><div class="no-js">' . __(
-                    'Warning- This options panel will not work properly without javascript!',
-                    'mozart-options'
-                ) . '</div></noscript>';
+        echo '<div class="redux-field-warnings notice-yellow"><strong><span></span> ' . __(
+                'warning(s) were found!',
+                'mozart-options'
+            ) . '</strong></div>';
 
-            // Security is vital!
-            echo '<input type="hidden" id="ajaxsecurity" name="security" value="' . wp_create_nonce(
-                    'redux_ajax_nonce'
-                ) . '" />';
+        echo '</div>';
 
-            // Main container
-            $expanded = ( $this->params['open_expanded'] ) ? ' fully-expanded' : '';
+        echo '<div class="clear"></div>';
 
-            echo '<div class="redux-container' . $expanded . ( !empty( $this->params['class'] ) ? ' ' . $this->params['class'] : '' ) . '">';
-            $url = './options.php';
-            if ($this->params['database'] == "network" && $this->params['network_admin']) {
-                if (is_network_admin()) {
-                    $url = './edit.php?action=redux_' . $this->params['opt_name'];
+        // Sidebar
+        echo '<div class="redux-sidebar">';
+        echo '<ul class="redux-group-menu">';
+
+        foreach ($this->getSections() as $k => $section) {
+            $title = isset( $section['title'] ) ? $section['title'] : '';
+
+            $skip_sec = false;
+            foreach ($this->hidden_perm_sections as $num => $section_title) {
+                if ($section_title == $title) {
+                    $skip_sec = true;
                 }
             }
-            echo '<form method="post" action="' . $url . '" enctype="multipart/form-data" id="redux-form-wrapper">';
-            echo '<input type="hidden" id="redux-compiler-hook" name="' . $this->params['opt_name'] . '[compiler]" value="" />';
-            echo '<input type="hidden" id="currentSection" name="' . $this->params['opt_name'] . '[redux-section]" value="" />';
 
-            settings_fields( "{$this->params['opt_name']}_group" );
-
-            // Last tab?
-            $this->options['last_tab'] = ( isset( $_GET['tab'] ) && !isset( $this->transients['last_save_mode'] ) ) ? $_GET['tab'] : '';
-
-            echo '<input type="hidden" id="last_tab" name="' . $this->params['opt_name'] . '[last_tab]" value="' . $this->options['last_tab'] . '" />';
-
-            // Header area
-            echo '<div id="redux-header">';
-
-            if (!empty( $this->params['display_name'] )) {
-                echo '<div class="display_header">';
-                echo '<h2>' . $this->params['display_name'] . '</h2>';
-
-                if (!empty( $this->params['display_version'] )) {
-                    echo '<span>' . $this->params['display_version'] . '</span>';
-                }
-
-                echo '</div>';
+            if (isset( $section['customizer_only'] ) && $section['customizer_only'] == true) {
+                continue;
             }
 
-            // Page icon
-            echo '<div id="' . $this->params['page_icon'] . '" class="icon32"></div>';
-
-            echo '<div class="clear"></div>';
-            echo '</div>';
-
-            // Intro text
-            if (isset( $this->params['intro_text'] )) {
-                echo '<div id="redux-intro-text">';
-                echo $this->params['intro_text'];
-                echo '</div>';
-            }
-
-            // Stickybar
-            echo '<div id="redux-sticky">';
-            echo '<div id="info_bar">';
-
-            $expanded = ( $this->params['open_expanded'] ) ? ' expanded' : '';
-
-            echo '<a href="javascript:void(0);" class="expand_options' . $expanded . '">' . __(
-                    'Expand',
-                    'mozart-options'
-                ) . '</a>';
-            echo '<div class="redux-action_bar">';
-            submit_button( __( 'Save Changes', 'mozart-options' ), 'primary', 'redux_save', false );
-
-            if (false === $this->params['hide_reset']) {
-                echo '&nbsp;';
-                submit_button(
-                    __( 'Reset Section', 'mozart-options' ),
-                    'secondary',
-                    $this->params['opt_name'] . '[defaults-section]',
-                    false
-                );
-                echo '&nbsp;';
-                submit_button(
-                    __( 'Reset All', 'mozart-options' ),
-                    'secondary',
-                    $this->params['opt_name'] . '[defaults]',
-                    false
-                );
-            }
-
-            echo '</div>';
-
-            echo '<div class="redux-ajax-loading" alt="' . __( 'Working...', 'mozart-options' ) . '">&nbsp;</div>';
-            echo '<div class="clear"></div>';
-            echo '</div>';
-
-            // Warning bar
-            if (isset( $this->transients['last_save_mode'] )) {
-
-                if ($this->transients['last_save_mode'] == "import") {
-                    echo '<div class="admin-notice notice-blue saved_notice"><strong>' . apply_filters(
-                            "redux-imported-text-{$this->params['opt_name']}",
-                            __( 'Settings Imported!', 'mozart-options' )
-                        ) . '</strong></div>';
-                } elseif ($this->transients['last_save_mode'] == "defaults") {
-                    echo '<div class="saved_notice admin-notice notice-yellow"><strong>' . apply_filters(
-                            "redux-defaults-text-{$this->params['opt_name']}",
-                            __( 'All Defaults Restored!', 'mozart-options' )
-                        ) . '</strong></div>';
-                } elseif ($this->transients['last_save_mode'] == "defaults_section") {
-
-                    echo '<div class="saved_notice admin-notice notice-yellow"><strong>' . apply_filters(
-                            "redux-defaults-section-text-{$this->params['opt_name']}",
-                            __( 'Section Defaults Restored!', 'mozart-options' )
-                        ) . '</strong></div>';
-                } else {
-                    echo '<div class="saved_notice admin-notice notice-green"><strong>' . apply_filters(
-                            "redux-saved-text-{$this->params['opt_name']}",
-                            __( 'Settings Saved!', 'mozart-options' )
-                        ) . '</strong></div>';
-                }
-                unset( $this->transients['last_save_mode'] );
-
-            }
-
-            echo '<div class="redux-save-warn notice-yellow"><strong>' . apply_filters(
-                    "redux-changed-text-{$this->params['opt_name']}",
-                    __( 'Settings have changed, you should save them!', 'mozart-options' )
-                ) . '</strong></div>';
-
-            echo '<div class="redux-field-errors notice-red"><strong><span></span> ' . __(
-                    'error(s) were found!',
-                    'mozart-options'
-                ) . '</strong></div>';
-
-            echo '<div class="redux-field-warnings notice-yellow"><strong><span></span> ' . __(
-                    'warning(s) were found!',
-                    'mozart-options'
-                ) . '</strong></div>';
-
-            echo '</div>';
-
-            echo '<div class="clear"></div>';
-
-            // Sidebar
-            echo '<div class="redux-sidebar">';
-            echo '<ul class="redux-group-menu">';
-
-            foreach ($this->getSections() as $k => $section) {
-                $title = isset( $section['title'] ) ? $section['title'] : '';
-
+            if (false == $skip_sec) {
+                echo $this->section_menu( $k, $section );
                 $skip_sec = false;
-                foreach ($this->hidden_perm_sections as $num => $section_title) {
-                    if ($section_title == $title) {
-                        $skip_sec = true;
-                    }
-                }
+            }
+        }
 
-                if (isset( $section['customizer_only'] ) && $section['customizer_only'] == true) {
-                    continue;
-                }
+        // Import / Export tab
+        if (true == $this->params['show_importer'] && false == $this->importer->is_field) {
+            $this->importer->render_tab();
+        }
 
-                if (false == $skip_sec) {
-                    echo $this->section_menu( $k, $section );
-                    $skip_sec = false;
+        // Debug tab
+        if ($this->params['dev_mode'] == true) {
+            $this->debugger->render_tab();
+        }
+
+        if ($this->params['system_info'] === true) {
+            echo '<li id="system_info_default_section_group_li" class="redux-group-tab-link-li">';
+
+            if (!empty( $this->params['icon_type'] ) && $this->params['icon_type'] == 'image') {
+                $icon = ( !isset( $this->params['system_info_icon'] ) ) ? '' : '<img src="' . $this->params['system_info_icon'] . '" /> ';
+            } else {
+                $icon_class = ( !isset( $this->params['system_info_icon_class'] ) ) ? '' : ' ' . $this->params['system_info_icon_class'];
+                $icon = ( !isset( $this->params['system_info_icon'] ) ) ? '<i class="el-icon-info-sign' . $icon_class . '"></i>' : '<i class="icon-' . $this->params['system_info_icon'] . $icon_class . '"></i> ';
+            }
+
+            echo '<a href="javascript:void(0);" id="system_info_default_section_group_li_a" class="redux-group-tab-link-a custom-tab" data-rel="system_info_default">' . $icon . ' <span class="group_title">' . __(
+                    'System Info',
+                    'mozart-options'
+                ) . '</span></a>';
+            echo '</li>';
+        }
+
+        echo '</ul>';
+        echo '</div>';
+
+        echo '<div class="redux-main">';
+
+        foreach ($this->getSections() as $k => $section) {
+            if (isset( $section['customizer_only'] ) && $section['customizer_only'] == true) {
+                continue;
+            }
+
+            $section['class'] = isset( $section['class'] ) ? ' ' . $section['class'] : '';
+            echo '<div id="' . $k . '_section_group' . '" class="redux-group-tab' . $section['class'] . '" data-rel="' . $k . '">';
+
+            // Don't display in the
+            $display = true;
+            if (isset( $_GET['page'] ) && $_GET['page'] == $this->params['page_slug']) {
+                if (isset( $section['panel'] ) && $section['panel'] == "false") {
+                    $display = false;
                 }
             }
 
-            // Import / Export tab
-            if (true == $this->params['show_importer'] && false == $this->importer->is_field) {
-                $this->importer->render_tab();
+            if ($display) {
+                do_settings_sections( $this->params['opt_name'] . $k . '_section_group' );
             }
+            echo "</div>";
+        }
 
-            // Debug tab
-            if ($this->params['dev_mode'] == true) {
-                $this->debugger->render_tab();
-            }
+        // Import / Export output
+        if (true == $this->params['show_importer'] && false == $this->importer->is_field) {
+            $this->importer->enqueue();
 
-            if ($this->params['system_info'] === true) {
-                echo '<li id="system_info_default_section_group_li" class="redux-group-tab-link-li">';
+            echo '<fieldset id="' . $this->params['opt_name'] . '-importer_core" class="redux-field-container redux-field redux-field-init redux-container-importer" data-id="importer_core" data-type="importer">';
+            $this->importer->render();
+            echo '</fieldset>';
 
-                if (!empty( $this->params['icon_type'] ) && $this->params['icon_type'] == 'image') {
-                    $icon = ( !isset( $this->params['system_info_icon'] ) ) ? '' : '<img src="' . $this->params['system_info_icon'] . '" /> ';
+        }
+
+        // Debug object output
+        if ($this->params['dev_mode'] == true) {
+            $this->debugger->render();
+        }
+
+        if ($this->params['system_info'] === true) {
+            echo '<div id="system_info_default_section_group' . '" class="redux-group-tab">';
+            echo '<h3>' . __( 'System Info', 'mozart-options' ) . '</h3>';
+
+            echo '<div id="redux-system-info">';
+            echo SystemInfo::get();
+            echo '</div>';
+
+            echo '</div>';
+        }
+
+        echo '<div class="clear"></div>';
+        echo '</div>';
+        echo '<div class="clear"></div>';
+
+        echo '<div id="redux-sticky-padder" style="display: none;">&nbsp;</div>';
+        echo '<div id="redux-footer-sticky"><div id="redux-footer">';
+
+        if (isset( $this->params['share_icons'] )) {
+            echo '<div id="redux-share">';
+
+            foreach ($this->params['share_icons'] as $link) {
+                // SHIM, use URL now
+                if (isset( $link['link'] ) && !empty( $link['link'] )) {
+                    $link['url'] = $link['link'];
+                    unset( $link['link'] );
+                }
+
+                echo '<a href="' . $link['url'] . '" title="' . $link['title'] . '" target="_blank">';
+
+                if (isset( $link['icon'] ) && !empty( $link['icon'] )) {
+                    echo '<i class="' . $link['icon'] . '"></i>';
                 } else {
-                    $icon_class = ( !isset( $this->params['system_info_icon_class'] ) ) ? '' : ' ' . $this->params['system_info_icon_class'];
-                    $icon = ( !isset( $this->params['system_info_icon'] ) ) ? '<i class="el-icon-info-sign' . $icon_class . '"></i>' : '<i class="icon-' . $this->params['system_info_icon'] . $icon_class . '"></i> ';
+                    echo '<img src="' . $link['img'] . '"/>';
                 }
 
-                echo '<a href="javascript:void(0);" id="system_info_default_section_group_li_a" class="redux-group-tab-link-a custom-tab" data-rel="system_info_default">' . $icon . ' <span class="group_title">' . __(
-                        'System Info',
-                        'mozart-options'
-                    ) . '</span></a>';
-                echo '</li>';
-            }
-
-            echo '</ul>';
-            echo '</div>';
-
-            echo '<div class="redux-main">';
-
-            foreach ($this->getSections() as $k => $section) {
-                if (isset( $section['customizer_only'] ) && $section['customizer_only'] == true) {
-                    continue;
-                }
-
-                $section['class'] = isset( $section['class'] ) ? ' ' . $section['class'] : '';
-                echo '<div id="' . $k . '_section_group' . '" class="redux-group-tab' . $section['class'] . '" data-rel="' . $k . '">';
-
-                // Don't display in the
-                $display = true;
-                if (isset( $_GET['page'] ) && $_GET['page'] == $this->params['page_slug']) {
-                    if (isset( $section['panel'] ) && $section['panel'] == "false") {
-                        $display = false;
-                    }
-                }
-
-                if ($display) {
-                    do_settings_sections( $this->params['opt_name'] . $k . '_section_group' );
-                }
-                echo "</div>";
-            }
-
-            // Import / Export output
-            if (true == $this->params['show_importer'] && false == $this->importer->is_field) {
-                $this->importer->enqueue();
-
-                echo '<fieldset id="' . $this->params['opt_name'] . '-importer_core" class="redux-field-container redux-field redux-field-init redux-container-importer" data-id="importer_core" data-type="importer">';
-                $this->importer->render();
-                echo '</fieldset>';
-
-            }
-
-            // Debug object output
-            if ($this->params['dev_mode'] == true) {
-                $this->debugger->render();
-            }
-
-            if ($this->params['system_info'] === true) {
-                echo '<div id="system_info_default_section_group' . '" class="redux-group-tab">';
-                echo '<h3>' . __( 'System Info', 'mozart-options' ) . '</h3>';
-
-                echo '<div id="redux-system-info">';
-                echo SystemInfo::get();
-                echo '</div>';
-
-                echo '</div>';
-            }
-
-            echo '<div class="clear"></div>';
-            echo '</div>';
-            echo '<div class="clear"></div>';
-
-            echo '<div id="redux-sticky-padder" style="display: none;">&nbsp;</div>';
-            echo '<div id="redux-footer-sticky"><div id="redux-footer">';
-
-            if (isset( $this->params['share_icons'] )) {
-                echo '<div id="redux-share">';
-
-                foreach ($this->params['share_icons'] as $link) {
-                    // SHIM, use URL now
-                    if (isset( $link['link'] ) && !empty( $link['link'] )) {
-                        $link['url'] = $link['link'];
-                        unset( $link['link'] );
-                    }
-
-                    echo '<a href="' . $link['url'] . '" title="' . $link['title'] . '" target="_blank">';
-
-                    if (isset( $link['icon'] ) && !empty( $link['icon'] )) {
-                        echo '<i class="' . $link['icon'] . '"></i>';
-                    } else {
-                        echo '<img src="' . $link['img'] . '"/>';
-                    }
-
-                    echo '</a>';
-                }
-
-                echo '</div>';
-            }
-
-            echo '<div class="redux-action_bar">';
-            submit_button( __( 'Save Changes', 'mozart-options' ), 'primary', 'redux_save', false );
-
-            if (false === $this->params['hide_reset']) {
-                echo '&nbsp;';
-                submit_button(
-                    __( 'Reset Section', 'mozart-options' ),
-                    'secondary',
-                    $this->params['opt_name'] . '[defaults-section]',
-                    false
-                );
-                echo '&nbsp;';
-                submit_button(
-                    __( 'Reset All', 'mozart-options' ),
-                    'secondary',
-                    $this->params['opt_name'] . '[defaults]',
-                    false
-                );
+                echo '</a>';
             }
 
             echo '</div>';
-
-            echo '<div class="redux-ajax-loading" alt="' . __( 'Working...', 'mozart-options' ) . '">&nbsp;</div>';
-            echo '<div class="clear"></div>';
-
-            echo '</div>';
-            echo '</form>';
-            echo '</div></div>';
-
-            echo ( isset( $this->params['footer_text'] ) ) ? '<div id="redux-sub-footer">' . $this->params['footer_text'] . '</div>' : '';
-
-
-            echo '<div class="clear"></div>';
-            echo '</div><!--wrap-->';
-
-            if ($this->params['dev_mode'] == true) {
-                if (current_user_can( 'administrator' )) {
-                    global $wpdb;
-                    echo "<br /><pre>";
-                    print_r( $wpdb->queries );
-                    echo "</pre>";
-                }
-
-                echo '<br /><div class="redux-timer">' . get_num_queries() . ' queries in ' . timer_stop(
-                        0
-                    ) . ' seconds</div>';
-            }
-
-            $this->set_transients();
-
         }
 
-        /**
-         * Section HTML OUTPUT.
-         *
-         * @param       array $section
-         *
-         * @return      void
-         */
-        public
-        function _section_desc( $section )
-        {
-            $id = trim( rtrim( $section['id'], '_section' ), $this->params['opt_name'] );
+        echo '<div class="redux-action_bar">';
+        submit_button( __( 'Save Changes', 'mozart-options' ), 'primary', 'redux_save', false );
 
-            if (isset( $this->sections[$id]['desc'] ) && !empty( $this->sections[$id]['desc'] )) {
-                echo '<div class="redux-section-desc">' . $this->sections[$id]['desc'] . '</div>';
-            }
+        if (false === $this->params['hide_reset']) {
+            echo '&nbsp;';
+            submit_button(
+                __( 'Reset Section', 'mozart-options' ),
+                'secondary',
+                $this->params['opt_name'] . '[defaults-section]',
+                false
+            );
+            echo '&nbsp;';
+            submit_button(
+                __( 'Reset All', 'mozart-options' ),
+                'secondary',
+                $this->params['opt_name'] . '[defaults]',
+                false
+            );
         }
 
-        /**
-         * Field HTML OUTPUT.
-         * Gets option from options array, then calls the specific field type class - allows extending by other devs
-         *
-         * @param array $field
-         * @param string $v
-         *
-         * @return      void
-         */
-        public
-        function _field_input( $field, $v = null )
-        {
-            if (isset( $field['callback'] ) && function_exists( $field['callback'] )) {
-                $value = ( isset( $this->options[$field['id']] ) ) ? $this->options[$field['id']] : '';
-                call_user_func( $field['callback'], $field, $value );
+        echo '</div>';
 
+        echo '<div class="redux-ajax-loading" alt="' . __( 'Working...', 'mozart-options' ) . '">&nbsp;</div>';
+        echo '<div class="clear"></div>';
+
+        echo '</div>';
+        echo '</form>';
+        echo '</div></div>';
+
+        echo ( isset( $this->params['footer_text'] ) ) ? '<div id="redux-sub-footer">' . $this->params['footer_text'] . '</div>' : '';
+
+
+        echo '<div class="clear"></div>';
+        echo '</div><!--wrap-->';
+
+        if ($this->params['dev_mode'] == true) {
+            if (current_user_can( 'administrator' )) {
+                global $wpdb;
+                echo "<br /><pre>";
+                print_r( $wpdb->queries );
+                echo "</pre>";
+            }
+
+            echo '<br /><div class="redux-timer">' . get_num_queries() . ' queries in ' . timer_stop(
+                    0
+                ) . ' seconds</div>';
+        }
+
+        $this->set_transients();
+
+    }
+
+    /**
+     * Section HTML OUTPUT.
+     *
+     * @param       array $section
+     *
+     * @return      void
+     */
+    public
+    function _section_desc(
+        $section
+    ) {
+        $id = trim( rtrim( $section['id'], '_section' ), $this->params['opt_name'] );
+
+        if (isset( $this->sections[$id]['desc'] ) && !empty( $this->sections[$id]['desc'] )) {
+            echo '<div class="redux-section-desc">' . $this->sections[$id]['desc'] . '</div>';
+        }
+    }
+
+    /**
+     * Field HTML OUTPUT.
+     * Gets option from options array, then calls the specific field type class - allows extending by other devs
+     *
+     * @param array $field
+     * @param string $v
+     *
+     * @return      void
+     */
+    public
+    function _field_input(
+        $field,
+        $v = null
+    ) {
+        if (isset( $field['callback'] ) && function_exists( $field['callback'] )) {
+            $value = ( isset( $this->options[$field['id']] ) ) ? $this->options[$field['id']] : '';
+            call_user_func( $field['callback'], $field, $value );
+
+            return;
+        }
+
+        if (isset( $field['type'] )) {
+
+            // If the field is set not to display in the panel
+            $display = true;
+            if (isset( $_GET['page'] ) && $_GET['page'] == $this->params['page_slug']) {
+                if (isset( $field['panel'] ) && $field['panel'] == false) {
+                    $display = false;
+                }
+            }
+
+            if (!$display) {
                 return;
             }
 
-            if (isset( $field['type'] )) {
+            $field_class = "Mozart\\Component\\Form\\Field\\" . Str::camel( $field['type'] );
 
-                // If the field is set not to display in the panel
-                $display = true;
-                if (isset( $_GET['page'] ) && $_GET['page'] == $this->params['page_slug']) {
-                    if (isset( $field['panel'] ) && $field['panel'] == false) {
-                        $display = false;
-                    }
-                }
-
-                if (!$display) {
-                    return;
-                }
-
-                $field_class = "Mozart\\Component\\Form\\Field\\" . Str::camel( $field['type'] );
-
-                if (false === class_exists( $field_class )) {
-                    if (false === class_exists( $field_class . 'Field' )) {
-                        return false;
-                    }
-                }
-
-                $value = isset( $this->options[$field['id']] ) ? $this->options[$field['id']] : '';
-
-                if ($v !== null) {
-                    $value = $v;
-                }
-
-                if (!isset( $field['name_suffix'] )) {
-                    $field['name_suffix'] = "";
-                }
-
-                $render = new $field_class( $field, $value, $this );
-                ob_start();
-
-                $render->render();
-
-                /**
-                 * @param string $_render rendered field markup
-                 * @param array $field field data
-                 */
-                $_render = apply_filters(
-                    "redux/field/{$this->params['opt_name']}/{$field['type']}/render/after",
-                    $render,
-                    $field
-                );
-
-                ob_end_clean();
-
-                //save the values into a unique array in case we need it for dependencies
-                $this->fieldsValues[$field['id']] = ( isset( $value['url'] ) && is_array(
-                        $value
-                    ) ) ? $value['url'] : $value;
-
-                //create default data und class string and checks the dependencies of an object
-                $class_string = '';
-                $data_string = '';
-
-                $this->check_dependencies( $field );
-
-                if (!isset( $field['fields'] ) || empty( $field['fields'] )) {
-                    echo '<fieldset id="' . $this->params['opt_name'] . '-' . $field['id'] . '" class="redux-field-container redux-field redux-field-init redux-container-' . $field['type'] . ' ' . $class_string . '" data-id="' . $field['id'] . '" ' . $data_string . ' data-type="' . $field['type'] . '">';
-                }
-
-                echo $_render;
-
-                if (!empty( $field['desc'] )) {
-                    $field['description'] = $field['desc'];
-                }
-
-                echo ( isset( $field['description'] ) && $field['type'] != "info" && $field['type'] !== "section" && !empty( $field['description'] ) ) ? '<div class="description field-desc">' . $field['description'] . '</div>' : '';
-
-                if (!isset( $field['fields'] ) || empty( $field['fields'] )) {
-                    echo '</fieldset>';
-                }
-            }
-        }
-
-        /**
-         * Can Output CSS
-         * Check if a field meets its requirements before outputting to CSS
-         *
-         * @param $field
-         *
-         * @return bool
-         */
-        public
-        function _can_output_css( $field )
-        {
-            $return = true;
-
-            if (isset( $field['force_output'] ) && $field['force_output'] == true) {
-                return $return;
-            }
-
-            if (!empty( $field['required'] )) {
-                if (isset( $field['required'][0] )) {
-                    if (!is_array( $field['required'][0] ) && count( $field['required'] ) == 3) {
-                        $parentValue = $GLOBALS[$this->params['global_variable']][$field['required'][0]];
-                        $checkValue = $field['required'][2];
-                        $operation = $field['required'][1];
-                        $return = $this->compareValueDependencies( $parentValue, $checkValue, $operation );
-                    } elseif (is_array( $field['required'][0] )) {
-                        foreach ($field['required'] as $required) {
-                            if (!is_array( $required[0] ) && count( $required ) == 3) {
-                                $parentValue = $GLOBALS[$this->params['global_variable']][$required[0]];
-                                $checkValue = $required[2];
-                                $operation = $required[1];
-                                $return = $this->compareValueDependencies( $parentValue, $checkValue, $operation );
-                            }
-                            if (!$return) {
-                                return $return;
-                            }
-                        }
-                    }
+            if (false === class_exists( $field_class )) {
+                if (false === class_exists( $field_class . 'Field' )) {
+                    return false;
                 }
             }
 
-            return $return;
-        }
+            $value = isset( $this->options[$field['id']] ) ? $this->options[$field['id']] : '';
 
-        /**
-         * Checks dependencies between objects based on the $field['required'] array
-         * If the array is set it needs to have exactly 3 entries.
-         * The first entry describes which field should be monitored by the current field. eg: "content"
-         * The second entry describes the comparison parameter. eg: "equals, not, is_larger, is_smaller ,contains"
-         * The third entry describes the value that we are comparing against.
-         * Example: if the required array is set to array('content','equals','Hello World'); then the current
-         * field will only be displayed if the field with id "content" has exactly the value "Hello World"
-         *
-         * @param array $field
-         *
-         * @return array $params
-         */
-        public
-        function check_dependencies( $field )
-        {
-            if (!empty( $field['required'] )) {
-
-                //$this->folds[$field['id']] = $this->folds[$field['id']] ? $this->folds[$field['id']] : array();
-                if (!isset( $this->required_child[$field['id']] )) {
-                    $this->required_child[$field['id']] = array();
-                }
-
-                if (!isset( $this->required[$field['id']] )) {
-                    $this->required[$field['id']] = array();
-                }
-
-                if (is_array( $field['required'][0] )) {
-                    foreach ($field['required'] as $value) {
-                        if (is_array( $value ) && count( $value ) == 3) {
-                            $data = array();
-                            $data['parent'] = $value[0];
-                            $data['operation'] = $value[1];
-                            $data['checkValue'] = $value[2];
-
-                            $this->required[$data['parent']][$field['id']][] = $data;
-
-                            if (!in_array( $data['parent'], $this->required_child[$field['id']] )) {
-                                $this->required_child[$field['id']][] = $data;
-                            }
-
-                            $this->checkRequiredDependencies( $field, $data );
-                        }
-                    }
-                } else {
-                    $data = array();
-                    $data['parent'] = $field['required'][0];
-                    $data['operation'] = $field['required'][1];
-                    $data['checkValue'] = $field['required'][2];
-
-                    $this->required[$data['parent']][$field['id']][] = $data;
-
-                    if (!in_array( $data['parent'], $this->required_child[$field['id']] )) {
-                        $this->required_child[$field['id']][] = $data;
-                    }
-
-                    $this->checkRequiredDependencies( $field, $data );
-                }
-
-            }
-        }
-
-        /**
-         * Compare data for required field
-         *
-         * @param $parentValue
-         * @param $checkValue
-         * @param $operation
-         *
-         * @return bool
-         */
-        public
-        function compareValueDependencies( $parentValue, $checkValue, $operation )
-        {
-            $return = false;
-
-            switch ($operation) {
-                case '=':
-                case 'equals':
-                    $data['operation'] = "=";
-                    if (is_array( $checkValue )) {
-                        if (in_array( $parentValue, $checkValue )) {
-                            $return = true;
-                        }
-                    } else {
-                        if ($parentValue == $checkValue) {
-                            $return = true;
-                        } elseif (is_array( $parentValue )) {
-                            if (in_array( $checkValue, $parentValue )) {
-                                $return = true;
-                            }
-                        }
-                    }
-                    break;
-                case '!=':
-                case 'not':
-                    $data['operation'] = "!==";
-                    if (is_array( $checkValue )) {
-                        if (!in_array( $parentValue, $checkValue )) {
-                            $return = true;
-                        }
-                    } else {
-                        if ($parentValue != $checkValue) {
-                            $return = true;
-                        } elseif (is_array( $parentValue )) {
-                            if (!in_array( $checkValue, $parentValue )) {
-                                $return = true;
-                            }
-                        }
-                    }
-                    break;
-                case '>':
-                case 'greater':
-                case 'is_larger':
-                    $data['operation'] = ">";
-                    if ($parentValue > $checkValue) {
-                        $return = true;
-                    }
-                    break;
-                case '>=':
-                case 'greater_equal':
-                case 'is_larger_equal':
-                    $data['operation'] = ">=";
-                    if ($parentValue >= $checkValue) {
-                        $return = true;
-                    }
-                    break;
-                case '<':
-                case 'less':
-                case 'is_smaller':
-                    $data['operation'] = "<";
-                    if ($parentValue < $checkValue) {
-                        $return = true;
-                    }
-                    break;
-                case '<=':
-                case 'less_equal':
-                case 'is_smaller_equal':
-                    $data['operation'] = "<=";
-                    if ($parentValue <= $checkValue) {
-                        $return = true;
-                    }
-                    break;
-                case 'contains':
-                    if (strpos( $parentValue, $checkValue ) !== false) {
-                        $return = true;
-                    }
-                    break;
-                case 'doesnt_contain':
-                case 'not_contain':
-                    if (strpos( $parentValue, $checkValue ) === false) {
-                        $return = true;
-                    }
-                    break;
-                case 'is_empty_or':
-                    if (empty( $parentValue ) || $parentValue == $checkValue) {
-                        $return = true;
-                    }
-                    break;
-                case 'not_empty_and':
-                    if (!empty( $parentValue ) && $parentValue != $checkValue) {
-                        $return = true;
-                    }
-                    break;
-                case 'is_empty':
-                case 'empty':
-                case '!isset':
-                    if (empty( $parentValue ) || $parentValue == "" || $parentValue == null) {
-                        $return = true;
-                    }
-                    break;
-                case 'not_empty':
-                case '!empty':
-                case 'isset':
-                    if (!empty( $parentValue ) && $parentValue != "" && $parentValue != null) {
-                        $return = true;
-                    }
-                    break;
+            if ($v !== null) {
+                $value = $v;
             }
 
-            return $return;
-        }
-
-        /**
-         * @param $field
-         * @param $data
-         */
-        public
-        function checkRequiredDependencies( $field, $data )
-        {
-            //required field must not be hidden. otherwise hide this one by default
-
-            if (!in_array(
-                    $data['parent'],
-                    $this->fieldsHidden
-                ) && ( !isset( $this->folds[$field['id']] ) || $this->folds[$field['id']] != "hide" )
-            ) {
-                if (isset( $this->options[$data['parent']] )) {
-                    $return = $this->compareValueDependencies(
-                        $this->options[$data['parent']],
-                        $data['checkValue'],
-                        $data['operation']
-                    );
-                }
+            if (!isset( $field['name_suffix'] )) {
+                $field['name_suffix'] = "";
             }
 
-            if (( isset( $return ) && $return ) && ( !isset( $this->folds[$field['id']] ) || $this->folds[$field['id']] != "hide" )) {
-                $this->folds[$field['id']] = "show";
-            } else {
-                $this->folds[$field['id']] = "hide";
-                if (!in_array( $field['id'], $this->fieldsHidden )) {
-                    $this->fieldsHidden[] = $field['id'];
-                }
+            $render = new $field_class( $field, $value, $this );
+            ob_start();
+
+            $render->render();
+
+            /**
+             * @param string $_render rendered field markup
+             * @param array $field field data
+             */
+            $_render = apply_filters(
+                "redux/field/{$this->params['opt_name']}/{$field['type']}/render/after",
+                $render,
+                $field
+            );
+
+            ob_end_clean();
+
+            //save the values into a unique array in case we need it for dependencies
+            $this->fieldsValues[$field['id']] = ( isset( $value['url'] ) && is_array(
+                    $value
+                ) ) ? $value['url'] : $value;
+
+            //create default data und class string and checks the dependencies of an object
+            $class_string = '';
+            $data_string = '';
+
+            $this->check_dependencies( $field );
+
+            if (!isset( $field['fields'] ) || empty( $field['fields'] )) {
+                echo '<fieldset id="' . $this->params['opt_name'] . '-' . $field['id'] . '" class="redux-field-container redux-field redux-field-init redux-container-' . $field['type'] . ' ' . $class_string . '" data-id="' . $field['id'] . '" ' . $data_string . ' data-type="' . $field['type'] . '">';
             }
-        }
 
-        /**
-         * converts an array into a html data string
-         *
-         * @param array $data example input: array('id'=>'true')
-         *
-         * @return string $data_string example output: data-id='true'
-         */
-        public
-        function create_data_string( $data = array() )
-        {
-            $data_string = "";
+            echo $_render;
 
-            foreach ($data as $key => $value) {
-                if (is_array( $value )) {
-                    $value = implode( "|", $value );
-                }
-                $data_string .= " data-$key='$value' ";
+            if (!empty( $field['desc'] )) {
+                $field['description'] = $field['desc'];
             }
 
-            return $data_string;
+            echo ( isset( $field['description'] ) && $field['type'] != "info" && $field['type'] !== "section" && !empty( $field['description'] ) ) ? '<div class="description field-desc">' . $field['description'] . '</div>' : '';
+
+            if (!isset( $field['fields'] ) || empty( $field['fields'] )) {
+                echo '</fieldset>';
+            }
         }
     }
+
+    /**
+     * Can Output CSS
+     * Check if a field meets its requirements before outputting to CSS
+     *
+     * @param $field
+     *
+     * @return bool
+     */
+    public function _can_output_css( $field )
+    {
+        $return = true;
+
+        if (isset( $field['force_output'] ) && $field['force_output'] == true) {
+            return $return;
+        }
+
+        if (!empty( $field['required'] )) {
+            if (isset( $field['required'][0] )) {
+                if (!is_array( $field['required'][0] ) && count( $field['required'] ) == 3) {
+                    $parentValue = $GLOBALS[$this->params['global_variable']][$field['required'][0]];
+                    $checkValue = $field['required'][2];
+                    $operation = $field['required'][1];
+                    $return = $this->compareValueDependencies( $parentValue, $checkValue, $operation );
+                } elseif (is_array( $field['required'][0] )) {
+                    foreach ($field['required'] as $required) {
+                        if (!is_array( $required[0] ) && count( $required ) == 3) {
+                            $parentValue = $GLOBALS[$this->params['global_variable']][$required[0]];
+                            $checkValue = $required[2];
+                            $operation = $required[1];
+                            $return = $this->compareValueDependencies( $parentValue, $checkValue, $operation );
+                        }
+                        if (!$return) {
+                            return $return;
+                        }
+                    }
+                }
+            }
+        }
+
+        return $return;
+    }
+
+    /**
+     * Checks dependencies between objects based on the $field['required'] array
+     * If the array is set it needs to have exactly 3 entries.
+     * The first entry describes which field should be monitored by the current field. eg: "content"
+     * The second entry describes the comparison parameter. eg: "equals, not, is_larger, is_smaller ,contains"
+     * The third entry describes the value that we are comparing against.
+     * Example: if the required array is set to array('content','equals','Hello World'); then the current
+     * field will only be displayed if the field with id "content" has exactly the value "Hello World"
+     *
+     * @param array $field
+     *
+     * @return array $params
+     */
+    public
+    function check_dependencies(
+        $field
+    ) {
+        if (!empty( $field['required'] )) {
+
+            //$this->folds[$field['id']] = $this->folds[$field['id']] ? $this->folds[$field['id']] : array();
+            if (!isset( $this->required_child[$field['id']] )) {
+                $this->required_child[$field['id']] = array();
+            }
+
+            if (!isset( $this->required[$field['id']] )) {
+                $this->required[$field['id']] = array();
+            }
+
+            if (is_array( $field['required'][0] )) {
+                foreach ($field['required'] as $value) {
+                    if (is_array( $value ) && count( $value ) == 3) {
+                        $data = array();
+                        $data['parent'] = $value[0];
+                        $data['operation'] = $value[1];
+                        $data['checkValue'] = $value[2];
+
+                        $this->required[$data['parent']][$field['id']][] = $data;
+
+                        if (!in_array( $data['parent'], $this->required_child[$field['id']] )) {
+                            $this->required_child[$field['id']][] = $data;
+                        }
+
+                        $this->checkRequiredDependencies( $field, $data );
+                    }
+                }
+            } else {
+                $data = array();
+                $data['parent'] = $field['required'][0];
+                $data['operation'] = $field['required'][1];
+                $data['checkValue'] = $field['required'][2];
+
+                $this->required[$data['parent']][$field['id']][] = $data;
+
+                if (!in_array( $data['parent'], $this->required_child[$field['id']] )) {
+                    $this->required_child[$field['id']][] = $data;
+                }
+
+                $this->checkRequiredDependencies( $field, $data );
+            }
+
+        }
+    }
+
+    /**
+     * Compare data for required field
+     *
+     * @param $parentValue
+     * @param $checkValue
+     * @param $operation
+     *
+     * @return bool
+     */
+    public function compareValueDependencies( $parentValue, $checkValue, $operation )
+    {
+        $return = false;
+
+        switch ($operation) {
+            case '=':
+            case 'equals':
+                $data['operation'] = "=";
+                if (is_array( $checkValue )) {
+                    if (in_array( $parentValue, $checkValue )) {
+                        $return = true;
+                    }
+                } else {
+                    if ($parentValue == $checkValue) {
+                        $return = true;
+                    } elseif (is_array( $parentValue )) {
+                        if (in_array( $checkValue, $parentValue )) {
+                            $return = true;
+                        }
+                    }
+                }
+                break;
+            case '!=':
+            case 'not':
+                $data['operation'] = "!==";
+                if (is_array( $checkValue )) {
+                    if (!in_array( $parentValue, $checkValue )) {
+                        $return = true;
+                    }
+                } else {
+                    if ($parentValue != $checkValue) {
+                        $return = true;
+                    } elseif (is_array( $parentValue )) {
+                        if (!in_array( $checkValue, $parentValue )) {
+                            $return = true;
+                        }
+                    }
+                }
+                break;
+            case '>':
+            case 'greater':
+            case 'is_larger':
+                $data['operation'] = ">";
+                if ($parentValue > $checkValue) {
+                    $return = true;
+                }
+                break;
+            case '>=':
+            case 'greater_equal':
+            case 'is_larger_equal':
+                $data['operation'] = ">=";
+                if ($parentValue >= $checkValue) {
+                    $return = true;
+                }
+                break;
+            case '<':
+            case 'less':
+            case 'is_smaller':
+                $data['operation'] = "<";
+                if ($parentValue < $checkValue) {
+                    $return = true;
+                }
+                break;
+            case '<=':
+            case 'less_equal':
+            case 'is_smaller_equal':
+                $data['operation'] = "<=";
+                if ($parentValue <= $checkValue) {
+                    $return = true;
+                }
+                break;
+            case 'contains':
+                if (strpos( $parentValue, $checkValue ) !== false) {
+                    $return = true;
+                }
+                break;
+            case 'doesnt_contain':
+            case 'not_contain':
+                if (strpos( $parentValue, $checkValue ) === false) {
+                    $return = true;
+                }
+                break;
+            case 'is_empty_or':
+                if (empty( $parentValue ) || $parentValue == $checkValue) {
+                    $return = true;
+                }
+                break;
+            case 'not_empty_and':
+                if (!empty( $parentValue ) && $parentValue != $checkValue) {
+                    $return = true;
+                }
+                break;
+            case 'is_empty':
+            case 'empty':
+            case '!isset':
+                if (empty( $parentValue ) || $parentValue == "" || $parentValue == null) {
+                    $return = true;
+                }
+                break;
+            case 'not_empty':
+            case '!empty':
+            case 'isset':
+                if (!empty( $parentValue ) && $parentValue != "" && $parentValue != null) {
+                    $return = true;
+                }
+                break;
+        }
+
+        return $return;
+    }
+
+    /**
+     * @param $field
+     * @param $data
+     */
+    public function checkRequiredDependencies( $field, $data )
+    {
+        //required field must not be hidden. otherwise hide this one by default
+
+        if (!in_array(
+                $data['parent'],
+                $this->fieldsHidden
+            ) && ( !isset( $this->folds[$field['id']] ) || $this->folds[$field['id']] != "hide" )
+        ) {
+            if (isset( $this->options[$data['parent']] )) {
+                $return = $this->compareValueDependencies(
+                    $this->options[$data['parent']],
+                    $data['checkValue'],
+                    $data['operation']
+                );
+            }
+        }
+
+        if (( isset( $return ) && $return ) && ( !isset( $this->folds[$field['id']] ) || $this->folds[$field['id']] != "hide" )) {
+            $this->folds[$field['id']] = "show";
+        } else {
+            $this->folds[$field['id']] = "hide";
+            if (!in_array( $field['id'], $this->fieldsHidden )) {
+                $this->fieldsHidden[] = $field['id'];
+            }
+        }
+    }
+
+    /**
+     * converts an array into a html data string
+     *
+     * @param array $data example input: array('id'=>'true')
+     *
+     * @return string $data_string example output: data-id='true'
+     */
+    public function create_data_string( $data = array() )
+    {
+        $data_string = "";
+
+        foreach ($data as $key => $value) {
+            if (is_array( $value )) {
+                $value = implode( "|", $value );
+            }
+            $data_string .= " data-$key='$value' ";
+        }
+
+        return $data_string;
+    }
+
+    private function getFontIcons()
+    {
+        return array(
+            'el-icon-address-book-alt',
+            'el-icon-address-book',
+            'el-icon-adjust-alt',
+            'el-icon-adjust',
+            'el-icon-adult',
+            'el-icon-align-center',
+            'el-icon-align-justify',
+            'el-icon-align-left',
+            'el-icon-align-right',
+            'el-icon-arrow-down',
+            'el-icon-arrow-left',
+            'el-icon-arrow-right',
+            'el-icon-arrow-up',
+            'el-icon-asl',
+            'el-icon-asterisk',
+            'el-icon-backward',
+            'el-icon-ban-circle',
+            'el-icon-barcode',
+            'el-icon-behance',
+            'el-icon-bell',
+            'el-icon-blind',
+            'el-icon-blogger',
+            'el-icon-bold',
+            'el-icon-book',
+            'el-icon-bookmark-empty',
+            'el-icon-bookmark',
+            'el-icon-braille',
+            'el-icon-briefcase',
+            'el-icon-broom',
+            'el-icon-brush',
+            'el-icon-bulb',
+            'el-icon-bullhorn',
+            'el-icon-calendar-sign',
+            'el-icon-calendar',
+            'el-icon-camera',
+            'el-icon-car',
+            'el-icon-caret-down',
+            'el-icon-caret-left',
+            'el-icon-caret-right',
+            'el-icon-caret-up',
+            'el-icon-cc',
+            'el-icon-certificate',
+            'el-icon-check-empty',
+            'el-icon-check',
+            'el-icon-chevron-down',
+            'el-icon-chevron-left',
+            'el-icon-chevron-right',
+            'el-icon-chevron-up',
+            'el-icon-child',
+            'el-icon-circle-arrow-down',
+            'el-icon-circle-arrow-left',
+            'el-icon-circle-arrow-right',
+            'el-icon-circle-arrow-up',
+            'el-icon-cloud-alt',
+            'el-icon-cloud',
+            'el-icon-cog-alt',
+            'el-icon-cog',
+            'el-icon-cogs',
+            'el-icon-comment-alt',
+            'el-icon-comment',
+            'el-icon-compass-alt',
+            'el-icon-compass',
+            'el-icon-credit-card',
+            'el-icon-css',
+            'el-icon-dashboard',
+            'el-icon-delicious',
+            'el-icon-deviantart',
+            'el-icon-digg',
+            'el-icon-download-alt',
+            'el-icon-download',
+            'el-icon-dribbble',
+            'el-icon-edit',
+            'el-icon-eject',
+            'el-icon-envelope-alt',
+            'el-icon-envelope',
+            'el-icon-error-alt',
+            'el-icon-error',
+            'el-icon-eur',
+            'el-icon-exclamation-sign',
+            'el-icon-eye-close',
+            'el-icon-eye-open',
+            'el-icon-facebook',
+            'el-icon-facetime-video',
+            'el-icon-fast-backward',
+            'el-icon-fast-forward',
+            'el-icon-female',
+            'el-icon-file-alt',
+            'el-icon-file-edit-alt',
+            'el-icon-file-edit',
+            'el-icon-file-new-alt',
+            'el-icon-file-new',
+            'el-icon-file',
+            'el-icon-film',
+            'el-icon-filter',
+            'el-icon-fire',
+            'el-icon-flag-alt',
+            'el-icon-flag',
+            'el-icon-flickr',
+            'el-icon-folder-close',
+            'el-icon-folder-open',
+            'el-icon-folder-sign',
+            'el-icon-folder',
+            'el-icon-font',
+            'el-icon-fontsize',
+            'el-icon-fork',
+            'el-icon-forward-alt',
+            'el-icon-forward',
+            'el-icon-foursquare',
+            'el-icon-friendfeed-rect',
+            'el-icon-friendfeed',
+            'el-icon-fullscreen',
+            'el-icon-gbp',
+            'el-icon-gift',
+            'el-icon-github-text',
+            'el-icon-github',
+            'el-icon-glass',
+            'el-icon-glasses',
+            'el-icon-globe-alt',
+            'el-icon-globe',
+            'el-icon-googleplus',
+            'el-icon-graph-alt',
+            'el-icon-graph',
+            'el-icon-group-alt',
+            'el-icon-group',
+            'el-icon-guidedog',
+            'el-icon-hand-down',
+            'el-icon-hand-left',
+            'el-icon-hand-right',
+            'el-icon-hand-up',
+            'el-icon-hdd',
+            'el-icon-headphones',
+            'el-icon-hearing-impaired',
+            'el-icon-heart-alt',
+            'el-icon-heart-empty',
+            'el-icon-heart',
+            'el-icon-home-alt',
+            'el-icon-home',
+            'el-icon-hourglass',
+            'el-icon-idea-alt',
+            'el-icon-idea',
+            'el-icon-inbox-alt',
+            'el-icon-inbox-box',
+            'el-icon-inbox',
+            'el-icon-indent-left',
+            'el-icon-indent-right',
+            'el-icon-info-sign',
+            'el-icon-instagram',
+            'el-icon-iphone-home',
+            'el-icon-italic',
+            'el-icon-key',
+            'el-icon-laptop-alt',
+            'el-icon-laptop',
+            'el-icon-lastfm',
+            'el-icon-leaf',
+            'el-icon-lines',
+            'el-icon-link',
+            'el-icon-linkedin',
+            'el-icon-list-alt',
+            'el-icon-list',
+            'el-icon-livejournal',
+            'el-icon-lock-alt',
+            'el-icon-lock',
+            'el-icon-magic',
+            'el-icon-magnet',
+            'el-icon-male',
+            'el-icon-map-marker-alt',
+            'el-icon-map-marker',
+            'el-icon-mic-alt',
+            'el-icon-mic',
+            'el-icon-minus-sign',
+            'el-icon-minus',
+            'el-icon-move',
+            'el-icon-music',
+            'el-icon-myspace',
+            'el-icon-network',
+            'el-icon-off',
+            'el-icon-ok-circle',
+            'el-icon-ok-sign',
+            'el-icon-ok',
+            'el-icon-opensource',
+            'el-icon-paper-clip-alt',
+            'el-icon-paper-clip',
+            'el-icon-path',
+            'el-icon-pause-alt',
+            'el-icon-pause',
+            'el-icon-pencil-alt',
+            'el-icon-pencil',
+            'el-icon-person',
+            'el-icon-phone-alt',
+            'el-icon-phone',
+            'el-icon-photo-alt',
+            'el-icon-photo',
+            'el-icon-picasa',
+            'el-icon-picture',
+            'el-icon-pinterest',
+            'el-icon-plane',
+            'el-icon-play-alt',
+            'el-icon-play-circle',
+            'el-icon-play',
+            'el-icon-plus-sign',
+            'el-icon-plus',
+            'el-icon-podcast',
+            'el-icon-print',
+            'el-icon-puzzle',
+            'el-icon-qrcode',
+            'el-icon-question-sign',
+            'el-icon-question',
+            'el-icon-quotes-alt',
+            'el-icon-quotes',
+            'el-icon-random',
+            'el-icon-record',
+            'el-icon-reddit',
+            'el-icon-refresh',
+            'el-icon-remove-circle',
+            'el-icon-remove-sign',
+            'el-icon-remove',
+            'el-icon-repeat-alt',
+            'el-icon-repeat',
+            'el-icon-resize-full',
+            'el-icon-resize-horizontal',
+            'el-icon-resize-small',
+            'el-icon-resize-vertical',
+            'el-icon-return-key',
+            'el-icon-retweet',
+            'el-icon-reverse-alt',
+            'el-icon-road',
+            'el-icon-rss',
+            'el-icon-scissors',
+            'el-icon-screen-alt',
+            'el-icon-screen',
+            'el-icon-screenshot',
+            'el-icon-search-alt',
+            'el-icon-search',
+            'el-icon-share-alt',
+            'el-icon-share',
+            'el-icon-shopping-cart-sign',
+            'el-icon-shopping-cart',
+            'el-icon-signal',
+            'el-icon-skype',
+            'el-icon-slideshare',
+            'el-icon-smiley-alt',
+            'el-icon-smiley',
+            'el-icon-soundcloud',
+            'el-icon-speaker',
+            'el-icon-spotify',
+            'el-icon-stackoverflow',
+            'el-icon-star-alt',
+            'el-icon-star-empty',
+            'el-icon-star',
+            'el-icon-step-backward',
+            'el-icon-step-forward',
+            'el-icon-stop-alt',
+            'el-icon-stop',
+            'el-icon-stumbleupon',
+            'el-icon-tag',
+            'el-icon-tags',
+            'el-icon-tasks',
+            'el-icon-text-height',
+            'el-icon-text-width',
+            'el-icon-th-large',
+            'el-icon-th-list',
+            'el-icon-th',
+            'el-icon-thumbs-down',
+            'el-icon-thumbs-up',
+            'el-icon-time-alt',
+            'el-icon-time',
+            'el-icon-tint',
+            'el-icon-torso',
+            'el-icon-trash-alt',
+            'el-icon-trash',
+            'el-icon-tumblr',
+            'el-icon-twitter',
+            'el-icon-universal-access',
+            'el-icon-unlock-alt',
+            'el-icon-unlock',
+            'el-icon-upload',
+            'el-icon-usd',
+            'el-icon-user',
+            'el-icon-viadeo',
+            'el-icon-video-alt',
+            'el-icon-video-chat',
+            'el-icon-video',
+            'el-icon-view-mode',
+            'el-icon-vimeo',
+            'el-icon-vkontakte',
+            'el-icon-volume-down',
+            'el-icon-volume-off',
+            'el-icon-volume-up',
+            'el-icon-w3c',
+            'el-icon-warning-sign',
+            'el-icon-website-alt',
+            'el-icon-website',
+            'el-icon-wheelchair',
+            'el-icon-wordpress',
+            'el-icon-wrench-alt',
+            'el-icon-wrench',
+            'el-icon-youtube',
+            'el-icon-zoom-in',
+            'el-icon-zoom-out'
+        );
+    }
+}
