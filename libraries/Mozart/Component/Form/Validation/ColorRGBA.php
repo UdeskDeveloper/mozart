@@ -1,8 +1,6 @@
 <?php
 namespace Mozart\Component\Form\Validation;
 
-use Mozart\Component\Option\Utils\OptionUtil;
-
 class ColorRGBA
 {
     /**
@@ -45,8 +43,37 @@ class ColorRGBA
             $color = '#' . $color;
         }
 
-        return array( 'hex' => $color, 'rgba' => OptionUtil::hex2rgba( $color ) );
+        return array( 'hex' => $color, 'rgba' => $this->hex2rgba( $color ) );
     }
+
+
+    /**
+     * Field Render Function.
+     * Takes the color hex value and converts to a rgba.
+     */
+    private function hex2rgba($hex, $alpha = '')
+    {
+        $hex = str_replace( "#", "", $hex );
+        if (strlen( $hex ) == 3) {
+            $r = hexdec( substr( $hex, 0, 1 ) . substr( $hex, 0, 1 ) );
+            $g = hexdec( substr( $hex, 1, 1 ) . substr( $hex, 1, 1 ) );
+            $b = hexdec( substr( $hex, 2, 1 ) . substr( $hex, 2, 1 ) );
+        } else {
+            $r = hexdec( substr( $hex, 0, 2 ) );
+            $g = hexdec( substr( $hex, 2, 2 ) );
+            $b = hexdec( substr( $hex, 4, 2 ) );
+        }
+        $rgb = $r . ',' . $g . ',' . $b;
+
+        if ('' == $alpha) {
+            return $rgb;
+        } else {
+            $alpha = floatval( $alpha );
+
+            return 'rgba(' . $rgb . ',' . $alpha . ')';
+        }
+    }
+
 
     /**
      * Field Render Function.

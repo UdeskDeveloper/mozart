@@ -77,15 +77,47 @@ class Color extends Field
             $style .= $mode . ':' . $this->value . ';';
 
             if (!empty( $this->field['output'] ) && is_array( $this->field['output'] )) {
-                $css = Redux_Functions::parseCSS( $this->field['output'], $style, $this->value );
+                $css = $this->parseCSS( $this->field['output'], $style, $this->value );
                 $this->parent->outputCSS .= $css;
             }
 
             if (!empty( $this->field['compiler'] ) && is_array( $this->field['compiler'] )) {
-                $css = Redux_Functions::parseCSS( $this->field['compiler'], $style, $this->value );
+                $css = $this->parseCSS( $this->field['compiler'], $style, $this->value );
                 $this->parent->compilerCSS .= $css;
 
             }
         }
+    }
+
+    /**
+     * Parse CSS from output/compiler array
+     *
+     * @return $css CSS string
+     */
+    private function parseCSS( $cssArray = array(), $style = '', $value = '' )
+    {
+        $css = '';
+
+        if (count( $cssArray ) == 0) {
+            return $css;
+        } else {
+
+            $keys = implode( ",", $cssArray );
+
+            foreach ($cssArray as $element => $selector) {
+
+                // The old way
+                if ($element === 0) {
+                    return $keys . "{" . $style . '}';
+                }
+
+                // New way continued
+                $cssStyle = $element . ':' . $value . ';';
+
+                $css .= $selector . '{' . $cssStyle . '}';
+            }
+        }
+
+        return $css;
     }
 }

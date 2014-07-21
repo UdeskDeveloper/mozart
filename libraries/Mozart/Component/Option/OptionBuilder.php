@@ -7,7 +7,6 @@ namespace Mozart\Component\Option;
 
 use Mozart\Component\Debug\SystemInfo;
 use Mozart\Component\Form\Field\Typography;
-use Mozart\Component\Option\Utils\OptionUtil;
 use Mozart\Component\Support\Str;
 use Mozart\Component\Option\Extension\ExtensionManager;
 use Mozart\Component\Option\Section\SectionManager;
@@ -1488,7 +1487,7 @@ class OptionBuilder implements OptionBuilderInterface
         }
 
 
-        if (OptionUtil::isFieldInUseByType(
+        if ($this->isFieldInUseByType(
             $this->getFields(),
             array(
                 'background',
@@ -1623,7 +1622,7 @@ class OptionBuilder implements OptionBuilderInterface
         wp_enqueue_script( 'jquery-ui-dialog' );
 
         // Load jQuery sortable for slides, sorter, sortable and group
-        if (OptionUtil::isFieldInUseByType(
+        if ($this->isFieldInUseByType(
             $this->getFields(),
             array(
                 'slides',
@@ -1638,17 +1637,17 @@ class OptionBuilder implements OptionBuilderInterface
         }
 
         // Load jQuery UI Datepicker for date
-        if (OptionUtil::isFieldInUseByType( $this->getFields(), array( 'date' ) )) {
+        if ($this->isFieldInUseByType( $this->getFields(), array( 'date' ) )) {
             wp_enqueue_script( 'jquery-ui-datepicker' );
         }
 
         // Load jQuery UI Accordion for slides and group
-        if (OptionUtil::isFieldInUseByType( $this->getFields(), array( 'slides', 'group' ) )) {
+        if ($this->isFieldInUseByType( $this->getFields(), array( 'slides', 'group' ) )) {
             wp_enqueue_script( 'jquery-ui-accordion' );
         }
 
         // Load wp-color-picker for color, color_gradient, link_color, border, background and typography
-        if (OptionUtil::isFieldInUseByType(
+        if ($this->isFieldInUseByType(
             $this->getFields(),
             array(
                 'background',
@@ -3927,5 +3926,32 @@ class OptionBuilder implements OptionBuilderInterface
             'el-icon-zoom-in',
             'el-icon-zoom-out'
         );
+    }
+
+
+    public function isFieldInUseByType( $fields, $field = array() )
+    {
+        foreach ($field as $name) {
+            if (array_key_exists( $name, $fields )) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function isFieldInUse($sections, $field)
+    {
+        foreach ($sections as $k => $section) {
+            if (!isset( $section['title'] )) {
+                continue;
+            }
+
+            if (isset( $section['fields'] ) && !empty( $section['fields'] )) {
+                if (in_array_recursive( $field, $section['fields'] )) {
+                    return true;
+                }
+            }
+        }
     }
 }

@@ -66,21 +66,82 @@ class ColorRGBA extends Field
             if ($this->value['alpha'] == "0.00" || empty( $this->value['color'] )) {
                 $style = $mode . ':transparent;';
             } elseif (!empty( $this->value['color'] )) {
-                $style = $mode . ':rgba(' . Utils\Option::hex2rgba(
+                $style = $mode . ':rgba(' . $this->hex2rgba(
                         $this->value['color']
                     ) . ',' . $this->value['alpha'] . ');';
             }
 
             if (!empty( $this->field['output'] ) && is_array( $this->field['output'] )) {
-                $css = Redux_Functions::parseCSS( $this->field['output'], $style, $this->value );
+                $css = $this->parseCSS( $this->field['output'], $style, $this->value );
                 $this->parent->outputCSS .= $css;
             }
 
             if (!empty( $this->field['compiler'] ) && is_array( $this->field['compiler'] )) {
-                $css = Redux_Functions::parseCSS( $this->field['compiler'], $style, $this->value );
+                $css = $this->parseCSS( $this->field['compiler'], $style, $this->value );
                 $this->parent->compilerCSS .= $css;
             }
         }
+    }
+
+
+    /**
+     * Field Render Function.
+     * Takes the color hex value and converts to a rgba.
+     */
+    private function hex2rgba($hex, $alpha = '')
+    {
+        $hex = str_replace( "#", "", $hex );
+        if (strlen( $hex ) == 3) {
+            $r = hexdec( substr( $hex, 0, 1 ) . substr( $hex, 0, 1 ) );
+            $g = hexdec( substr( $hex, 1, 1 ) . substr( $hex, 1, 1 ) );
+            $b = hexdec( substr( $hex, 2, 1 ) . substr( $hex, 2, 1 ) );
+        } else {
+            $r = hexdec( substr( $hex, 0, 2 ) );
+            $g = hexdec( substr( $hex, 2, 2 ) );
+            $b = hexdec( substr( $hex, 4, 2 ) );
+        }
+        $rgb = $r . ',' . $g . ',' . $b;
+
+        if ('' == $alpha) {
+            return $rgb;
+        } else {
+            $alpha = floatval( $alpha );
+
+            return 'rgba(' . $rgb . ',' . $alpha . ')';
+        }
+    }
+
+
+    /**
+     * Parse CSS from output/compiler array
+     *
+     * @return $css CSS string
+     */
+    private function parseCSS( $cssArray = array(), $style = '', $value = '' )
+    {
+        $css = '';
+
+        if (count( $cssArray ) == 0) {
+            return $css;
+        } else {
+
+            $keys = implode( ",", $cssArray );
+
+            foreach ($cssArray as $element => $selector) {
+
+                // The old way
+                if ($element === 0) {
+                    return $keys . "{" . $style . '}';
+                }
+
+                // New way continued
+                $cssStyle = $element . ':' . $value . ';';
+
+                $css .= $selector . '{' . $cssStyle . '}';
+            }
+        }
+
+        return $css;
     }
 
     /**

@@ -63,7 +63,7 @@ class Dimensions extends Field
          */
 
         // If units field has a value but is not an acceptable value, unset the variable
-        if (isset( $this->field['units'] ) && !Utils\Option::array_in_array(
+        if (isset( $this->field['units'] ) && !in_array_recursive(
                 $this->field['units'],
                 array(
                     '',
@@ -84,7 +84,7 @@ class Dimensions extends Field
         }
 
          // if there is a default unit value  but is not an accepted value, unset the variable
-        if (isset( $this->value['units'] ) && !Utils\Option::array_in_array(
+        if (isset( $this->value['units'] ) && !in_array_recursive(
                 $this->value['units'],
                 array(
                     '',

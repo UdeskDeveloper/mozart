@@ -2,7 +2,6 @@
 namespace Mozart\Component\Form\Field;
 
 use Mozart\Component\Form\Field;
-use Mozart\Component\Option\Utils\OptionUtil;
 
 class Spacing extends Field
 {
@@ -64,7 +63,7 @@ class Spacing extends Field
          */
 
         // If units field has a value but is not an acceptable value, unset the variable
-        if (isset( $this->field['units'] ) && !OptionUtil::array_in_array(
+        if (isset( $this->field['units'] ) && !in_array_recursive(
                 $this->field['units'],
                 array(
                     '',
@@ -86,7 +85,7 @@ class Spacing extends Field
         }
 
         // if there is a default unit value  but is not an accepted value, unset the variable
-        if (isset( $this->value['units'] ) && !OptionUtil::array_in_array(
+        if (isset( $this->value['units'] ) && !in_array_recursive(
                 $this->value['units'],
                 array(
                     '',

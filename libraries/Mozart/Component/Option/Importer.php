@@ -1,8 +1,6 @@
 <?php
 namespace Mozart\Component\Option;
 
-use Mozart\Component\Option\Utils\OptionUtil;
-
 class Importer
 {
     private $enabled = false;
@@ -155,7 +153,7 @@ class Importer
 
     public function checkEnabled()
     {
-        $this->setEnabled( OptionUtil::isFieldInUse( $this->builder->getSections(), 'import_export' ) );
+        $this->setEnabled( $this->builder->isFieldInUse( $this->builder->getSections(), 'import_export' ) );
     }
 
     public function render_tab()
