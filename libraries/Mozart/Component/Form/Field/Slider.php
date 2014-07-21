@@ -146,8 +146,6 @@ class Slider extends Field
 
     /**
      * Clean the field data to the fields defaults given the parameters.
-     *
-     * @since Redux_Framework 3.1.8
      */
     public function clean()
     {
@@ -191,8 +189,6 @@ class Slider extends Field
     /**
      * Enqueue Function.
      * If this field requires any scripts, or css define this function and register/enqueue the scripts/css
-     *
-     * @since ReduxFramework 3.1.8
      */
     public function enqueue()
     {

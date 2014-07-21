@@ -2137,21 +2137,6 @@ class OptionBuilder implements OptionBuilderInterface
                 continue;
             }
 
-            /**
-             * @param array $section section configuration
-             */
-            $section = apply_filters( "redux-section-{$k}-modifier-{$this->params['opt_name']}", $section );
-
-            /**
-             * @param array $section section configuration
-             */
-            if (isset( $section['id'] )) {
-                $section = apply_filters(
-                    "redux/options/{$this->params['opt_name']}/section/{$section['id']}",
-                    $section
-                );
-            }
-
             if (!isset( $section['title'] )) {
                 $section['title'] = "";
             }
@@ -2667,20 +2652,9 @@ class OptionBuilder implements OptionBuilderInterface
                     }
 
                     if (isset( $field['validate'] )) {
-                        $validate = 'Redux_Validation_' . $field['validate'];
+                        $validateClass = 'Mozart\\Component\\Form\\Validation\\' . Str::camel($field['validate']);
 
-                        if (!class_exists( $validate )) {
-
-                            $class_file = self::$_dir . "src/validation/{$field['validate']}/validation_{$field['validate']}.php";
-
-                            if ($class_file) {
-                                if (file_exists( $class_file )) {
-                                    require_once( $class_file );
-                                }
-                            }
-                        }
-
-                        if (class_exists( $validate )) {
+                        if (class_exists( $validateClass )) {
 
                             if (empty ( $options[$field['id']] )) {
                                 $options[$field['id']] = '';
@@ -2726,7 +2700,7 @@ class OptionBuilder implements OptionBuilderInterface
                                     $pofi = trim( $plugin_options[$field['id']] );
                                 }
 
-                                $validation = new $validate( $this, $field, $pofi, $options[$field['id']] );
+                                $validation = new $validateClass( $this, $field, $pofi, $options[$field['id']] );
                                 $plugin_options[$field['id']] = $validation->value;
 
                                 if (isset( $validation->error )) {

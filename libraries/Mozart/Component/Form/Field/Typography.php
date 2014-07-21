@@ -44,6 +44,9 @@ class Typography extends Field
      * Field Constructor.
      *
      * Required - must call the parent constructor, then assign field and value to vars, and obviously call the render field function
+     * @param array $field
+     * @param string $value
+     * @param $parent
      */
     public function __construct( $field = array(), $value = '', $parent )
     {
@@ -724,7 +727,8 @@ class Typography extends Field
      *
      * Creates the google fonts link.
      *
-     *
+     * @param $fonts
+     * @return string
      */
     public function makeGoogleWebfontLink($fonts)
     {
@@ -766,8 +770,8 @@ class Typography extends Field
      * makeGoogleWebfontString Function.
      *
      * Creates the google fonts link.
-     *
-     * @since ReduxFramework 3.1.8
+     * @param $fonts
+     * @return string
      */
     public function makeGoogleWebfontString($fonts)
     {
@@ -1162,6 +1166,8 @@ class Typography extends Field
      * getSubsets Function.
      *
      * Clean up the Google Webfonts subsets to be human readable
+     * @param $var
+     * @return array
      */
     private function getSubsets($var)
     {
@@ -1190,6 +1196,8 @@ class Typography extends Field
      * getVariants Function.
      *
      * Clean up the Google Webfonts variants to be human readable
+     * @param $var
+     * @return array
      */
     private function getVariants($var)
     {

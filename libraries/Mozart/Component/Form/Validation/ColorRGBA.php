@@ -6,8 +6,10 @@ class ColorRGBA
     /**
      * Field Constructor.
      * Required - must call the parent constructor, then assign field and value to vars, and obviously call the render field function
-     *
-     * @since ReduxFramework 3.0.4
+     * @param $parent
+     * @param $field
+     * @param $value
+     * @param $current
      */
     function __construct( $parent, $field, $value, $current )
     {
@@ -26,8 +28,8 @@ class ColorRGBA
     /**
      * Validate Color to RGBA
      * Takes the user's input color value and returns it only if it's a valid color.
-     *
-     * @since ReduxFramework 3.0.3
+     * @param $color
+     * @return array
      */
     function validate_color_rgba( $color )
     {
@@ -50,6 +52,9 @@ class ColorRGBA
     /**
      * Field Render Function.
      * Takes the color hex value and converts to a rgba.
+     * @param $hex
+     * @param string $alpha
+     * @return string
      */
     private function hex2rgba($hex, $alpha = '')
     {

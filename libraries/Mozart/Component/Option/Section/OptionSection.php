@@ -5,17 +5,11 @@
 
 namespace Mozart\Component\Option\Section;
 
-/**
- * Class OptionSection
- *
- * @package Mozart\Component\Option\Section
- */
 use Traversable;
 
 /**
  * Class OptionSection
- *
- * @package Mozart\Component\Option\Section\Redux
+ * @package Mozart\Component\Option\Section
  */
 class OptionSection implements SectionInterface, \ArrayAccess
 {
@@ -33,6 +27,9 @@ class OptionSection implements SectionInterface, \ArrayAccess
         $this->section               = array();
     }
 
+    /**
+     * @return array
+     */
     public function getConfiguration()
     {
         $conf = array(
