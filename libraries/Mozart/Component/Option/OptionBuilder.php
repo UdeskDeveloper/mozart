@@ -484,7 +484,7 @@ class OptionBuilder implements OptionBuilderInterface
     }
 
     /**
-     *
+     * load translations
      */
     private function loadTranslations()
     {
@@ -492,12 +492,12 @@ class OptionBuilder implements OptionBuilderInterface
 
         if (strpos( $locale, '_' ) === false) {
             if (file_exists(
-                self::$_dir . 'languages/' . strtolower( $locale ) . '_' . strtoupper( $locale ) . '.mo'
+                \Mozart::parameter('wp.plugin.dir') . '/mozart/translations/option/' . strtolower( $locale ) . '_' . strtoupper( $locale ) . '.mo'
             )) {
                 $locale = strtolower( $locale ) . '_' . strtoupper( $locale );
             }
         }
-        load_textdomain( 'mozart-options', self::$_dir . 'languages/' . $locale . '.mo' );
+        load_textdomain( 'mozart-options', \Mozart::parameter('wp.plugin.dir') . '/mozart/translations/option/' . $locale . '.mo' );
     }
 
     /**
