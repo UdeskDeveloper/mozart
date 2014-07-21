@@ -233,6 +233,7 @@ class OptionBuilder implements OptionBuilderInterface
 
     /**
      * @param array $params
+     * @return bool
      */
     public function boot( $params = array() )
     {
@@ -314,6 +315,7 @@ class OptionBuilder implements OptionBuilderInterface
     }
 
     /**
+     * @param $param
      * @return array
      */
     public function getParam( $param )
@@ -686,7 +688,9 @@ class OptionBuilder implements OptionBuilderInterface
 
     /**
      * Get Wordpress specific data from the DB and return in a usable array
-     *
+     * @param bool $type
+     * @param array $params
+     * @return array|string
      */
     public function get_wordpress_data( $type = false, $params = array() )
     {
@@ -1079,6 +1083,11 @@ class OptionBuilder implements OptionBuilderInterface
     /**
      * Class Add Sub Menu Function, creates options submenu in Wordpress admin area.
      *
+     * @param $page_parent
+     * @param $page_title
+     * @param $menu_title
+     * @param $page_permissions
+     * @param $page_slug
      * @return      void
      */
     private function add_submenu( $page_parent, $page_title, $menu_title, $page_permissions, $page_slug )
@@ -1257,7 +1266,8 @@ class OptionBuilder implements OptionBuilderInterface
      */
     public function _admin_bar_menu()
     {
-        global $menu, $submenu, $wp_admin_bar;
+        global /** @var \WP_Admin_Bar $wp_admin_bar */
+        $menu, $submenu, $wp_admin_bar;
 
         $theme_data = wp_get_theme();
 
@@ -1342,42 +1352,45 @@ class OptionBuilder implements OptionBuilderInterface
                 continue;
             }
 
-            if (isset( $section['fields'] )) {
-                foreach ($section['fields'] as $fieldk => $field) {
-                    if (isset( $field['type'] ) && $field['type'] != "callback") {
-                        $field_class = "Mozart\\Component\\Form\\Field\\" . Str::camel( $field['type'] );
-                        if (!isset( $field['compiler'] )) {
-                            $field['compiler'] = "";
-                        }
+            if (!isset( $section['fields'] )) {
+                continue;
+            }
+            foreach ($section['fields'] as $fieldk => $field) {
+                if (!isset( $field['type'] ) || $field['type'] == "callback") {
+                    continue;
+                }
 
-                        if (false === class_exists( $field_class )) {
-                            if (false === class_exists( $field_class . 'Field' )) {
-                                continue;
-                            } else {
-                                $field_class = $field_class . 'Field';
-                            }
-                        }
+                $fieldClass = "Mozart\\Component\\Form\\Field\\" . Str::camel( $field['type'] );
+                if (!isset( $field['compiler'] )) {
+                    $field['compiler'] = "";
+                }
 
-                        if (!empty( $this->options[$field['id']] ) && method_exists(
-                                $field_class,
-                                'output'
-                            ) && $this->_can_output_css( $field )
-                        ) {
-                            $field = apply_filters( "redux/field/{$this->params['opt_name']}/output_css", $field );
-
-                            if (!empty( $field['output'] ) && !is_array( $field['output'] )) {
-                                $field['output'] = array( $field['output'] );
-                            }
-
-                            $value = isset( $this->options[$field['id']] ) ? $this->options[$field['id']] : '';
-                            $enqueue = new $field_class( $field, $value, $this );
-
-                            if (( ( isset( $field['output'] ) && !empty( $field['output'] ) ) || ( isset( $field['compiler'] ) && !empty( $field['compiler'] ) ) || $field['type'] == "typography" || $field['type'] == "icon_select" )) {
-                                $enqueue->output();
-                            }
-                        }
+                if (false === class_exists( $fieldClass )) {
+                    if (false === class_exists( $fieldClass . 'Field' )) {
+                        continue;
+                    } else {
+                        $fieldClass = $fieldClass . 'Field';
                     }
                 }
+
+                if (!empty( $this->options[$field['id']] ) && method_exists(
+                        $fieldClass,
+                        'output'
+                    ) && $this->_can_output_css( $field )
+                ) {
+                    if (!empty( $field['output'] ) && !is_array( $field['output'] )) {
+                        $field['output'] = array( $field['output'] );
+                    }
+
+                    $value = isset( $this->options[$field['id']] ) ? $this->options[$field['id']] : '';
+                    $enqueue = new $fieldClass( $field, $value, $this );
+
+                    if (( ( isset( $field['output'] ) && !empty( $field['output'] ) ) || ( isset( $field['compiler'] ) && !empty( $field['compiler'] ) ) || $field['type'] == "typography" || $field['type'] == "icon_select" )) {
+                        $enqueue->output();
+                    }
+                }
+
+
             }
         }
 
@@ -1691,36 +1704,36 @@ class OptionBuilder implements OptionBuilderInterface
                         continue;
                     }
 
-                    $field_class = "Mozart\\Component\\Form\\Field\\" . Str::camel( $field['type'] );
+                    $fieldClass = "Mozart\\Component\\Form\\Field\\" . Str::camel( $field['type'] );
 
-                    if (false === class_exists( $field_class )) {
-                        if (false === class_exists( $field_class . 'Field' )) {
+                    if (false === class_exists( $fieldClass )) {
+                        if (false === class_exists( $fieldClass . 'Field' )) {
                             continue;
                         } else {
-                            $field_class = $field_class . 'Field';
+                            $fieldClass = $fieldClass . 'Field';
                         }
                     }
 
-                    if (false === method_exists( $field_class, 'enqueue' )
-                        && false === method_exists( $field_class, 'localize' )
+                    if (false === method_exists( $fieldClass, 'enqueue' )
+                        && false === method_exists( $fieldClass, 'localize' )
                     ) {
                         continue;
                     }
                     if (!isset( $this->options[$field['id']] )) {
                         $this->options[$field['id']] = "";
                     }
-                    $theField = new $field_class( $field, $this->options[$field['id']], $this );
+                    $theField = new $fieldClass( $field, $this->options[$field['id']], $this );
 
                     // Move dev_mode check to a new if/then block
                     if (!wp_script_is(
                             'redux-field-' . $field['type'] . '-js',
                             'enqueued'
-                        ) && class_exists( $field_class ) && method_exists( $field_class, 'enqueue' )
+                        ) && class_exists( $fieldClass ) && method_exists( $fieldClass, 'enqueue' )
                     ) {
                         $theField->enqueue();
                     }
 
-                    if (method_exists( $field_class, 'localize' )) {
+                    if (method_exists( $fieldClass, 'localize' )) {
                         $params = $theField->localize( $field );
                         if (!isset( $this->localize_data[$field['type']] )) {
                             $this->localize_data[$field['type']] = array();
@@ -1949,6 +1962,7 @@ class OptionBuilder implements OptionBuilderInterface
     /**
      * Return default output string for use in panel
      *
+     * @param $field
      * @return      string default_output
      */
     public function get_default_output_string( $field )
@@ -2988,35 +3002,30 @@ class OptionBuilder implements OptionBuilderInterface
         if (isset( $this->transients['last_save_mode'] )) {
 
             if ($this->transients['last_save_mode'] == "import") {
-                echo '<div class="admin-notice notice-blue saved_notice"><strong>' . apply_filters(
-                        "redux-imported-text-{$this->params['opt_name']}",
-                        __( 'Settings Imported!', 'mozart-options' )
-                    ) . '</strong></div>';
+                echo '<div class="admin-notice notice-blue saved_notice"><strong>'
+                    . __( 'Settings Imported!', 'mozart-options' )
+                    . '</strong></div>';
             } elseif ($this->transients['last_save_mode'] == "defaults") {
-                echo '<div class="saved_notice admin-notice notice-yellow"><strong>' . apply_filters(
-                        "redux-defaults-text-{$this->params['opt_name']}",
-                        __( 'All Defaults Restored!', 'mozart-options' )
-                    ) . '</strong></div>';
+                echo '<div class="saved_notice admin-notice notice-yellow"><strong>' .
+                    __( 'All Defaults Restored!', 'mozart-options' )
+                    . '</strong></div>';
             } elseif ($this->transients['last_save_mode'] == "defaults_section") {
 
-                echo '<div class="saved_notice admin-notice notice-yellow"><strong>' . apply_filters(
-                        "redux-defaults-section-text-{$this->params['opt_name']}",
-                        __( 'Section Defaults Restored!', 'mozart-options' )
-                    ) . '</strong></div>';
+                echo '<div class="saved_notice admin-notice notice-yellow"><strong>' .
+                    __( 'Section Defaults Restored!', 'mozart-options' )
+                    . '</strong></div>';
             } else {
-                echo '<div class="saved_notice admin-notice notice-green"><strong>' . apply_filters(
-                        "redux-saved-text-{$this->params['opt_name']}",
-                        __( 'Settings Saved!', 'mozart-options' )
-                    ) . '</strong></div>';
+                echo '<div class="saved_notice admin-notice notice-green"><strong>' .
+                    __( 'Settings Saved!', 'mozart-options' )
+                    . '</strong></div>';
             }
             unset( $this->transients['last_save_mode'] );
 
         }
 
-        echo '<div class="redux-save-warn notice-yellow"><strong>' . apply_filters(
-                "redux-changed-text-{$this->params['opt_name']}",
-                __( 'Settings have changed, you should save them!', 'mozart-options' )
-            ) . '</strong></div>';
+        echo '<div class="redux-save-warn notice-yellow"><strong>' .
+            __( 'Settings have changed, you should save them!', 'mozart-options' )
+            . '</strong></div>';
 
         echo '<div class="redux-field-errors notice-red"><strong><span></span> ' . __(
                 'error(s) were found!',
@@ -3272,10 +3281,10 @@ class OptionBuilder implements OptionBuilderInterface
                 return;
             }
 
-            $field_class = "Mozart\\Component\\Form\\Field\\" . Str::camel( $field['type'] );
+            $fieldClass = "Mozart\\Component\\Form\\Field\\" . Str::camel( $field['type'] );
 
-            if (false === class_exists( $field_class )) {
-                if (false === class_exists( $field_class . 'Field' )) {
+            if (false === class_exists( $fieldClass )) {
+                if (false === class_exists( $fieldClass . 'Field' )) {
                     return false;
                 }
             }
@@ -3290,7 +3299,7 @@ class OptionBuilder implements OptionBuilderInterface
                 $field['name_suffix'] = "";
             }
 
-            $render = new $field_class( $field, $value, $this );
+            $render = new $fieldClass( $field, $value, $this );
             ob_start();
 
             $render->render();
