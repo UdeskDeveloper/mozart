@@ -171,10 +171,6 @@ class OptionBuilder implements OptionBuilderInterface
      * @var Debugger
      */
     protected $debugger;
-    /**
-     * @var Tracker
-     */
-    protected $tracker;
 
     /**
      * @var ExtensionManager
@@ -191,7 +187,6 @@ class OptionBuilder implements OptionBuilderInterface
     /**
      * @param Importer $importer
      * @param Debugger $debugger
-     * @param Tracker $tracker
      * @param ExtensionManager $extensionManager
      * @param SectionManager $sectionManager
      * @param $mozartRootUrl
@@ -200,7 +195,6 @@ class OptionBuilder implements OptionBuilderInterface
     public function __construct(
         Importer $importer,
         Debugger $debugger,
-        Tracker $tracker,
         ExtensionManager $extensionManager,
         SectionManager $sectionManager,
         $mozartRootUrl,
@@ -208,7 +202,6 @@ class OptionBuilder implements OptionBuilderInterface
     ) {
         $this->importer = $importer;
         $this->debugger = $debugger;
-        $this->tracker = $tracker;
         $this->extensionManager = $extensionManager;
         $this->sectionManager = $sectionManager;
         $this->mozartRootUrl = $mozartRootUrl;
@@ -239,8 +232,6 @@ class OptionBuilder implements OptionBuilderInterface
 
         // Grab database values
         $this->loadOptions();
-
-        $this->tracker->load( $this );
 
         // Display admin notices in dev_mode
         if (true == $this->params['dev_mode']) {

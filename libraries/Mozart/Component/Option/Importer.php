@@ -1,14 +1,30 @@
 <?php
 namespace Mozart\Component\Option;
 
+/**
+ * Class Importer
+ * @package Mozart\Component\Option
+ */
 class Importer
 {
+    /**
+     * @var bool
+     */
     private $enabled = false;
 
+    /**
+     * @var array
+     */
     public $field_args = array();
 
+    /**
+     * @var
+     */
     private $builder;
 
+    /**
+     * @param OptionBuilderInterface $builder
+     */
     public function init(OptionBuilderInterface $builder)
     {
         $this->builder = $builder;
@@ -151,11 +167,17 @@ class Importer
         $this->enabled = $enabled;
     }
 
+    /**
+     *
+     */
     public function checkEnabled()
     {
         $this->setEnabled( $this->builder->isFieldInUse( $this->builder->getSections(), 'import_export' ) );
     }
 
+    /**
+     *
+     */
     public function render_tab()
     {
         echo '<li id="import_export_default_section_group_li" class="redux-group-tab-link-li">';
@@ -176,6 +198,9 @@ class Importer
         echo '<li class="divide">&nbsp;</li>';
     }
 
+    /**
+     *
+     */
     public function add_submenu()
     {
         add_submenu_page(
@@ -188,6 +213,9 @@ class Importer
         );
     }
 
+    /**
+     *
+     */
     public function link_options()
     {
         if (!isset( $_GET['secret'] ) || $_GET['secret'] != md5(
@@ -195,7 +223,6 @@ class Importer
             )
         ) {
             wp_die( 'Invalid Secret for options use' );
-            exit;
         }
 
         $var = $this->builder->options;
@@ -204,11 +231,12 @@ class Importer
             unset( $var['REDUX_imported'] );
         }
 
-        echo json_encode( $var );
-
-        die();
+        die( json_encode( $var ));
     }
 
+    /**
+     *
+     */
     public function download_options()
     {
         if (!isset( $_GET['secret'] ) || $_GET['secret'] != md5(
@@ -241,9 +269,6 @@ class Importer
             header( 'Cache-Control: must-revalidate' );
             header( 'Pragma: public' );
 
-            echo $content;
-
-            exit;
         } else {
             header( "Expires: Mon, 26 Jul 1997 05:00:00 GMT" );
             header( "Last-Modified: " . gmdate( "D, d M Y H:i:s" ) . "GMT" );
@@ -251,11 +276,7 @@ class Importer
             header( 'Cache-Control: no-store, no-cache, must-revalidate' );
             header( 'Cache-Control: post-check=0, pre-check=0', false );
             header( 'Pragma: no-cache' );
-
-            // Can't include the type. Thanks old Firefox and IE. BAH.
-            //header("Content-type: application/json");
-            echo $content;
-            exit;
         }
+        die( $content);
     }
 }
