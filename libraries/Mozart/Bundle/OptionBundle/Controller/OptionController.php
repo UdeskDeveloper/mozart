@@ -159,8 +159,6 @@ class OptionController
 
         // Activate plugin when new blog is added
         add_action( 'wpmu_new_blog', array( $this, 'activate_new_site' ) );
-
-        add_action( 'activated_plugin', array( $this, 'load_first' ) );
     }
 
 
@@ -239,21 +237,6 @@ class OptionController
 
                 // Add the dismiss request to the user meta.
                 update_user_meta( $userid, 'ignore_' . $id, $val );
-            }
-        }
-    }
-
-    /**
-     *
-     */
-    public function load_first()
-    {
-        $path = str_replace( WP_PLUGIN_DIR . '/', '', __FILE__ );
-        if ($plugins = get_option( 'active_plugins' )) {
-            if ($key = array_search( $path, $plugins )) {
-                array_splice( $plugins, $key, 1 );
-                array_unshift( $plugins, $path );
-                update_option( 'active_plugins', $plugins );
             }
         }
     }
