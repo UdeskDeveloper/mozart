@@ -815,7 +815,7 @@ class OptionBuilder implements OptionBuilderInterface
                         }
                         break;
                     case "roles":
-                        /** @global WP_Roles $wp_roles */
+                        /** @global \WP_Roles $wp_roles */
                         global $wp_roles;
 
                         $data = $wp_roles->get_names();
@@ -830,7 +830,7 @@ class OptionBuilder implements OptionBuilderInterface
                         }
                         break;
                     case "capabilities":
-                        /** @global WP_Roles $wp_roles */
+                        /** @global \WP_Roles $wp_roles */
                         global $wp_roles;
 
                         foreach ($wp_roles->roles as $role) {
