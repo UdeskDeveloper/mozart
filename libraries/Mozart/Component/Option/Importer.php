@@ -14,6 +14,9 @@ class Importer
     public function init( OptionBuilderInterface $builder )
     {
         $this->builder = $builder;
+
+        $this->enabled = OptionUtil::isFieldInUse( $this->builder->getSections(), 'import_export' );
+
         add_action( "wp_ajax_redux_link_options", array( $this, "link_options" ) );
         add_action( "wp_ajax_nopriv_redux_link_options", array( $this, "link_options" ) );
 
@@ -34,16 +37,16 @@ class Importer
         $c = '';
         $bDoClose = false;
 
-        if (false == $this->is_field) {
+        if (false == $this->isEnabled()) {
             $c = 'redux-group-tab hide';
-        } elseif (true == $this->is_field && false == $this->field_args['full_width']) {
+        } elseif (true == $this->isEnabled() && false == $this->field_args['full_width']) {
             echo '</td></tr></table><table class="form-table no-border redux-group-table redux-raw-table" style="margin-top: -20px;"><tbody><tr><td>';
             $bDoClose = true;
         }
 
         echo '<div id="import_export_default_section_group' . '" class="' . $c . '">';
 
-        if (false == $this->is_field) {
+        if (false == $this->isEnabled()) {
             echo '<h3>' . __( 'Import / Export Options', 'mozart-options' ) . '</h3>';
         }
 
@@ -148,11 +151,6 @@ class Importer
     public function setEnabled( $enabled )
     {
         $this->enabled = $enabled;
-    }
-
-    public function in_field()
-    {
-        $this->enabled = OptionUtil::isFieldInUse( $this->builder->getSections(), 'import_export' );
     }
 
     public function render_tab()
