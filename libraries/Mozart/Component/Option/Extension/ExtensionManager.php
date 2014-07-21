@@ -5,7 +5,6 @@
 
 namespace Mozart\Component\Option\Extension;
 
-
 /**
  * Class ExtensionManager
  * @package Mozart\Component\Option\Extension
@@ -26,7 +25,7 @@ class ExtensionManager
     /**
      * @param ExtensionInterface $extension
      */
-    public function addExtension( ExtensionInterface $extension )
+    public function addExtension(ExtensionInterface $extension)
     {
         $this->extensions[] = $extension;
     }
@@ -38,4 +37,4 @@ class ExtensionManager
     {
         return $this->extensions;
     }
-} 
+}

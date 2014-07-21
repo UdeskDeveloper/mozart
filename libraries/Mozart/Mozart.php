@@ -30,7 +30,7 @@ class Mozart
      * @param ContainerInterface $container A new container instance to replace the current.
      *
      */
-    public static function setContainer( ContainerInterface $container = null )
+    public static function setContainer(ContainerInterface $container = null)
     {
         static::$container = $container;
     }
@@ -55,12 +55,12 @@ class Mozart
      * accessor method below. If it is listed below, those methods are preferred
      * as they can return useful type hints.
      *
-     * @param string $id The ID of the service to retrieve.
-     * @param int $invalidBehavior The behavior when the service does not exist
+     * @param string $id              The ID of the service to retrieve.
+     * @param int    $invalidBehavior The behavior when the service does not exist
      *
      * @return mixed The specified service.
      */
-    public static function service( $id, $invalidBehavior = ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE )
+    public static function service($id, $invalidBehavior = ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE)
     {
         return static::$container->get( $id, $invalidBehavior );
     }
@@ -72,7 +72,7 @@ class Mozart
      *
      * @return bool true if the service is defined, false otherwise
      */
-    public static function hasService( $id )
+    public static function hasService($id)
     {
         return static::$container && static::$container->has( $id );
     }
@@ -87,16 +87,16 @@ class Mozart
      * @throws InvalidArgumentException if the parameter is not defined
      *
      */
-    public static function parameter( $name )
+    public static function parameter($name)
     {
         return self::$container->getParameter( $name );
     }
 
     /**
-     * @param array $bundles
+     * @param  array            $bundles
      * @return array|mixed|void
      */
-    public static function registerAdditionalBundles( array $bundles )
+    public static function registerAdditionalBundles(array $bundles)
     {
         $bundles = apply_filters( 'register_mozart_bundle', $bundles );
 

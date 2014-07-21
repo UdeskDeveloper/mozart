@@ -6,7 +6,7 @@ class Debugger
 {
     protected $builder;
 
-    public function init( OptionBuilderInterface $builder )
+    public function init(OptionBuilderInterface $builder)
     {
         $this->builder = $builder;
     }

@@ -12,7 +12,7 @@ class SystemInfo
     /**
      * Get system info
      *
-     * @return      string $return A string containing all system info
+     * @return string $return A string containing all system info
      */
     public static function get( $args = array() )
     {
@@ -137,7 +137,6 @@ class SystemInfo
             if (!in_array( $plugin_path, $active_plugins )) {
                 continue;
             }
-
 
             $return .= $plugin['Name'] . ': ' . $plugin['Version'] . "\n";
         }
@@ -288,4 +287,4 @@ class SystemInfo
 
         return $return;
     }
-} 
+}

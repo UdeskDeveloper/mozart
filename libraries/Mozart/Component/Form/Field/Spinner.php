@@ -10,7 +10,7 @@ class Spinner extends Field
      * Required - must call the parent constructor, then assign field and value to vars, and obviously call the render field function
      *
      */
-    function __construct( $field = array(), $value = '', $parent )
+    public function __construct( $field = array(), $value = '', $parent )
     {
         $this->parent = $parent;
         $this->field = $field;
@@ -21,7 +21,7 @@ class Spinner extends Field
      * Field Render Function.
      * Takes the vars and outputs the HTML for the field in the settings
      */
-    function render()
+    public function render()
     {
         // Don't allow input edit if there's a step
         $readonly = "";
@@ -36,7 +36,7 @@ class Spinner extends Field
     /**
      * Clean the field data to the fields defaults given the parameters.
      */
-    function clean()
+    public function clean()
     {
         if (empty( $this->field['min'] )) {
             $this->field['min'] = 0;
@@ -82,7 +82,7 @@ class Spinner extends Field
      *
      *
      */
-    function enqueue()
+    public function enqueue()
     {
         wp_enqueue_script(
             'redux-field-spinner-custom-js',
@@ -125,7 +125,7 @@ class Spinner extends Field
      *
      * @return array Params to be saved as a javascript object accessable to the UI.
      */
-    function localize( $field, $value = "" )
+    public function localize($field, $value = "")
     {
         $params = array(
             'id'      => '',

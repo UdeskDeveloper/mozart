@@ -10,7 +10,7 @@ class Text extends Field
      * Required - must call the parent constructor, then assign field and value to vars, and obviously call the render field function
      *
      */
-    function __construct( $field = array(), $value = '', $parent )
+    public function __construct( $field = array(), $value = '', $parent )
     {
         $this->parent = $parent;
         $this->field = $field;
@@ -21,7 +21,7 @@ class Text extends Field
      * Field Render Function.
      * Takes the vars and outputs the HTML for the field in the settings
      */
-    function render()
+    public function render()
     {
         if (!empty( $this->field['data'] ) && empty( $this->field['options'] )) {
             if (empty( $this->field['args'] )) {
@@ -75,7 +75,7 @@ class Text extends Field
      * If this field requires any scripts, or css define this function and register/enqueue the scripts/css
      *
      */
-    function enqueue()
+    public function enqueue()
     {
         wp_enqueue_style(
             'redux-field-text-css',

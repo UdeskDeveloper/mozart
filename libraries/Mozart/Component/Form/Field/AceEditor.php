@@ -10,7 +10,7 @@ class AceEditor extends Field
      * Required - must call the parent constructor, then assign field and value to vars, and obviously call the render field function
      *
      */
-    function __construct( $field = array(), $value = '', $parent )
+    public function __construct( $field = array(), $value = '', $parent )
     {
         $this->parent = $parent;
         $this->field = $field;
@@ -22,7 +22,7 @@ class AceEditor extends Field
      * Takes the vars and outputs the HTML for the field in the settings
      *
      */
-    function render()
+    public function render()
     {
         if (!isset( $this->field['mode'] )) {
             $this->field['mode'] = 'javascript';
@@ -52,7 +52,7 @@ class AceEditor extends Field
      *
      *
      *
-     * @return      void
+     * @return void
      */
     public function enqueue()
     {
@@ -96,7 +96,7 @@ class AceEditor extends Field
      * @return array Params to be saved as a javascript object accessable to the UI.
      *
      */
-    function localize( $field, $value = "" )
+    public function localize($field, $value = "")
     {
         $params = array(
             'minLines' => 10,

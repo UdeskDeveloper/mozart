@@ -5,7 +5,6 @@
 
 namespace Mozart\Component\Option\Extension;
 
-
 use Mozart\Component\Option\OptionBuilderInterface;
 
 interface ExtensionInterface
@@ -15,4 +14,4 @@ interface ExtensionInterface
      * Boot the extension
      */
     public function extend( OptionBuilderInterface $builder );
-} 
+}

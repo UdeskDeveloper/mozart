@@ -10,7 +10,7 @@ class OptionUtil
     /**
      * Parse CSS from output/compiler array
      *
-     * @return      $css CSS string
+     * @return $css CSS string
      */
     public static function parseCSS( $cssArray = array(), $style = '', $value = '' )
     {
@@ -42,7 +42,7 @@ class OptionUtil
     /**
      * initWpFilesystem - Initialized the Wordpress filesystem, if it already isn't.
      *
-     * @return      void
+     * @return void
      */
     public static function initWpFilesystem()
     {
@@ -55,7 +55,7 @@ class OptionUtil
         }
     }
 
-    public function curlRead( $filename )
+    public function curlRead($filename)
     {
         $ch = curl_init();
 
@@ -84,7 +84,7 @@ class OptionUtil
         return false;
     }
 
-    public static function isFieldInUse( $sections, $field )
+    public static function isFieldInUse($sections, $field)
     {
         foreach ($sections as $k => $section) {
             if (!isset( $section['title'] )) {
@@ -100,7 +100,7 @@ class OptionUtil
         }
     }
 
-    public static function array_in_array( $needle, $haystack )
+    public static function array_in_array($needle, $haystack)
     {
         //Make sure $needle is an array for foreach
         if (!is_array( $needle )) {
@@ -116,7 +116,7 @@ class OptionUtil
         return false;
     }
 
-    public static function recursiveArraySearch( $needle, $haystack )
+    public static function recursiveArraySearch($needle, $haystack)
     {
         foreach ($haystack as $key => $value) {
             if ($needle === $value || ( is_array( $value ) && self::recursiveArraySearch(
@@ -136,7 +136,7 @@ class OptionUtil
      *
      * @param string $path
      */
-    public static function cleanFilePath( $path )
+    public static function cleanFilePath($path)
     {
         $path = str_replace( '', '', str_replace( array( "\\", "\\\\" ), '/', $path ) );
         if ($path[strlen( $path ) - 1] === '/') {
@@ -150,7 +150,7 @@ class OptionUtil
      * Field Render Function.
      * Takes the color hex value and converts to a rgba.
      */
-    public static function hex2rgba( $hex, $alpha = '' )
+    public static function hex2rgba($hex, $alpha = '')
     {
         $hex = str_replace( "#", "", $hex );
         if (strlen( $hex ) == 3) {
@@ -172,4 +172,4 @@ class OptionUtil
             return 'rgba(' . $rgb . ',' . $alpha . ')';
         }
     }
-} 
+}

@@ -12,7 +12,7 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
  */
 class MozartUserBundle extends Bundle
 {
-    public function build( ContainerBuilder $container )
+    public function build(ContainerBuilder $container)
     {
         parent::build( $container );
     }
@@ -29,7 +29,7 @@ class MozartUserBundle extends Bundle
      *
      * @return mixed
      */
-    public function changeLoginUrl( $url )
+    public function changeLoginUrl($url)
     {
         if (strpos( $url, 'wp-login.php' ) !== false) {
             $url = str_replace( 'wp-login.php', 'my-account', $url );

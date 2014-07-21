@@ -15,7 +15,7 @@ class Slider extends Field
     private $display_text = 2;
     private $display_select = 3;
 
-    function __construct( $field = array(), $value = '', $parent )
+    public function __construct( $field = array(), $value = '', $parent )
     {
         //parent::__construct( $parent->getSections(), $parent->args );
         $this->parent = $parent;
@@ -74,7 +74,7 @@ class Slider extends Field
         }
     }
 
-    private function cleanVal( $var )
+    private function cleanVal($var)
     {
         if (is_float( $var )) {
             $cleanVar = floatval( $var );
@@ -85,7 +85,7 @@ class Slider extends Field
         return $cleanVar;
     }
 
-    private function cleanDefault( $val )
+    private function cleanDefault($val)
     {
         if (empty( $val ) && !empty( $this->field['default'] ) && $this->cleanVal( $this->field['min'] ) >= 1) {
             $val = $this->cleanVal( $this->field['default'] );
@@ -109,7 +109,7 @@ class Slider extends Field
         return $val;
     }
 
-    private function cleanDefaultArray( $val )
+    private function cleanDefaultArray($val)
     {
         $one = $this->value[1];
         $two = $this->value[2];
@@ -149,7 +149,7 @@ class Slider extends Field
      *
      * @since Redux_Framework 3.1.8
      */
-    function clean()
+    public function clean()
     {
         // Set min to 0 if no value is set.
         $this->field['min'] = empty( $this->field['min'] ) ? 0 : $this->cleanVal( $this->field['min'] );
@@ -194,7 +194,7 @@ class Slider extends Field
      *
      * @since ReduxFramework 3.1.8
      */
-    function enqueue()
+    public function enqueue()
     {
         wp_enqueue_style(
             'nouislider-css',
@@ -244,7 +244,7 @@ class Slider extends Field
      * Field Render Function.
      * Takes the vars and outputs the HTML for the field in the settings
      */
-    function render()
+    public function render()
     {
         $this->clean();
 

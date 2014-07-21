@@ -8,12 +8,12 @@ class Textarea extends Field
     /**
      * Field Constructor.
      *
-     * @param       $value  Constructed by Redux class. Based on the passing in $field['defaults'] value and what is stored in the database.
-     * @param       $parent ReduxFramework object is passed for easier pointing.
+     * @param   $value  Constructed by Redux class. Based on the passing in $field['defaults'] value and what is stored in the database.
+     * @param   $parent ReduxFramework object is passed for easier pointing.
      *
      * @type string $field [test] Description. Default <value>. Accepts <value>, <value>.
      */
-    function __construct( $field = array(), $value = '', $parent )
+    public function __construct( $field = array(), $value = '', $parent )
     {
         $this->parent = $parent;
         $this->field = $field;
@@ -28,7 +28,7 @@ class Textarea extends Field
      *
      * @return Object A new editor object.
      **/
-    function render()
+    public function render()
     {
         $this->field['placeholder'] = isset( $this->field['placeholder'] ) ? $this->field['placeholder'] : "";
         $this->field['rows'] = isset( $this->field['rows'] ) ? $this->field['rows'] : 6;

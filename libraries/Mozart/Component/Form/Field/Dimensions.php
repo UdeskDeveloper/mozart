@@ -11,7 +11,7 @@ class Dimensions extends Field
      * Required - must call the parent constructor, then assign field and value to vars, and obviously call the render field function
      *
      */
-    function __construct( $field = array(), $value = '', $parent )
+    public function __construct( $field = array(), $value = '', $parent )
     {
         $this->parent = $parent;
         $this->field = $field;
@@ -22,7 +22,7 @@ class Dimensions extends Field
      * Field Render Function.
      * Takes the vars and outputs the HTML for the field in the settings
      */
-    function render()
+    public function render()
     {
         /*
          * So, in_array() wasn't doing it's job for checking a passed array for a proper value.
@@ -254,7 +254,7 @@ class Dimensions extends Field
      *
      *
      */
-    function enqueue()
+    public function enqueue()
     {
         wp_enqueue_script(
             'redux-field-dimensions-js',

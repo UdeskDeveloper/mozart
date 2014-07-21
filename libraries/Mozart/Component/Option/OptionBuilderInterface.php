@@ -5,7 +5,6 @@
 
 namespace Mozart\Component\Option;
 
-
 interface OptionBuilderInterface
 {
     public function boot( $params = array() );
@@ -13,4 +12,4 @@ interface OptionBuilderInterface
     public function getSections();
 
     public function getOptions();
-} 
+}

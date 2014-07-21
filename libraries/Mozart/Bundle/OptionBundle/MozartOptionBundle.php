@@ -20,7 +20,7 @@ class MozartOptionBundle extends Bundle
     /**
      * @param ContainerBuilder $container
      */
-    public function build( ContainerBuilder $container )
+    public function build(ContainerBuilder $container)
     {
         parent::build( $container );
         $container->addCompilerPass( new OptionExtensionsCompilerPass() );

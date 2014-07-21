@@ -11,7 +11,7 @@ class Border extends Field
      *
      *
      */
-    function __construct( $field = array(), $value = '', $parent )
+    public function __construct( $field = array(), $value = '', $parent )
     {
         $this->parent = $parent;
         $this->field = $field;
@@ -24,7 +24,7 @@ class Border extends Field
      *
      *
      */
-    function render()
+    public function render()
     {
         // No errors please
         $defaults = array(
@@ -205,7 +205,7 @@ class Border extends Field
      *
      *
      */
-    function enqueue()
+    public function enqueue()
     {
         wp_enqueue_script(
             'redux-field-border-js',

@@ -21,7 +21,7 @@ class SectionManager
 
     /**
      * @param OptionSection $section
-     * @param null         $alias
+     * @param null          $alias
      */
     public function addSection(OptionSection $section, $alias = null)
     {

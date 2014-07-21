@@ -33,7 +33,7 @@ class ShortcodeChain
     /**
      * @param ShortcodeInterface $shortcode
      */
-    public function addShortcode( ShortcodeInterface $shortcode )
+    public function addShortcode(ShortcodeInterface $shortcode)
     {
         $this->shortcodes[$shortcode->getName()] = $shortcode;
     }
@@ -48,7 +48,7 @@ class ShortcodeChain
      * @param  string $content Content to search for shortcodes
      * @return string Content with shortcodes filtered out.
      */
-    public function process( $content )
+    public function process($content)
     {
         if (empty( $this->shortcodes )) {
             return $content;
@@ -120,7 +120,7 @@ class ShortcodeChain
      * @param  array $m Regular expression match array
      * @return mixed False on failure.
      */
-    public function doShortcodeTag( $m )
+    public function doShortcodeTag($m)
     {
         // allow [[foo]] syntax for escaping a tag
         if ($m[1] == '[' && $m[6] == ']') {
@@ -149,7 +149,7 @@ class ShortcodeChain
      * @param  string $text
      * @return array  List of attributes and their value.
      */
-    private function parseAttributes( $text )
+    private function parseAttributes($text)
     {
         $atts = array();
         $pattern = '/(\w+)\s*=\s*"([^"]*)"(?:\s|$)|(\w+)\s*=\s*\'([^\']*)\'(?:\s|$)|(\w+)\s*=\s*([^\s\'"]+)(?:\s|$)|"([^"]*)"(?:\s|$)|(\S+)(?:\s|$)/';
@@ -160,8 +160,7 @@ class ShortcodeChain
                     $atts[strtolower( $m[1] )] = stripcslashes( $m[2] );
                 elseif (!empty( $m[3] )) {
                     $atts[strtolower( $m[3] )] = stripcslashes( $m[4] );
-                }
-                elseif (!empty( $m[5] ))
+                } elseif (!empty( $m[5] ))
                     $atts[strtolower( $m[5] )] = stripcslashes( $m[6] );
                 elseif (isset( $m[7] ) and strlen( $m[7] ))
                     $atts[] = stripcslashes( $m[7] );

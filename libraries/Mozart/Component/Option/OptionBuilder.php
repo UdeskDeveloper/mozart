@@ -211,11 +211,11 @@ class OptionBuilder implements OptionBuilderInterface
     private $sectionManager;
 
     /**
-     * @param Importer $importer
-     * @param Debugger $debugger
-     * @param Tracker $tracker
+     * @param Importer         $importer
+     * @param Debugger         $debugger
+     * @param Tracker          $tracker
      * @param ExtensionManager $extensionManager
-     * @param SectionManager $sectionManager
+     * @param SectionManager   $sectionManager
      */
     public function __construct(
         Importer $importer,
@@ -232,7 +232,7 @@ class OptionBuilder implements OptionBuilderInterface
     }
 
     /**
-     * @param array $params
+     * @param  array $params
      * @return bool
      */
     public function boot( $params = array() )
@@ -279,7 +279,7 @@ class OptionBuilder implements OptionBuilderInterface
     /**
      * @param array $field
      */
-    public function addField( $field )
+    public function addField($field)
     {
         // Detect what field types are being used
         if (!isset( $this->fields[$field['type']][$field['id']] )) {
@@ -300,7 +300,7 @@ class OptionBuilder implements OptionBuilderInterface
     /**
      * @param array $sections
      */
-    public function setSections( $sections )
+    public function setSections($sections)
     {
 
         $this->sections = $sections;
@@ -318,7 +318,7 @@ class OptionBuilder implements OptionBuilderInterface
      * @param $param
      * @return array
      */
-    public function getParam( $param )
+    public function getParam($param)
     {
         return $this->params[$param];
     }
@@ -436,7 +436,7 @@ class OptionBuilder implements OptionBuilderInterface
     /**
      * @param \WP_Admin_Bar $wp_admin_bar
      */
-    public function network_admin_bar( \WP_Admin_Bar $wp_admin_bar )
+    public function network_admin_bar(\WP_Admin_Bar $wp_admin_bar)
     {
         $params = array(
             'id'     => $this->params['opt_name'] . '_network_admin',
@@ -454,7 +454,7 @@ class OptionBuilder implements OptionBuilderInterface
      *
      * @return array|string
      */
-    public function stripslashes_deep( $value )
+    public function stripslashes_deep($value)
     {
         $value = is_array( $value ) ?
             array_map( 'stripslashes_deep', $value ) :
@@ -511,12 +511,12 @@ class OptionBuilder implements OptionBuilderInterface
     /**
      * This is used to return the default value if default_show is set
      *
-     * @param       string $opt_name The option name to return
-     * @param       mixed $default (null)  The value to return if default not set
+     * @param string $opt_name The option name to return
+     * @param mixed  $default  (null)  The value to return if default not set
      *
-     * @return      mixed $default
+     * @return mixed $default
      */
-    public function getDefaultOption( $opt_name, $default = null )
+    public function getDefaultOption($opt_name, $default = null)
     {
         if ($this->params['default_show'] == true) {
 
@@ -536,12 +536,12 @@ class OptionBuilder implements OptionBuilderInterface
     /**
      * This is used to return and option value from the options array
      *
-     * @param       string $opt_name The option name to return
-     * @param       mixed $default (null) The value to return if option not set
+     * @param string $opt_name The option name to return
+     * @param mixed  $default  (null) The value to return if option not set
      *
-     * @return      mixed
+     * @return mixed
      */
-    public function getOption( $opt_name, $default = null )
+    public function getOption($opt_name, $default = null)
     {
         return ( !empty( $this->options[$opt_name] ) ) ? $this->options[$opt_name] : $this->getDefaultOption(
             $opt_name,
@@ -552,12 +552,12 @@ class OptionBuilder implements OptionBuilderInterface
     /**
      * This is used to set an arbitrary option in the options array
      *
-     * @param       string $opt_name The name of the option being added
-     * @param       mixed $value The value of the option being added
+     * @param string $opt_name The name of the option being added
+     * @param mixed  $value    The value of the option being added
      *
-     * @return      void
+     * @return void
      */
-    public function setOption( $opt_name = '', $value = '' )
+    public function setOption($opt_name = '', $value = '')
     {
         if ($opt_name != '') {
             $this->options[$opt_name] = $value;
@@ -568,7 +568,7 @@ class OptionBuilder implements OptionBuilderInterface
     /**
      * Set a global variable by the global_variable argument
      *
-     * @return  bool
+     * @return bool
      */
     public function setGlobalVariable()
     {
@@ -599,7 +599,7 @@ class OptionBuilder implements OptionBuilderInterface
      *
      * @param mixed $value the value of the option being added
      */
-    public function setOptions( $value = '' )
+    public function setOptions($value = '')
     {
         $this->transients['last_save'] = time();
 
@@ -683,13 +683,14 @@ class OptionBuilder implements OptionBuilderInterface
             return get_site_option( $this->params['opt_name'], array() );
 //            return json_decode( stripslashes( json_encode( $result ) ), true );
         }
+
         return get_option( $this->params['opt_name'], array() );
     }
 
     /**
      * Get Wordpress specific data from the DB and return in a usable array
-     * @param bool $type
-     * @param array $params
+     * @param  bool         $type
+     * @param  array        $params
      * @return array|string
      */
     public function get_wordpress_data( $type = false, $params = array() )
@@ -721,14 +722,14 @@ class OptionBuilder implements OptionBuilderInterface
                     case "categories":
                     case "category":
                         $cats = get_categories( $params );
-                        foreach ((array)$cats as $cat) {
+                        foreach ((array) $cats as $cat) {
                             $data[$cat->term_id] = $cat->name;
                         }
                         break;
                     case "menus":
                     case "menu":
                         $menus = wp_get_nav_menus( $params );
-                        foreach ((array)$menus as $item) {
+                        foreach ((array) $menus as $item) {
                             $data[$item->term_id] = $item->name;
                         }
                         break;
@@ -738,7 +739,7 @@ class OptionBuilder implements OptionBuilderInterface
                             $params['posts_per_page'] = 20;
                         }
                         $pages = get_pages( $params );
-                        foreach ((array)$pages as $page) {
+                        foreach ((array) $pages as $page) {
                             $data[$page->ID] = $page->post_title;
                         }
                         break;
@@ -748,21 +749,21 @@ class OptionBuilder implements OptionBuilderInterface
                         unset( $params['taxonomies'] );
 
                         $terms = get_terms( $taxonomies, $params ); // this will get nothing
-                        foreach ((array)$terms as $term) {
+                        foreach ((array) $terms as $term) {
                             $data[$term->term_id] = $term->name;
                         }
                         break;
                     case "taxonomy":
                     case "taxonomies":
                         $taxonomies = get_taxonomies( $params );
-                        foreach ((array)$taxonomies as $key => $taxonomy) {
+                        foreach ((array) $taxonomies as $key => $taxonomy) {
                             $data[$key] = $taxonomy;
                         }
                         break;
                     case "posts":
                     case "post":
                         $posts = get_posts( $params );
-                        foreach ((array)$posts as $post) {
+                        foreach ((array) $posts as $post) {
                             $data[$post->ID] = $post->post_title;
                         }
                         break;
@@ -793,7 +794,7 @@ class OptionBuilder implements OptionBuilderInterface
                     case "tags":
                     case "tag": // NOT WORKING!
                         $tags = get_tags( $params );
-                        foreach ((array)$tags as $tag) {
+                        foreach ((array) $tags as $tag) {
                             $data[$tag->term_id] = $tag->name;
                         }
                         break;
@@ -857,12 +858,12 @@ class OptionBuilder implements OptionBuilderInterface
     /**
      * This is used to echo and option value from the options array
      *
-     * @param       string $opt_name The name of the option being shown
-     * @param       mixed $default The value to show if $opt_name isn't set
+     * @param string $opt_name The name of the option being shown
+     * @param mixed  $default  The value to show if $opt_name isn't set
      *
-     * @return      void
+     * @return void
      */
-    public function show( $opt_name, $default = '' )
+    public function show($opt_name, $default = '')
     {
         $option = $this->getOption( $opt_name );
         if (!is_array( $option ) && $option != '') {
@@ -875,7 +876,7 @@ class OptionBuilder implements OptionBuilderInterface
     /**
      * Get default options into an array suitable for the settings API
      *
-     * @return      array
+     * @return array
      */
     private function getDefaultOptions()
     {
@@ -947,7 +948,6 @@ class OptionBuilder implements OptionBuilderInterface
         return $this->options_defaults;
     }
 
-
     /**
      * Get fold values into an array suitable for setting folds
      */
@@ -1014,7 +1014,7 @@ class OptionBuilder implements OptionBuilderInterface
      *
      * @return array
      */
-    public function get_fold( $field )
+    public function get_fold($field)
     {
         if (!is_array( $field['required'] )) {
 
@@ -1033,7 +1033,6 @@ class OptionBuilder implements OptionBuilderInterface
 //                $comparison = $field['required'][1];
             $value = $foldv = $field['required'][2];
             //foreach ($field['required'] as $foldk=>$foldv) {
-
 
             if (is_array( $value )) {
                 /*
@@ -1088,9 +1087,9 @@ class OptionBuilder implements OptionBuilderInterface
      * @param $menu_title
      * @param $page_permissions
      * @param $page_slug
-     * @return      void
+     * @return void
      */
-    private function add_submenu( $page_parent, $page_title, $menu_title, $page_permissions, $page_slug )
+    private function add_submenu($page_parent, $page_title, $menu_title, $page_permissions, $page_slug)
     {
         global $submenu;
 
@@ -1262,7 +1261,7 @@ class OptionBuilder implements OptionBuilderInterface
      * Add admin bar menu
      *
      * @global      $menu , $submenu, $wp_admin_bar
-     * @return      void
+     * @return void
      */
     public function _admin_bar_menu()
     {
@@ -1319,7 +1318,7 @@ class OptionBuilder implements OptionBuilderInterface
     /**
      * Output dynamic CSS at bottom of HEAD
      *
-     * @return      void
+     * @return void
      */
     public function _output_css()
     {
@@ -1339,7 +1338,7 @@ class OptionBuilder implements OptionBuilderInterface
     /**
      * Enqueue CSS and Google fonts for front end
      *
-     * @return      void
+     * @return void
      */
     public function _enqueue_output()
     {
@@ -1423,7 +1422,7 @@ class OptionBuilder implements OptionBuilderInterface
                     }</style>
                 <script>
                     /* You can add more configuration options to webfontloader by previously defining the WebFontConfig with your options */
-                    if ( typeof WebFontConfig === "undefined" ) {
+                    if (typeof WebFontConfig === "undefined") {
                         WebFontConfig = {};
                     }
                     WebFontConfig['google'] = {families: [<?php echo $typography->makeGoogleWebfontString( $this->typography )?>]};
@@ -1457,7 +1456,7 @@ class OptionBuilder implements OptionBuilderInterface
     /**
      * Enqueue CSS/JS for options page
      * @global      $wp_styles
-     * @return      void
+     * @return void
      */
     public function _enqueue()
     {
@@ -1866,7 +1865,7 @@ class OptionBuilder implements OptionBuilderInterface
 
     /**
      * Show page help
-     * @return      void
+     * @return void
      */
     public function _load_page()
     {
@@ -1952,7 +1951,7 @@ class OptionBuilder implements OptionBuilderInterface
 
     /**
      * Return footer text
-     * @return      string $this->params['footer_credit']
+     * @return string $this->params['footer_credit']
      */
     public function admin_footer_text()
     {
@@ -1963,9 +1962,9 @@ class OptionBuilder implements OptionBuilderInterface
      * Return default output string for use in panel
      *
      * @param $field
-     * @return      string default_output
+     * @return string default_output
      */
-    public function get_default_output_string( $field )
+    public function get_default_output_string($field)
     {
         $default_output = "";
 
@@ -2023,7 +2022,7 @@ class OptionBuilder implements OptionBuilderInterface
      * @param $field
      * @return string
      */
-    public function get_header_html( $field )
+    public function get_header_html($field)
     {
         global $current_user;
 
@@ -2094,7 +2093,7 @@ class OptionBuilder implements OptionBuilderInterface
     /**
      * Register Option for use
      *
-     * @return      void
+     * @return void
      */
     public function _register_settings()
     {
@@ -2446,11 +2445,11 @@ class OptionBuilder implements OptionBuilderInterface
     /**
      * Validate the Options options before insertion
      *
-     * @param       array $plugin_options The options array
+     * @param array $plugin_options The options array
      *
      * @return array|mixed|string|void
      */
-    public function _validate_options( $plugin_options )
+    public function _validate_options($plugin_options)
     {
         if (!empty( $this->hidden_perm_fields ) && is_array( $this->hidden_perm_fields )) {
             foreach ($this->hidden_perm_fields as $id => $data) {
@@ -2625,12 +2624,12 @@ class OptionBuilder implements OptionBuilderInterface
      * Validate values from options form (used in settings api validate function)
      * calls the custom validation class for the field so authors can override with custom classes
      *
-     * @param       array $plugin_options
-     * @param       array $options
+     * @param array $plugin_options
+     * @param array $options
      *
-     * @return      array $plugin_options
+     * @return array $plugin_options
      */
-    public function _validate_values( $plugin_options, $options, $sections )
+    public function _validate_values($plugin_options, $options, $sections)
     {
         foreach ($sections as $k => $section) {
             if (isset( $section['fields'] )) {
@@ -2781,7 +2780,7 @@ class OptionBuilder implements OptionBuilderInterface
     /**
      * Return Section Menu HTML
      *
-     * @return      void
+     * @return void
      */
     public function section_menu( $k, $section, $suffix = "", $sections = array() )
     {
@@ -2893,10 +2892,9 @@ class OptionBuilder implements OptionBuilderInterface
     /**
      * HTML OUTPUT.
      *
-     * @return      void
+     * @return void
      */
-    public
-    function _options_page_html()
+    public function _options_page_html()
     {
         echo '<div class="wrap"><h2></h2></div>'; // Stupid hack for Wordpress alerts and warnings
 
@@ -3231,12 +3229,11 @@ class OptionBuilder implements OptionBuilderInterface
     /**
      * Section HTML OUTPUT.
      *
-     * @param       array $section
+     * @param array $section
      *
-     * @return      void
+     * @return void
      */
-    public
-    function _section_desc(
+    public function _section_desc(
         $section
     ) {
         $id = trim( rtrim( $section['id'], '_section' ), $this->params['opt_name'] );
@@ -3250,13 +3247,12 @@ class OptionBuilder implements OptionBuilderInterface
      * Field HTML OUTPUT.
      * Gets option from options array, then calls the specific field type class - allows extending by other devs
      *
-     * @param array $field
+     * @param array  $field
      * @param string $v
      *
-     * @return      void
+     * @return void
      */
-    public
-    function _field_input(
+    public function _field_input(
         $field,
         $v = null
     ) {
@@ -3353,7 +3349,7 @@ class OptionBuilder implements OptionBuilderInterface
      *
      * @return bool
      */
-    public function _can_output_css( $field )
+    public function _can_output_css($field)
     {
         $return = true;
 
@@ -3400,8 +3396,7 @@ class OptionBuilder implements OptionBuilderInterface
      *
      * @return array $params
      */
-    public
-    function check_dependencies(
+    public function check_dependencies(
         $field
     ) {
         if (!empty( $field['required'] )) {
@@ -3459,7 +3454,7 @@ class OptionBuilder implements OptionBuilderInterface
      *
      * @return bool
      */
-    public function compareValueDependencies( $parentValue, $checkValue, $operation )
+    public function compareValueDependencies($parentValue, $checkValue, $operation)
     {
         $return = false;
 
@@ -3574,7 +3569,7 @@ class OptionBuilder implements OptionBuilderInterface
      * @param $field
      * @param $data
      */
-    public function checkRequiredDependencies( $field, $data )
+    public function checkRequiredDependencies($field, $data)
     {
         //required field must not be hidden. otherwise hide this one by default
 

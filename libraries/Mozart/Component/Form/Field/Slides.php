@@ -9,9 +9,9 @@ class Slides extends Field
      * Field Constructor.
      * Required - must call the parent constructor, then assign field and value to vars, and obviously call the render field function
      *
-     * @return      void
+     * @return void
      */
-    function __construct( $field = array(), $value = '', $parent )
+    public function __construct( $field = array(), $value = '', $parent )
     {
         $this->parent = $parent;
         $this->field = $field;
@@ -22,7 +22,7 @@ class Slides extends Field
      * Field Render Function.
      * Takes the vars and outputs the HTML for the field in the settings
      *
-     * @return      void
+     * @return void
      */
     public function render()
     {
@@ -82,7 +82,6 @@ class Slides extends Field
                 if (empty ( $slide['image'] )) {
                     $hide = ' hide';
                 }
-
 
                 echo '<div class="screenshot' . $hide . '">';
                 echo '<a class="of-uploaded-image" href="' . $slide['image'] . '">';
@@ -237,7 +236,7 @@ class Slides extends Field
      *
      *
      *
-     * @return      void
+     * @return void
      */
     public function enqueue()
     {

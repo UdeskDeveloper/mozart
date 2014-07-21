@@ -10,7 +10,7 @@ class Password extends Field
      * Required - must call the parent constructor, then assign field and value to vars, and obviously call the render field function
      *
      */
-    function __construct( $field = array(), $value = '', $parent )
+    public function __construct( $field = array(), $value = '', $parent )
     {
         $this->parent = $parent;
         $this->field = $field;
@@ -22,7 +22,7 @@ class Password extends Field
      * Takes the vars and outputs the HTML for the field in the settings
      *
      */
-    function render()
+    public function render()
     {
         if (!empty( $this->field['username'] ) && $this->field['username'] === true) {
             $this->_render_combined_field();

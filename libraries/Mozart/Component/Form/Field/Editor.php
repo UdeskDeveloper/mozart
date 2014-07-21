@@ -5,7 +5,7 @@ use Mozart\Component\Form\Field;
 
 class Editor extends Field
 {
-    function __construct( $field = array(), $value = '', $parent )
+    public function __construct( $field = array(), $value = '', $parent )
     {
         $this->parent = $parent;
         $this->field = $field;
@@ -16,7 +16,7 @@ class Editor extends Field
      * Field Render Function.
      * Takes the vars and outputs the HTML for the field in the settings
      *
-     * @return      void
+     * @return void
      */
     public function render()
     {
@@ -44,12 +44,11 @@ class Editor extends Field
         wp_editor( $this->value, $this->field['id'], $this->field['args'] );
     }
 
-
     /**
      * Enqueue Function.
      * If this field requires any scripts, or css define this function and register/enqueue the scripts/css
      *
-     * @return      void
+     * @return void
      */
     public function enqueue()
     {

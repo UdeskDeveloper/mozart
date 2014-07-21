@@ -9,7 +9,7 @@ use Symfony\Component\DependencyInjection\Reference;
 class OptionExtensionsCompilerPass implements CompilerPassInterface
 {
 
-    public function process( ContainerBuilder $container )
+    public function process(ContainerBuilder $container)
     {
         if (!$container->hasDefinition( 'mozart.option.extensionmanager' )) {
             return;

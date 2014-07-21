@@ -45,7 +45,7 @@ class Typography extends Field
      *
      * Required - must call the parent constructor, then assign field and value to vars, and obviously call the render field function
      */
-    function __construct( $field = array(), $value = '', $parent )
+    public function __construct( $field = array(), $value = '', $parent )
     {
         $this->parent = $parent;
         $this->field = $field;
@@ -133,10 +133,10 @@ class Typography extends Field
 
     /**
      * @param $field
-     * @param string $value
+     * @param  string $value
      * @return array
      */
-    function localize( $field, $value = "" )
+    public function localize($field, $value = "")
     {
         $params = array();
 
@@ -154,7 +154,7 @@ class Typography extends Field
      *
      *
      */
-    function render()
+    public function render()
     {
         // Since fonts declared is CSS (@font-face) are not rendered in the preview,
         // they can be declared in a CSS file and passed here so they DO display in
@@ -691,7 +691,7 @@ class Typography extends Field
      *
      *
      */
-    function enqueue()
+    public function enqueue()
     {
         wp_enqueue_script(
             'redux-field-typography-js',
@@ -726,7 +726,7 @@ class Typography extends Field
      *
      *
      */
-    function makeGoogleWebfontLink( $fonts )
+    public function makeGoogleWebfontLink($fonts)
     {
         $link = "";
         $subsets = array();
@@ -769,7 +769,7 @@ class Typography extends Field
      *
      * @since ReduxFramework 3.1.8
      */
-    function makeGoogleWebfontString( $fonts )
+    public function makeGoogleWebfontString($fonts)
     {
         $link = "";
         $subsets = array();
@@ -808,7 +808,7 @@ class Typography extends Field
     /**
      *
      */
-    function output()
+    public function output()
     {
         $font = $this->value;
 
@@ -1039,7 +1039,7 @@ class Typography extends Field
      *   Construct the google array from the stored JSON/HTML
      *
      */
-    function getGoogleArray()
+    public function getGoogleArray()
     {
         // Is already present?
         if (isset( $this->parent->fonts['google'] ) && !empty( $this->parent->fonts['google'] )) {
@@ -1136,11 +1136,11 @@ class Typography extends Field
     /**
      * Translates JSON_ERROR_* constant into meaningful message.
      *
-     * @param  int $errorCode Error code returned by json_last_error() call
+     * @param int $errorCode Error code returned by json_last_error() call
      *
-     * @return string  Message string
+     * @return string Message string
      */
-    private function getJSONErrorMessage( $errorCode )
+    private function getJSONErrorMessage($errorCode)
     {
         switch ($errorCode) {
             case JSON_ERROR_DEPTH:
@@ -1163,7 +1163,7 @@ class Typography extends Field
      *
      * Clean up the Google Webfonts subsets to be human readable
      */
-    private function getSubsets( $var )
+    private function getSubsets($var)
     {
         $result = array();
 
@@ -1191,7 +1191,7 @@ class Typography extends Field
      *
      * Clean up the Google Webfonts variants to be human readable
      */
-    private function getVariants( $var )
+    private function getVariants($var)
     {
         $result = array();
         $italic = array();

@@ -11,7 +11,7 @@ class Importer
 
     private $builder;
 
-    public function init( OptionBuilderInterface $builder )
+    public function init(OptionBuilderInterface $builder)
     {
         $this->builder = $builder;
 
@@ -28,7 +28,7 @@ class Importer
      * Field Render Function.
      * Takes the vars and outputs the HTML for the field in the settings
      *
-     * @return      void
+     * @return void
      */
     public function render()
     {
@@ -148,7 +148,7 @@ class Importer
     /**
      * @param boolean $enabled
      */
-    public function setEnabled( $enabled )
+    public function setEnabled($enabled)
     {
         $this->enabled = $enabled;
     }
@@ -212,7 +212,7 @@ class Importer
         );
     }
 
-    function link_options()
+    public function link_options()
     {
         if (!isset( $_GET['secret'] ) || $_GET['secret'] != md5(
                 md5( AUTH_KEY . SECURE_AUTH_KEY ) . '-' . $this->builder->args['opt_name']

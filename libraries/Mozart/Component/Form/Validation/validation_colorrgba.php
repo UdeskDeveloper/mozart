@@ -18,8 +18,6 @@
                 //$this->validate();
             }
 
-
-
             /**
              * Validate Color to RGBA
              * Takes the user's input color value and returns it only if it's a valid color.
@@ -49,8 +47,6 @@
                 return array( 'hex' => $color, 'alpha' => $alpha );
             }
 
-
-
             /**
              * Field Render Function.
              * Takes the vars and outputs the HTML for the field in the settings
@@ -71,8 +67,6 @@
                  */
             }
 
-
         }
-
 
     }

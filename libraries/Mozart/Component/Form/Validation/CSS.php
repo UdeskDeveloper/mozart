@@ -19,8 +19,6 @@
                 $this->validate();
             }
 
-
-
             /**
              * Field Render Function.
              * Takes the vars and validates them

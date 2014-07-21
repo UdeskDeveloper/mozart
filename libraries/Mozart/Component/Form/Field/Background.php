@@ -11,9 +11,9 @@ class Background extends Field
      *
      * @since       3.1.5
      *
-     * @return      void
+     * @return void
      */
-    function __construct( $field = array(), $value = '', $parent )
+    public function __construct( $field = array(), $value = '', $parent )
     {
         $this->parent = $parent;
         $this->field = $field;
@@ -26,7 +26,7 @@ class Background extends Field
      *
      *
      *
-     * @return      void
+     * @return void
      */
     public function render()
     {
@@ -273,7 +273,6 @@ class Background extends Field
                 }
             }
 
-
             if (empty( $this->value['background-image'] ) && !empty( $this->value['media']['id'] )) {
                 $img = wp_get_attachment_image_src( $this->value['media']['id'], 'full' );
                 $this->value['background-image'] = $img[0];
@@ -352,7 +351,6 @@ class Background extends Field
             echo '</div>';
         }
 
-
         /**
          * Preview
          * */
@@ -374,7 +372,7 @@ class Background extends Field
      *
      *
      *
-     * @return      void
+     * @return void
      */
     public function enqueue()
     {

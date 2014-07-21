@@ -11,9 +11,9 @@ class ImageSelect extends Field
      *
      *
      *
-     * @return      void
+     * @return void
      */
-    function __construct( $field = array(), $value = '', $parent )
+    public function __construct( $field = array(), $value = '', $parent )
     {
         $this->parent = $parent;
         $this->field = $field;
@@ -26,7 +26,7 @@ class ImageSelect extends Field
      *
      *
      *
-     * @return      void
+     * @return void
      */
     public function render()
     {
@@ -172,7 +172,7 @@ class ImageSelect extends Field
      *
      *
      *
-     * @return      void
+     * @return void
      */
     public function enqueue()
     {
@@ -196,7 +196,7 @@ class ImageSelect extends Field
         );
     }
 
-    public function getCSS( $mode = '' )
+    public function getCSS($mode = '')
     {
         $css = '';
         $value = $this->value;

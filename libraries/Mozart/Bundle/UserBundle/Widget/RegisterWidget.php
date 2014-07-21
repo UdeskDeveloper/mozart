@@ -19,7 +19,7 @@ class RegisterWidget extends Widget
     /**
      * @param EngineInterface $templating
      */
-    public function __construct( EngineInterface $templating )
+    public function __construct(EngineInterface $templating)
     {
         $this->templating = $templating;
         parent::__construct();
@@ -67,12 +67,11 @@ class RegisterWidget extends Widget
         );
     }
 
-
     /**
      * @param array $args
      * @param array $instance
      */
-    public function widget( $args, $instance )
+    public function widget($args, $instance)
     {
         echo $this->templating->render(
             'MozartUserBundle:Account:widgets/register.html.twig',

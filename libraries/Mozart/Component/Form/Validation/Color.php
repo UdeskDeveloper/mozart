@@ -8,7 +8,7 @@ class Redux_Validation_color
      *
      *
      */
-    function __construct( $parent, $field, $value, $current )
+    public function __construct($parent, $field, $value, $current)
     {
         $this->parent = $parent;
         $this->field = $field;
@@ -28,7 +28,7 @@ class Redux_Validation_color
      *
      *
      */
-    function validate_color( $color )
+    public function validate_color($color)
     {
         if ($color == "transparent") {
             return $color;
@@ -63,7 +63,7 @@ class Redux_Validation_color
      *
      *
      */
-    function validate()
+    public function validate()
     {
         if (is_array( $this->value )) { // If array
             foreach ($this->value as $k => $value) {

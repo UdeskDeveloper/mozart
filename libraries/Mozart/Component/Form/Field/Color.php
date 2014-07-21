@@ -11,9 +11,9 @@ class Color extends Field
      *
      * @since         1.0.0
      * @access        public
-     * @return        void
+     * @return void
      */
-    function __construct( $field = array(), $value = '', $parent )
+    public function __construct( $field = array(), $value = '', $parent )
     {
         $this->parent = $parent;
         $this->field = $field;
@@ -26,7 +26,7 @@ class Color extends Field
      *
      * @since         1.0.0
      * @access        public
-     * @return        void
+     * @return void
      */
     public function render()
     {
@@ -54,7 +54,7 @@ class Color extends Field
      *
      * @since         1.0.0
      * @access        public
-     * @return        void
+     * @return void
      */
     public function enqueue()
     {

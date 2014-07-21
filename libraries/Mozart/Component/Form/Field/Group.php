@@ -9,9 +9,9 @@ class Group extends Field
      * Field Constructor.
      * Required - must call the parent constructor, then assign field and value to vars, and obviously call the render field function
      *
-     * @return      void
+     * @return void
      */
-    function __construct( $field = array(), $value = '', $parent )
+    public function __construct( $field = array(), $value = '', $parent )
     {
         //parent::__construct( $parent->getSections(), $parent->args );
         $this->parent = $parent;
@@ -24,7 +24,7 @@ class Group extends Field
      * Field Render Function.
      * Takes the vars and outputs the HTML for the field in the settings
      *
-     * @return      void
+     * @return void
      */
     public function render()
     {
@@ -95,7 +95,6 @@ class Group extends Field
             ) . ' ' . $this->field['groupname'] . '</a>';
         echo '</div></div>';
 
-
         echo '</div><a href="javascript:void(0);" class="button redux-groups-add button-primary" rel-id="' . $this->field['id'] . '-ul" rel-name="' . $this->parent->args['opt_name'] . '[' . $this->field['id'] . '][slide_title][]">' . __(
                 'Add',
                 'mozart-options'
@@ -105,7 +104,7 @@ class Group extends Field
 
     }
 
-    function support_multi( $content, $field, $sort )
+    public function support_multi($content, $field, $sort)
     {
         //convert name
         $name = $this->parent->args['opt_name'] . '[' . $field['id'] . ']';
@@ -124,7 +123,7 @@ class Group extends Field
      * Enqueue Function.
      * If this field requires any scripts, or css define this function and register/enqueue the scripts/css
      *
-     * @return        void
+     * @return void
      */
     public function enqueue()
     {
@@ -144,7 +143,7 @@ class Group extends Field
         );
     }
 
-    public function enqueue_dependencies( $field_type )
+    public function enqueue_dependencies($field_type)
     {
         $field_class = 'ReduxFramework_' . $field_type;
 

@@ -10,7 +10,7 @@ class Sorter extends Field
      * Required - must call the parent constructor, then assign field and value to vars, and obviously call the render field function
      *
      */
-    function __construct( $field = array(), $value = '', $parent )
+    public function __construct( $field = array(), $value = '', $parent )
     {
         $this->parent = $parent;
         $this->field = $field;
@@ -22,7 +22,7 @@ class Sorter extends Field
      * Takes the vars and outputs the HTML for the field in the settings
      *
      */
-    function render()
+    public function render()
     {
         if (!is_array( $this->value ) && isset( $this->field['options'] )) {
             $this->value = $this->field['options'];
@@ -122,7 +122,7 @@ class Sorter extends Field
         }
     }
 
-    function enqueue()
+    public function enqueue()
     {
         wp_enqueue_style(
             'redux-field-sorder-css',
@@ -149,7 +149,7 @@ class Sorter extends Field
      *
      * @return array Params to be saved as a javascript object accessable to the UI.
      */
-    function localize( $field, $value = "" )
+    public function localize($field, $value = "")
     {
         $params = array();
 

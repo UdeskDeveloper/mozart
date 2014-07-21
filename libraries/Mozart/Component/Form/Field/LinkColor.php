@@ -9,9 +9,9 @@ class LinkColor extends Field
      * Field Constructor.
      * Required - must call the parent constructor, then assign field and value to vars, and obviously call the render field function
      *
-     * @return      void
+     * @return void
      */
-    function __construct( $field = array(), $value = '', $parent )
+    public function __construct( $field = array(), $value = '', $parent )
     {
         $this->parent = $parent;
         $this->field = $field;
@@ -48,7 +48,7 @@ class LinkColor extends Field
      *
      *
      *
-     * @return      void
+     * @return void
      */
     public function render()
     {
@@ -85,7 +85,7 @@ class LinkColor extends Field
      * Enqueue Function.
      * If this field requires any scripts, or css define this function and register/enqueue the scripts/css
      *
-     * @return      void
+     * @return void
      */
     public function enqueue()
     {

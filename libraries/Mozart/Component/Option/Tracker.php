@@ -19,7 +19,7 @@ class Tracker
     /**
      * @param OptionBuilderInterface $builder
      */
-    public function load( OptionBuilderInterface $builder )
+    public function load(OptionBuilderInterface $builder)
     {
         $this->builder = $builder;
 
@@ -68,7 +68,7 @@ class Tracker
     /**
      *
      */
-    function _enqueue_tracking()
+    public function _enqueue_tracking()
     {
         wp_enqueue_style( 'wp-pointer' );
         wp_enqueue_script( 'jquery' );
@@ -81,7 +81,7 @@ class Tracker
     /**
      *
      */
-    function _enqueue_newsletter()
+    public function _enqueue_newsletter()
     {
         wp_enqueue_style( 'wp-pointer' );
         wp_enqueue_script( 'jquery' );
@@ -94,7 +94,7 @@ class Tracker
     /**
      * Shows a popup that asks for permission to allow tracking.
      */
-    function tracking_request()
+    public function tracking_request()
     {
         $id = '#wpadminbar';
         $nonce = wp_create_nonce( 'redux_activate_tracking' );
@@ -126,11 +126,10 @@ class Tracker
     /**
      * Shows a popup that asks for permission to allow tracking.
      */
-    function newsletter_request()
+    public function newsletter_request()
     {
         $id = '#wpadminbar';
         $nonce = wp_create_nonce( 'redux_activate_tracking' );
-
 
         $content = '<h3>' . __( 'Welcome to the Redux Demo Panel', 'mozart-options' ) . '</h3>';
         $content .= '<p><strong>' . __( 'Getting Started', 'mozart-options' ) . '</strong><br>' . sprintf(
@@ -202,14 +201,14 @@ class Tracker
     /**
      * Prints the pointer script
      *
-     * @param string $selector The CSS selector the pointer is attached to.
-     * @param array $options The options for the pointer.
-     * @param string $button1 Text for button 1
-     * @param string|bool $button2 Text for button 2 (or false to not show it, defaults to false)
-     * @param string $button2_function The JavaScript function to attach to button 2
-     * @param string $button1_function The JavaScript function to attach to button 1
+     * @param string      $selector         The CSS selector the pointer is attached to.
+     * @param array       $options          The options for the pointer.
+     * @param string      $button1          Text for button 1
+     * @param string|bool $button2          Text for button 2 (or false to not show it, defaults to false)
+     * @param string      $button2_function The JavaScript function to attach to button 2
+     * @param string      $button1_function The JavaScript function to attach to button 1
      */
-    function print_scripts(
+    public function print_scripts(
         $selector,
         $options,
         $button1,
@@ -221,12 +220,13 @@ class Tracker
         <script type="text/javascript">
             //<![CDATA[
             //
-            (function ( $ ) {
+            (function ($) {
                 $( document ).ready(
                     function () {
                         var redux_pointer_options = <?php echo json_encode($options); ?>, setup;
 
-                        function redux_store_answer( input, nonce ) {
+                        function redux_store_answer(input, nonce)
+                        {
                             var redux_tracking_data = {
                                 action        : 'redux_allow_tracking',
                                 allow_tracking: input,
@@ -241,7 +241,7 @@ class Tracker
 
                         redux_pointer_options = $.extend(
                             redux_pointer_options, {
-                                buttons: function ( event, t ) {
+                                buttons: function (event, t) {
                                     button = jQuery( '<a id="pointer-close" style="margin-left:5px" class="button-secondary">' + '<?php echo $button1; ?>' + '</a>' );
                                     button.bind(
                                         'click.pointer', function () {
@@ -287,10 +287,9 @@ class Tracker
                             <?php } ?>
                         };
 
-                        if ( redux_pointer_options.position && redux_pointer_options.position.defer_loading ) {
+                        if (redux_pointer_options.position && redux_pointer_options.position.defer_loading) {
                             $( window ).bind( 'load.wp-pointers', setup );
-                        }
-                        else {
+                        } else {
                             $( document ).ready( setup );
                         }
                     }
@@ -304,7 +303,7 @@ class Tracker
     /**
      * @return array
      */
-    function trackingObject()
+    public function trackingObject()
     {
         global $blog_id, $wpdb;
         $pts = array();
@@ -420,7 +419,7 @@ class Tracker
     /**
      * Main tracking function.
      */
-    function tracking()
+    public function tracking()
     {
         // Start of Metrics
         global $blog_id, $wpdb;
@@ -442,7 +441,7 @@ class Tracker
     /**
      *
      */
-    function tracking_arg()
+    public function tracking_arg()
     {
         echo md5( AUTH_KEY . SECURE_AUTH_KEY . '-redux' );
         die();
@@ -451,7 +450,7 @@ class Tracker
     /**
      *
      */
-    function support_args()
+    public function support_args()
     {
         header( "Expires: Mon, 26 Jul 1997 05:00:00 GMT" );
         header( "Last-Modified: " . gmdate( "D, d M Y H:i:s" ) . "GMT" );
@@ -513,7 +512,7 @@ class Tracker
  *
  * @return array
  */
-function redux_tracking_additions( $options )
+function redux_tracking_additions($options)
 {
     $opt = array();
 
@@ -553,5 +552,3 @@ function redux_allow_tracking_callback()
 }
 
 add_action( 'wp_ajax_redux_allow_tracking', 'redux_allow_tracking_callback' );
-
-    

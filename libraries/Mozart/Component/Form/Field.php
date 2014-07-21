@@ -5,7 +5,6 @@
 
 namespace Mozart\Component\Form;
 
-
-class Field implements FieldInterface {
-
-} 
+class Field implements FieldInterface
+{
+}

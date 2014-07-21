@@ -26,7 +26,7 @@ class ButtonSet extends Field
      * @param array $arr (See above)
      *
      * @return Object A new editor object.
-     * */
+     *                */
     static $_properties = array(
         'id' => 'Identifier',
     );
@@ -37,9 +37,9 @@ class ButtonSet extends Field
      *
      *
      *
-     * @return      void
+     * @return void
      */
-    function __construct( $field = array(), $value = '', $parent )
+    public function __construct( $field = array(), $value = '', $parent )
     {
         $this->parent = $parent;
         $this->field = $field;
@@ -52,7 +52,7 @@ class ButtonSet extends Field
      *
      *
      *
-     * @return      void
+     * @return void
      */
     public function render()
     {
@@ -95,7 +95,7 @@ class ButtonSet extends Field
      * Enqueue Function.
      * If this field requires any scripts, or css define this function and register/enqueue the scripts/css
      *
-     * @return      void
+     * @return void
      */
     public function enqueue()
     {

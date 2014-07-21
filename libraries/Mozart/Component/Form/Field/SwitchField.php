@@ -10,7 +10,7 @@ class SwitchField extends Field
      * Required - must call the parent constructor, then assign field and value to vars, and obviously call the render field function
      *
      */
-    function __construct( $field = array(), $value = '', $parent )
+    public function __construct( $field = array(), $value = '', $parent )
     {
         $this->parent = $parent;
         $this->field = $field;
@@ -21,12 +21,12 @@ class SwitchField extends Field
      * Field Render Function.
      * Takes the vars and outputs the HTML for the field in the settings
      */
-    function render()
+    public function render()
     {
         $cb_enabled = $cb_disabled = ''; //no errors, please
         //
         //Get selected
-        if ((int)$this->value == 1) {
+        if ((int) $this->value == 1) {
             $cb_enabled = ' selected';
         } else {
             $cb_disabled = ' selected';
@@ -59,7 +59,7 @@ class SwitchField extends Field
      * If this field requires any scripts, or css define this function and register/enqueue the scripts/css
      *
      */
-    function enqueue()
+    public function enqueue()
     {
         wp_enqueue_script(
             'redux-field-switch-js',
