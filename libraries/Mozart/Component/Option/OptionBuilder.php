@@ -6,6 +6,7 @@
 namespace Mozart\Component\Option;
 
 use Mozart\Component\Debug\SystemInfo;
+use Mozart\Component\Form\Field\Typography;
 use Mozart\Component\Option\Utils\OptionUtil;
 use Mozart\Component\Support\Str;
 use Mozart\Component\Option\Extension\ExtensionManager;
@@ -957,7 +958,6 @@ class OptionBuilder implements OptionBuilderInterface
             foreach ($this->getSections() as $section) {
                 if (isset( $section['fields'] )) {
                     foreach ($section['fields'] as $field) {
-                        //if we have required option in group field
                         if (isset( $field['fields'] ) && is_array( $field['fields'] )) {
                             foreach ($field['fields'] as $subfield) {
                                 if (isset( $subfield['required'] )) {
@@ -1049,10 +1049,6 @@ class OptionBuilder implements OptionBuilderInterface
                 }
             } else {
 
-                //!DOVY If there's a problem, this is where it's at. These two cases.
-                //This may be able to solve this issue if these don't work
-                //if (count($field['fold']) == count($field['fold'], COUNT_RECURSIVE)) {
-                //}
                 if (count( $field['required'] ) === 1 && is_numeric( $foldk )) {
                     /*
                         Example variable:
@@ -1399,7 +1395,7 @@ class OptionBuilder implements OptionBuilderInterface
             )
         ) {
             $version = !empty( $this->transients['last_save'] ) ? $this->transients['last_save'] : '';
-            $typography = new Fields\Typography( null, null, $this );
+            $typography = new Typography( null, null, $this );
 
             if ($this->params['async_typography'] && !empty( $this->typography )) {
                 $families = array();
@@ -1418,7 +1414,7 @@ class OptionBuilder implements OptionBuilderInterface
                 <script>
                     /* You can add more configuration options to webfontloader by previously defining the WebFontConfig with your options */
                     if ( typeof WebFontConfig === "undefined" ) {
-                        WebFontConfig = new Object();
+                        WebFontConfig = {};
                     }
                     WebFontConfig['google'] = {families: [<?php echo $typography->makeGoogleWebfontString( $this->typography )?>]};
 
@@ -1724,13 +1720,7 @@ class OptionBuilder implements OptionBuilderInterface
                             'enqueued'
                         ) && class_exists( $field_class ) && method_exists( $field_class, 'enqueue' )
                     ) {
-
-                        // Checking for extension field AND dev_mode = false OR dev_mode = true
-                        // Since extension fields use 'extension_dir' exclusively, we can detect them here.
-                        // Also checking for dev_mode = true doesn't mess up the JS combinine.
-                        //if ( /*$this->params['dev_mode'] === false && */ isset($theField->extension_dir) && (!'' == $theField->extension_dir) /* || ($this->params['dev_mode'] === true) */) {
                         $theField->enqueue();
-                        //}
                     }
 
                     if (method_exists( $field_class, 'localize' )) {
@@ -2682,15 +2672,7 @@ class OptionBuilder implements OptionBuilderInterface
 
                         if (!class_exists( $validate )) {
 
-                            /**
-                             * @param        string                validation class file path
-                             * @param string $class_file validation class file path
-                             */
-                            $class_file = apply_filters(
-                                "redux/validate/{$this->params['opt_name']}/class/{$field['validate']}",
-                                self::$_dir . "src/validation/{$field['validate']}/validation_{$field['validate']}.php",
-                                $class_file
-                            );
+                            $class_file = self::$_dir . "src/validation/{$field['validate']}/validation_{$field['validate']}.php";
 
                             if ($class_file) {
                                 if (file_exists( $class_file )) {
@@ -2701,7 +2683,6 @@ class OptionBuilder implements OptionBuilderInterface
 
                         if (class_exists( $validate )) {
 
-                            //!DOVY - DB saving stuff. Is this right?
                             if (empty ( $options[$field['id']] )) {
                                 $options[$field['id']] = '';
                             }
@@ -2813,18 +2794,17 @@ class OptionBuilder implements OptionBuilderInterface
 
         $string = "";
         if (( isset( $this->params['icon_type'] ) && $this->params['icon_type'] == 'image' ) || ( isset( $section['icon_type'] ) && $section['icon_type'] == 'image' )) {
-            //if ( !empty( $this->params['icon_type'] ) && $this->params['icon_type'] == 'image' ) {
-            $icon = ( !isset( $section['icon'] ) ) ? '' : '<img class="image_icon_type" src="' . $section['icon'] . '" /> ';
-        } else {
-            if (!empty( $section['icon_class'] )) {
-                $icon_class = ' ' . $section['icon_class'];
-            } elseif (!empty( $this->params['default_icon_class'] )) {
-                $icon_class = ' ' . $this->params['default_icon_class'];
+                $icon = ( !isset( $section['icon'] ) ) ? '' : '<img class="image_icon_type" src="' . $section['icon'] . '" /> ';
             } else {
-                $icon_class = '';
+                if (!empty( $section['icon_class'] )) {
+                    $icon_class = ' ' . $section['icon_class'];
+                } elseif (!empty( $this->params['default_icon_class'] )) {
+                    $icon_class = ' ' . $this->params['default_icon_class'];
+                } else {
+                    $icon_class = '';
+                }
+                $icon = ( !isset( $section['icon'] ) ) ? '<i class="el-icon-cog' . $icon_class . '"></i> ' : '<i class="' . $section['icon'] . $icon_class . '"></i> ';
             }
-            $icon = ( !isset( $section['icon'] ) ) ? '<i class="el-icon-cog' . $icon_class . '"></i> ' : '<i class="' . $section['icon'] . $icon_class . '"></i> ';
-        }
 
         $canBeSubSection = ( $k > 0 && ( !isset( $sections[( $k )]['type'] ) || $sections[( $k )]['type'] != "divide" ) ) ? true : false;
 
@@ -2871,7 +2851,6 @@ class OptionBuilder implements OptionBuilderInterface
                         }
 
                         if (( isset( $this->params['icon_type'] ) && $this->params['icon_type'] == 'image' ) || ( isset( $sections[$nextK]['icon_type'] ) && $sections[$nextK]['icon_type'] == 'image' )) {
-                            //if ( !empty( $this->params['icon_type'] ) && $this->params['icon_type'] == 'image' ) {
                             $icon = ( !isset( $sections[$nextK]['icon'] ) ) ? '' : '<img class="image_icon_type" src="' . $sections[$nextK]['icon'] . '" /> ';
                         } else {
                             if (!empty( $sections[$nextK]['icon_class'] )) {
@@ -2896,737 +2875,745 @@ class OptionBuilder implements OptionBuilderInterface
             $string .= '</li>';
         }
 
-        return $string;
-
-    }
-
-    /**
-     * HTML OUTPUT.
-     *
-     * @return      void
-     */
-    public function _options_page_html()
-    {
-        echo '<div class="wrap"><h2></h2></div>'; // Stupid hack for Wordpress alerts and warnings
-
-        echo '<div class="clear"></div>';
-        echo '<div class="wrap">';
-
-        // Do we support JS?
-        echo '<noscript><div class="no-js">' . __(
-                'Warning- This options panel will not work properly without javascript!',
-                'mozart-options'
-            ) . '</div></noscript>';
-
-        // Security is vital!
-        echo '<input type="hidden" id="ajaxsecurity" name="security" value="' . wp_create_nonce(
-                'redux_ajax_nonce'
-            ) . '" />';
-
-        // Main container
-        $expanded = ( $this->params['open_expanded'] ) ? ' fully-expanded' : '';
-
-        echo '<div class="redux-container' . $expanded . ( !empty( $this->params['class'] ) ? ' ' . $this->params['class'] : '' ) . '">';
-        $url = './options.php';
-        if ($this->params['database'] == "network" && $this->params['network_admin']) {
-            if (is_network_admin()) {
-                $url = './edit.php?action=redux_' . $this->params['opt_name'];
-            }
-        }
-        echo '<form method="post" action="' . $url . '" enctype="multipart/form-data" id="redux-form-wrapper">';
-        echo '<input type="hidden" id="redux-compiler-hook" name="' . $this->params['opt_name'] . '[compiler]" value="" />';
-        echo '<input type="hidden" id="currentSection" name="' . $this->params['opt_name'] . '[redux-section]" value="" />';
-
-        settings_fields( "{$this->params['opt_name']}_group" );
-
-        // Last tab?
-        $this->options['last_tab'] = ( isset( $_GET['tab'] ) && !isset( $this->transients['last_save_mode'] ) ) ? $_GET['tab'] : '';
-
-        echo '<input type="hidden" id="last_tab" name="' . $this->params['opt_name'] . '[last_tab]" value="' . $this->options['last_tab'] . '" />';
-
-        // Header area
-        echo '<div id="redux-header">';
-
-        if (!empty( $this->params['display_name'] )) {
-            echo '<div class="display_header">';
-            echo '<h2>' . $this->params['display_name'] . '</h2>';
-
-            if (!empty( $this->params['display_version'] )) {
-                echo '<span>' . $this->params['display_version'] . '</span>';
-            }
-
-            echo '</div>';
-        }
-
-        // Page icon
-        echo '<div id="' . $this->params['page_icon'] . '" class="icon32"></div>';
-
-        echo '<div class="clear"></div>';
-        echo '</div>';
-
-        // Intro text
-        if (isset( $this->params['intro_text'] )) {
-            echo '<div id="redux-intro-text">';
-            echo $this->params['intro_text'];
-            echo '</div>';
-        }
-
-        // Stickybar
-        echo '<div id="redux-sticky">';
-        echo '<div id="info_bar">';
-
-        $expanded = ( $this->params['open_expanded'] ) ? ' expanded' : '';
-
-        echo '<a href="javascript:void(0);" class="expand_options' . $expanded . '">' . __(
-                'Expand',
-                'mozart-options'
-            ) . '</a>';
-        echo '<div class="redux-action_bar">';
-        submit_button( __( 'Save Changes', 'mozart-options' ), 'primary', 'redux_save', false );
-
-        if (false === $this->params['hide_reset']) {
-            echo '&nbsp;';
-            submit_button(
-                __( 'Reset Section', 'mozart-options' ),
-                'secondary',
-                $this->params['opt_name'] . '[defaults-section]',
-                false
-            );
-            echo '&nbsp;';
-            submit_button(
-                __( 'Reset All', 'mozart-options' ),
-                'secondary',
-                $this->params['opt_name'] . '[defaults]',
-                false
-            );
-        }
-
-        echo '</div>';
-
-        echo '<div class="redux-ajax-loading" alt="' . __( 'Working...', 'mozart-options' ) . '">&nbsp;</div>';
-        echo '<div class="clear"></div>';
-        echo '</div>';
-
-        // Warning bar
-        if (isset( $this->transients['last_save_mode'] )) {
-
-            if ($this->transients['last_save_mode'] == "import") {
-                echo '<div class="admin-notice notice-blue saved_notice"><strong>' . apply_filters(
-                        "redux-imported-text-{$this->params['opt_name']}",
-                        __( 'Settings Imported!', 'mozart-options' )
-                    ) . '</strong></div>';
-            } elseif ($this->transients['last_save_mode'] == "defaults") {
-                echo '<div class="saved_notice admin-notice notice-yellow"><strong>' . apply_filters(
-                        "redux-defaults-text-{$this->params['opt_name']}",
-                        __( 'All Defaults Restored!', 'mozart-options' )
-                    ) . '</strong></div>';
-            } elseif ($this->transients['last_save_mode'] == "defaults_section") {
-
-                echo '<div class="saved_notice admin-notice notice-yellow"><strong>' . apply_filters(
-                        "redux-defaults-section-text-{$this->params['opt_name']}",
-                        __( 'Section Defaults Restored!', 'mozart-options' )
-                    ) . '</strong></div>';
-            } else {
-                echo '<div class="saved_notice admin-notice notice-green"><strong>' . apply_filters(
-                        "redux-saved-text-{$this->params['opt_name']}",
-                        __( 'Settings Saved!', 'mozart-options' )
-                    ) . '</strong></div>';
-            }
-            unset( $this->transients['last_save_mode'] );
+            return $string;
 
         }
 
-        echo '<div class="redux-save-warn notice-yellow"><strong>' . apply_filters(
-                "redux-changed-text-{$this->params['opt_name']}",
-                __( 'Settings have changed, you should save them!', 'mozart-options' )
-            ) . '</strong></div>';
+        /**
+         * HTML OUTPUT.
+         *
+         * @return      void
+         */
+        public
+        function _options_page_html()
+        {
+            echo '<div class="wrap"><h2></h2></div>'; // Stupid hack for Wordpress alerts and warnings
 
-        echo '<div class="redux-field-errors notice-red"><strong><span></span> ' . __(
-                'error(s) were found!',
-                'mozart-options'
-            ) . '</strong></div>';
+            echo '<div class="clear"></div>';
+            echo '<div class="wrap">';
 
-        echo '<div class="redux-field-warnings notice-yellow"><strong><span></span> ' . __(
-                'warning(s) were found!',
-                'mozart-options'
-            ) . '</strong></div>';
-
-        echo '</div>';
-
-        echo '<div class="clear"></div>';
-
-        // Sidebar
-        echo '<div class="redux-sidebar">';
-        echo '<ul class="redux-group-menu">';
-
-        foreach ($this->getSections() as $k => $section) {
-            $title = isset( $section['title'] ) ? $section['title'] : '';
-
-            $skip_sec = false;
-            foreach ($this->hidden_perm_sections as $num => $section_title) {
-                if ($section_title == $title) {
-                    $skip_sec = true;
-                }
-            }
-
-            if (isset( $section['customizer_only'] ) && $section['customizer_only'] == true) {
-                continue;
-            }
-
-            if (false == $skip_sec) {
-                echo $this->section_menu( $k, $section );
-                $skip_sec = false;
-            }
-        }
-
-        // Import / Export tab
-        if (true == $this->params['show_importer'] && false == $this->importer->is_field) {
-            $this->importer->render_tab();
-        }
-
-        // Debug tab
-        if ($this->params['dev_mode'] == true) {
-            $this->debugger->render_tab();
-        }
-
-        if ($this->params['system_info'] === true) {
-            echo '<li id="system_info_default_section_group_li" class="redux-group-tab-link-li">';
-
-            if (!empty( $this->params['icon_type'] ) && $this->params['icon_type'] == 'image') {
-                $icon = ( !isset( $this->params['system_info_icon'] ) ) ? '' : '<img src="' . $this->params['system_info_icon'] . '" /> ';
-            } else {
-                $icon_class = ( !isset( $this->params['system_info_icon_class'] ) ) ? '' : ' ' . $this->params['system_info_icon_class'];
-                $icon = ( !isset( $this->params['system_info_icon'] ) ) ? '<i class="el-icon-info-sign' . $icon_class . '"></i>' : '<i class="icon-' . $this->params['system_info_icon'] . $icon_class . '"></i> ';
-            }
-
-            echo '<a href="javascript:void(0);" id="system_info_default_section_group_li_a" class="redux-group-tab-link-a custom-tab" data-rel="system_info_default">' . $icon . ' <span class="group_title">' . __(
-                    'System Info',
+            // Do we support JS?
+            echo '<noscript><div class="no-js">' . __(
+                    'Warning- This options panel will not work properly without javascript!',
                     'mozart-options'
-                ) . '</span></a>';
-            echo '</li>';
-        }
+                ) . '</div></noscript>';
 
-        echo '</ul>';
-        echo '</div>';
+            // Security is vital!
+            echo '<input type="hidden" id="ajaxsecurity" name="security" value="' . wp_create_nonce(
+                    'redux_ajax_nonce'
+                ) . '" />';
 
-        echo '<div class="redux-main">';
+            // Main container
+            $expanded = ( $this->params['open_expanded'] ) ? ' fully-expanded' : '';
 
-        foreach ($this->getSections() as $k => $section) {
-            if (isset( $section['customizer_only'] ) && $section['customizer_only'] == true) {
-                continue;
-            }
-
-            $section['class'] = isset( $section['class'] ) ? ' ' . $section['class'] : '';
-            echo '<div id="' . $k . '_section_group' . '" class="redux-group-tab' . $section['class'] . '" data-rel="' . $k . '">';
-
-            // Don't display in the
-            $display = true;
-            if (isset( $_GET['page'] ) && $_GET['page'] == $this->params['page_slug']) {
-                if (isset( $section['panel'] ) && $section['panel'] == "false") {
-                    $display = false;
+            echo '<div class="redux-container' . $expanded . ( !empty( $this->params['class'] ) ? ' ' . $this->params['class'] : '' ) . '">';
+            $url = './options.php';
+            if ($this->params['database'] == "network" && $this->params['network_admin']) {
+                if (is_network_admin()) {
+                    $url = './edit.php?action=redux_' . $this->params['opt_name'];
                 }
             }
+            echo '<form method="post" action="' . $url . '" enctype="multipart/form-data" id="redux-form-wrapper">';
+            echo '<input type="hidden" id="redux-compiler-hook" name="' . $this->params['opt_name'] . '[compiler]" value="" />';
+            echo '<input type="hidden" id="currentSection" name="' . $this->params['opt_name'] . '[redux-section]" value="" />';
 
-            if ($display) {
-                do_settings_sections( $this->params['opt_name'] . $k . '_section_group' );
-            }
-            echo "</div>";
-        }
+            settings_fields( "{$this->params['opt_name']}_group" );
 
-        // Import / Export output
-        if (true == $this->params['show_importer'] && false == $this->importer->is_field) {
-            $this->importer->enqueue();
+            // Last tab?
+            $this->options['last_tab'] = ( isset( $_GET['tab'] ) && !isset( $this->transients['last_save_mode'] ) ) ? $_GET['tab'] : '';
 
-            echo '<fieldset id="' . $this->params['opt_name'] . '-importer_core" class="redux-field-container redux-field redux-field-init redux-container-importer" data-id="importer_core" data-type="importer">';
-            $this->importer->render();
-            echo '</fieldset>';
+            echo '<input type="hidden" id="last_tab" name="' . $this->params['opt_name'] . '[last_tab]" value="' . $this->options['last_tab'] . '" />';
 
-        }
+            // Header area
+            echo '<div id="redux-header">';
 
-        // Debug object output
-        if ($this->params['dev_mode'] == true) {
-            $this->debugger->render();
-        }
+            if (!empty( $this->params['display_name'] )) {
+                echo '<div class="display_header">';
+                echo '<h2>' . $this->params['display_name'] . '</h2>';
 
-        if ($this->params['system_info'] === true) {
-            echo '<div id="system_info_default_section_group' . '" class="redux-group-tab">';
-            echo '<h3>' . __( 'System Info', 'mozart-options' ) . '</h3>';
-
-            echo '<div id="redux-system-info">';
-            echo SystemInfo::get();
-            echo '</div>';
-
-            echo '</div>';
-        }
-
-        echo '<div class="clear"></div>';
-        echo '</div>';
-        echo '<div class="clear"></div>';
-
-        echo '<div id="redux-sticky-padder" style="display: none;">&nbsp;</div>';
-        echo '<div id="redux-footer-sticky"><div id="redux-footer">';
-
-        if (isset( $this->params['share_icons'] )) {
-            echo '<div id="redux-share">';
-
-            foreach ($this->params['share_icons'] as $link) {
-                // SHIM, use URL now
-                if (isset( $link['link'] ) && !empty( $link['link'] )) {
-                    $link['url'] = $link['link'];
-                    unset( $link['link'] );
+                if (!empty( $this->params['display_version'] )) {
+                    echo '<span>' . $this->params['display_version'] . '</span>';
                 }
 
-                echo '<a href="' . $link['url'] . '" title="' . $link['title'] . '" target="_blank">';
+                echo '</div>';
+            }
 
-                if (isset( $link['icon'] ) && !empty( $link['icon'] )) {
-                    echo '<i class="' . $link['icon'] . '"></i>';
+            // Page icon
+            echo '<div id="' . $this->params['page_icon'] . '" class="icon32"></div>';
+
+            echo '<div class="clear"></div>';
+            echo '</div>';
+
+            // Intro text
+            if (isset( $this->params['intro_text'] )) {
+                echo '<div id="redux-intro-text">';
+                echo $this->params['intro_text'];
+                echo '</div>';
+            }
+
+            // Stickybar
+            echo '<div id="redux-sticky">';
+            echo '<div id="info_bar">';
+
+            $expanded = ( $this->params['open_expanded'] ) ? ' expanded' : '';
+
+            echo '<a href="javascript:void(0);" class="expand_options' . $expanded . '">' . __(
+                    'Expand',
+                    'mozart-options'
+                ) . '</a>';
+            echo '<div class="redux-action_bar">';
+            submit_button( __( 'Save Changes', 'mozart-options' ), 'primary', 'redux_save', false );
+
+            if (false === $this->params['hide_reset']) {
+                echo '&nbsp;';
+                submit_button(
+                    __( 'Reset Section', 'mozart-options' ),
+                    'secondary',
+                    $this->params['opt_name'] . '[defaults-section]',
+                    false
+                );
+                echo '&nbsp;';
+                submit_button(
+                    __( 'Reset All', 'mozart-options' ),
+                    'secondary',
+                    $this->params['opt_name'] . '[defaults]',
+                    false
+                );
+            }
+
+            echo '</div>';
+
+            echo '<div class="redux-ajax-loading" alt="' . __( 'Working...', 'mozart-options' ) . '">&nbsp;</div>';
+            echo '<div class="clear"></div>';
+            echo '</div>';
+
+            // Warning bar
+            if (isset( $this->transients['last_save_mode'] )) {
+
+                if ($this->transients['last_save_mode'] == "import") {
+                    echo '<div class="admin-notice notice-blue saved_notice"><strong>' . apply_filters(
+                            "redux-imported-text-{$this->params['opt_name']}",
+                            __( 'Settings Imported!', 'mozart-options' )
+                        ) . '</strong></div>';
+                } elseif ($this->transients['last_save_mode'] == "defaults") {
+                    echo '<div class="saved_notice admin-notice notice-yellow"><strong>' . apply_filters(
+                            "redux-defaults-text-{$this->params['opt_name']}",
+                            __( 'All Defaults Restored!', 'mozart-options' )
+                        ) . '</strong></div>';
+                } elseif ($this->transients['last_save_mode'] == "defaults_section") {
+
+                    echo '<div class="saved_notice admin-notice notice-yellow"><strong>' . apply_filters(
+                            "redux-defaults-section-text-{$this->params['opt_name']}",
+                            __( 'Section Defaults Restored!', 'mozart-options' )
+                        ) . '</strong></div>';
                 } else {
-                    echo '<img src="' . $link['img'] . '"/>';
+                    echo '<div class="saved_notice admin-notice notice-green"><strong>' . apply_filters(
+                            "redux-saved-text-{$this->params['opt_name']}",
+                            __( 'Settings Saved!', 'mozart-options' )
+                        ) . '</strong></div>';
+                }
+                unset( $this->transients['last_save_mode'] );
+
+            }
+
+            echo '<div class="redux-save-warn notice-yellow"><strong>' . apply_filters(
+                    "redux-changed-text-{$this->params['opt_name']}",
+                    __( 'Settings have changed, you should save them!', 'mozart-options' )
+                ) . '</strong></div>';
+
+            echo '<div class="redux-field-errors notice-red"><strong><span></span> ' . __(
+                    'error(s) were found!',
+                    'mozart-options'
+                ) . '</strong></div>';
+
+            echo '<div class="redux-field-warnings notice-yellow"><strong><span></span> ' . __(
+                    'warning(s) were found!',
+                    'mozart-options'
+                ) . '</strong></div>';
+
+            echo '</div>';
+
+            echo '<div class="clear"></div>';
+
+            // Sidebar
+            echo '<div class="redux-sidebar">';
+            echo '<ul class="redux-group-menu">';
+
+            foreach ($this->getSections() as $k => $section) {
+                $title = isset( $section['title'] ) ? $section['title'] : '';
+
+                $skip_sec = false;
+                foreach ($this->hidden_perm_sections as $num => $section_title) {
+                    if ($section_title == $title) {
+                        $skip_sec = true;
+                    }
                 }
 
-                echo '</a>';
+                if (isset( $section['customizer_only'] ) && $section['customizer_only'] == true) {
+                    continue;
+                }
+
+                if (false == $skip_sec) {
+                    echo $this->section_menu( $k, $section );
+                    $skip_sec = false;
+                }
+            }
+
+            // Import / Export tab
+            if (true == $this->params['show_importer'] && false == $this->importer->is_field) {
+                $this->importer->render_tab();
+            }
+
+            // Debug tab
+            if ($this->params['dev_mode'] == true) {
+                $this->debugger->render_tab();
+            }
+
+            if ($this->params['system_info'] === true) {
+                echo '<li id="system_info_default_section_group_li" class="redux-group-tab-link-li">';
+
+                if (!empty( $this->params['icon_type'] ) && $this->params['icon_type'] == 'image') {
+                    $icon = ( !isset( $this->params['system_info_icon'] ) ) ? '' : '<img src="' . $this->params['system_info_icon'] . '" /> ';
+                } else {
+                    $icon_class = ( !isset( $this->params['system_info_icon_class'] ) ) ? '' : ' ' . $this->params['system_info_icon_class'];
+                    $icon = ( !isset( $this->params['system_info_icon'] ) ) ? '<i class="el-icon-info-sign' . $icon_class . '"></i>' : '<i class="icon-' . $this->params['system_info_icon'] . $icon_class . '"></i> ';
+                }
+
+                echo '<a href="javascript:void(0);" id="system_info_default_section_group_li_a" class="redux-group-tab-link-a custom-tab" data-rel="system_info_default">' . $icon . ' <span class="group_title">' . __(
+                        'System Info',
+                        'mozart-options'
+                    ) . '</span></a>';
+                echo '</li>';
+            }
+
+            echo '</ul>';
+            echo '</div>';
+
+            echo '<div class="redux-main">';
+
+            foreach ($this->getSections() as $k => $section) {
+                if (isset( $section['customizer_only'] ) && $section['customizer_only'] == true) {
+                    continue;
+                }
+
+                $section['class'] = isset( $section['class'] ) ? ' ' . $section['class'] : '';
+                echo '<div id="' . $k . '_section_group' . '" class="redux-group-tab' . $section['class'] . '" data-rel="' . $k . '">';
+
+                // Don't display in the
+                $display = true;
+                if (isset( $_GET['page'] ) && $_GET['page'] == $this->params['page_slug']) {
+                    if (isset( $section['panel'] ) && $section['panel'] == "false") {
+                        $display = false;
+                    }
+                }
+
+                if ($display) {
+                    do_settings_sections( $this->params['opt_name'] . $k . '_section_group' );
+                }
+                echo "</div>";
+            }
+
+            // Import / Export output
+            if (true == $this->params['show_importer'] && false == $this->importer->is_field) {
+                $this->importer->enqueue();
+
+                echo '<fieldset id="' . $this->params['opt_name'] . '-importer_core" class="redux-field-container redux-field redux-field-init redux-container-importer" data-id="importer_core" data-type="importer">';
+                $this->importer->render();
+                echo '</fieldset>';
+
+            }
+
+            // Debug object output
+            if ($this->params['dev_mode'] == true) {
+                $this->debugger->render();
+            }
+
+            if ($this->params['system_info'] === true) {
+                echo '<div id="system_info_default_section_group' . '" class="redux-group-tab">';
+                echo '<h3>' . __( 'System Info', 'mozart-options' ) . '</h3>';
+
+                echo '<div id="redux-system-info">';
+                echo SystemInfo::get();
+                echo '</div>';
+
+                echo '</div>';
+            }
+
+            echo '<div class="clear"></div>';
+            echo '</div>';
+            echo '<div class="clear"></div>';
+
+            echo '<div id="redux-sticky-padder" style="display: none;">&nbsp;</div>';
+            echo '<div id="redux-footer-sticky"><div id="redux-footer">';
+
+            if (isset( $this->params['share_icons'] )) {
+                echo '<div id="redux-share">';
+
+                foreach ($this->params['share_icons'] as $link) {
+                    // SHIM, use URL now
+                    if (isset( $link['link'] ) && !empty( $link['link'] )) {
+                        $link['url'] = $link['link'];
+                        unset( $link['link'] );
+                    }
+
+                    echo '<a href="' . $link['url'] . '" title="' . $link['title'] . '" target="_blank">';
+
+                    if (isset( $link['icon'] ) && !empty( $link['icon'] )) {
+                        echo '<i class="' . $link['icon'] . '"></i>';
+                    } else {
+                        echo '<img src="' . $link['img'] . '"/>';
+                    }
+
+                    echo '</a>';
+                }
+
+                echo '</div>';
+            }
+
+            echo '<div class="redux-action_bar">';
+            submit_button( __( 'Save Changes', 'mozart-options' ), 'primary', 'redux_save', false );
+
+            if (false === $this->params['hide_reset']) {
+                echo '&nbsp;';
+                submit_button(
+                    __( 'Reset Section', 'mozart-options' ),
+                    'secondary',
+                    $this->params['opt_name'] . '[defaults-section]',
+                    false
+                );
+                echo '&nbsp;';
+                submit_button(
+                    __( 'Reset All', 'mozart-options' ),
+                    'secondary',
+                    $this->params['opt_name'] . '[defaults]',
+                    false
+                );
             }
 
             echo '</div>';
-        }
 
-        echo '<div class="redux-action_bar">';
-        submit_button( __( 'Save Changes', 'mozart-options' ), 'primary', 'redux_save', false );
+            echo '<div class="redux-ajax-loading" alt="' . __( 'Working...', 'mozart-options' ) . '">&nbsp;</div>';
+            echo '<div class="clear"></div>';
 
-        if (false === $this->params['hide_reset']) {
-            echo '&nbsp;';
-            submit_button(
-                __( 'Reset Section', 'mozart-options' ),
-                'secondary',
-                $this->params['opt_name'] . '[defaults-section]',
-                false
-            );
-            echo '&nbsp;';
-            submit_button(
-                __( 'Reset All', 'mozart-options' ),
-                'secondary',
-                $this->params['opt_name'] . '[defaults]',
-                false
-            );
-        }
+            echo '</div>';
+            echo '</form>';
+            echo '</div></div>';
 
-        echo '</div>';
-
-        echo '<div class="redux-ajax-loading" alt="' . __( 'Working...', 'mozart-options' ) . '">&nbsp;</div>';
-        echo '<div class="clear"></div>';
-
-        echo '</div>';
-        echo '</form>';
-        echo '</div></div>';
-
-        echo ( isset( $this->params['footer_text'] ) ) ? '<div id="redux-sub-footer">' . $this->params['footer_text'] . '</div>' : '';
+            echo ( isset( $this->params['footer_text'] ) ) ? '<div id="redux-sub-footer">' . $this->params['footer_text'] . '</div>' : '';
 
 
-        echo '<div class="clear"></div>';
-        echo '</div><!--wrap-->';
+            echo '<div class="clear"></div>';
+            echo '</div><!--wrap-->';
 
-        if ($this->params['dev_mode'] == true) {
-            if (current_user_can( 'administrator' )) {
-                global $wpdb;
-                echo "<br /><pre>";
-                print_r( $wpdb->queries );
-                echo "</pre>";
-            }
-
-            echo '<br /><div class="redux-timer">' . get_num_queries() . ' queries in ' . timer_stop(
-                    0
-                ) . ' seconds</div>';
-        }
-
-        $this->set_transients();
-
-    }
-
-    /**
-     * Section HTML OUTPUT.
-     *
-     * @param       array $section
-     *
-     * @return      void
-     */
-    public function _section_desc( $section )
-    {
-        $id = trim( rtrim( $section['id'], '_section' ), $this->params['opt_name'] );
-
-        if (isset( $this->sections[$id]['desc'] ) && !empty( $this->sections[$id]['desc'] )) {
-            echo '<div class="redux-section-desc">' . $this->sections[$id]['desc'] . '</div>';
-        }
-    }
-
-    /**
-     * Field HTML OUTPUT.
-     * Gets option from options array, then calls the specific field type class - allows extending by other devs
-     *
-     * @param array $field
-     * @param string $v
-     *
-     * @return      void
-     */
-    public function _field_input( $field, $v = null )
-    {
-        if (isset( $field['callback'] ) && function_exists( $field['callback'] )) {
-            $value = ( isset( $this->options[$field['id']] ) ) ? $this->options[$field['id']] : '';
-            call_user_func( $field['callback'], $field, $value );
-
-            return;
-        }
-
-        if (isset( $field['type'] )) {
-
-            // If the field is set not to display in the panel
-            $display = true;
-            if (isset( $_GET['page'] ) && $_GET['page'] == $this->params['page_slug']) {
-                if (isset( $field['panel'] ) && $field['panel'] == false) {
-                    $display = false;
+            if ($this->params['dev_mode'] == true) {
+                if (current_user_can( 'administrator' )) {
+                    global $wpdb;
+                    echo "<br /><pre>";
+                    print_r( $wpdb->queries );
+                    echo "</pre>";
                 }
+
+                echo '<br /><div class="redux-timer">' . get_num_queries() . ' queries in ' . timer_stop(
+                        0
+                    ) . ' seconds</div>';
             }
 
-            if (!$display) {
+            $this->set_transients();
+
+        }
+
+        /**
+         * Section HTML OUTPUT.
+         *
+         * @param       array $section
+         *
+         * @return      void
+         */
+        public
+        function _section_desc( $section )
+        {
+            $id = trim( rtrim( $section['id'], '_section' ), $this->params['opt_name'] );
+
+            if (isset( $this->sections[$id]['desc'] ) && !empty( $this->sections[$id]['desc'] )) {
+                echo '<div class="redux-section-desc">' . $this->sections[$id]['desc'] . '</div>';
+            }
+        }
+
+        /**
+         * Field HTML OUTPUT.
+         * Gets option from options array, then calls the specific field type class - allows extending by other devs
+         *
+         * @param array $field
+         * @param string $v
+         *
+         * @return      void
+         */
+        public
+        function _field_input( $field, $v = null )
+        {
+            if (isset( $field['callback'] ) && function_exists( $field['callback'] )) {
+                $value = ( isset( $this->options[$field['id']] ) ) ? $this->options[$field['id']] : '';
+                call_user_func( $field['callback'], $field, $value );
+
                 return;
             }
 
-            $field_class = "Mozart\\Component\\Form\\Field\\" . Str::camel( $field['type'] );
+            if (isset( $field['type'] )) {
 
-            if (false === class_exists( $field_class )) {
-                if (false === class_exists( $field_class . 'Field' )) {
-                    return false;
+                // If the field is set not to display in the panel
+                $display = true;
+                if (isset( $_GET['page'] ) && $_GET['page'] == $this->params['page_slug']) {
+                    if (isset( $field['panel'] ) && $field['panel'] == false) {
+                        $display = false;
+                    }
+                }
+
+                if (!$display) {
+                    return;
+                }
+
+                $field_class = "Mozart\\Component\\Form\\Field\\" . Str::camel( $field['type'] );
+
+                if (false === class_exists( $field_class )) {
+                    if (false === class_exists( $field_class . 'Field' )) {
+                        return false;
+                    }
+                }
+
+                $value = isset( $this->options[$field['id']] ) ? $this->options[$field['id']] : '';
+
+                if ($v !== null) {
+                    $value = $v;
+                }
+
+                if (!isset( $field['name_suffix'] )) {
+                    $field['name_suffix'] = "";
+                }
+
+                $render = new $field_class( $field, $value, $this );
+                ob_start();
+
+                $render->render();
+
+                /**
+                 * @param string $_render rendered field markup
+                 * @param array $field field data
+                 */
+                $_render = apply_filters(
+                    "redux/field/{$this->params['opt_name']}/{$field['type']}/render/after",
+                    $render,
+                    $field
+                );
+
+                ob_end_clean();
+
+                //save the values into a unique array in case we need it for dependencies
+                $this->fieldsValues[$field['id']] = ( isset( $value['url'] ) && is_array(
+                        $value
+                    ) ) ? $value['url'] : $value;
+
+                //create default data und class string and checks the dependencies of an object
+                $class_string = '';
+                $data_string = '';
+
+                $this->check_dependencies( $field );
+
+                if (!isset( $field['fields'] ) || empty( $field['fields'] )) {
+                    echo '<fieldset id="' . $this->params['opt_name'] . '-' . $field['id'] . '" class="redux-field-container redux-field redux-field-init redux-container-' . $field['type'] . ' ' . $class_string . '" data-id="' . $field['id'] . '" ' . $data_string . ' data-type="' . $field['type'] . '">';
+                }
+
+                echo $_render;
+
+                if (!empty( $field['desc'] )) {
+                    $field['description'] = $field['desc'];
+                }
+
+                echo ( isset( $field['description'] ) && $field['type'] != "info" && $field['type'] !== "section" && !empty( $field['description'] ) ) ? '<div class="description field-desc">' . $field['description'] . '</div>' : '';
+
+                if (!isset( $field['fields'] ) || empty( $field['fields'] )) {
+                    echo '</fieldset>';
+                }
+            }
+        }
+
+        /**
+         * Can Output CSS
+         * Check if a field meets its requirements before outputting to CSS
+         *
+         * @param $field
+         *
+         * @return bool
+         */
+        public
+        function _can_output_css( $field )
+        {
+            $return = true;
+
+            if (isset( $field['force_output'] ) && $field['force_output'] == true) {
+                return $return;
+            }
+
+            if (!empty( $field['required'] )) {
+                if (isset( $field['required'][0] )) {
+                    if (!is_array( $field['required'][0] ) && count( $field['required'] ) == 3) {
+                        $parentValue = $GLOBALS[$this->params['global_variable']][$field['required'][0]];
+                        $checkValue = $field['required'][2];
+                        $operation = $field['required'][1];
+                        $return = $this->compareValueDependencies( $parentValue, $checkValue, $operation );
+                    } elseif (is_array( $field['required'][0] )) {
+                        foreach ($field['required'] as $required) {
+                            if (!is_array( $required[0] ) && count( $required ) == 3) {
+                                $parentValue = $GLOBALS[$this->params['global_variable']][$required[0]];
+                                $checkValue = $required[2];
+                                $operation = $required[1];
+                                $return = $this->compareValueDependencies( $parentValue, $checkValue, $operation );
+                            }
+                            if (!$return) {
+                                return $return;
+                            }
+                        }
+                    }
                 }
             }
 
-            $value = isset( $this->options[$field['id']] ) ? $this->options[$field['id']] : '';
-
-            if ($v !== null) {
-                $value = $v;
-            }
-
-            if (!isset( $field['name_suffix'] )) {
-                $field['name_suffix'] = "";
-            }
-
-            $render = new $field_class( $field, $value, $this );
-            ob_start();
-
-            $render->render();
-
-            /**
-             * @param string $_render rendered field markup
-             * @param array $field field data
-             */
-            $_render = apply_filters(
-                "redux/field/{$this->params['opt_name']}/{$field['type']}/render/after",
-                $render,
-                $field
-            );
-
-            ob_end_clean();
-
-            //save the values into a unique array in case we need it for dependencies
-            $this->fieldsValues[$field['id']] = ( isset( $value['url'] ) && is_array(
-                    $value
-                ) ) ? $value['url'] : $value;
-
-            //create default data und class string and checks the dependencies of an object
-            $class_string = '';
-            $data_string = '';
-
-            $this->check_dependencies( $field );
-
-            if (!isset( $field['fields'] ) || empty( $field['fields'] )) {
-                echo '<fieldset id="' . $this->params['opt_name'] . '-' . $field['id'] . '" class="redux-field-container redux-field redux-field-init redux-container-' . $field['type'] . ' ' . $class_string . '" data-id="' . $field['id'] . '" ' . $data_string . ' data-type="' . $field['type'] . '">';
-            }
-
-            echo $_render;
-
-            if (!empty( $field['desc'] )) {
-                $field['description'] = $field['desc'];
-            }
-
-            echo ( isset( $field['description'] ) && $field['type'] != "info" && $field['type'] !== "section" && !empty( $field['description'] ) ) ? '<div class="description field-desc">' . $field['description'] . '</div>' : '';
-
-            if (!isset( $field['fields'] ) || empty( $field['fields'] )) {
-                echo '</fieldset>';
-            }
-        }
-    }
-
-    /**
-     * Can Output CSS
-     * Check if a field meets its requirements before outputting to CSS
-     *
-     * @param $field
-     *
-     * @return bool
-     */
-    public function _can_output_css( $field )
-    {
-        $return = true;
-
-        if (isset( $field['force_output'] ) && $field['force_output'] == true) {
             return $return;
         }
 
-        if (!empty( $field['required'] )) {
-            if (isset( $field['required'][0] )) {
-                if (!is_array( $field['required'][0] ) && count( $field['required'] ) == 3) {
-                    $parentValue = $GLOBALS[$this->params['global_variable']][$field['required'][0]];
-                    $checkValue = $field['required'][2];
-                    $operation = $field['required'][1];
-                    $return = $this->compareValueDependencies( $parentValue, $checkValue, $operation );
-                } elseif (is_array( $field['required'][0] )) {
-                    foreach ($field['required'] as $required) {
-                        if (!is_array( $required[0] ) && count( $required ) == 3) {
-                            $parentValue = $GLOBALS[$this->params['global_variable']][$required[0]];
-                            $checkValue = $required[2];
-                            $operation = $required[1];
-                            $return = $this->compareValueDependencies( $parentValue, $checkValue, $operation );
-                        }
-                        if (!$return) {
-                            return $return;
+        /**
+         * Checks dependencies between objects based on the $field['required'] array
+         * If the array is set it needs to have exactly 3 entries.
+         * The first entry describes which field should be monitored by the current field. eg: "content"
+         * The second entry describes the comparison parameter. eg: "equals, not, is_larger, is_smaller ,contains"
+         * The third entry describes the value that we are comparing against.
+         * Example: if the required array is set to array('content','equals','Hello World'); then the current
+         * field will only be displayed if the field with id "content" has exactly the value "Hello World"
+         *
+         * @param array $field
+         *
+         * @return array $params
+         */
+        public
+        function check_dependencies( $field )
+        {
+            if (!empty( $field['required'] )) {
+
+                //$this->folds[$field['id']] = $this->folds[$field['id']] ? $this->folds[$field['id']] : array();
+                if (!isset( $this->required_child[$field['id']] )) {
+                    $this->required_child[$field['id']] = array();
+                }
+
+                if (!isset( $this->required[$field['id']] )) {
+                    $this->required[$field['id']] = array();
+                }
+
+                if (is_array( $field['required'][0] )) {
+                    foreach ($field['required'] as $value) {
+                        if (is_array( $value ) && count( $value ) == 3) {
+                            $data = array();
+                            $data['parent'] = $value[0];
+                            $data['operation'] = $value[1];
+                            $data['checkValue'] = $value[2];
+
+                            $this->required[$data['parent']][$field['id']][] = $data;
+
+                            if (!in_array( $data['parent'], $this->required_child[$field['id']] )) {
+                                $this->required_child[$field['id']][] = $data;
+                            }
+
+                            $this->checkRequiredDependencies( $field, $data );
                         }
                     }
+                } else {
+                    $data = array();
+                    $data['parent'] = $field['required'][0];
+                    $data['operation'] = $field['required'][1];
+                    $data['checkValue'] = $field['required'][2];
+
+                    $this->required[$data['parent']][$field['id']][] = $data;
+
+                    if (!in_array( $data['parent'], $this->required_child[$field['id']] )) {
+                        $this->required_child[$field['id']][] = $data;
+                    }
+
+                    $this->checkRequiredDependencies( $field, $data );
                 }
+
             }
         }
 
-        return $return;
-    }
+        /**
+         * Compare data for required field
+         *
+         * @param $parentValue
+         * @param $checkValue
+         * @param $operation
+         *
+         * @return bool
+         */
+        public
+        function compareValueDependencies( $parentValue, $checkValue, $operation )
+        {
+            $return = false;
 
-    /**
-     * Checks dependencies between objects based on the $field['required'] array
-     * If the array is set it needs to have exactly 3 entries.
-     * The first entry describes which field should be monitored by the current field. eg: "content"
-     * The second entry describes the comparison parameter. eg: "equals, not, is_larger, is_smaller ,contains"
-     * The third entry describes the value that we are comparing against.
-     * Example: if the required array is set to array('content','equals','Hello World'); then the current
-     * field will only be displayed if the field with id "content" has exactly the value "Hello World"
-     *
-     * @param array $field
-     *
-     * @return array $params
-     */
-    public function check_dependencies( $field )
-    {
-        if (!empty( $field['required'] )) {
-
-            //$this->folds[$field['id']] = $this->folds[$field['id']] ? $this->folds[$field['id']] : array();
-            if (!isset( $this->required_child[$field['id']] )) {
-                $this->required_child[$field['id']] = array();
-            }
-
-            if (!isset( $this->required[$field['id']] )) {
-                $this->required[$field['id']] = array();
-            }
-
-            if (is_array( $field['required'][0] )) {
-                foreach ($field['required'] as $value) {
-                    if (is_array( $value ) && count( $value ) == 3) {
-                        $data = array();
-                        $data['parent'] = $value[0];
-                        $data['operation'] = $value[1];
-                        $data['checkValue'] = $value[2];
-
-                        $this->required[$data['parent']][$field['id']][] = $data;
-
-                        if (!in_array( $data['parent'], $this->required_child[$field['id']] )) {
-                            $this->required_child[$field['id']][] = $data;
+            switch ($operation) {
+                case '=':
+                case 'equals':
+                    $data['operation'] = "=";
+                    if (is_array( $checkValue )) {
+                        if (in_array( $parentValue, $checkValue )) {
+                            $return = true;
                         }
-
-                        $this->checkRequiredDependencies( $field, $data );
+                    } else {
+                        if ($parentValue == $checkValue) {
+                            $return = true;
+                        } elseif (is_array( $parentValue )) {
+                            if (in_array( $checkValue, $parentValue )) {
+                                $return = true;
+                            }
+                        }
                     }
+                    break;
+                case '!=':
+                case 'not':
+                    $data['operation'] = "!==";
+                    if (is_array( $checkValue )) {
+                        if (!in_array( $parentValue, $checkValue )) {
+                            $return = true;
+                        }
+                    } else {
+                        if ($parentValue != $checkValue) {
+                            $return = true;
+                        } elseif (is_array( $parentValue )) {
+                            if (!in_array( $checkValue, $parentValue )) {
+                                $return = true;
+                            }
+                        }
+                    }
+                    break;
+                case '>':
+                case 'greater':
+                case 'is_larger':
+                    $data['operation'] = ">";
+                    if ($parentValue > $checkValue) {
+                        $return = true;
+                    }
+                    break;
+                case '>=':
+                case 'greater_equal':
+                case 'is_larger_equal':
+                    $data['operation'] = ">=";
+                    if ($parentValue >= $checkValue) {
+                        $return = true;
+                    }
+                    break;
+                case '<':
+                case 'less':
+                case 'is_smaller':
+                    $data['operation'] = "<";
+                    if ($parentValue < $checkValue) {
+                        $return = true;
+                    }
+                    break;
+                case '<=':
+                case 'less_equal':
+                case 'is_smaller_equal':
+                    $data['operation'] = "<=";
+                    if ($parentValue <= $checkValue) {
+                        $return = true;
+                    }
+                    break;
+                case 'contains':
+                    if (strpos( $parentValue, $checkValue ) !== false) {
+                        $return = true;
+                    }
+                    break;
+                case 'doesnt_contain':
+                case 'not_contain':
+                    if (strpos( $parentValue, $checkValue ) === false) {
+                        $return = true;
+                    }
+                    break;
+                case 'is_empty_or':
+                    if (empty( $parentValue ) || $parentValue == $checkValue) {
+                        $return = true;
+                    }
+                    break;
+                case 'not_empty_and':
+                    if (!empty( $parentValue ) && $parentValue != $checkValue) {
+                        $return = true;
+                    }
+                    break;
+                case 'is_empty':
+                case 'empty':
+                case '!isset':
+                    if (empty( $parentValue ) || $parentValue == "" || $parentValue == null) {
+                        $return = true;
+                    }
+                    break;
+                case 'not_empty':
+                case '!empty':
+                case 'isset':
+                    if (!empty( $parentValue ) && $parentValue != "" && $parentValue != null) {
+                        $return = true;
+                    }
+                    break;
+            }
+
+            return $return;
+        }
+
+        /**
+         * @param $field
+         * @param $data
+         */
+        public
+        function checkRequiredDependencies( $field, $data )
+        {
+            //required field must not be hidden. otherwise hide this one by default
+
+            if (!in_array(
+                    $data['parent'],
+                    $this->fieldsHidden
+                ) && ( !isset( $this->folds[$field['id']] ) || $this->folds[$field['id']] != "hide" )
+            ) {
+                if (isset( $this->options[$data['parent']] )) {
+                    $return = $this->compareValueDependencies(
+                        $this->options[$data['parent']],
+                        $data['checkValue'],
+                        $data['operation']
+                    );
                 }
+            }
+
+            if (( isset( $return ) && $return ) && ( !isset( $this->folds[$field['id']] ) || $this->folds[$field['id']] != "hide" )) {
+                $this->folds[$field['id']] = "show";
             } else {
-                $data = array();
-                $data['parent'] = $field['required'][0];
-                $data['operation'] = $field['required'][1];
-                $data['checkValue'] = $field['required'][2];
-
-                $this->required[$data['parent']][$field['id']][] = $data;
-
-                if (!in_array( $data['parent'], $this->required_child[$field['id']] )) {
-                    $this->required_child[$field['id']][] = $data;
+                $this->folds[$field['id']] = "hide";
+                if (!in_array( $field['id'], $this->fieldsHidden )) {
+                    $this->fieldsHidden[] = $field['id'];
                 }
-
-                $this->checkRequiredDependencies( $field, $data );
-            }
-
-        }
-    }
-
-    /**
-     * Compare data for required field
-     *
-     * @param $parentValue
-     * @param $checkValue
-     * @param $operation
-     *
-     * @return bool
-     */
-    public function compareValueDependencies( $parentValue, $checkValue, $operation )
-    {
-        $return = false;
-
-        switch ($operation) {
-            case '=':
-            case 'equals':
-                $data['operation'] = "=";
-                if (is_array( $checkValue )) {
-                    if (in_array( $parentValue, $checkValue )) {
-                        $return = true;
-                    }
-                } else {
-                    if ($parentValue == $checkValue) {
-                        $return = true;
-                    } elseif (is_array( $parentValue )) {
-                        if (in_array( $checkValue, $parentValue )) {
-                            $return = true;
-                        }
-                    }
-                }
-                break;
-            case '!=':
-            case 'not':
-                $data['operation'] = "!==";
-                if (is_array( $checkValue )) {
-                    if (!in_array( $parentValue, $checkValue )) {
-                        $return = true;
-                    }
-                } else {
-                    if ($parentValue != $checkValue) {
-                        $return = true;
-                    } elseif (is_array( $parentValue )) {
-                        if (!in_array( $checkValue, $parentValue )) {
-                            $return = true;
-                        }
-                    }
-                }
-                break;
-            case '>':
-            case 'greater':
-            case 'is_larger':
-                $data['operation'] = ">";
-                if ($parentValue > $checkValue) {
-                    $return = true;
-                }
-                break;
-            case '>=':
-            case 'greater_equal':
-            case 'is_larger_equal':
-                $data['operation'] = ">=";
-                if ($parentValue >= $checkValue) {
-                    $return = true;
-                }
-                break;
-            case '<':
-            case 'less':
-            case 'is_smaller':
-                $data['operation'] = "<";
-                if ($parentValue < $checkValue) {
-                    $return = true;
-                }
-                break;
-            case '<=':
-            case 'less_equal':
-            case 'is_smaller_equal':
-                $data['operation'] = "<=";
-                if ($parentValue <= $checkValue) {
-                    $return = true;
-                }
-                break;
-            case 'contains':
-                if (strpos( $parentValue, $checkValue ) !== false) {
-                    $return = true;
-                }
-                break;
-            case 'doesnt_contain':
-            case 'not_contain':
-                if (strpos( $parentValue, $checkValue ) === false) {
-                    $return = true;
-                }
-                break;
-            case 'is_empty_or':
-                if (empty( $parentValue ) || $parentValue == $checkValue) {
-                    $return = true;
-                }
-                break;
-            case 'not_empty_and':
-                if (!empty( $parentValue ) && $parentValue != $checkValue) {
-                    $return = true;
-                }
-                break;
-            case 'is_empty':
-            case 'empty':
-            case '!isset':
-                if (empty( $parentValue ) || $parentValue == "" || $parentValue == null) {
-                    $return = true;
-                }
-                break;
-            case 'not_empty':
-            case '!empty':
-            case 'isset':
-                if (!empty( $parentValue ) && $parentValue != "" && $parentValue != null) {
-                    $return = true;
-                }
-                break;
-        }
-
-        return $return;
-    }
-
-    /**
-     * @param $field
-     * @param $data
-     */
-    public function checkRequiredDependencies( $field, $data )
-    {
-        //required field must not be hidden. otherwise hide this one by default
-
-        if (!in_array(
-                $data['parent'],
-                $this->fieldsHidden
-            ) && ( !isset( $this->folds[$field['id']] ) || $this->folds[$field['id']] != "hide" )
-        ) {
-            if (isset( $this->options[$data['parent']] )) {
-                $return = $this->compareValueDependencies(
-                    $this->options[$data['parent']],
-                    $data['checkValue'],
-                    $data['operation']
-                );
             }
         }
 
-        if (( isset( $return ) && $return ) && ( !isset( $this->folds[$field['id']] ) || $this->folds[$field['id']] != "hide" )) {
-            $this->folds[$field['id']] = "show";
-        } else {
-            $this->folds[$field['id']] = "hide";
-            if (!in_array( $field['id'], $this->fieldsHidden )) {
-                $this->fieldsHidden[] = $field['id'];
+        /**
+         * converts an array into a html data string
+         *
+         * @param array $data example input: array('id'=>'true')
+         *
+         * @return string $data_string example output: data-id='true'
+         */
+        public
+        function create_data_string( $data = array() )
+        {
+            $data_string = "";
+
+            foreach ($data as $key => $value) {
+                if (is_array( $value )) {
+                    $value = implode( "|", $value );
+                }
+                $data_string .= " data-$key='$value' ";
             }
+
+            return $data_string;
         }
     }
-
-    /**
-     * converts an array into a html data string
-     *
-     * @param array $data example input: array('id'=>'true')
-     *
-     * @return string $data_string example output: data-id='true'
-     */
-    public function create_data_string( $data = array() )
-    {
-        $data_string = "";
-
-        foreach ($data as $key => $value) {
-            if (is_array( $value )) {
-                $value = implode( "|", $value );
-            }
-            $data_string .= " data-$key='$value' ";
-        }
-
-        return $data_string;
-    }
-} 

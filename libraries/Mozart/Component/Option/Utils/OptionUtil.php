@@ -21,7 +21,7 @@ class OptionUtil
         // Something wrong happened
         if (count( $cssArray ) == 0) {
             return;
-        } else { //if ( count( $cssArray ) >= 1 ) {
+        } else {  ( count( $cssArray ) >= 1 ) {
             $css = '';
 
             foreach ($cssArray as $element => $selector) {
@@ -66,24 +66,6 @@ class OptionUtil
             WP_Filesystem();
         }
     }
-
-
-    public static function tabFromField( $parent, $field )
-    {
-        foreach ($parent->getSections() as $k => $section) {
-            if (!isset( $section['title'] )) {
-                continue;
-            }
-
-            if (isset( $section['fields'] ) && !empty( $section['fields'] )) {
-                if (self::recursiveArraySearch( $field, $section['fields'] )) {
-                    return $k;
-                    continue;
-                }
-            }
-        }
-    }
-
 
     public function curlRead( $filename )
     {
@@ -130,33 +112,6 @@ class OptionUtil
         }
     }
 
-    public static function isParentTheme( $file )
-    {
-        if (strpos( self::cleanFilePath( $file ), self::cleanFilePath( get_template_directory() ) ) !== false) {
-            return true;
-        }
-
-        return false;
-    }
-
-    public static function isChildTheme( $file )
-    {
-        if (strpos( self::cleanFilePath( $file ), self::cleanFilePath( get_stylesheet_directory() ) ) !== false) {
-            return true;
-        }
-
-        return false;
-    }
-
-    public static function isTheme( $file )
-    {
-        if (true == self::isChildTheme( $file ) || true == self::isParentTheme( $file )) {
-            return true;
-        }
-
-        return false;
-    }
-
     public static function array_in_array( $needle, $haystack )
     {
         //Make sure $needle is an array for foreach
@@ -201,29 +156,6 @@ class OptionUtil
         }
 
         return $path;
-    }
-
-    /**
-     * Take a path and delete it
-     *
-     * @param string $path
-     */
-    public static function rmdir( $dir )
-    {
-        if (is_dir( $dir )) {
-            $objects = scandir( $dir );
-            foreach ($objects as $object) {
-                if ($object != "." && $object != "..") {
-                    if (filetype( $dir . "/" . $object ) == "dir") {
-                        rrmdir( $dir . "/" . $object );
-                    } else {
-                        unlink( $dir . "/" . $object );
-                    }
-                }
-            }
-            reset( $objects );
-            rmdir( $dir );
-        }
     }
 
     /**

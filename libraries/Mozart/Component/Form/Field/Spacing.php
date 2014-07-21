@@ -2,6 +2,7 @@
 namespace Mozart\Component\Form\Field;
 
 use Mozart\Component\Form\Field;
+use Mozart\Component\Option\Utils\OptionUtil;
 
 class Spacing extends Field
 {
@@ -63,7 +64,7 @@ class Spacing extends Field
          */
 
         // If units field has a value but is not an acceptable value, unset the variable
-        if (isset( $this->field['units'] ) && !Utils\Option::array_in_array(
+        if (isset( $this->field['units'] ) && !OptionUtil::array_in_array(
                 $this->field['units'],
                 array(
                     '',
@@ -84,8 +85,8 @@ class Spacing extends Field
             unset( $this->field['units'] );
         }
 
-        //if there is a default unit value  but is not an accepted value, unset the variable
-        if (isset( $this->value['units'] ) && !Utils\Option::array_in_array(
+        // if there is a default unit value  but is not an accepted value, unset the variable
+        if (isset( $this->value['units'] ) && !OptionUtil::array_in_array(
                 $this->value['units'],
                 array(
                     '',
@@ -154,7 +155,7 @@ class Spacing extends Field
         // if field units has a value and is NOT an array, then evaluate as needed.
         if (isset( $this->field['units'] ) && !is_array( $this->field['units'] )) {
 
-            //if units fields has a value and is not empty but units value does not then make units value the field value
+            // if units fields has a value and is not empty but units value does not then make units value the field value
             if (isset( $this->field['units'] ) && $this->field['units'] != "" && !isset( $this->value['units'] ) || $this->field['units'] == false) {
                 $this->value['units'] = $this->field['units'];
 

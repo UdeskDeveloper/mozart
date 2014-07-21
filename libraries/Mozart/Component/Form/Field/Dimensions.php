@@ -83,7 +83,7 @@ class Dimensions extends Field
             unset( $this->field['units'] );
         }
 
-        //if there is a default unit value  but is not an accepted value, unset the variable
+         // if there is a default unit value  but is not an accepted value, unset the variable
         if (isset( $this->value['units'] ) && !Utils\Option::array_in_array(
                 $this->value['units'],
                 array(
@@ -111,7 +111,7 @@ class Dimensions extends Field
         // if field units has a value and IS an array, then evaluate as needed.
         if (isset( $this->field['units'] ) && !is_array( $this->field['units'] )) {
 
-            //if units fields has a value but units value does not then make units value the field value
+            // if units fields has a value but units value does not then make units value the field value
             if (isset( $this->field['units'] ) && !isset( $this->value['units'] ) || $this->field['units'] == false) {
                 $this->value['units'] = $this->field['units'];
 
@@ -281,7 +281,7 @@ class Dimensions extends Field
         // if field units has a value and IS an array, then evaluate as needed.
         if (isset( $this->field['units'] ) && !is_array( $this->field['units'] )) {
 
-            //if units fields has a value but units value does not then make units value the field value
+            // if units fields has a value but units value does not then make units value the field value
             if (isset( $this->field['units'] ) && !isset( $this->value['units'] ) || $this->field['units'] == false) {
                 $this->value['units'] = $this->field['units'];
 

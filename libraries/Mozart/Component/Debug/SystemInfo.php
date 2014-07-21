@@ -138,7 +138,6 @@ class SystemInfo
                 continue;
             }
 
-            //if( $plugin['Name'] !== 'Redux Framework' ) continue;
 
             $return .= $plugin['Name'] . ': ' . $plugin['Version'] . "\n";
         }

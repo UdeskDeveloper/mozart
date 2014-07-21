@@ -36,10 +36,8 @@ class Text extends Field
             $this->value = $this->field['options'];
         }
 
-        //if (isset($this->field['text_hint']) && is_array($this->field['text_hint'])) {
         $qtip_title = isset( $this->field['text_hint']['title'] ) ? 'qtip-title="' . $this->field['text_hint']['title'] . '" ' : '';
         $qtip_text = isset( $this->field['text_hint']['content'] ) ? 'qtip-content="' . $this->field['text_hint']['content'] . '" ' : '';
-        //}
 
         $readonly = isset( $this->field['readonly'] ) ? ' readonly="readonly"' : '';
 
@@ -62,7 +60,6 @@ class Text extends Field
                     ) . '" class="regular-text ' . $this->field['class'] . '"' . $readonly . ' /><br />';
                 echo '</div>';
             }
-            //foreach
         } else {
             $placeholder = ( isset( $this->field['placeholder'] ) && !is_array(
                     $this->field['placeholder']

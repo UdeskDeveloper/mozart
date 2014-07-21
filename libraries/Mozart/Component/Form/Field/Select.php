@@ -65,7 +65,7 @@ class Select extends Field
         if (!empty( $this->field['data'] ) && ( $this->field['data'] == "elusive-icons" || $this->field['data'] == "elusive-icon" || $this->field['data'] == "elusive" )) {
             $this->field['class'] = " font-icons";
         }
-        //if
+
 
         if (!empty( $this->field['options'] )) {
             $multi = ( isset( $this->field['multi'] ) && $this->field['multi'] ) ? ' multiple="multiple"' : "";

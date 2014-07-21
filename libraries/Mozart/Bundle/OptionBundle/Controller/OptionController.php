@@ -167,7 +167,7 @@ class OptionController
 
 
     /**
-     * adminNotices - Evaluates user dismiss option for displaying admin notices
+     * Evaluates user dismiss option for displaying admin notices
      *
      * @return      void
      */
@@ -217,11 +217,10 @@ class OptionController
 
         // Clear the admin notice array
         $this->notices = array();
-
     }
 
     /**
-     * dismissAdminNotice - Updates user meta to store dismiss notice preference
+     * Updates user meta to store dismiss notice preference
      *
      * @return      void
      */
