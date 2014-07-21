@@ -44,9 +44,9 @@ class CustomizerExtension implements ExtensionInterface
 
     /**
      * @param OptionBuilderInterface $builder
-     * @param RequestStack           $request
+     * @param RequestStack $request
      */
-    public function __construct(RequestStack $requestStack)
+    public function __construct( RequestStack $requestStack )
     {
         $this->currentPage = $GLOBALS['pagenow'];
         $this->requestStack = $requestStack;
@@ -55,7 +55,7 @@ class CustomizerExtension implements ExtensionInterface
     /**
      * Boot the extension
      */
-    public function extend(OptionBuilderInterface $builder)
+    public function extend( OptionBuilderInterface $builder )
     {
         $this->builder = $builder;
 
@@ -114,7 +114,7 @@ class CustomizerExtension implements ExtensionInterface
      *
      * @return mixed
      */
-    public function _override_values($data)
+    public function _override_values( $data )
     {
         if (isset( $this->request['customized'] )) {
             $this->orig_options = $this->builder->options;
@@ -175,7 +175,7 @@ class CustomizerExtension implements ExtensionInterface
     /**
      * @param \WP_Customize_Manager $wp_customize
      */
-    public function registerCustomizer(\WP_Customize_Manager $wp_customize)
+    public function registerCustomizer( \WP_Customize_Manager $wp_customize )
     {
         $order = array(
             'heading' => -500,
@@ -434,7 +434,7 @@ class CustomizerExtension implements ExtensionInterface
     /**
      * @param $plugin_options
      */
-    public function customizer_save_before($plugin_options)
+    public function customizer_save_before( $plugin_options )
     {
         $this->before_save = $this->builder->options;
     }
@@ -442,7 +442,7 @@ class CustomizerExtension implements ExtensionInterface
     /**
      * @param \WP_Customize_Manager $wp_customize
      */
-    public function customizer_save_after(\WP_Customize_Manager $wp_customize)
+    public function customizer_save_after( \WP_Customize_Manager $wp_customize )
     {
         $options = json_decode( stripslashes_deep( $this->request['customized'] ), true );
         $compiler = false;
@@ -567,28 +567,26 @@ class CustomizerExtension implements ExtensionInterface
         do_action( 'redux-enqueue-' . $this->builder->args['opt_name'] );
 
         foreach ($this->builder->getSections() as $section) {
-            if (isset( $section['fields'] )) {
-                foreach ($section['fields'] as $field) {
-                    if (isset( $field['type'] )) {
-                        $field_class = 'ReduxFramework_' . $field['type'];
+            if (!isset( $section['fields'] )) {
+                continue;
+            }
+            foreach ($section['fields'] as $field) {
+                if (!isset( $field['type'] )) {
+                    continue;
+                }
 
-                        if (!class_exists( $field_class )) {
-                            $class_file = apply_filters(
-                                'redux-typeclass-load',
-                                $this->path . 'inc/fields/' . $field['type'] . '/field_' . $field['type'] . '.php',
-                                $field_class
-                            );
-                            if ($class_file) {
-                                /** @noinspection PhpIncludeInspection */
-                                require_once( $class_file );
-                            }
-                        }
+                $fieldClass = "Mozart\\Component\\Form\\Field\\" . ucfirst(Str::camel( $field['type'] ));
 
-                        if (class_exists( $field_class ) && method_exists( $field_class, 'enqueue' )) {
-                            $enqueue = new $field_class( '', '', $this );
-                            $enqueue->enqueue();
-                        }
+                if (false === class_exists( $fieldClass )) {
+                    if (false === class_exists( $fieldClass . 'Field' )) {
+                        return false;
+                    } else {
+                        $fieldClass = $fieldClass . 'Field';
                     }
+                }
+                if (class_exists( $fieldClass ) && method_exists( $fieldClass, 'enqueue' )) {
+                    $enqueue = new $fieldClass( '', '', $this );
+                    $enqueue->enqueue();
                 }
             }
         }
@@ -611,7 +609,7 @@ class CustomizerExtension implements ExtensionInterface
      *
      * @return
      */
-    public function _field_validation($plugin_options, $two)
+    public function _field_validation( $plugin_options, $two )
     {
         echo $two;
 

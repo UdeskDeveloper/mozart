@@ -1333,7 +1333,7 @@ class OptionBuilder implements OptionBuilderInterface
                     continue;
                 }
 
-                $fieldClass = "Mozart\\Component\\Form\\Field\\" . Str::camel( $field['type'] );
+                $fieldClass = "Mozart\\Component\\Form\\Field\\" . ucfirst(Str::camel( $field['type'] ));
                 if (!isset( $field['compiler'] )) {
                     $field['compiler'] = "";
                 }
@@ -1705,7 +1705,7 @@ class OptionBuilder implements OptionBuilderInterface
                         continue;
                     }
 
-                    $fieldClass = "Mozart\\Component\\Form\\Field\\" . Str::camel( $field['type'] );
+                    $fieldClass = "Mozart\\Component\\Form\\Field\\" . ucfirst(Str::camel( $field['type'] ));
 
                     if (false === class_exists( $fieldClass )) {
                         if (false === class_exists( $fieldClass . 'Field' )) {
@@ -2652,7 +2652,7 @@ class OptionBuilder implements OptionBuilderInterface
                     }
 
                     if (isset( $field['validate'] )) {
-                        $validateClass = 'Mozart\\Component\\Form\\Validation\\' . Str::camel($field['validate']);
+                        $validateClass = 'Mozart\\Component\\Form\\Validation\\' . ucfirst(Str::camel($field['validate']));
 
                         if (class_exists( $validateClass )) {
 
@@ -3238,11 +3238,14 @@ class OptionBuilder implements OptionBuilderInterface
                 return;
             }
 
-            $fieldClass = "Mozart\\Component\\Form\\Field\\" . Str::camel( $field['type'] );
+            $fieldClass = "Mozart\\Component\\Form\\Field\\" . ucfirst(Str::camel( $field['type'] ));
+
 
             if (false === class_exists( $fieldClass )) {
                 if (false === class_exists( $fieldClass . 'Field' )) {
                     return false;
+                } else {
+                    $fieldClass = $fieldClass . 'Field';
                 }
             }
 

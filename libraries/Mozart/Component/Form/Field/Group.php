@@ -145,25 +145,18 @@ class Group extends Field
 
     public function enqueue_dependencies($field_type)
     {
-        $field_class = 'ReduxFramework_' . $field_type;
+        $fieldClass = "Mozart\\Component\\Form\\Field\\" . ucfirst(Str::camel( $field_type ));
 
-        if (!class_exists( $field_class )) {
-            $class_file = apply_filters(
-                'redux-typeclass-load',
-                \Mozart::parameter(
-                    'wp.plugin.dir'
-                ) . '/mozart/public/bundles/mozart/option/fields/' . $field_type . '/field_' . $field_type . '.php',
-                $field_class
-            );
-
-            if ($class_file) {
-                /** @noinspection PhpIncludeInspection */
-                require_once( $class_file );
+        if (false === class_exists( $fieldClass )) {
+            if (false === class_exists( $fieldClass . 'Field' )) {
+                return false;
+            } else {
+                $fieldClass = $fieldClass . 'Field';
             }
         }
 
-        if (class_exists( $field_class ) && method_exists( $field_class, 'enqueue' )) {
-            $enqueue = new $field_class( '', '', $this );
+        if (class_exists( $fieldClass ) && method_exists( $fieldClass, 'enqueue' )) {
+            $enqueue = new $fieldClass( '', '', $this );
             $enqueue->enqueue();
         }
     }
