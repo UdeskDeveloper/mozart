@@ -850,7 +850,7 @@ class Typography extends Field
                 }
                 $style .= $key . ':' . $value . ';';
             }
-            if (isset( $this->builder->args['async_typography'] ) && $this->builder->args['async_typography']) {
+            if ($this->builder->getParam('async_typography')) {
                 $style .= 'visibility: hidden;';
             }
         }
@@ -1004,7 +1004,7 @@ class Typography extends Field
             }
         }
 
-        if (!empty( $this->field['custom_fonts'] )) {
+        if (is_array( $this->field['custom_fonts'] )) {
             foreach ($this->field['custom_fonts'] as $group => $fonts) {
                 $this->builder->font_groups['customfonts'] = array(
                     'text'     => $group,
@@ -1037,7 +1037,10 @@ class Typography extends Field
         $filesystem = new Filesystem();
 
         // Weekly update
-        if (isset( $this->field['update_weekly'] ) && $this->field['update_weekly'] === true && $this->field['google'] === true && !empty( $this->builder->args['google_api_key'] )) {
+        if (isset( $this->field['update_weekly'] ) &&
+            $this->field['update_weekly'] === true &&
+            $this->field['google'] === true &&
+            $this->builder->getParam('google_api_key')) {
             if ($filesystem->exists( $this->googleFontsJsonFile )) {
 
                 // Keep the fonts updated weekly
@@ -1054,7 +1057,7 @@ class Typography extends Field
                 apply_filters(
                     'redux-google-fonts-api-url',
                     'https://www.googleapis.com/webfonts/v1/webfonts?key='
-                ) . $this->builder->args['google_api_key'],
+                ) . $this->builder->getParam('google_api_key'),
                 array( 'sslverify' => false )
             );
 
