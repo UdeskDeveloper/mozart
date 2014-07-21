@@ -2,7 +2,7 @@
 
 namespace Mozart\Component\Form\Validation;
 
-class CSS
+class PregReplace
 {
     /**
      * Field Constructor.
@@ -12,7 +12,7 @@ class CSS
      */
     function __construct( $parent, $field, $value, $current )
     {
-        $this ->parent = $parent;
+        $this->parent = $parent;
         $this->field = $field;
         $this->value = $value;
         $this->current = $current;
@@ -28,13 +28,10 @@ class CSS
      */
     function validate()
     {
-        // Strip all html
-        $data = $this->value;
-
-        $data = wp_filter_nohtml_kses( $data );
-        $data = str_replace( '&gt;', '>', $data );
-
-        $this->value = $data;
-
+        $this->value = preg_replace(
+            $this->field['preg']['pattern'],
+            $this->field['preg']['replacement'],
+            $this->value
+        );
     }
 }

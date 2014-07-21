@@ -1,6 +1,8 @@
 <?php
 
-class Redux_Validation_color
+namespace Mozart\Component\Form\Validation;
+
+class Color
 {
     /**
      * Field Constructor.

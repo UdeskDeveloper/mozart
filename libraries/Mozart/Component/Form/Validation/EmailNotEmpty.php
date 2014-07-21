@@ -2,7 +2,7 @@
 
 namespace Mozart\Component\Form\Validation;
 
-class CommaNumeric
+class EmailNotEmpty
 {
     /**
      * Field Constructor.
@@ -10,12 +10,12 @@ class CommaNumeric
      *
      *
      */
-    function __construct( $parent, $field, $value, $current )
+    public function __construct($parent, $field, $value, $current)
     {
         $this->parent = $parent;
         $this->field = $field;
         $this->field['msg'] = ( isset( $this->field['msg'] ) ) ? $this->field['msg'] : __(
-            'You must provide a comma separated list of numerical values for this option.',
+            'You must provide a valid email for this option.',
             'mozart-options'
         );
         $this->value = $value;
@@ -30,11 +30,9 @@ class CommaNumeric
      *
      *
      */
-    function validate()
+    public function validate()
     {
-        $this->value = str_replace( ' ', '', $this->value );
-
-        if (!is_numeric( str_replace( ',', '', $this->value ) )) {
+        if (!is_email( $this->value ) || !isset( $this->value ) || empty( $this->value )) {
             $this->value = ( isset( $this->current ) ) ? $this->current : '';
             $this->error = $this->field;
         }

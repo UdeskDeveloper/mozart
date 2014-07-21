@@ -2,7 +2,7 @@
 
 namespace Mozart\Component\Form\Validation;
 
-class CommaNumeric
+class NoHTML
 {
     /**
      * Field Constructor.
@@ -15,7 +15,7 @@ class CommaNumeric
         $this->parent = $parent;
         $this->field = $field;
         $this->field['msg'] = ( isset( $this->field['msg'] ) ) ? $this->field['msg'] : __(
-            'You must provide a comma separated list of numerical values for this option.',
+            'You must not enter any HTML in this field, all HTML tags have been removed.',
             'mozart-options'
         );
         $this->value = $value;
@@ -26,17 +26,18 @@ class CommaNumeric
 
     /**
      * Field Render Function.
-     * Takes the vars and outputs the HTML for the field in the settings
+     * Takes the vars and validates them
      *
      *
      */
     function validate()
     {
-        $this->value = str_replace( ' ', '', $this->value );
+        $newvalue = strip_tags( $this->value );
 
-        if (!is_numeric( str_replace( ',', '', $this->value ) )) {
-            $this->value = ( isset( $this->current ) ) ? $this->current : '';
-            $this->error = $this->field;
+        if ($this->value != $newvalue) {
+            $this->warning = $this->field;
         }
+
+        $this->value = $newvalue;
     }
 }

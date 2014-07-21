@@ -1,6 +1,8 @@
 <?php
 
-class Redux_Validation_email_not_empty
+namespace Mozart\Component\Form\Validation;
+
+class NotEmpty
 {
     /**
      * Field Constructor.
@@ -8,12 +10,12 @@ class Redux_Validation_email_not_empty
      *
      *
      */
-    public function __construct($parent, $field, $value, $current)
+    function __construct( $parent, $field, $value, $current )
     {
         $this->parent = $parent;
         $this->field = $field;
         $this->field['msg'] = ( isset( $this->field['msg'] ) ) ? $this->field['msg'] : __(
-            'You must provide a valid email for this option.',
+            'This field cannot be empty. Please provide a value.',
             'mozart-options'
         );
         $this->value = $value;
@@ -28,9 +30,9 @@ class Redux_Validation_email_not_empty
      *
      *
      */
-    public function validate()
+    function validate()
     {
-        if (!is_email( $this->value ) || !isset( $this->value ) || empty( $this->value )) {
+        if (!isset( $this->value ) || empty( $this->value )) {
             $this->value = ( isset( $this->current ) ) ? $this->current : '';
             $this->error = $this->field;
         }
