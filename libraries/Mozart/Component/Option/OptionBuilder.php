@@ -67,9 +67,11 @@ class OptionBuilder implements OptionBuilderInterface
      */
     public $saved = false;
     /**
+     * Fields by type used in the panel
+     *
      * @var array
      */
-    public $fields = array(); // Fields by type used in the panel
+    private $fields = array();
     /**
      * @var string
      */
@@ -265,6 +267,27 @@ class OptionBuilder implements OptionBuilderInterface
 
         $this->importer->init( $this );
 
+    }
+
+    /**
+     * @return array
+     */
+    public function getFields()
+    {
+        return $this->fields;
+    }
+
+    /**
+     * @param array $field
+     */
+    public function addField( $field )
+    {
+        // Detect what field types are being used
+        if (!isset( $this->fields[$field['type']][$field['id']] )) {
+            $this->fields[$field['type']][$field['id']] = 1;
+        } else {
+            $this->fields[$field['type']] = array( $field['id'] => 1 );
+        }
     }
 
     /**
@@ -880,12 +903,9 @@ class OptionBuilder implements OptionBuilderInterface
                             $field['class'] .= "redux-section-indent-start";
                             $this->sections[$sk]['fields'][$k] = $field;
                         }
-                        // Detect what field types are being used
-                        if (!isset( $this->fields[$field['type']][$field['id']] )) {
-                            $this->fields[$field['type']][$field['id']] = 1;
-                        } else {
-                            $this->fields[$field['type']] = array( $field['id'] => 1 );
-                        }
+
+                        $this->addField( $field );
+
                         if (isset( $field['default'] )) {
                             $this->options_defaults[$field['id']] = $field['default'];
                         } elseif (isset( $field['options'] )) {
@@ -1441,11 +1461,9 @@ class OptionBuilder implements OptionBuilderInterface
     {
         global $wp_styles;
 
-        OptionUtil::$_parent = $this;
-
         // Select2 business.  Fields:  Background, Border, Dimensions, Select, Slider, Typography
         if (OptionUtil::isFieldInUseByType(
-            $this->fields,
+            $this->getFields(),
             array(
                 'background',
                 'border',
@@ -1573,7 +1591,7 @@ class OptionBuilder implements OptionBuilderInterface
 
         // Load jQuery sortable for slides, sorter, sortable and group
         if (OptionUtil::isFieldInUseByType(
-            $this->fields,
+            $this->getFields(),
             array(
                 'slides',
                 'sorter',
@@ -1587,18 +1605,18 @@ class OptionBuilder implements OptionBuilderInterface
         }
 
         // Load jQuery UI Datepicker for date
-        if (OptionUtil::isFieldInUseByType( $this->fields, array( 'date' ) )) {
+        if (OptionUtil::isFieldInUseByType( $this->getFields(), array( 'date' ) )) {
             wp_enqueue_script( 'jquery-ui-datepicker' );
         }
 
         // Load jQuery UI Accordion for slides and group
-        if (OptionUtil::isFieldInUseByType( $this->fields, array( 'slides', 'group' ) )) {
+        if (OptionUtil::isFieldInUseByType( $this->getFields(), array( 'slides', 'group' ) )) {
             wp_enqueue_script( 'jquery-ui-accordion' );
         }
 
         // Load wp-color-picker for color, color_gradient, link_color, border, background and typography
         if (OptionUtil::isFieldInUseByType(
-            $this->fields,
+            $this->getFields(),
             array(
                 'background',
                 'color',
@@ -1735,7 +1753,7 @@ class OptionBuilder implements OptionBuilderInterface
         $this->localize_data['required'] = $this->required;
         $this->localize_data['fonts'] = $this->fonts;
         $this->localize_data['required_child'] = $this->required_child;
-        $this->localize_data['fields'] = $this->fields;
+        $this->localize_data['fields'] = $this->getFields();
 
         if (isset( $this->font_groups['google'] )) {
             $this->localize_data['googlefonts'] = $this->font_groups['google'];
@@ -1752,7 +1770,7 @@ class OptionBuilder implements OptionBuilderInterface
         $this->localize_data['folds'] = $this->folds;
 
         // Make sure the children are all hidden properly.
-        foreach ($this->fields as $key => $value) {
+        foreach ($this->getFields() as $key => $value) {
             if (in_array( $key, $this->fieldsHidden )) {
                 foreach ($value as $k => $v) {
                     if (!in_array( $k, $this->fieldsHidden )) {
@@ -1767,44 +1785,12 @@ class OptionBuilder implements OptionBuilderInterface
         $this->localize_data['options'] = $this->options;
         $this->localize_data['defaults'] = $this->options_defaults;
 
-        /**
-         * Save pending string
-         * @param       string        save_pending string
-         */
-        $save_pending = apply_filters(
-            "redux/{$this->params['opt_name']}/localize/save_pending",
-            __( 'You have changes that are not saved. Would you like to save them now?', 'mozart-options' )
-        );
-
-        /**
-         * Reset all string
-         * @param       string        reset all string
-         */
-        $reset_all = apply_filters(
-            "redux/{$this->params['opt_name']}/localize/reset",
-            __( 'Are you sure? Resetting will lose all custom values.', 'mozart-options' )
-        );
-
-        /**
-         * Reset section string
-         * @param       string        reset section string
-         */
-        $reset_section = apply_filters(
-            "redux/{$this->params['opt_name']}/localize/reset_section",
-            __( 'Are you sure? Resetting will lose all custom values in this section.', 'mozart-options' )
-        );
-
-        /**
-         * Preset confirm string
-         *
-         * @param       string        preset confirm string
-         */
-        $preset_confirm = apply_filters(
-            "redux/{$this->params['opt_name']}/localize/preset",
-            __(
-                'Your current options will be replaced with the values of this preset. Would you like to proceed?',
-                'mozart-options'
-            )
+        $save_pending = __( 'You have changes that are not saved. Would you like to save them now?', 'mozart-options' );
+        $reset_all = __( 'Are you sure? Resetting will lose all custom values.', 'mozart-options' );
+        $reset_section = __( 'Are you sure? Resetting will lose all custom values in this section.', 'mozart-options' );
+        $preset_confirm = ___(
+            'Your current options will be replaced with the values of this preset. Would you like to proceed?',
+            'mozart-options'
         );
 
         $this->localize_data['params'] = array(

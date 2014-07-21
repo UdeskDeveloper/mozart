@@ -152,7 +152,7 @@ class Importer
 
     public function in_field()
     {
-        $this->enabled = OptionUtil::isFieldInUse( $this->builder, 'import_export' );
+        $this->enabled = OptionUtil::isFieldInUse( $this->builder->getSections(), 'import_export' );
     }
 
     public function render_tab()
