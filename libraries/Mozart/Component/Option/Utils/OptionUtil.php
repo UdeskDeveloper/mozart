@@ -5,12 +5,8 @@
 
 namespace Mozart\Component\Option\Utils;
 
-
 class OptionUtil
 {
-
-    public static $_parent;
-
     /**
      * Parse CSS from output/compiler array
      *
@@ -18,19 +14,19 @@ class OptionUtil
      */
     public static function parseCSS( $cssArray = array(), $style = '', $value = '' )
     {
-        // Something wrong happened
+        $css = '';
+
         if (count( $cssArray ) == 0) {
-            return;
-        } else {  ( count( $cssArray ) >= 1 ) {
-            $css = '';
+            return $css;
+        } else {
+
+            $keys = implode( ",", $cssArray );
 
             foreach ($cssArray as $element => $selector) {
 
                 // The old way
                 if ($element === 0) {
-                    $css = self::theOldWay( $cssArray, $style );
-
-                    return $css;
+                    return $keys . "{" . $style . '}';
                 }
 
                 // New way continued
@@ -39,14 +35,6 @@ class OptionUtil
                 $css .= $selector . '{' . $cssStyle . '}';
             }
         }
-
-        return $css;
-    }
-
-    private static function theOldWay( $cssArray, $style )
-    {
-        $keys = implode( ",", $cssArray );
-        $css = $keys . "{" . $style . '}';
 
         return $css;
     }
