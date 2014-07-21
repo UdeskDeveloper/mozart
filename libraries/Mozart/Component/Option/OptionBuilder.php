@@ -17,35 +17,11 @@ use Mozart\Component\Option\Section\SectionManager;
  */
 class OptionBuilder implements OptionBuilderInterface
 {
-    /**
-     *
-     */
     const NAME = 'mozart';
     /**
      * @var
      */
-    public static $_dir;
-    /**
-     * @var
-     */
-    public static $_url;
-    /**
-     * @var
-     */
     public static $_properties;
-    /**
-     * @var bool
-     */
-    public static $_as_plugin = false;
-    /**
-     * @var null
-     */
-    public static $instance = null;
-
-    /**
-     * @var string
-     */
-    public $framework_url = 'http://www.reduxframework.com/';
     /**
      * @var array
      */
@@ -3953,5 +3929,7 @@ class OptionBuilder implements OptionBuilderInterface
                 }
             }
         }
+
+        return false;
     }
 }
