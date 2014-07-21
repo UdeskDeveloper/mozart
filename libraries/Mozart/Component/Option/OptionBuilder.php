@@ -55,10 +55,6 @@ class OptionBuilder implements OptionBuilderInterface
      */
     public $font_groups = array();
     /**
-     * @var array
-     */
-    public $admin_notices = array();
-    /**
      * @var string
      */
     public $page = '';

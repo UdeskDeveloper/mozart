@@ -28,10 +28,13 @@ class OptionController
      */
     private $optionBuilder;
 
+    private $notices;
+
     public function __construct(
         OptionBuilderInterface $optionBuilder,
         $parameters
     ) {
+        $this->notices = array();
         $this->optionBuilder = $optionBuilder;
         $this->parameters = $parameters;
     }
@@ -120,10 +123,10 @@ class OptionController
 
 
         // Display admin notices
-        add_action( 'admin_notices', array( 'Mozart\Component\Option\Utils\OptionUtil', 'adminNotices' ) );
+        add_action( 'admin_notices', array( $this, 'adminNotices' ) );
 
         // Check for dismissed admin notices.
-        add_action( 'admin_init', array( 'Mozart\Component\Option\Utils\OptionUtil', 'dismissAdminNotice' ), 9 );
+        add_action( 'admin_init', array( $this, 'dismissAdminNotice' ), 9 );
 
         // Enqueue the admin page CSS and JS
         if (isset( $_GET['page'] ) && $_GET['page'] == $this->optionBuilder->getParam( 'page_slug' )) {
@@ -157,19 +160,90 @@ class OptionController
         // Activate plugin when new blog is added
         add_action( 'wpmu_new_blog', array( $this, 'activate_new_site' ) );
 
-        // Display admin notices
-        add_action( 'admin_notices', array( $this, 'admin_notices' ) );
-
         add_action( 'activated_plugin', array( $this, 'load_first' ) );
 
         do_action( 'redux/plugin/hooks', $this );
     }
 
+
     /**
+     * adminNotices - Evaluates user dismiss option for displaying admin notices
      *
+     * @return      void
      */
-    public function admin_notices()
+    public function adminNotices()
     {
+        global $current_user, $pagenow;
+
+        // Enum admin notices
+        foreach ($this->notices as $notice) {
+            if (true == $notice['dismiss']) {
+
+                // Get user ID
+                $userid = $current_user->ID;
+
+                if (!get_user_meta( $userid, 'ignore_' . $notice['id'] )) {
+
+                    // Check if we are on admin.php.  If we are, we have
+                    // to get the current page slug and tab, so we can
+                    // feed it back to Wordpress.  Why>  admin.php cannot
+                    // be accessed without the page parameter.  We add the
+                    // tab to return the user to the last panel they were
+                    // on.
+                    $pageName = '';
+                    $curTab = '';
+                    if ($pagenow == 'admin.php' || $pagenow == 'themes.php') {
+
+                        // Get the current page.  To avoid errors, we'll set
+                        // the redux page slug if the GET is empty.
+                        $pageName = empty( $_GET['page'] ) ? '&amp;page=' . $this->optionBuilder->getParam('page_slug') : '&amp;page=' . $_GET['page'];
+
+                        // Ditto for the current tab.
+                        $curTab = empty( $_GET['tab'] ) ? '&amp;tab=0' : '&amp;tab=' . $_GET['tab'];
+                    }
+
+                    // Print the notice with the dismiss link
+                    echo '<div class="' . $notice['type'] . '"><p>' . $notice['msg'] . '&nbsp;&nbsp;<a href="?dismiss=true&amp;id=' . $notice['id'] . $pageName . $curTab . '">' . __(
+                            'Dismiss',
+                            'mozart-options'
+                        ) . '</a>.</p></div>';
+                }
+            } else {
+
+                // Standard notice
+                echo '<div class="' . $notice['type'] . '"><p>' . $notice['msg'] . '</a>.</p></div>';
+            }
+        }
+
+        // Clear the admin notice array
+        $this->notices = array();
+
+    }
+
+    /**
+     * dismissAdminNotice - Updates user meta to store dismiss notice preference
+     *
+     * @return      void
+     */
+    public function dismissAdminNotice()
+    {
+        global $current_user;
+
+        // Verify the dismiss and id parameters are present.
+        if (isset( $_GET['dismiss'] ) && isset( $_GET['id'] )) {
+            if ('true' == $_GET['dismiss'] || 'false' == $_GET['dismiss']) {
+
+                // Get the user id
+                $userid = $current_user->ID;
+
+                // Get the notice id
+                $id = $_GET['id'];
+                $val = $_GET['dismiss'];
+
+                // Add the dismiss request to the user meta.
+                update_user_meta( $userid, 'ignore_' . $id, $val );
+            }
+        }
     }
 
     /**

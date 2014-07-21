@@ -67,127 +67,6 @@ class OptionUtil
         }
     }
 
-    /**
-     * modRewriteCheck - Check for the installation of apache mod_rewrite
-     *
-     * @return      void
-     */
-    public static function modRewriteCheck()
-    {
-        if (function_exists( 'apache_get_modules' )) {
-            if (!in_array( 'mod_rewrite', apache_get_modules() )) {
-                self::$_parent->admin_notices[] = array(
-                    'type'    => 'error',
-                    'msg'     => '<strong><center>The Apache mod_rewrite module is not enabled on your server.</center></strong>
-                              <br/>
-                              Both Wordpress and Redux require the enabling of the Apache mod_rewrite module to function properly.  Please contact whomever provides support for your server and ask them to enable the mod_rewrite module',
-                    'id'      => 'mod_rewrite_notice_',
-                    'dismiss' => false
-                );
-            }
-        }
-    }
-
-    /**
-     * adminNotices - Evaluates user dismiss option for displaying admin notices
-     *
-     * @return      void
-     */
-    public static function adminNotices()
-    {
-        global $current_user, $pagenow;
-
-        // Check for an active admin notice array
-        if (!empty( self::$_parent->admin_notices )) {
-
-            // Enum admin notices
-            foreach (self::$_parent->admin_notices as $notice) {
-                if (true == $notice['dismiss']) {
-
-                    // Get user ID
-                    $userid = $current_user->ID;
-
-                    if (!get_user_meta( $userid, 'ignore_' . $notice['id'] )) {
-
-                        // Check if we are on admin.php.  If we are, we have
-                        // to get the current page slug and tab, so we can
-                        // feed it back to Wordpress.  Why>  admin.php cannot
-                        // be accessed without the page parameter.  We add the
-                        // tab to return the user to the last panel they were
-                        // on.
-                        $pageName = '';
-                        $curTab = '';
-                        if ($pagenow == 'admin.php' || $pagenow == 'themes.php') {
-
-                            // Get the current page.  To avoid errors, we'll set
-                            // the redux page slug if the GET is empty.
-                            $pageName = empty( $_GET['page'] ) ? '&amp;page=' . self::$_parent->args['page_slug'] : '&amp;page=' . $_GET['page'];
-
-                            // Ditto for the current tab.
-                            $curTab = empty( $_GET['tab'] ) ? '&amp;tab=0' : '&amp;tab=' . $_GET['tab'];
-                        }
-
-                        // Print the notice with the dismiss link
-                        echo '<div class="' . $notice['type'] . '"><p>' . $notice['msg'] . '&nbsp;&nbsp;<a href="?dismiss=true&amp;id=' . $notice['id'] . $pageName . $curTab . '">' . __(
-                                'Dismiss',
-                                'mozart-options'
-                            ) . '</a>.</p></div>';
-                    }
-                } else {
-
-                    // Standard notice
-                    echo '<div class="' . $notice['type'] . '"><p>' . $notice['msg'] . '</a>.</p></div>';
-                }
-            }
-
-            // Clear the admin notice array
-            self::$_parent->admin_notices = array();
-        }
-    }
-
-    /**
-     * dismissAdminNotice - Updates user meta to store dismiss notice preference
-     *
-     * @return      void
-     */
-    public static function dismissAdminNotice()
-    {
-        global $current_user;
-
-        // Verify the dismiss and id parameters are present.
-        if (isset( $_GET['dismiss'] ) && isset( $_GET['id'] )) {
-            if ('true' == $_GET['dismiss'] || 'false' == $_GET['dismiss']) {
-
-                // Get the user id
-                $userid = $current_user->ID;
-
-                // Get the notice id
-                $id = $_GET['id'];
-                $val = $_GET['dismiss'];
-
-                // Add the dismiss request to the user meta.
-                update_user_meta( $userid, 'ignore_' . $id, $val );
-            }
-        }
-    }
-
-    public static function curlRead( $filename )
-    {
-        $ch = curl_init();
-
-        curl_setopt( $ch, CURLOPT_URL, $filename );
-        curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
-
-        $data = curl_exec( $ch );
-
-        curl_close( $ch );
-
-        if (empty( $data )) {
-            $data = false;
-        }
-
-        return $data;
-    }
 
     public static function tabFromField( $parent, $field )
     {
@@ -203,6 +82,25 @@ class OptionUtil
                 }
             }
         }
+    }
+
+
+    public function curlRead( $filename )
+    {
+        $ch = curl_init();
+
+        curl_setopt( $ch, CURLOPT_URL, $filename );
+        curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
+
+        $data = curl_exec( $ch );
+
+        curl_close( $ch );
+
+        if (empty( $data )) {
+            $data = false;
+        }
+
+        return $data;
     }
 
     public static function isFieldInUseByType( $fields, $field = array() )
