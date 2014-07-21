@@ -12,4 +12,6 @@ interface OptionBuilderInterface
     public function getSections();
 
     public function getOptions();
+
+    public function getParam( $param );
 }

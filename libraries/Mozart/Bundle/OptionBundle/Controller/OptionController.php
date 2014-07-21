@@ -116,10 +116,10 @@ class OptionController
         }
 
         // Admin Bar menu
-        add_action( 'admin_bar_menu', array( $this->optionBuilder, '_admin_bar_menu' ), 999 );
+        add_action( 'admin_bar_menu', array( $this->optionBuilder, 'adminBarMenu' ), 999 );
 
         // Register setting
-        add_action( 'admin_init', array( $this->optionBuilder, '_register_settings' ) );
+        add_action( 'admin_init', array( $this->optionBuilder, 'registerSettings' ) );
 
 
         // Display admin notices
@@ -130,14 +130,14 @@ class OptionController
 
         // Enqueue the admin page CSS and JS
         if (isset( $_GET['page'] ) && $_GET['page'] == $this->optionBuilder->getParam( 'page_slug' )) {
-            add_action( 'admin_enqueue_scripts', array( $this->optionBuilder, '_enqueue' ), 1 );
+            add_action( 'admin_enqueue_scripts', array( $this->optionBuilder, 'adminEnqueueScripts' ), 1 );
         }
 
         // Output dynamic CSS
         add_action( 'wp_head', array( $this->optionBuilder, '_output_css' ), 150 );
 
         // Enqueue dynamic CSS and Google fonts
-        add_action( 'wp_enqueue_scripts', array( $this->optionBuilder, '_enqueue_output' ), 150 );
+        add_action( 'wp_enqueue_scripts', array( $this->optionBuilder, 'enqueueScriptsOutput' ), 150 );
 
 
         if ($this->optionBuilder->getParam( 'database' ) == "network"
@@ -152,7 +152,7 @@ class OptionController
                 10,
                 0
             );
-            add_action( 'admin_bar_menu', array( $this->optionBuilder, 'network_admin_bar' ), 999 );
+            add_action( 'admin_bar_menu', array( $this->optionBuilder, 'adminBarMenuForNetwork' ), 999 );
 
         }
         add_action( 'wp_loaded', array( $this, 'options_toggle_check' ) );
@@ -161,8 +161,6 @@ class OptionController
         add_action( 'wpmu_new_blog', array( $this, 'activate_new_site' ) );
 
         add_action( 'activated_plugin', array( $this, 'load_first' ) );
-
-        do_action( 'redux/plugin/hooks', $this );
     }
 
 
@@ -401,6 +399,7 @@ class OptionController
 
     /**
      * Add settings action link to plugins page
+     * @param $links
      */
     public function add_action_links($links)
     {

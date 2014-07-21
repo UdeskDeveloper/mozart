@@ -436,7 +436,7 @@ class OptionBuilder implements OptionBuilderInterface
     /**
      * @param \WP_Admin_Bar $wp_admin_bar
      */
-    public function network_admin_bar(\WP_Admin_Bar $wp_admin_bar)
+    public function adminBarMenuForNetwork(\WP_Admin_Bar $wp_admin_bar)
     {
         $params = array(
             'id'     => $this->params['opt_name'] . '_network_admin',
@@ -1260,10 +1260,9 @@ class OptionBuilder implements OptionBuilderInterface
     /**
      * Add admin bar menu
      *
-     * @global      $menu , $submenu, $wp_admin_bar
      * @return void
      */
-    public function _admin_bar_menu()
+    public function adminBarMenu()
     {
         global /** @var \WP_Admin_Bar $wp_admin_bar */
         $menu, $submenu, $wp_admin_bar;
@@ -1340,7 +1339,7 @@ class OptionBuilder implements OptionBuilderInterface
      *
      * @return void
      */
-    public function _enqueue_output()
+    public function enqueueScriptsOutput()
     {
         if ($this->params['output'] == false && $this->params['compiler'] == false) {
             return;
@@ -1455,10 +1454,9 @@ class OptionBuilder implements OptionBuilderInterface
 
     /**
      * Enqueue CSS/JS for options page
-     * @global      $wp_styles
      * @return void
      */
-    public function _enqueue()
+    public function adminEnqueueScripts()
     {
         global $wp_styles;
 
@@ -1483,9 +1481,9 @@ class OptionBuilder implements OptionBuilderInterface
             // select2 CSS
             wp_register_style(
                 'select2-css',
-                self::$_url . 'assets/js/vendor/select2/select2.css',
+                \Mozart::parameter('wp.plugin.uri') . '/mozart/public/bundles/mozart/option/js/vendor/select2/select2.css',
                 array(),
-                filemtime( self::$_dir . 'assets/js/vendor/select2/select2.css' ),
+                filemtime( \Mozart::parameter('wp.plugin.dir') . '/mozart/public/bundles/mozart/option/js/vendor/select2/select2.css' ),
                 'all'
             );
 
@@ -1494,17 +1492,17 @@ class OptionBuilder implements OptionBuilderInterface
             // JS
             wp_register_script(
                 'select2-sortable-js',
-                self::$_url . 'assets/js/vendor/select2.sortable.min.js',
+                \Mozart::parameter('wp.plugin.uri') . '/mozart/public/bundles/mozart/option/js/vendor/select2.sortable.min.js',
                 array( 'jquery' ),
-                filemtime( self::$_dir . 'assets/js/vendor/select2.sortable.min.js' ),
+                filemtime( \Mozart::parameter('wp.plugin.dir') . '/mozart/public/bundles/mozart/option/js/vendor/select2.sortable.min.js' ),
                 true
             );
 
             wp_register_script(
                 'select2-js',
-                self::$_url . 'assets/js/vendor/select2/select2.min.js',
+                \Mozart::parameter('wp.plugin.uri') . '/mozart/public/bundles/mozart/option/js/vendor/select2/select2.min.js',
                 array( 'jquery', 'select2-sortable-js' ),
-                filemtime( self::$_dir . 'assets/js/vendor/select2/select2.min.js' ),
+                filemtime( \Mozart::parameter('wp.plugin.dir') . '/mozart/public/bundles/mozart/option/js/vendor/select2/select2.min.js' ),
                 true
             );
 
@@ -1513,41 +1511,41 @@ class OptionBuilder implements OptionBuilderInterface
 
         wp_register_style(
             'redux-css',
-            self::$_url . 'assets/css/redux.css',
+            \Mozart::parameter('wp.plugin.uri') . '/mozart/public/bundles/mozart/option/css/redux.css',
             array( 'farbtastic' ),
-            filemtime( self::$_dir . 'assets/css/redux.css' ),
+            filemtime( \Mozart::parameter('wp.plugin.dir') . '/mozart/public/bundles/mozart/option/css/redux.css' ),
             'all'
         );
 
         wp_register_style(
             'admin-css',
-            self::$_url . 'assets/css/admin.css',
+            \Mozart::parameter('wp.plugin.uri') . '/mozart/public/bundles/mozart/option/css/admin.css',
             array( 'farbtastic' ),
-            filemtime( self::$_dir . 'assets/css/admin.css' ),
+            filemtime( \Mozart::parameter('wp.plugin.dir') . '/mozart/public/bundles/mozart/option/css/admin.css' ),
             'all'
         );
 
         wp_register_style(
             'redux-elusive-icon',
-            self::$_url . 'assets/css/vendor/elusive-icons/elusive-webfont.css',
+            \Mozart::parameter('wp.plugin.uri') . '/mozart/public/bundles/mozart/option/css/vendor/elusive-icons/elusive-webfont.css',
             array(),
-            filemtime( self::$_dir . 'assets/css/vendor/elusive-icons/elusive-webfont.css' ),
+            filemtime( \Mozart::parameter('wp.plugin.dir') . '/mozart/public/bundles/mozart/option/css/vendor/elusive-icons/elusive-webfont.css' ),
             'all'
         );
 
         wp_register_style(
             'redux-elusive-icon-ie7',
-            self::$_url . 'assets/css/vendor/elusive-icons/elusive-webfont-ie7.css',
+            \Mozart::parameter('wp.plugin.uri') . '/mozart/public/bundles/mozart/option/css/vendor/elusive-icons/elusive-webfont-ie7.css',
             array(),
-            filemtime( self::$_dir . 'assets/css/vendor/elusive-icons/elusive-webfont-ie7.css' ),
+            filemtime( \Mozart::parameter('wp.plugin.dir') . '/mozart/public/bundles/mozart/option/css/vendor/elusive-icons/elusive-webfont-ie7.css' ),
             'all'
         );
 
         wp_register_style(
             'qtip-css',
-            self::$_url . 'assets/css/vendor/qtip/jquery.qtip.css',
+            \Mozart::parameter('wp.plugin.uri') . '/mozart/public/bundles/mozart/option/css/vendor/qtip/jquery.qtip.css',
             array(),
-            filemtime( self::$_dir . 'assets/css/vendor/qtip/jquery.qtip.css' ),
+            filemtime( \Mozart::parameter('wp.plugin.dir') . '/mozart/public/bundles/mozart/option/css/vendor/qtip/jquery.qtip.css' ),
             'all'
         );
 
@@ -1561,10 +1559,10 @@ class OptionBuilder implements OptionBuilderInterface
             'jquery-ui-css',
             apply_filters(
                 "redux/page/{$this->params['opt_name']}/enqueue/jquery-ui-css",
-                self::$_url . 'assets/css/vendor/jquery-ui-bootstrap/jquery-ui-1.10.0.custom.css'
+                \Mozart::parameter('wp.plugin.uri') . '/mozart/public/bundles/mozart/option/css/vendor/jquery-ui-bootstrap/jquery-ui-1.10.0.custom.css'
             ),
             '',
-            filemtime( self::$_dir . 'assets/css/vendor/jquery-ui-bootstrap/jquery-ui-1.10.0.custom.css' ),
+            filemtime( \Mozart::parameter('wp.plugin.dir') . '/mozart/public/bundles/mozart/option/css/vendor/jquery-ui-bootstrap/jquery-ui-1.10.0.custom.css' ),
             // todo - version should be based on above post-filter src
             'all'
         );
@@ -1578,9 +1576,9 @@ class OptionBuilder implements OptionBuilderInterface
         if (is_rtl()) {
             wp_register_style(
                 'redux-rtl-css',
-                self::$_url . 'assets/css/rtl.css',
+                \Mozart::parameter('wp.plugin.uri') . '/mozart/public/bundles/mozart/option/css/rtl.css',
                 '',
-                filemtime( self::$_dir . 'assets/css/rtl.css' ),
+                filemtime( \Mozart::parameter('wp.plugin.dir') . '/mozart/public/bundles/mozart/option/css/rtl.css' ),
                 'all'
             );
             wp_enqueue_style( 'redux-rtl-css' );
@@ -1631,9 +1629,9 @@ class OptionBuilder implements OptionBuilderInterface
 
             wp_register_style(
                 'color-picker-css',
-                self::$_url . 'assets/css/color-picker/color-picker.css',
+                \Mozart::parameter('wp.plugin.uri') . '/mozart/public/bundles/mozart/option/css/color-picker/color-picker.css',
                 array(),
-                filemtime( self::$_dir . 'assets/css/color-picker/color-picker.css' ),
+                filemtime( \Mozart::parameter('wp.plugin.dir') . '/mozart/public/bundles/mozart/option/css/color-picker/color-picker.css' ),
                 'all'
             );
 
@@ -1651,7 +1649,7 @@ class OptionBuilder implements OptionBuilderInterface
 
         wp_register_script(
             'qtip-js',
-            self::$_url . 'assets/js/vendor/qtip/jquery.qtip.js',
+            \Mozart::parameter('wp.plugin.uri') . '/mozart/public/bundles/mozart/option/js/vendor/qtip/jquery.qtip.js',
             array( 'jquery' ),
             '2.2.0',
             true
@@ -1659,7 +1657,7 @@ class OptionBuilder implements OptionBuilderInterface
 
         wp_register_script(
             'serializeForm-js',
-            self::$_url . 'assets/js/vendor/jquery.serializeForm.js',
+            \Mozart::parameter('wp.plugin.uri') . '/mozart/public/bundles/mozart/option/js/vendor/jquery.serializeForm.js',
             array( 'jquery' ),
             '1.0.0',
             true
@@ -1671,9 +1669,9 @@ class OptionBuilder implements OptionBuilderInterface
             wp_enqueue_style( 'admin-css' );
             wp_register_script(
                 'redux-vendor',
-                self::$_url . 'assets/js/vendor.min.js',
+                \Mozart::parameter('wp.plugin.uri') . '/mozart/public/bundles/mozart/option/js/vendor.min.js',
                 array( 'jquery' ),
-                filemtime( self::$_dir . 'assets/js/vendor.min.js' ),
+                filemtime( \Mozart::parameter('wp.plugin.dir') . '/mozart/public/bundles/mozart/option/js/vendor.min.js' ),
                 true
             );
 
@@ -1690,9 +1688,9 @@ class OptionBuilder implements OptionBuilderInterface
 
         wp_register_script(
             'redux-js',
-            self::$_url . 'assets/js/redux.js',
+            \Mozart::parameter('wp.plugin.uri') . '/mozart/public/bundles/mozart/option/js/redux.js',
             $depArray,
-            filemtime( self::$_dir . 'assets/js/redux.js' ),
+            filemtime( \Mozart::parameter('wp.plugin.dir') . '/mozart/public/bundles/mozart/option/js/redux.js' ),
             true
         );
 
@@ -1783,7 +1781,7 @@ class OptionBuilder implements OptionBuilderInterface
         $save_pending = __( 'You have changes that are not saved. Would you like to save them now?', 'mozart-options' );
         $reset_all = __( 'Are you sure? Resetting will lose all custom values.', 'mozart-options' );
         $reset_section = __( 'Are you sure? Resetting will lose all custom values in this section.', 'mozart-options' );
-        $preset_confirm = ___(
+        $preset_confirm = __(
             'Your current options will be replaced with the values of this preset. Would you like to proceed?',
             'mozart-options'
         );
@@ -2095,7 +2093,7 @@ class OptionBuilder implements OptionBuilderInterface
      *
      * @return void
      */
-    public function _register_settings()
+    public function registerSettings()
     {
         if (!function_exists( 'wp_get_current_user' )) {
             include( ABSPATH . "wp-includes/pluggable.php" );
@@ -2196,14 +2194,6 @@ class OptionBuilder implements OptionBuilderInterface
                     if (isset( $field['customizer_only'] ) && $field['customizer_only'] == true) {
                         continue; // ok
                     }
-
-                    /**
-                     * @param array $field field config
-                     */
-                    $field = apply_filters(
-                        "redux/options/{$this->params['opt_name']}/field/{$field['id']}/register",
-                        $field
-                    );
 
                     $display = true;
                     if (isset( $_GET['page'] ) && $_GET['page'] == $this->params['page_slug']) {
@@ -2355,11 +2345,6 @@ class OptionBuilder implements OptionBuilderInterface
                     }
                     $id = $field['id'];
 
-                    /**
-                     * @param array $field field config
-                     */
-                    $field = apply_filters( "redux/options/{$this->params['opt_name']}/field/{$field['id']}", $field );
-
                     if (empty( $field ) || !$field || $field == false) {
                         unset( $this->sections[$k]['fields'][$fieldk] );
                         continue;
@@ -2413,7 +2398,7 @@ class OptionBuilder implements OptionBuilderInterface
 
         if (isset( $this->transients['run_compiler'] ) && $this->transients['run_compiler']) {
             $this->params['output_tag'] = false;
-            $this->_enqueue_output();
+            $this->enqueueScriptsOutput();
 
             unset( $this->transients['run_compiler'] );
             $this->set_transients();
@@ -3295,22 +3280,7 @@ class OptionBuilder implements OptionBuilderInterface
                 $field['name_suffix'] = "";
             }
 
-            $render = new $fieldClass( $field, $value, $this );
-            ob_start();
-
-            $render->render();
-
-            /**
-             * @param string $_render rendered field markup
-             * @param array $field field data
-             */
-            $_render = apply_filters(
-                "redux/field/{$this->params['opt_name']}/{$field['type']}/render/after",
-                $render,
-                $field
-            );
-
-            ob_end_clean();
+            $fieldObject = new $fieldClass( $field, $value, $this );
 
             //save the values into a unique array in case we need it for dependencies
             $this->fieldsValues[$field['id']] = ( isset( $value['url'] ) && is_array(
@@ -3327,7 +3297,7 @@ class OptionBuilder implements OptionBuilderInterface
                 echo '<fieldset id="' . $this->params['opt_name'] . '-' . $field['id'] . '" class="redux-field-container redux-field redux-field-init redux-container-' . $field['type'] . ' ' . $class_string . '" data-id="' . $field['id'] . '" ' . $data_string . ' data-type="' . $field['type'] . '">';
             }
 
-            echo $_render;
+            $fieldObject->render();
 
             if (!empty( $field['desc'] )) {
                 $field['description'] = $field['desc'];
