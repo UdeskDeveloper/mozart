@@ -468,7 +468,7 @@ class OptionBuilder implements OptionBuilderInterface
         $data = $this->_validate_options( $_POST[$this->params['opt_name']] );
 
         if (!empty( $data )) {
-            $this->set_options( $data );
+            $this->setOptions( $data );
         }
 
         wp_redirect(
@@ -558,7 +558,7 @@ class OptionBuilder implements OptionBuilderInterface
     {
         if ($opt_name != '') {
             $this->options[$opt_name] = $value;
-            $this->set_options( $this->options );
+            $this->setOptions( $this->options );
         }
     }
 
@@ -567,7 +567,7 @@ class OptionBuilder implements OptionBuilderInterface
      *
      * @return  bool
      */
-    public function set_global_variable()
+    public function setGlobalVariable()
     {
         if ($this->params['global_variable']) {
             $option_global = $this->params['global_variable'];
@@ -596,7 +596,7 @@ class OptionBuilder implements OptionBuilderInterface
      *
      * @param mixed $value the value of the option being added
      */
-    public function set_options( $value = '' )
+    public function setOptions( $value = '' )
     {
         $this->transients['last_save'] = time();
 
@@ -634,7 +634,7 @@ class OptionBuilder implements OptionBuilderInterface
             $this->options = $value;
 
             // Set a global variable by the global_variable argument.
-            $this->set_global_variable();
+            $this->setGlobalVariable();
 
             // Saving the transient values
             $this->set_transients();
@@ -653,38 +653,34 @@ class OptionBuilder implements OptionBuilderInterface
             $defaults = $this->defaults;
         }
 
-        if ($this->params['database'] === "transient") {
-            $result = get_transient( $this->params['opt_name'] . '-transient' );
-        } elseif ($this->params['database'] === "theme_mods") {
-            $result = get_theme_mod( $this->params['opt_name'] . '-mods' );
-        } elseif ($this->params['database'] === 'theme_mods_expanded') {
-            $result = get_theme_mods();
-        } elseif ($this->params['database'] === 'network') {
-            $result = get_site_option( $this->params['opt_name'], array() );
-            $result = json_decode( stripslashes( json_encode( $result ) ), true );
-        } else {
-            $result = get_option( $this->params['opt_name'], array() );
-        }
+        $options = $this->getOptions();
 
-        if (empty( $result ) && !empty( $defaults )) {
-            $results = $defaults;
-            $this->set_options( $results );
+        if (empty( $options ) && !empty( $defaults )) {
+            $this->setOptions( $defaults );
         } else {
-            $this->options = $result;
+            $this->options = $options;
         }
-
-        /**
-         * action 'redux/options/{opt_name}/options'
-         *
-         * @param mixed $value option values
-         */
-        $this->options = apply_filters( "redux/options/{$this->params['opt_name']}/options", $this->options );
 
         // Get transient values
-        $this->get_transients();
+        $this->getTransients();
 
         // Set a global variable by the global_variable argument.
-        $this->set_global_variable();
+        $this->setGlobalVariable();
+    }
+
+    public function getOptions()
+    {
+        if ($this->params['database'] === "transient") {
+            return get_transient( $this->params['opt_name'] . '-transient' );
+        } elseif ($this->params['database'] === "theme_mods") {
+            return get_theme_mod( $this->params['opt_name'] . '-mods' );
+        } elseif ($this->params['database'] === 'theme_mods_expanded') {
+            return get_theme_mods();
+        } elseif ($this->params['database'] === 'network') {
+            return get_site_option( $this->params['opt_name'], array() );
+//            return json_decode( stripslashes( json_encode( $result ) ), true );
+        }
+        return get_option( $this->params['opt_name'], array() );
     }
 
     /**
@@ -2398,7 +2394,7 @@ class OptionBuilder implements OptionBuilderInterface
         }
 
         if ($runUpdate && !isset( $this->never_save_to_db )) { // Always update the DB with new fields
-            $this->set_options( $this->options );
+            $this->setOptions( $this->options );
         }
 
         if (isset( $this->transients['run_compiler'] ) && $this->transients['run_compiler']) {
@@ -2413,7 +2409,7 @@ class OptionBuilder implements OptionBuilderInterface
     /**
      *
      */
-    public function get_transients()
+    public function getTransients()
     {
         if (!isset( $this->transients )) {
             $this->transients = get_option( $this->params['opt_name'] . '-transients', array() );
@@ -2497,7 +2493,7 @@ class OptionBuilder implements OptionBuilderInterface
 
                 unset( $plugin_options['defaults'], $plugin_options['compiler'], $plugin_options['import'], $plugin_options['import_code'] );
                 if ($this->params['database'] == 'transient' || $this->params['database'] == 'theme_mods' || $this->params['database'] == 'theme_mods_expanded' || $this->params['database'] == 'network') {
-                    $this->set_options( $plugin_options );
+                    $this->setOptions( $plugin_options );
 
                     return false;
                 }
@@ -2594,7 +2590,7 @@ class OptionBuilder implements OptionBuilderInterface
 
         unset( $plugin_options['defaults'], $plugin_options['defaults_section'], $plugin_options['import'], $plugin_options['import_code'], $plugin_options['import_link'], $plugin_options['compiler'], $plugin_options['redux-section'] );
         if ($this->params['database'] == 'transient' || $this->params['database'] == 'theme_mods' || $this->params['database'] == 'theme_mods_expanded') {
-            $this->set_options( $plugin_options );
+            $this->setOptions( $plugin_options );
 
             return;
         }
