@@ -9,8 +9,6 @@ use Mozart\Component\Debug\SystemInfo;
 use Mozart\Component\Form\Field\Typography;
 use Mozart\Component\Option\Extension\ExtensionManager;
 use Mozart\Component\Option\Section\SectionManager;
-use Mozart\Component\Support\Str;
-use Symfony\Component\Debug\Exception\ClassNotFoundException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use W3_ObjectCache;
 
@@ -28,12 +26,6 @@ class OptionBuilder
      * @var string
      */
     private $page = '';
-    /**
-     * Fields by type used in the panel
-     *
-     * @var array
-     */
-    private $fields = array();
     /**
      * @var array
      */
@@ -53,39 +45,11 @@ class OptionBuilder
     /**
      * @var array
      */
-    private $compiler_fields = array(); // Fields that trigger the compiler hook
-    /**
-     * @var array
-     */
-    private $required = array(); // Information that needs to be localized
-    /**
-     * @var array
-     */
-    private $required_child = array(); // Information that needs to be localized
-    /**
-     * @var array
-     */
     private $localize_data = array(); // Information that needs to be localized
-    /**
-     * @var array
-     */
-    private $folds = array(); // The itms that need to fold.
     /**
      * @var null
      */
     private $outputCSS = null; // CSS that get auto-appended to the header
-    /**
-     * @var array
-     */
-    private $fieldsValues = array(); //all fields values in an id=>value array so we can check dependencies
-    /**
-     * @var array
-     */
-    private $fieldsHidden = array(); //all fields that didn't pass the dependency test and are hidden
-    /**
-     * @var array
-     */
-    private $toHide = array(); // Values to hide on page load
     /**
      * @var null
      */
@@ -102,20 +66,16 @@ class OptionBuilder
     /**
      * @var array
      */
-    private $transients = array();
-    /**
-     * @var array
-     */
-    private $hidden_perm_fields = array(); //  Hidden fields specified by 'permissions' arg.
-    /**
-     * @var array
-     */
     private $hidden_perm_sections = array(); //  Hidden sections specified by 'permissions' arg.
 
     /**
      * @var ContainerInterface
      */
     private $container;
+    /**
+     * @var array
+     */
+    private $transients = array();
     /**
      * @var
      */
@@ -152,6 +112,10 @@ class OptionBuilder
         // Grab database values
         $this->loadOptions();
 
+        $this->getFieldManager()->init( $this );
+        $this->getFontManager()->init($this);
+        $this->getValidator()->init($this);
+
         // Display admin notices in dev_mode
         if (true == $this->params['dev_mode']) {
             $this->getDebugger()->init( $this );
@@ -162,26 +126,6 @@ class OptionBuilder
         return true;
     }
 
-    /**
-     * @return array
-     */
-    public function getFields()
-    {
-        return $this->fields;
-    }
-
-    /**
-     * @param array $field
-     */
-    public function addField( $field )
-    {
-        // Detect what field types are being used
-        if (!isset( $this->fields[$field['type']][$field['id']] )) {
-            $this->fields[$field['type']][$field['id']] = 1;
-        } else {
-            $this->fields[$field['type']] = array( $field['id'] => 1 );
-        }
-    }
 
     /**
      * @return array
@@ -193,7 +137,7 @@ class OptionBuilder
 
     /**
      * @param $param
-     * @return array
+     * @return mixed
      */
     public function getParam( $param )
     {
@@ -211,8 +155,9 @@ class OptionBuilder
     /**
      * @return Validator
      */
-    public function getValidator() {
-        return $this->container->get('mozart.option.validator');
+    public function getValidator()
+    {
+        return $this->container->get( 'mozart.option.validator' );
     }
 
     /**
@@ -812,42 +757,39 @@ class OptionBuilder
 
         // fill the cache
         foreach ($this->getSectionManager()->getSections() as $alias => $section) {
-            if (isset( $section['fields'] )) {
-                foreach ($section['fields'] as $k => $field) {
-                    if (empty( $field['id'] ) && empty( $field['type'] )) {
-                        continue;
-                    }
-                    if ($field['type'] == "section" && isset( $field['indent'] ) && $field['indent'] == "true") {
-                        $field['class'] = isset( $field['class'] ) ? $field['class'] : '';
-                        $field['class'] .= "redux-section-indent-start";
-                        $this->sections[$alias]['fields'][$k] = $field;
-                    }
+            if (!isset( $section['fields'] )) {
+                continue;
+            }
 
-                    $this->addField( $field );
+            foreach ($section['fields'] as $k => $field) {
+                if (empty( $field['id'] ) && empty( $field['type'] )) {
+                    continue;
+                }
 
-                    if (isset( $field['default'] )) {
-                        $this->options_defaults[$field['id']] = $field['default'];
-                    } elseif (isset( $field['options'] )) {
-                        // Sorter data filter
-                        if ($field['type'] == "sorter" && isset( $field['data'] ) && !empty( $field['data'] ) && is_array(
-                                $field['data']
-                            )
-                        ) {
-                            if (!isset( $field['params'] )) {
-                                $field['params'] = array();
-                            }
-                            foreach ($field['data'] as $key => $data) {
-                                if (!isset( $field['params'][$key] )) {
-                                    $field['params'][$key] = array();
-                                }
-                                $field['options'][$key] = $this->get_wordpress_data(
-                                    $data,
-                                    $field['params'][$key]
-                                );
-                            }
+                $this->getFieldManager()->addField( $field );
+
+                if (isset( $field['default'] )) {
+                    $this->options_defaults[$field['id']] = $field['default'];
+                } elseif (isset( $field['options'] )) {
+                    // Sorter data filter
+                    if ($field['type'] == "sorter" && isset( $field['data'] ) && !empty( $field['data'] ) && is_array(
+                            $field['data']
+                        )
+                    ) {
+                        if (!isset( $field['params'] )) {
+                            $field['params'] = array();
                         }
-                        $this->options_defaults[$field['id']] = $field['options'];
+                        foreach ($field['data'] as $key => $data) {
+                            if (!isset( $field['params'][$key] )) {
+                                $field['params'][$key] = array();
+                            }
+                            $field['options'][$key] = $this->get_wordpress_data(
+                                $data,
+                                $field['params'][$key]
+                            );
+                        }
                     }
+                    $this->options_defaults[$field['id']] = $field['options'];
                 }
             }
         }
@@ -855,136 +797,6 @@ class OptionBuilder
         return $this->options_defaults;
     }
 
-    /**
-     * Get fold values into an array suitable for setting folds
-     */
-    public function _fold_values()
-    {
-
-        if (!is_null( $this->getSectionManager()->getSections() )) {
-
-            foreach ($this->getSectionManager()->getSections() as $section) {
-                if (isset( $section['fields'] )) {
-                    foreach ($section['fields'] as $field) {
-                        if (isset( $field['fields'] ) && is_array( $field['fields'] )) {
-                            foreach ($field['fields'] as $subfield) {
-                                if (isset( $subfield['required'] )) {
-                                    $this->get_fold( $subfield );
-                                }
-                            }
-                        }
-                        if (isset( $field['required'] )) {
-                            $this->get_fold( $field );
-                        }
-                    }
-                }
-            }
-        }
-
-        $parents = array();
-
-        foreach ($this->folds as $k => $fold) { // ParentFolds WITHOUT parents
-            if (empty( $fold['children'] ) || !empty( $fold['children']['parents'] )) {
-                continue;
-            }
-
-            $fold['value'] = $this->options[$k];
-
-            foreach ($fold['children'] as $key => $value) {
-                if ($key == $fold['value']) {
-                    unset( $fold['children'][$key] );
-                }
-            }
-
-            if (empty( $fold['children'] )) {
-                continue;
-            }
-
-            foreach ($fold['children'] as $key => $value) {
-                foreach ($value as $k => $hidden) {
-                    if (!in_array( $hidden, $this->toHide )) {
-                        $this->toHide[] = $hidden;
-                    }
-                }
-            }
-
-            $parents[] = $fold;
-        }
-
-        return $this->folds;
-    }
-
-    /**
-     * Get the fold values
-     *
-     * @param array $field
-     *
-     * @return array
-     */
-    public function get_fold( $field )
-    {
-        if (!is_array( $field['required'] )) {
-
-            /*
-                Example variable:
-                    $var = array(
-                    'fold' => 'id'
-                    );
-                */
-
-            $this->folds[$field['required']]['children'][1][] = $field['id'];
-            $this->folds[$field['id']]['parent'] = $field['required'];
-        } else {
-//                $parent = $foldk = $field['required'][0];
-            $foldk = $field['required'][0];
-//                $comparison = $field['required'][1];
-            $value = $foldv = $field['required'][2];
-            //foreach ($field['required'] as $foldk=>$foldv) {
-
-            if (is_array( $value )) {
-                /*
-                    Example variable:
-                        $var = array(
-                        'fold' => array( 'id' , '=', array(1, 5) )
-                        );
-                    */
-
-                foreach ($value as $foldvValue) {
-                    //echo 'id: '.$field['id']." key: ".$foldk.' f-val-'.print_r($foldv)." foldvValue".$foldvValue;
-                    $this->folds[$foldk]['children'][$foldvValue][] = $field['id'];
-                    $this->folds[$field['id']]['parent'] = $foldk;
-                }
-            } else {
-
-                if (count( $field['required'] ) === 1 && is_numeric( $foldk )) {
-                    /*
-                        Example variable:
-                            $var = array(
-                            'fold' => array( 'id' )
-                            );
-                        */
-                    $this->folds[$field['id']]['parent'] = $foldk;
-                    $this->folds[$foldk]['children'][1][] = $field['id'];
-                } else {
-                    /*
-                        Example variable:
-                            $var = array(
-                            'fold' => array( 'id' => 1 )
-                            );
-                        */
-                    if (empty( $foldv )) {
-                        $foldv = 0;
-                    }
-
-                    $this->folds[$field['id']]['parent'] = $foldk;
-                    $this->folds[$foldk]['children'][$foldv][] = $field['id'];
-                }
-            }
-            //}
-        }
-
-        return $this->folds;
-    }
 
     /**
      * Class Add Sub Menu Function, creates options submenu in Wordpress admin area.
@@ -1242,25 +1054,6 @@ class OptionBuilder
     }
 
     /**
-     * @param $fieldType
-     * @return bool|string
-     */
-    protected function getFieldClass( $fieldType )
-    {
-        $fieldClass = "Mozart\\Component\\Form\\Field\\" . ucfirst( Str::camel( $fieldType ) );
-
-        if (false === class_exists( $fieldClass )) {
-            if (false === class_exists( $fieldClass . 'Field' )) {
-                return false;
-            } else {
-                $fieldClass = $fieldClass . 'Field';
-            }
-        }
-
-        return $fieldClass;
-    }
-
-    /**
      * Enqueue CSS and Google fonts for front end
      *
      * @return void
@@ -1280,34 +1073,7 @@ class OptionBuilder
                 continue;
             }
             foreach ($section['fields'] as $fieldk => $field) {
-                if (!isset( $field['type'] ) || $field['type'] == "callback") {
-                    continue;
-                }
-
-                $fieldClass = $this->getFieldClass( $field['type'] );
-
-                if ($fieldClass && !empty( $this->options[$field['id']] ) && method_exists(
-                        $fieldClass,
-                        'output'
-                    ) && $this->_can_output_css( $field )
-                ) {
-                    if (!isset( $field['compiler'] )) {
-                        $field['compiler'] = "";
-                    }
-
-                    if (!empty( $field['output'] ) && !is_array( $field['output'] )) {
-                        $field['output'] = array( $field['output'] );
-                    }
-
-                    $value = isset( $this->options[$field['id']] ) ? $this->options[$field['id']] : '';
-                    $enqueue = new $fieldClass( $this, $field, $value );
-
-                    if (( ( isset( $field['output'] ) && !empty( $field['output'] ) ) || ( isset( $field['compiler'] ) && !empty( $field['compiler'] ) ) || $field['type'] == "typography" || $field['type'] == "icon_select" )) {
-                        $enqueue->output();
-                    }
-                }
-
-
+                $this->getFieldManager()->enqueueOutput( $field );
             }
         }
 
@@ -1358,7 +1124,6 @@ class OptionBuilder
             } else {
                 $protocol = ( !empty( $_SERVER['HTTPS'] ) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443 ) ? "https:" : "http:";
 
-                //echo '<link rel="stylesheet" id="options-google-fonts" title="" href="'.$protocol.$typography->makeGoogleWebfontLink( $this->typography ).'&amp;v='.$version.'" type="text/css" media="all" />';
                 wp_register_style(
                     'redux-google-fonts',
                     $protocol . $typography->makeGoogleWebfontLink( $this->typography ),
@@ -1751,9 +1516,9 @@ class OptionBuilder
             }
         }
 
-        $this->localize_data['required'] = $this->required;
+        $this->localize_data['required'] = $this->getFieldManager()->getRequired();
         $this->localize_data['fonts'] = $this->fonts;
-        $this->localize_data['required_child'] = $this->required_child;
+        $this->localize_data['required_child'] = $this->getFieldManager()->getRequiredChild();
         $this->localize_data['fields'] = $this->getFields();
 
         if (isset( $this->font_groups['google'] )) {
@@ -2916,66 +2681,6 @@ class OptionBuilder
     }
 
     /**
-     * Checks dependencies between objects based on the $field['required'] array
-     * If the array is set it needs to have exactly 3 entries.
-     * The first entry describes which field should be monitored by the current field. eg: "content"
-     * The second entry describes the comparison parameter. eg: "equals, not, is_larger, is_smaller ,contains"
-     * The third entry describes the value that we are comparing against.
-     * Example: if the required array is set to array('content','equals','Hello World'); then the current
-     * field will only be displayed if the field with id "content" has exactly the value "Hello World"
-     *
-     * @param array $field
-     *
-     * @return array $params
-     */
-    public function checkDependencies( $field )
-    {
-        if (!empty( $field['required'] )) {
-
-            if (!isset( $this->required_child[$field['id']] )) {
-                $this->required_child[$field['id']] = array();
-            }
-
-            if (!isset( $this->required[$field['id']] )) {
-                $this->required[$field['id']] = array();
-            }
-
-            if (is_array( $field['required'][0] )) {
-                foreach ($field['required'] as $value) {
-                    if (is_array( $value ) && count( $value ) == 3) {
-                        $data = array();
-                        $data['parent'] = $value[0];
-                        $data['operation'] = $value[1];
-                        $data['checkValue'] = $value[2];
-
-                        $this->required[$data['parent']][$field['id']][] = $data;
-
-                        if (!in_array( $data['parent'], $this->required_child[$field['id']] )) {
-                            $this->required_child[$field['id']][] = $data;
-                        }
-
-                        $this->checkRequiredDependencies( $field, $data );
-                    }
-                }
-            } else {
-                $data = array();
-                $data['parent'] = $field['required'][0];
-                $data['operation'] = $field['required'][1];
-                $data['checkValue'] = $field['required'][2];
-
-                $this->required[$data['parent']][$field['id']][] = $data;
-
-                if (!in_array( $data['parent'], $this->required_child[$field['id']] )) {
-                    $this->required_child[$field['id']][] = $data;
-                }
-
-                $this->checkRequiredDependencies( $field, $data );
-            }
-
-        }
-    }
-
-    /**
      * Compare data for required field
      *
      * @param $parentValue
@@ -3095,37 +2800,6 @@ class OptionBuilder
         return $return;
     }
 
-    /**
-     * @param $field
-     * @param $data
-     */
-    public function checkRequiredDependencies( $field, $data )
-    {
-        //required field must not be hidden. otherwise hide this one by default
-
-        if (!in_array(
-                $data['parent'],
-                $this->fieldsHidden
-            ) && ( !isset( $this->folds[$field['id']] ) || $this->folds[$field['id']] != "hide" )
-        ) {
-            if (isset( $this->options[$data['parent']] )) {
-                $return = $this->compareValueDependencies(
-                    $this->options[$data['parent']],
-                    $data['checkValue'],
-                    $data['operation']
-                );
-            }
-        }
-
-        if (( isset( $return ) && $return ) && ( !isset( $this->folds[$field['id']] ) || $this->folds[$field['id']] != "hide" )) {
-            $this->folds[$field['id']] = "show";
-        } else {
-            $this->folds[$field['id']] = "hide";
-            if (!in_array( $field['id'], $this->fieldsHidden )) {
-                $this->fieldsHidden[] = $field['id'];
-            }
-        }
-    }
 
     /**
      * converts an array into a html data string
