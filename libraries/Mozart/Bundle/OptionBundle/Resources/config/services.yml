@@ -1,18 +1,18 @@
 services:
     mozart.option.importer:
         class: Mozart\Component\Option\Importer
-
     mozart.option.debugger:
         class: Mozart\Component\Option\Debugger
+    mozart.option.fontmanager:
+        class: Mozart\Component\Option\FontManager
+    mozart.option.fieldmanager:
+        class: Mozart\Component\Option\FieldManager
+    mozart.option.validator:
+        class: Mozart\Component\Option\Validator
     mozart.option.builder:
         class: Mozart\Component\Option\OptionBuilder
         arguments:
-            - @mozart.option.importer
-            - @mozart.option.debugger
-            - @mozart.option.extensionmanager
-            - @mozart.option.sectionmanager
-            - %wp.plugin.uri%/mozart
-            - %wp.plugin.dir%/mozart
+            - @service_container
     mozart.option.manager:
         class: Mozart\Bundle\OptionBundle\Model\OptionManager
         arguments:
