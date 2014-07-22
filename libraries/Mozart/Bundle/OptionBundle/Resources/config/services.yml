@@ -19,16 +19,12 @@ services:
             - @service_container
     mozart.option.sectionmanager:
         class: Mozart\Component\Option\Section\SectionManager
-    mozart.option.extensionmanager:
-        class: Mozart\Component\Option\Extension\ExtensionManager
     mozart.option.controller:
         class: Mozart\Bundle\OptionBundle\Controller\OptionController
         arguments:
             - @mozart.option.builder
             - %mozart.option%
-    mozart.option.extension.core.customizer:
-        class: Mozart\Component\Option\Extension\Core\CustomizerExtension
-        tags:
-            - { name: mozart.option.extension }
+    mozart.option.customizer:
+        class: Mozart\Component\Option\Customizer
         arguments:
             - @request_stack

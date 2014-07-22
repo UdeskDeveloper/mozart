@@ -20,10 +20,10 @@ class SectionManager
     }
 
     /**
-     * @param OptionSection $section
+     * @param OptionSectionInterface $section
      * @param null $alias
      */
-    public function addSection( OptionSection $section, $alias = null )
+    public function addSection( OptionSectionInterface $section, $alias = null )
     {
         if (null === $alias) {
             $alias = $section->getAlias();

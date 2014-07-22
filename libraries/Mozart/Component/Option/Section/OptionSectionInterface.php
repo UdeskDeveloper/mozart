@@ -5,9 +5,11 @@
 
 namespace Mozart\Component\Option\Section;
 
-interface SectionInterface
+interface OptionSectionInterface
 {
     public function getTitle();
+    public function getAlias();
+    public function getConfiguration();
     public function getIcon();
     public function getDescription();
     public function getFields();

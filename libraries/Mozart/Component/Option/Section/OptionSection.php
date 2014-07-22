@@ -11,7 +11,7 @@ use Mozart\Component\Support\Str;
  * Class OptionSection
  * @package Mozart\Component\Option\Section
  */
-class OptionSection implements SectionInterface
+class OptionSection implements OptionSectionInterface
 {
     public function __construct()
     {

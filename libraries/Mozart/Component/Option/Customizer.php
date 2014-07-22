@@ -1,17 +1,10 @@
 <?php
 
-namespace Mozart\Component\Option\Extension\Core;
+namespace Mozart\Component\Option;
 
-use Mozart\Component\Option\OptionBuilder;
-use Mozart\Component\Option\Extension\ExtensionInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-/**
- * Class Customizer
- *
- * @package Mozart\Component\Option\Extensions
- */
-class CustomizerExtension implements ExtensionInterface
+class Customizer
 {
     /**
      * @var array
@@ -55,7 +48,7 @@ class CustomizerExtension implements ExtensionInterface
     /**
      * Boot the extension
      */
-    public function extend( OptionBuilder $builder )
+    public function init( OptionBuilder $builder )
     {
         $this->builder = $builder;
 
@@ -73,10 +66,10 @@ class CustomizerExtension implements ExtensionInterface
             str_replace( trailingslashit( str_replace( '\\', '/', ABSPATH ) ), '', $this->_extension_dir )
         );
 
-        if ('' !== $this->requestStack->get( 'customized' )
+        if ('' !== $this->requestStack->getCurrentRequest()->get( 'customized' )
             || $this->currentPage === "admin-ajax.php"
         ) {
-            if (current_user_can( $this->builder->getParam('page_permissions') )) {
+            if (current_user_can( $this->builder->getParam( 'page_permissions' ) )) {
                 add_action(
                     'customize_register',
                     array( $this, 'registerCustomizer' )
@@ -84,9 +77,9 @@ class CustomizerExtension implements ExtensionInterface
             }
         }
 
-        if ('' !== $this->requestStack->get( 'customized' )) {
+        if ('' !== $this->requestStack->getCurrentRequest()->get( 'customized' )) {
             add_action(
-                "redux/options/{$this->builder->getParam('opt_name')}/options",
+                "redux/options/{$this->builder->getParam( 'opt_name' )}/options",
                 array( $this, '_override_values' ),
                 100
             );
@@ -121,15 +114,15 @@ class CustomizerExtension implements ExtensionInterface
             $options = json_decode( stripslashes_deep( $this->request['customized'] ), true );
 
             foreach ($options as $key => $value) {
-                if (strpos( $key, $this->builder->getParam('opt_name') ) !== false) {
+                if (strpos( $key, $this->builder->getParam( 'opt_name' ) ) !== false) {
                     $key = str_replace(
-                        $this->builder->getParam('opt_name') . '[',
+                        $this->builder->getParam( 'opt_name' ) . '[',
                         '',
                         rtrim( $key, "]" )
                     );
                     $data[$key] = $value;
                     $GLOBALS[$this->builder->args['global_variable']][$key] = $value;
-                    $this->builder->options[$key] = $value;
+                    $this->builder->setOption( $key, $value );
                 }
             }
         }
@@ -284,7 +277,7 @@ class CustomizerExtension implements ExtensionInterface
                     //'sanitize_js_callback' =>array( &$parent, '_field_input' ),
                 );
 
-                $option['id'] = $this->builder->getParam('opt_name') . '[' . $option['id'] . ']';
+                $option['id'] = $this->builder->getParam( 'opt_name' ) . '[' . $option['id'] . ']';
 
                 if ($option['type'] != "heading" || !empty( $option['type'] )) {
                     $wp_customize->add_setting( $option['id'], $customSetting );
@@ -436,7 +429,7 @@ class CustomizerExtension implements ExtensionInterface
      */
     public function customizer_save_before( $plugin_options )
     {
-        $this->before_save = $this->builder->options;
+        $this->before_save = $this->builder->getOptions();
     }
 
     /**
@@ -449,8 +442,8 @@ class CustomizerExtension implements ExtensionInterface
         $changed = array();
 
         foreach ($options as $key => $value) {
-            if (strpos( $key, $this->builder->getParam('opt_name') ) !== false) {
-                $key = str_replace( $this->builder->getParam('opt_name') . '[', '', rtrim( $key, "]" ) );
+            if (strpos( $key, $this->builder->getParam( 'opt_name' ) ) !== false) {
+                $key = str_replace( $this->builder->getParam( 'opt_name' ) . '[', '', rtrim( $key, "]" ) );
 
                 if (false === isset( $this->orig_options[$key] )
                     || $this->orig_options[$key] != $value
@@ -469,18 +462,13 @@ class CustomizerExtension implements ExtensionInterface
         }
 
         if (!empty( $changed )) {
-            setcookie( "redux-saved-{$this->builder->getParam('opt_name')}", 1, time() + 1000, "/" );
+            setcookie( "redux-saved-{$this->builder->getParam( 'opt_name' )}", 1, time() + 1000, "/" );
         }
 
         if ($compiler) {
             // Have to set this to stop the output of the CSS and typography stuff.
             $this->builder->no_output = true;
             $this->builder->_enqueue_output();
-            do_action(
-                "redux/options/{$this->builder->getParam('opt_name')}/compiler",
-                $this->builder->options,
-                $this->builder->compilerCSS
-            );
         }
     }
 
@@ -509,10 +497,10 @@ class CustomizerExtension implements ExtensionInterface
                 'Your current options will be replaced with the values of this preset. Would you like to proceed?',
                 'redux-framework'
             ),
-            'opt_name'       => $this->builder->getParam('opt_name'),
+            'opt_name'       => $this->builder->getParam( 'opt_name' ),
             //'folds'             => $this->folds,
-            'options'        => $this->builder->options,
-            'defaults'       => $this->builder->options_defaults,
+            'options'        => $this->builder->getOptions(),
+            'defaults'       => $this->builder->getDefaultOptions(),
         );
 
         wp_localize_script(
@@ -551,10 +539,10 @@ class CustomizerExtension implements ExtensionInterface
                 'Your current options will be replaced with the values of this preset.  Would you like to proceed?',
                 'redux-framework'
             ),
-            'opt_name'       => $this->builder->getParam('opt_name'),
+            'opt_name'       => $this->builder->getParam( 'opt_name' ),
             //'folds'             => $this->folds,
-            'field'          => $this->builder->options,
-            'defaults'       => $this->builder->options_defaults,
+            'field'          => $this->builder->getOptions(),
+            'defaults'       => $this->builder->getDefaultOptions(),
         );
 
         // Values used by the javascript
@@ -564,7 +552,7 @@ class CustomizerExtension implements ExtensionInterface
             $localize
         );
 
-        do_action( 'redux-enqueue-' . $this->builder->getParam('opt_name') );
+        do_action( 'redux-enqueue-' . $this->builder->getParam( 'opt_name' ) );
 
         foreach ($this->builder->getSections() as $section) {
             if (!isset( $section['fields'] )) {
@@ -575,7 +563,7 @@ class CustomizerExtension implements ExtensionInterface
                     continue;
                 }
 
-                $fieldClass = "Mozart\\Component\\Form\\Field\\" . ucfirst(Str::camel( $field['type'] ));
+                $fieldClass = "Mozart\\Component\\Form\\Field\\" . ucfirst( Str::camel( $field['type'] ) );
 
                 if (false === class_exists( $fieldClass )) {
                     if (false === class_exists( $fieldClass . 'Field' )) {

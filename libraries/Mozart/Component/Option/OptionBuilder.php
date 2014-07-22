@@ -6,8 +6,6 @@
 namespace Mozart\Component\Option;
 
 use Mozart\Component\Debug\SystemInfo;
-use Mozart\Component\Form\Field\Typography;
-use Mozart\Component\Option\Extension\ExtensionManager;
 use Mozart\Component\Option\Section\SectionManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -96,7 +94,7 @@ class OptionBuilder
             $this->params['global_variable'] = str_replace( '-', '_', $this->params['opt_name'] );
         }
 
-        $this->getExtensionManager()->loadExtensions();
+        $this->getCustomizer()->init( $this );
 
         $this->loadTranslations();
 
@@ -117,6 +115,11 @@ class OptionBuilder
         return true;
     }
 
+    public function getCustomizer()
+    {
+        return $this->container->get( 'mozart.option.customizer' );
+    }
+
 
     /**
      * @return array
@@ -133,14 +136,6 @@ class OptionBuilder
     public function getParam( $param )
     {
         return $this->params[$param];
-    }
-
-    /**
-     * @return ExtensionManager
-     */
-    public function getExtensionManager()
-    {
-        return $this->container->get( 'mozart.option.extensionmanager' );
     }
 
     /**
@@ -191,19 +186,23 @@ class OptionBuilder
         return $this->container->get( 'mozart.option.fieldmanager' );
     }
 
-    public function getOutputCSS() {
+    public function getOutputCSS()
+    {
         return $this->outputCSS;
     }
 
-    public function addToOutputCSS($css) {
+    public function addToOutputCSS( $css )
+    {
         $this->outputCSS .= $css;
     }
 
-    public function getCompilerCSS() {
+    public function getCompilerCSS()
+    {
         return $this->compilerCSS;
     }
 
-    public function addToCompilerCSS($css) {
+    public function addToCompilerCSS( $css )
+    {
         $this->compilerCSS .= $css;
     }
 
@@ -432,12 +431,10 @@ class OptionBuilder
      *
      * @return void
      */
-    public function setOption( $opt_name = '', $value = '' )
+    public function setOption( $opt_name, $value = '' )
     {
-        if ($opt_name != '') {
-            $this->options[$opt_name] = $value;
-            $this->setOptions( $this->options );
-        }
+        $this->options[$opt_name] = $value;
+        $this->setOptions( $this->options );
     }
 
     /**
@@ -756,7 +753,7 @@ class OptionBuilder
      *
      * @return array
      */
-    private function getDefaultOptions()
+    public function getDefaultOptions()
     {
         if (!empty( $this->options_defaults )) {
             return $this->options_defaults;
@@ -929,7 +926,10 @@ class OptionBuilder
 
             if (true === $this->params['allow_sub_menu']) {
 
-                $this->getSectionManager()->addSubmenuPages($this->params['page_slug'], $this->params['page_permissions']);
+                $this->getSectionManager()->addSubmenuPages(
+                    $this->params['page_slug'],
+                    $this->params['page_permissions']
+                );
 
                 if (true == $this->params['show_importer'] && false == $this->getImporter()->isEnabled()
                 ) {
@@ -1064,7 +1064,8 @@ class OptionBuilder
 //        $this->getFontManager()->enqueueTypographyFonts();
     }
 
-    public function getLastSave() {
+    public function getLastSave()
+    {
         return !empty( $this->transients['last_save'] ) ? $this->transients['last_save'] : '';
     }
 
@@ -1410,13 +1411,13 @@ class OptionBuilder
                 continue;
             }
             foreach ($section['fields'] as $field) {
-                $this->getFieldManager()->enqueueScripts($field);
-                $this->localize_data = $this->getFieldManager()->localizeFieldData($field, $this->localize_data);
+                $this->getFieldManager()->enqueueScripts( $field );
+                $this->localize_data = $this->getFieldManager()->localizeFieldData( $field, $this->localize_data );
             }
         }
 
-        $this->localize_data = $this->getFieldManager()->addLocalizeData($this->localize_data);
-        $this->localize_data = $this->getFontManager()->addLocalizeData($this->localize_data);
+        $this->localize_data = $this->getFieldManager()->addLocalizeData( $this->localize_data );
+        $this->localize_data = $this->getFontManager()->addLocalizeData( $this->localize_data );
 
         $this->localize_data['options'] = $this->options;
         $this->localize_data['defaults'] = $this->options_defaults;
@@ -1504,7 +1505,8 @@ class OptionBuilder
         );
     }
 
-    public function addLocalizeData($key, $value) {
+    public function addLocalizeData( $key, $value )
+    {
 
     }
 
@@ -1799,7 +1801,7 @@ class OptionBuilder
                             $default = isset( $this->options_defaults[$field_id] ) ? $this->options_defaults[$field_id] : '';
                             $data = isset( $this->options[$field_id] ) ? $this->options[$field_id] : $default;
 
-                            $this->getFieldManager()->addHiddenField($field_id, $data);
+                            $this->getFieldManager()->addHiddenField( $field_id, $data );
                         }
                     }
 
@@ -1845,7 +1847,7 @@ class OptionBuilder
                         if (!current_user_can( $field['permissions'] )) {
                             $data = isset( $this->options[$field['id']] ) ? $this->options[$field['id']] : $this->options_defaults[$field['id']];
 
-                            $this->getFieldManager()->addHiddenField($field['id'], $data);
+                            $this->getFieldManager()->addHiddenField( $field['id'], $data );
                             continue;
                         }
                     }
@@ -1974,7 +1976,7 @@ class OptionBuilder
 
                     $folds = $this->getFieldManager()->getFolds();
 
-                    $field['class'] = isset($field['class']) ? $field['class'] : "";
+                    $field['class'] = isset( $field['class'] ) ? $field['class'] : "";
 
                     if (!empty( $folds[$field['id']]['parent'] )) { // This has some fold items, hide it by default
                         $field['class'] .= " fold";
@@ -1986,10 +1988,12 @@ class OptionBuilder
 
                     if (!empty( $field['compiler'] )) {
                         $field['class'] .= " compiler";
-                        $this->getFieldManager()->addCompilerField($field['id']);
+                        $this->getFieldManager()->addCompilerField( $field['id'] );
                     }
 
-                    $this->getSectionManager()->updateSection($k, array(
+                    $this->getSectionManager()->updateSection(
+                        $k,
+                        array(
                             'fields' => array(
                                 $fieldk => $field
                             )
@@ -2156,7 +2160,9 @@ class OptionBuilder
         // Section reset to defaults
         if (!empty( $plugin_options['defaults-section'] )) {
             if (isset( $plugin_options['redux-section'] )) {
-                foreach ((array)$this->getSectionManager()->getSection($plugin_options['redux-section'])['fields'] as $field) {
+                foreach ((array)$this->getSectionManager()->getSection(
+                    $plugin_options['redux-section']
+                )['fields'] as $field) {
                     if (isset( $this->options_defaults[$field['id']] )) {
                         $plugin_options[$field['id']] = $this->options_defaults[$field['id']];
                     } else {
@@ -2199,9 +2205,10 @@ class OptionBuilder
         );
 
         if (count( $this->getValidator()->getErrors() ) > 0 ||
-            count( $this->getValidator()->getWarnings() ) > 0) {
+            count( $this->getValidator()->getWarnings() ) > 0
+        ) {
             $this->transients['notices'] = array(
-                'errors' => $this->getValidator()->getErrors(),
+                'errors'   => $this->getValidator()->getErrors(),
                 'warnings' => $this->getValidator()->getWarnings()
             );
         }
@@ -2541,8 +2548,8 @@ class OptionBuilder
     {
         $id = trim( rtrim( $section['id'], '_section' ), $this->params['opt_name'] );
 
-        if ($this->getSectionManager()->getSection($id)['desc'] != '' ) {
-            echo '<div class="redux-section-desc">' . $this->getSectionManager()->getSection($id)['desc'] . '</div>';
+        if ($this->getSectionManager()->getSection( $id )['desc'] != '') {
+            echo '<div class="redux-section-desc">' . $this->getSectionManager()->getSection( $id )['desc'] . '</div>';
         }
     }
 
