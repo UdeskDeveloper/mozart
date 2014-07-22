@@ -13,7 +13,7 @@ use Mozart\Bundle\PostBundle\PostTypeExtensionInterface;
  *
  * @package Mozart\Bundle\PostBundle\Admin
  */
-class PostTypeExtension implements PostTypeExtensionInterface
+abstract class PostTypeExtension implements PostTypeExtensionInterface
 {
     /**
      * @var PostType $postType
@@ -226,7 +226,7 @@ class PostTypeExtension implements PostTypeExtensionInterface
         return array();
     }
 
-    public function manageScreenColumnCells()
+    public function manageScreenColumnCells($column, $post_id)
     {
 
     }
