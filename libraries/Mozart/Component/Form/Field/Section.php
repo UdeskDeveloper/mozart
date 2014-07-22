@@ -13,7 +13,6 @@ class Section extends Field
      */
     public function render()
     {
-        // No errors please
         $defaults = array(
             'indent' => '',
             'style' => '',
@@ -21,7 +20,11 @@ class Section extends Field
             'title' => '',
             'subtitle' => '',
         );
-        $this->field = wp_parse_args( $this->field, $defaults );
+        $this->field = array_merge( $defaults, $this->field );
+
+        if (isset( $this->field['indent'] ) && $this->field['indent'] == "true") {
+            $this->field['class'] .= " redux-section-indent-start";
+        }
 
         $guid = uniqid();
 
