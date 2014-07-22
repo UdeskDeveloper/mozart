@@ -105,6 +105,9 @@ class OptionController
      */
     public function startHooks()
     {
+        ini_set( 'display_errors', 1 );
+        ini_set( 'display_startup_errors', 1 );
+        error_reporting( -1 );
         // Options page
         add_action( 'admin_menu', array( $this->optionBuilder, '_options_page' ) );
 
@@ -192,7 +195,9 @@ class OptionController
 
                         // Get the current page.  To avoid errors, we'll set
                         // the redux page slug if the GET is empty.
-                        $pageName = empty( $_GET['page'] ) ? '&amp;page=' . $this->optionBuilder->getParam('page_slug') : '&amp;page=' . $_GET['page'];
+                        $pageName = empty( $_GET['page'] ) ? '&amp;page=' . $this->optionBuilder->getParam(
+                                'page_slug'
+                            ) : '&amp;page=' . $_GET['page'];
 
                         // Ditto for the current tab.
                         $curTab = empty( $_GET['tab'] ) ? '&amp;tab=0' : '&amp;tab=' . $_GET['tab'];
@@ -248,7 +253,7 @@ class OptionController
      *
      * @return void
      */
-    public function activate($network_wide)
+    public function activate( $network_wide )
     {
         if (function_exists( 'is_multisite' ) && is_multisite()) {
             if ($network_wide) {
@@ -277,7 +282,7 @@ class OptionController
      *
      * @return void
      */
-    public function deactivate($network_wide)
+    public function deactivate( $network_wide )
     {
         if (function_exists( 'is_multisite' ) && is_multisite()) {
             if ($network_wide) {
@@ -306,7 +311,7 @@ class OptionController
      *
      * @return void
      */
-    public function activate_new_site($blog_id)
+    public function activate_new_site( $blog_id )
     {
         if (1 !== did_action( 'wpmu_new_blog' )) {
             return;
@@ -384,7 +389,7 @@ class OptionController
      * Add settings action link to plugins page
      * @param $links
      */
-    public function add_action_links($links)
+    public function add_action_links( $links )
     {
         // In case we ever want to do this...
         return $links;
