@@ -5,7 +5,7 @@
 
 namespace Mozart\Bundle\WidgetBundle;
 
-use Symfony\Component\DependencyInjection\Container;
+use Mozart\Component\Support\Str;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -55,7 +55,7 @@ class Widget extends \WP_Widget implements WidgetInterface, ContainerAwareInterf
         $className     = get_class( $this );
         $classBaseName = substr( strrchr( $className, '\\' ), 1 );
 
-        return Container::underscore( $classBaseName ) . '_mozart';
+        return Str::snake( $classBaseName ) . '_mozart';
     }
 
     /**
@@ -65,9 +65,8 @@ class Widget extends \WP_Widget implements WidgetInterface, ContainerAwareInterf
     {
         $alias = $this->getAlias();
         $alias = str_replace( '_mozart', ' | mozart', $alias );
-        $alias = str_replace( '_', ' ', $alias );
 
-        return ucwords( $alias );
+        return Str::studly( $alias );
     }
 
     /**
