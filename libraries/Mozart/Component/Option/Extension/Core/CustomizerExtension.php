@@ -2,7 +2,7 @@
 
 namespace Mozart\Component\Option\Extension\Core;
 
-use Mozart\Component\Option\OptionBuilderInterface;
+use Mozart\Component\Option\OptionBuilder;
 use Mozart\Component\Option\Extension\ExtensionInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -30,7 +30,7 @@ class CustomizerExtension implements ExtensionInterface
      */
     private $_extension_dir;
     /**
-     * @var OptionBuilderInterface
+     * @var OptionBuilder
      */
     private $builder;
     /**
@@ -43,7 +43,7 @@ class CustomizerExtension implements ExtensionInterface
     private $requestStack;
 
     /**
-     * @param OptionBuilderInterface $builder
+     * @param OptionBuilder $builder
      * @param RequestStack $request
      */
     public function __construct( RequestStack $requestStack )
@@ -55,7 +55,7 @@ class CustomizerExtension implements ExtensionInterface
     /**
      * Boot the extension
      */
-    public function extend( OptionBuilderInterface $builder )
+    public function extend( OptionBuilder $builder )
     {
         $this->builder = $builder;
 

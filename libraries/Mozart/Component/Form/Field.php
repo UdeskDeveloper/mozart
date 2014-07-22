@@ -5,7 +5,7 @@
 
 namespace Mozart\Component\Form;
 
-use Mozart\Component\Option\OptionBuilderInterface;
+use Mozart\Component\Option\OptionBuilder;
 
 /**
  * Class Field
@@ -14,7 +14,7 @@ use Mozart\Component\Option\OptionBuilderInterface;
 abstract class Field implements FieldInterface
 {
     /**
-     * @var OptionBuilderInterface
+     * @var OptionBuilder
      */
     protected $builder;
     /**
@@ -27,11 +27,11 @@ abstract class Field implements FieldInterface
     protected $value;
 
     /**
-     * @param OptionBuilderInterface $builder
+     * @param OptionBuilder $builder
      * @param array $field
      * @param string $value
      */
-    public function __construct( OptionBuilderInterface $builder, $field = array(), $value = '' )
+    public function __construct( OptionBuilder $builder, $field = array(), $value = '' )
     {
         $this->builder = $builder;
         $this->field = $field;

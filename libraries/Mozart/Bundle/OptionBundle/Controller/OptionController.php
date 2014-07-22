@@ -5,7 +5,7 @@
 
 namespace Mozart\Bundle\OptionBundle\Controller;
 
-use Mozart\Component\Option\OptionBuilderInterface;
+use Mozart\Component\Option\OptionBuilder;
 
 /**
  * Class OptionController
@@ -24,14 +24,14 @@ class OptionController
     protected $options = array();
 
     /**
-     * @var OptionBuilderInterface
+     * @var OptionBuilder
      */
     private $optionBuilder;
 
     private $notices;
 
     public function __construct(
-        OptionBuilderInterface $optionBuilder,
+        OptionBuilder $optionBuilder,
         $parameters
     ) {
         $this->notices = array();
