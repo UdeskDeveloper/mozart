@@ -249,6 +249,7 @@ class FieldManager
      * @param array $field
      * @param string $v
      *
+     * @return mixed|string
      * @throws \Symfony\Component\Debug\Exception\ClassNotFoundException
      */
     public function fieldInput( $field, $v = null )

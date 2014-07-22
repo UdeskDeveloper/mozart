@@ -2542,15 +2542,18 @@ class OptionBuilder
      *
      * @param array $section
      *
-     * @return void
+     * @return string
      */
     public function _section_desc( $section )
     {
+        $output = '';
         $id = trim( rtrim( $section['id'], '_section' ), $this->params['opt_name'] );
 
         if ($this->getSectionManager()->getSection( $id )['desc'] != '') {
-            echo '<div class="redux-section-desc">' . $this->getSectionManager()->getSection( $id )['desc'] . '</div>';
+            $output .= '<div class="redux-section-desc">' . $this->getSectionManager()->getSection( $id )['desc'] . '</div>';
         }
+
+        return $output;
     }
 
     /**
