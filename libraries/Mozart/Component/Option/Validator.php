@@ -6,8 +6,38 @@
 namespace Mozart\Component\Option;
 
 
+use Mozart\Component\Support\Str;
+
 class Validator {
 
+    /**
+     * @var array
+     */
+    private $errors = array(); // Errors
+    /**
+     * @var array
+     */
+    private $warnings = array(); // Warnings
+    /**
+     * @var OptionBuilder
+     */
+    private $builder;
+
+    /**
+     * @param OptionBuilder $builder
+     */
+    public function init( OptionBuilder $builder )
+    {
+        $this->builder = $builder;
+    }
+
+    public function getErrors() {
+        return $this->errors;
+    }
+
+    public function getWarnings() {
+        return $this->warnings;
+    }
     /**
      * Validate values from options form (used in settings api validate function)
      * calls the custom validation class for the field so authors can override with custom classes
@@ -161,4 +191,6 @@ class Validator {
 
         return $plugin_options;
     }
+
+
 } 
