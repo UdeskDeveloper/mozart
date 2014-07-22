@@ -145,7 +145,7 @@ class OptionBuilder
             $this->params['global_variable'] = str_replace( '-', '_', $this->params['opt_name'] );
         }
 
-        $this->loadExtensions();
+        $this->getExtensionManager()->loadExtensions();
 
         $this->loadTranslations();
 
@@ -198,16 +198,6 @@ class OptionBuilder
     public function getParam( $param )
     {
         return $this->params[$param];
-    }
-
-    /**
-     * Initialize all extensions
-     */
-    protected function loadExtensions()
-    {
-        foreach ($this->getExtensionManager()->getExtensions() as $extension) {
-            $extension->extend( $this );
-        }
     }
 
     /**
