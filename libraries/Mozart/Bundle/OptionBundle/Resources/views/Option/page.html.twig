@@ -102,22 +102,6 @@
 			<div id="redux-sticky-padder" style="display: none;">&nbsp;</div>
 			<div id="redux-footer-sticky">
 				<div id="redux-footer">
-
-					{% if params.share_icons is defined and params.share_icons is iterable %}
-						<div id="redux-share">
-							{% for link in params.share_icons %}
-								<a href="{{ link.url }}" title="{{ link.title }}" target="_blank">
-
-									{% if link.icon is not empty %}
-										<i class="{{ link.icon }}"></i>
-									{% else %}
-										<img src="{{ link.img }}"/>
-									{% endif %}
-								</a>
-							{% endfor %}
-						</div>
-					{% endif %}
-
 					<div class="redux-action_bar">
 						{% include "MozartOptionBundle:Option:actionBar.html.twig" %}
 					</div>
