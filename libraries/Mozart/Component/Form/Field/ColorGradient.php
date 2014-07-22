@@ -70,7 +70,7 @@ class ColorGradient extends Field
     {
         wp_enqueue_script(
             'redux-field-color-gradient-js',
-            \Mozart::parameter('wp.plugin.uri') . '/mozart/public/bundles/mozart/option/fields/color_gradient/field_color_gradient.js',
+            \Mozart::parameter('wp.plugin.uri') . '/mozart/public/bundles/mozart/form/fields/color_gradient/field_color_gradient.js',
             array( 'jquery', 'wp-color-picker', 'redux-js' ),
             time(),
             true
@@ -78,7 +78,7 @@ class ColorGradient extends Field
 
         wp_enqueue_style(
             'redux-field-color_gradient-css',
-            \Mozart::parameter('wp.plugin.uri') . '/mozart/public/bundles/mozart/option/fields/color_gradient/field_color_gradient.css',
+            \Mozart::parameter('wp.plugin.uri') . '/mozart/public/bundles/mozart/form/fields/color_gradient/field_color_gradient.css',
             time(),
             true
         );

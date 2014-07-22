@@ -237,7 +237,7 @@ class Slides extends Field
 
         wp_enqueue_style(
             'redux-field-media-css',
-            \Mozart::parameter( 'wp.plugin.uri' ) . '/mozart/public/bundles/mozart/option/fields/media/field_media.css',
+            \Mozart::parameter( 'wp.plugin.uri' ) . '/mozart/public/bundles/mozart/form/fields/media/field_media.css',
             time(),
             true
         );
@@ -246,7 +246,7 @@ class Slides extends Field
             'redux-field-slides-js',
             \Mozart::parameter(
                 'wp.plugin.uri'
-            ) . '/mozart/public/bundles/mozart/option/fields/slides/field_slides.js',
+            ) . '/mozart/public/bundles/mozart/form/fields/slides/field_slides.js',
             array( 'jquery', 'jquery-ui-core', 'jquery-ui-accordion', 'wp-color-picker' ),
             time(),
             true
@@ -256,7 +256,7 @@ class Slides extends Field
             'redux-field-slides-css',
             \Mozart::parameter(
                 'wp.plugin.uri'
-            ) . '/mozart/public/bundles/mozart/option/fields/slides/field_slides.css',
+            ) . '/mozart/public/bundles/mozart/form/fields/slides/field_slides.css',
             time(),
             true
         );

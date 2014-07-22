@@ -49,12 +49,12 @@ class AceEditor extends Field
             'ace-editor-js',
             \Mozart::parameter(
                 'wp.plugin.uri'
-            ) . '/mozart/public/bundles/mozart/option/fields/ace_editor/vendor/ace.js',
+            ) . '/mozart/public/bundles/mozart/form/fields/ace_editor/vendor/ace.js',
             array( 'jquery' ),
             filemtime(
                 \Mozart::parameter(
                     'wp.plugin.dir'
-                ) . '/mozart/public/bundles/mozart/option/fields/ace_editor/vendor/ace.js'
+                ) . '/mozart/public/bundles/mozart/form/fields/ace_editor/vendor/ace.js'
             ),
             true
         );
@@ -63,7 +63,7 @@ class AceEditor extends Field
             'redux-field-ace-editor-css',
             \Mozart::parameter(
                 'wp.plugin.uri'
-            ) . '/mozart/public/bundles/mozart/option/fields/ace_editor/field_ace_editor.css',
+            ) . '/mozart/public/bundles/mozart/form/fields/ace_editor/field_ace_editor.css',
             time(),
             true
         );
@@ -72,7 +72,7 @@ class AceEditor extends Field
             'redux-field-ace-editor-js',
             \Mozart::parameter(
                 'wp.plugin.uri'
-            ) . '/mozart/public/bundles/mozart/option/fields/ace_editor/field_ace_editor.js',
+            ) . '/mozart/public/bundles/mozart/form/fields/ace_editor/field_ace_editor.js',
             array( 'jquery', 'ace-editor-js', 'redux-js' ),
             time(),
             true

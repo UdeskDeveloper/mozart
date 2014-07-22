@@ -115,7 +115,7 @@ class Sortable extends Field
             'redux-field-sortable-css',
             \Mozart::parameter(
                 'wp.plugin.uri'
-            ) . '/mozart/public/bundles/mozart/option/fields/sortable/field_sortable.css',
+            ) . '/mozart/public/bundles/mozart/form/fields/sortable/field_sortable.css',
             time(),
             true
         );
@@ -124,7 +124,7 @@ class Sortable extends Field
             'redux-field-sortable-js',
             \Mozart::parameter(
                 'wp.plugin.uri'
-            ) . '/mozart/public/bundles/mozart/option/fields/sortable/field_sortable.js',
+            ) . '/mozart/public/bundles/mozart/form/fields/sortable/field_sortable.js',
             array( 'jquery', 'redux-js' ),
             time(),
             true

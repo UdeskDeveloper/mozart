@@ -116,7 +116,7 @@ class Sorter extends Field
             'redux-field-sorder-css',
             \Mozart::parameter(
                 'wp.plugin.uri'
-            ) . '/mozart/public/bundles/mozart/option/fields/sorter/field_sorter.css',
+            ) . '/mozart/public/bundles/mozart/form/fields/sorter/field_sorter.css',
             time(),
             true
         );
@@ -125,7 +125,7 @@ class Sorter extends Field
             'redux-field-sorter-js',
             \Mozart::parameter(
                 'wp.plugin.uri'
-            ) . '/mozart/public/bundles/mozart/option/fields/sorter/field_sorter.js',
+            ) . '/mozart/public/bundles/mozart/form/fields/sorter/field_sorter.js',
             array( 'jquery', 'redux-js' ),
             time(),
             true

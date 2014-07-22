@@ -66,7 +66,7 @@ class Section extends Field
             'redux-field-section-css',
             \Mozart::parameter(
                 'wp.plugin.uri'
-            ) . '/mozart/public/bundles/mozart/option/fields/section/field_section.css',
+            ) . '/mozart/public/bundles/mozart/form/fields/section/field_section.css',
             time(),
             true
         );

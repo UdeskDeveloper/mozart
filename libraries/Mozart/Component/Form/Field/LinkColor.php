@@ -82,7 +82,7 @@ class LinkColor extends Field
             'redux-field-link-color-js',
             \Mozart::parameter(
                 'wp.plugin.uri'
-            ) . '/mozart/public/bundles/mozart/option/fields/link_color/field_link_color.js',
+            ) . '/mozart/public/bundles/mozart/form/fields/link_color/field_link_color.js',
             array( 'jquery', 'wp-color-picker', 'redux-js' ),
             time(),
             true
@@ -92,7 +92,7 @@ class LinkColor extends Field
             'redux-field-link_color-js',
             \Mozart::parameter(
                 'wp.plugin.uri'
-            ) . '/mozart/public/bundles/mozart/option/fields/link_color/field_link_color.css',
+            ) . '/mozart/public/bundles/mozart/form/fields/link_color/field_link_color.css',
             time(),
             true
         );

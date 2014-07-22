@@ -402,7 +402,7 @@ class Background extends Field
     {
         wp_enqueue_script(
             'redux-field-background-js',
-            \Mozart::parameter('wp.plugin.uri') . '/mozart/public/bundles/mozart/option/fields/background/field_background.js',
+            \Mozart::parameter('wp.plugin.uri') . '/mozart/public/bundles/mozart/form/fields/background/field_background.js',
             array( 'jquery', 'wp-color-picker', 'select2-js', 'redux-js' ),
             time(),
             true
@@ -410,7 +410,7 @@ class Background extends Field
 
         wp_enqueue_style(
             'redux-field-background-css',
-            \Mozart::parameter('wp.plugin.uri') . '/mozart/public/bundles/mozart/option/fields/background/field_background.css',
+            \Mozart::parameter('wp.plugin.uri') . '/mozart/public/bundles/mozart/form/fields/background/field_background.css',
             time(),
             true
         );

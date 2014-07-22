@@ -49,7 +49,7 @@ class Editor extends Field
             'redux-field-editor-css',
             \Mozart::parameter(
                 'wp.plugin.uri'
-            ) . '/mozart/public/bundles/mozart/option/fields/editor/field_editor.css',
+            ) . '/mozart/public/bundles/mozart/form/fields/editor/field_editor.css',
             time(),
             true
         );
@@ -58,7 +58,7 @@ class Editor extends Field
             'redux-field-editor2-js',
             \Mozart::parameter(
                 'wp.plugin.uri'
-            ) . '/mozart/public/bundles/mozart/option/fields/editor/field_editor.js',
+            ) . '/mozart/public/bundles/mozart/form/fields/editor/field_editor.js',
             array( 'jquery', 'redux-js' ),
             time(),
             true

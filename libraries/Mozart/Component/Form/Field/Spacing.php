@@ -318,7 +318,7 @@ class Spacing extends Field
             'redux-field-spacing-js',
             \Mozart::parameter(
                 'wp.plugin.uri'
-            ) . '/mozart/public/bundles/mozart/option/fields/spacing/field_spacing.js',
+            ) . '/mozart/public/bundles/mozart/form/fields/spacing/field_spacing.js',
             array( 'jquery', 'select2-js', 'redux-js' ),
             time(),
             true
@@ -328,7 +328,7 @@ class Spacing extends Field
             'redux-field-spacing-css',
             \Mozart::parameter(
                 'wp.plugin.uri'
-            ) . '/mozart/public/bundles/mozart/option/fields/spacing/field_spacing.css',
+            ) . '/mozart/public/bundles/mozart/form/fields/spacing/field_spacing.css',
             time(),
             true
         );

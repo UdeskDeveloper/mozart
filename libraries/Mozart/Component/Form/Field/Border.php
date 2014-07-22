@@ -206,7 +206,7 @@ class Border extends Field
     {
         wp_enqueue_script(
             'redux-field-border-js',
-            \Mozart::parameter('wp.plugin.uri') . '/mozart/public/bundles/mozart/option/fields/border/field_border.js',
+            \Mozart::parameter('wp.plugin.uri') . '/mozart/public/bundles/mozart/form/fields/border/field_border.js',
             array( 'jquery', 'select2-js', 'wp-color-picker', 'redux-js' ),
             time(),
             true
@@ -214,7 +214,7 @@ class Border extends Field
 
         wp_enqueue_style(
             'redux-field-border-css',
-            \Mozart::parameter('wp.plugin.uri') . '/mozart/public/bundles/mozart/option/fields/border/field_border.css',
+            \Mozart::parameter('wp.plugin.uri') . '/mozart/public/bundles/mozart/form/fields/border/field_border.css',
             time(),
             true
         );

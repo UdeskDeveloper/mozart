@@ -86,7 +86,7 @@ class Info extends Field
     {
         wp_enqueue_style(
             'redux-field-info-css',
-            \Mozart::parameter( 'wp.plugin.uri' ) . '/mozart/public/bundles/mozart/option/fields/info/field_info.css',
+            \Mozart::parameter( 'wp.plugin.uri' ) . '/mozart/public/bundles/mozart/form/fields/info/field_info.css',
             time(),
             true
         );

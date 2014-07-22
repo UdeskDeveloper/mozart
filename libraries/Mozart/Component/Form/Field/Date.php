@@ -30,14 +30,14 @@ class Date extends Field
     {
         wp_enqueue_style(
             'redux-field-date-css',
-            \Mozart::parameter( 'wp.plugin.uri' ) . '/mozart/public/bundles/mozart/option/fields/date/field_date.css',
+            \Mozart::parameter( 'wp.plugin.uri' ) . '/mozart/public/bundles/mozart/form/fields/date/field_date.css',
             time(),
             true
         );
 
         wp_enqueue_script(
             'redux-field-date-js',
-            \Mozart::parameter( 'wp.plugin.uri' ) . '/mozart/public/bundles/mozart/option/fields/date/field_date.js',
+            \Mozart::parameter( 'wp.plugin.uri' ) . '/mozart/public/bundles/mozart/form/fields/date/field_date.js',
             array( 'jquery', 'jquery-ui-core', 'jquery-ui-datepicker', 'redux-js' ),
             time(),
             true

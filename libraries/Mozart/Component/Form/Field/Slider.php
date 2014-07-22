@@ -221,12 +221,12 @@ class Slider extends Field
             'nouislider-css',
             \Mozart::parameter(
                 'wp.plugin.uri'
-            ) . '/mozart/public/bundles/mozart/option/fields/slider/vendor/nouislider/jquery.nouislider.css',
+            ) . '/mozart/public/bundles/mozart/form/fields/slider/vendor/nouislider/jquery.nouislider.css',
             array(),
             filemtime(
                 \Mozart::parameter(
                     'wp.plugin.dir'
-                ) . '/mozart/public/bundles/mozart/option/fields/slider/vendor/nouislider/jquery.nouislider.css'
+                ) . '/mozart/public/bundles/mozart/form/fields/slider/vendor/nouislider/jquery.nouislider.css'
             ),
             'all'
         );
@@ -235,7 +235,7 @@ class Slider extends Field
             'nouislider-js',
             \Mozart::parameter(
                 'wp.plugin.uri'
-            ) . '/mozart/public/bundles/mozart/option/fields/slider/vendor/nouislider/jquery.nouislider.js',
+            ) . '/mozart/public/bundles/mozart/form/fields/slider/vendor/nouislider/jquery.nouislider.js',
             array( 'jquery' ),
             '5.0.0',
             true
@@ -245,7 +245,7 @@ class Slider extends Field
             'redux-field-slider-js',
             \Mozart::parameter(
                 'wp.plugin.uri'
-            ) . '/mozart/public/bundles/mozart/option/fields/slider/field_slider.js',
+            ) . '/mozart/public/bundles/mozart/form/fields/slider/field_slider.js',
             array( 'jquery', 'nouislider-js', 'redux-js', 'select2-js' ),
             time(),
             true
@@ -255,7 +255,7 @@ class Slider extends Field
             'redux-field-slider-css',
             \Mozart::parameter(
                 'wp.plugin.uri'
-            ) . '/mozart/public/bundles/mozart/option/fields/slider/field_slider.css',
+            ) . '/mozart/public/bundles/mozart/form/fields/slider/field_slider.css',
             time(),
             true
         );

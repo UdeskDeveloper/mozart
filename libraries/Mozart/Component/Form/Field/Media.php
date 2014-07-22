@@ -173,7 +173,7 @@ class Media extends Field
 
         wp_enqueue_style(
             'redux-field-media-css',
-            \Mozart::parameter( 'wp.plugin.uri' ) . '/mozart/public/bundles/mozart/option/fields/media/field_media.css',
+            \Mozart::parameter( 'wp.plugin.uri' ) . '/mozart/public/bundles/mozart/form/fields/media/field_media.css',
             time(),
             true
         );

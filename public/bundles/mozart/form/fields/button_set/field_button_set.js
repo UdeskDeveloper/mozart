@@ -1,7 +1,3 @@
-/*
- Field Button Set (button_set)
- */
-
 /*global jQuery, document, redux*/
 
 (function( $ ) {

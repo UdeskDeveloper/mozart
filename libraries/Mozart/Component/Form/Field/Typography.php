@@ -62,7 +62,7 @@ class Typography extends Field
             $filesystem->copy(
                 \Mozart::parameter(
                     'wp.plugin.dir'
-                ) . '/mozart/public/bundles/mozart/option/fields/typography/googlefonts.json',
+                ) . '/mozart/public/bundles/mozart/form/fields/typography/googlefonts.json',
                 $this->googleFontsDir . '/googlefonts.json',
                 false
             );
@@ -691,7 +691,7 @@ class Typography extends Field
             'redux-field-typography-js',
             \Mozart::parameter(
                 'wp.plugin.uri'
-            ) . '/mozart/public/bundles/mozart/option/fields/typography/field_typography.js',
+            ) . '/mozart/public/bundles/mozart/form/fields/typography/field_typography.js',
             array( 'jquery', 'wp-color-picker', 'select2-js', 'redux-js' ),
             time(),
             true
@@ -707,7 +707,7 @@ class Typography extends Field
             'redux-field-typography-css',
             \Mozart::parameter(
                 'wp.plugin.uri'
-            ) . '/mozart/public/bundles/mozart/option/fields/typography/field_typography.css',
+            ) . '/mozart/public/bundles/mozart/form/fields/typography/field_typography.css',
             time(),
             true
         );

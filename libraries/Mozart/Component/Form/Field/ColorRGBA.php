@@ -142,7 +142,7 @@ class ColorRGBA extends Field
     {
         wp_enqueue_script(
             'redux-field-color_rgba-minicolors-js',
-            \Mozart::parameter('wp.plugin.uri') . '/mozart/public/bundles/mozart/option/fields/color_rgba/vendor/minicolors/jquery.minicolors.js',
+            \Mozart::parameter('wp.plugin.uri') . '/mozart/public/bundles/mozart/form/fields/color_rgba/vendor/minicolors/jquery.minicolors.js',
             array( 'jquery' ),
             time(),
             true
@@ -150,7 +150,7 @@ class ColorRGBA extends Field
 
         wp_enqueue_script(
             'redux-field-color_rgba-js',
-            \Mozart::parameter('wp.plugin.uri') . '/mozart/public/bundles/mozart/option/fields/color_rgba/field_color_rgba.js',
+            \Mozart::parameter('wp.plugin.uri') . '/mozart/public/bundles/mozart/form/fields/color_rgba/field_color_rgba.js',
             array( 'jquery', 'redux-js' ),
             time(),
             true
@@ -158,7 +158,7 @@ class ColorRGBA extends Field
 
         wp_enqueue_style(
             'redux-field-color_rgba-css',
-            \Mozart::parameter('wp.plugin.uri') . '/mozart/public/bundles/mozart/option/fields/color_rgba/field_color_rgba.css',
+            \Mozart::parameter('wp.plugin.uri') . '/mozart/public/bundles/mozart/form/fields/color_rgba/field_color_rgba.css',
             time(),
             true
         );

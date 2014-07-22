@@ -76,7 +76,7 @@ class Spinner extends Field
             'redux-field-spinner-custom-js',
             \Mozart::parameter(
                 'wp.plugin.uri'
-            ) . '/mozart/public/bundles/mozart/option/fields/spinner/vendor/spinner_custom.js',
+            ) . '/mozart/public/bundles/mozart/form/fields/spinner/vendor/spinner_custom.js',
             array( 'jquery' ),
             time(),
             true
@@ -86,7 +86,7 @@ class Spinner extends Field
             'redux-field-spinner-js',
             \Mozart::parameter(
                 'wp.plugin.uri'
-            ) . '/mozart/public/bundles/mozart/option/fields/spinner/field_spinner.js',
+            ) . '/mozart/public/bundles/mozart/form/fields/spinner/field_spinner.js',
             array(
                 'jquery',
                 'redux-field-spinner-custom-js',
@@ -102,7 +102,7 @@ class Spinner extends Field
             'redux-field-spinner-css',
             \Mozart::parameter(
                 'wp.plugin.uri'
-            ) . '/mozart/public/bundles/mozart/option/fields/spinner/field_spinner.css',
+            ) . '/mozart/public/bundles/mozart/form/fields/spinner/field_spinner.css',
             time(),
             true
         );

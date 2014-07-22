@@ -26,7 +26,7 @@ class Select extends Field
             if ($this->field['data'] == "elusive-icons" || $this->field['data'] == "elusive-icon" || $this->field['data'] == "elusive") {
                 $icons_file = \Mozart::parameter(
                         'wp.plugin.dir'
-                    ) . '/mozart/public/bundles/mozart/option/fields/select/elusive-icons.php';
+                    ) . '/mozart/public/bundles/mozart/form/fields/select/elusive-icons.php';
                 /**
                  * filter 'redux-font-icons-file}'
                  *
@@ -136,7 +136,7 @@ class Select extends Field
             'field-select-js',
             \Mozart::parameter(
                 'wp.plugin.uri'
-            ) . '/mozart/public/bundles/mozart/option/fields/select/field_select.js',
+            ) . '/mozart/public/bundles/mozart/form/fields/select/field_select.js',
             array( 'jquery', 'select2-js', 'redux-js' ),
             time(),
             true
@@ -146,7 +146,7 @@ class Select extends Field
             'redux-field-select-css',
             \Mozart::parameter(
                 'wp.plugin.uri'
-            ) . '/mozart/public/bundles/mozart/option/fields/select/field_select.css',
+            ) . '/mozart/public/bundles/mozart/form/fields/select/field_select.css',
             time(),
             true
         );

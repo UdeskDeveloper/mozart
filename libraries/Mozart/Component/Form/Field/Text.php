@@ -67,7 +67,7 @@ class Text extends Field
     {
         wp_enqueue_style(
             'redux-field-text-css',
-            \Mozart::parameter( 'wp.plugin.uri' ) . '/mozart/public/bundles/mozart/option/fields/text/field_text.css',
+            \Mozart::parameter( 'wp.plugin.uri' ) . '/mozart/public/bundles/mozart/form/fields/text/field_text.css',
             time(),
             true
         );

@@ -63,7 +63,7 @@ class MultiText extends Field
             'redux-field-multi-text-js',
             \Mozart::parameter(
                 'wp.plugin.uri'
-            ) . '/mozart/public/bundles/mozart/option/fields/multi_text/field_multi_text.js',
+            ) . '/mozart/public/bundles/mozart/form/fields/multi_text/field_multi_text.js',
             array( 'jquery', 'redux-js' ),
             time(),
             true
@@ -73,7 +73,7 @@ class MultiText extends Field
             'redux-field-multi-text-css',
             \Mozart::parameter(
                 'wp.plugin.uri'
-            ) . '/mozart/public/bundles/mozart/option/fields/multi_text/field_multi_text.css',
+            ) . '/mozart/public/bundles/mozart/form/fields/multi_text/field_multi_text.css',
             time(),
             true
         );

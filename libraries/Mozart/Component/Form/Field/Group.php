@@ -118,7 +118,7 @@ class Group extends Field
     {
         wp_enqueue_script(
             'redux-field-group-js',
-            \Mozart::parameter( 'wp.plugin.uri' ) . '/mozart/public/bundles/mozart/option/fields/group/field_group.js',
+            \Mozart::parameter( 'wp.plugin.uri' ) . '/mozart/public/bundles/mozart/form/fields/group/field_group.js',
             array( 'jquery', 'jquery-ui-core', 'jquery-ui-accordion', 'wp-color-picker' ),
             time(),
             true
@@ -126,7 +126,7 @@ class Group extends Field
 
         wp_enqueue_style(
             'redux-field-group-css',
-            \Mozart::parameter( 'wp.plugin.uri' ) . '/mozart/public/bundles/mozart/option/fields/group/field_group.css',
+            \Mozart::parameter( 'wp.plugin.uri' ) . '/mozart/public/bundles/mozart/form/fields/group/field_group.css',
             time(),
             true
         );

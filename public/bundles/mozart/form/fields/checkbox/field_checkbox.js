@@ -1,10 +1,3 @@
-/**
- * Redux Checkbox
- * Dependencies        : jquery
- * Feature added by    : Dovy Paukstys
- * Date                : 17 June 2014
- */
-
 /*global redux_change, wp, redux*/
 
 (function( $ ) {

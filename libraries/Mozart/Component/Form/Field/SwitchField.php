@@ -53,7 +53,7 @@ class SwitchField extends Field
             'redux-field-switch-js',
             \Mozart::parameter(
                 'wp.plugin.uri'
-            ) . '/mozart/public/bundles/mozart/option/fields/switch/field_switch.js',
+            ) . '/mozart/public/bundles/mozart/form/fields/switch/field_switch.js',
             array( 'jquery', 'redux-js' ),
             time(),
             true
@@ -63,7 +63,7 @@ class SwitchField extends Field
             'redux-field-switch-css',
             \Mozart::parameter(
                 'wp.plugin.uri'
-            ) . '/mozart/public/bundles/mozart/option/fields/switch/field_switch.css',
+            ) . '/mozart/public/bundles/mozart/form/fields/switch/field_switch.css',
             time(),
             true
         );

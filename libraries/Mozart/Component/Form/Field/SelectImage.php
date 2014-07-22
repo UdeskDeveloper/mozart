@@ -133,7 +133,7 @@ class SelectImage extends Field
             'field-select-image-js',
             \Mozart::parameter(
                 'wp.plugin.uri'
-            ) . '/mozart/public/bundles/mozart/option/fields/select_image/field_select_image.js',
+            ) . '/mozart/public/bundles/mozart/form/fields/select_image/field_select_image.js',
             array( 'jquery', 'select2-js', 'redux-js' ),
             time(),
             true
@@ -143,7 +143,7 @@ class SelectImage extends Field
             'redux-field-select-image-css',
             \Mozart::parameter(
                 'wp.plugin.uri'
-            ) . '/mozart/public/bundles/mozart/option/fields/select_image/field_select_image.css',
+            ) . '/mozart/public/bundles/mozart/form/fields/select_image/field_select_image.css',
             time(),
             true
         );

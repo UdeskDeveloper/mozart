@@ -87,7 +87,7 @@ class ButtonSet extends Field
     {
         wp_enqueue_script(
             'redux-field-button-set-js',
-            \Mozart::parameter('wp.plugin.uri') . '/mozart/public/bundles/mozart/option/fields/button_set/field_button_set.js',
+            \Mozart::parameter('wp.plugin.uri') . '/mozart/public/bundles/mozart/form/fields/button_set/field_button_set.js',
             array( 'jquery', 'jquery-ui-core', 'redux-js' ),
             time(),
             true

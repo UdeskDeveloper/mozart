@@ -41,7 +41,7 @@ class Color extends Field
     {
         wp_enqueue_script(
             'redux-field-color-js',
-            \Mozart::parameter('wp.plugin.uri') . '/mozart/public/bundles/mozart/option/fields/color/field_color.js',
+            \Mozart::parameter('wp.plugin.uri') . '/mozart/public/bundles/mozart/form/fields/color/field_color.js',
             array( 'jquery', 'wp-color-picker', 'redux-js' ),
             time(),
             true

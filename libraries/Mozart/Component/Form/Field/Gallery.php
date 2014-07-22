@@ -60,7 +60,7 @@ class Gallery extends Field
             'redux-field-gallery-js',
             \Mozart::parameter(
                 'wp.plugin.uri'
-            ) . '/mozart/public/bundles/mozart/option/fields/gallery/field_gallery.js',
+            ) . '/mozart/public/bundles/mozart/form/fields/gallery/field_gallery.js',
             array( 'jquery', 'redux-js' ),
             time(),
             true

@@ -110,14 +110,14 @@ class Checkbox extends Field
     {
         wp_enqueue_style(
             'redux-field-checkbox-css',
-            \Mozart::parameter('wp.plugin.uri') . '/mozart/public/bundles/mozart/option/fields/checkbox/field_checkbox.css',
+            \Mozart::parameter('wp.plugin.uri') . '/mozart/public/bundles/mozart/form/fields/checkbox/field_checkbox.css',
             time(),
             true
         );
 
         wp_enqueue_script(
             'redux-field-checkbox-js',
-            \Mozart::parameter('wp.plugin.uri') . '/mozart/public/bundles/mozart/option/fields/checkbox/field_checkbox.js',
+            \Mozart::parameter('wp.plugin.uri') . '/mozart/public/bundles/mozart/form/fields/checkbox/field_checkbox.js',
             array( 'jquery', 'redux-js' ),
             time(),
             true

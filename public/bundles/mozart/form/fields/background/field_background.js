@@ -1,10 +1,3 @@
-/**
- * Redux Background
- * Dependencies        : jquery, wp media uploader
- * Feature added by    : Dovy Paukstys
- * Date                : 07 Jan 2014
- */
-
 /*global redux_change, wp, redux*/
 
 (function( $ ) {

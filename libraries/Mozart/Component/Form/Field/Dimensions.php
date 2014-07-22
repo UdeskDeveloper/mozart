@@ -248,7 +248,7 @@ class Dimensions extends Field
             'redux-field-dimensions-js',
             \Mozart::parameter(
                 'wp.plugin.uri'
-            ) . '/mozart/public/bundles/mozart/option/fields/dimensions/field_dimensions.js',
+            ) . '/mozart/public/bundles/mozart/form/fields/dimensions/field_dimensions.js',
             array( 'jquery', 'select2-js', 'redux-js' ),
             time(),
             true
@@ -258,7 +258,7 @@ class Dimensions extends Field
             'redux-field-dimensions-css',
             \Mozart::parameter(
                 'wp.plugin.uri'
-            ) . '/mozart/public/bundles/mozart/option/fields/dimensions/field_dimensions.css',
+            ) . '/mozart/public/bundles/mozart/form/fields/dimensions/field_dimensions.css',
             time(),
             true
         );
