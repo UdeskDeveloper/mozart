@@ -69,6 +69,8 @@ class OptionBuilder
      * @var string
      */
     private $compilerCSS;
+    private $settingsSections;
+    private $settingsFields;
 
     /**
      * @param ContainerInterface $container
@@ -320,7 +322,6 @@ class OptionBuilder
             'meta'   => array( 'class' => 'redux-network-admin' )
         );
         $wp_admin_bar->add_node( $params );
-
     }
 
     /**
@@ -1809,13 +1810,9 @@ class OptionBuilder
                 }
             }
 
-            add_settings_section(
+            $this->addSettingsSection(
                 $this->params['opt_name'] . $k . '_section',
                 $heading,
-                array(
-                    &$this,
-                    '_section_desc'
-                ),
                 $this->params['opt_name'] . $k . '_section_group'
             );
 
@@ -2010,10 +2007,9 @@ class OptionBuilder
 
                     $this->getFieldManager()->checkDependencies( $field );
 
-                    add_settings_field(
+                    $this->addSettingsField(
                         "{$fieldk}_field",
                         $th,
-                        array( $this->getFieldManager(), 'fieldInput' ),
                         "{$this->params['opt_name']}{$k}_section_group",
                         "{$this->params['opt_name']}{$k}_section",
                         $field
@@ -2034,6 +2030,22 @@ class OptionBuilder
             $this->setTransients();
         }
     }
+
+    private function addSettingsSection($id, $title, $page) {
+        $this->settingsSections[$page][$id] = array(
+            'id' => $id,
+            'title' => $title
+        );
+    }
+
+    private function addSettingsField($id, $title, $page, $section = 'default', $args = array()) {
+        $this->settingsFields[$page][$section][$id] = array(
+            'id' => $id,
+            'title' => $title,
+            'args' => $args
+        );
+    }
+
 
     /**
      *
@@ -2478,24 +2490,22 @@ class OptionBuilder
      */
     private function doSettingsSections( $page )
     {
-        global $wp_settings_sections, $wp_settings_fields;
-
         $return = '';
 
-        if (!isset( $wp_settings_sections[$page] )) {
+        if (!isset( $this->settingsSections[$page] )) {
             return $return;
         }
 
-        foreach ((array)$wp_settings_sections[$page] as $section) {
+        foreach ((array)$this->settingsSections[$page] as $section) {
             if ($section['title']) {
                 $return .= "<h3>{$section['title']}</h3>\n";
             }
 
-            if ($section['callback']) {
-                call_user_func( $section['callback'], $section );
-            }
+            $return .= $this->getSectionDescriptionOutput($section);
 
-            if (!isset( $wp_settings_fields ) || !isset( $wp_settings_fields[$page] ) || !isset( $wp_settings_fields[$page][$section['id']] )) {
+            if (!isset( $this->settingsFields ) ||
+                !isset( $this->settingsFields[$page] ) ||
+                !isset( $this->settingsFields[$page][$section['id']] )) {
                 continue;
             }
             $return .= '<table class="form-table">';
@@ -2513,14 +2523,13 @@ class OptionBuilder
      */
     private function doSettingsFields( $page, $section )
     {
-        global $wp_settings_fields;
         $return = '';
 
-        if (!isset( $wp_settings_fields[$page][$section] )) {
+        if (!isset( $this->settingsFields[$page][$section] )) {
             return $return;
         }
 
-        foreach ((array)$wp_settings_fields[$page][$section] as $field) {
+        foreach ((array)$this->settingsFields[$page][$section] as $field) {
             $return .= '<tr>';
             if (!empty( $field['args']['label_for'] )) {
                 $return .= '<th scope="row"><label for="' . esc_attr(
@@ -2530,7 +2539,7 @@ class OptionBuilder
                 $return .= '<th scope="row">' . $field['title'] . '</th>';
             }
             $return .= '<td>';
-            $return .= call_user_func( $field['callback'], $field['args'] );
+            $return .= $this->getFieldManager()->fieldInput($field['args']);
             $return .= '</td>';
             $return .= '</tr>';
         }
@@ -2544,7 +2553,7 @@ class OptionBuilder
      *
      * @return string
      */
-    public function _section_desc( $section )
+    public function getSectionDescriptionOutput( $section )
     {
         $output = '';
         $id = trim( rtrim( $section['id'], '_section' ), $this->params['opt_name'] );

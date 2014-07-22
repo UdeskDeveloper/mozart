@@ -66,7 +66,7 @@ class Customizer
             str_replace( trailingslashit( str_replace( '\\', '/', ABSPATH ) ), '', $this->_extension_dir )
         );
 
-        if ('' !== $this->requestStack->getCurrentRequest()->get( 'customized' )
+        if (($this->requestStack->getCurrentRequest() && '' !== $this->requestStack->getCurrentRequest()->get( 'customized' ))
             || $this->currentPage === "admin-ajax.php"
         ) {
             if (current_user_can( $this->builder->getParam( 'page_permissions' ) )) {
@@ -77,7 +77,7 @@ class Customizer
             }
         }
 
-        if ('' !== $this->requestStack->getCurrentRequest()->get( 'customized' )) {
+        if ($this->requestStack->getCurrentRequest() && '' !== $this->requestStack->getCurrentRequest()->get( 'customized' )) {
             add_action(
                 "redux/options/{$this->builder->getParam( 'opt_name' )}/options",
                 array( $this, '_override_values' ),
