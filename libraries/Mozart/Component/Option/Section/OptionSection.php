@@ -34,7 +34,8 @@ class OptionSection implements SectionInterface
             'icon' => $this->getIcon(),
             'title' => $this->getTitle(),
             'desc' => $this->getDescription(),
-            'subsection' => false
+            'subsection' => false,
+            'type' => null
         );
         if ($this->getParent() !== '') {
             $conf['subsection'] = true;

@@ -21,15 +21,23 @@ class SectionManager
 
     /**
      * @param OptionSection $section
-     * @param null          $alias
+     * @param null $alias
      */
-    public function addSection(OptionSection $section, $alias = null)
+    public function addSection( OptionSection $section, $alias = null )
     {
         if (null === $alias) {
             $alias = $section->getAlias();
         }
 
         $this->sections[$alias] = $section->getConfiguration();
+    }
+
+    public function updateSection($alias, $data = array()) {
+        foreach ($data as $dataKey => $dataValue) {
+            if (is_array($dataValue)) {
+                array_merge($this->sections[$alias][$dataKey], $dataValue);
+            }
+        }
     }
 
     /**
@@ -45,10 +53,45 @@ class SectionManager
      *
      * @return mixed
      */
-    public function getSection($alias)
+    public function getSection( $alias )
     {
         if (array_key_exists( $alias, $this->sections )) {
             return $this->sections[$alias];
+        }
+    }
+
+    public function addSubmenuPages($pageSlug, $pagePermissions)
+    {
+        foreach ($this->getSections() as $k => $section) {
+            if ($section['type'] === 'divide') {
+                continue;
+            }
+            $canBeSubSection =  !$section['type'] ? true : false;
+
+            if (!isset( $section['title'] ) ||
+                ( $canBeSubSection &&
+                    ( isset( $section['subsection'] ) &&
+                        $section['subsection'] == true ) )
+            ) {
+                continue;
+            }
+
+            if (isset( $section['submenu'] ) && $section['submenu'] == false) {
+                continue;
+            }
+
+            if (isset( $section['customizer_only'] ) && $section['customizer_only'] == true) {
+                continue;
+            }
+
+            add_submenu_page(
+                $pageSlug,
+                $section['title'],
+                $section['title'],
+                $pagePermissions,
+                $pageSlug . '&tab=' . $k,
+                '__return_null'
+            );
         }
     }
 }
