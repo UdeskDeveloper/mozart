@@ -6,7 +6,7 @@
 $container->setParameter(
     "mozart.option",
     array(
-        'opt_name'           => 'mozart',
+        'opt_name'           => 'mozart-options',
         // This is where your data is stored in the database and also becomes your global variable name.
         'display_name'       => wp_get_theme()->get( 'Name' ),
         // Name that appears at the top of your panel
