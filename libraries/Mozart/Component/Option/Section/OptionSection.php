@@ -83,7 +83,7 @@ class OptionSection implements OptionSectionInterface
      */
     public function getDescription()
     {
-        return '';
+        return $this->getTitle() . ' Options';
     }
 
     /**
