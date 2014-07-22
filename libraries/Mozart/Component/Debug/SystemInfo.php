@@ -6,6 +6,7 @@
 namespace Mozart\Component\Debug;
 
 use phpbrowscap\Browscap;
+use Symfony\Component\Filesystem\Filesystem;
 
 class SystemInfo
 {
@@ -20,7 +21,7 @@ class SystemInfo
             'show_inactive_plugins' => true,
             'container_id'          => 'system-info-box',
             'container_class'       => '',
-            'cache_dir'             => wp_upload_dir()
+            'cache_dir'             => wp_upload_dir()['basedir'] . '/Mozart/System/'
         );
 
         $args = array_merge( $defaults, $args );
@@ -31,6 +32,11 @@ class SystemInfo
             define( 'SSINFO_VERSION', '1.0.0' );
         }
 
+        $filesystem = new Filesystem();
+
+        if (false === $filesystem->exists($args['cache_dir'])) {
+            $filesystem->mkdir($args['cache_dir']);
+        }
         // Create a new Browscap object (loads or creates the cache)
         $bc = new Browscap( $args['cache_dir'] );
 
