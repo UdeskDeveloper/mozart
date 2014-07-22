@@ -41,7 +41,7 @@ class ExtensionManager
     public function loadExtensions() {
 
         foreach ($this->getExtensions() as $extension) {
-            $extension->extend( $this );
+//            $extension->extend( $this );
         }
     }
 }
