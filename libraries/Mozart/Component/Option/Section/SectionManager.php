@@ -26,10 +26,10 @@ class SectionManager
     public function addSection(OptionSection $section, $alias = null)
     {
         if (null === $alias) {
-            $this->sections[] = $section->getConfiguration();
-        } else {
-            $this->sections[$alias] = $section->getConfiguration();
+            $alias = $section->getAlias();
         }
+
+        $this->sections[$alias] = $section->getConfiguration();
     }
 
     /**
