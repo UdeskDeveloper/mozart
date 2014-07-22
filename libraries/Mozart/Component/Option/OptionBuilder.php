@@ -69,7 +69,13 @@ class OptionBuilder
      * @var string
      */
     private $compilerCSS;
+    /**
+     * @var
+     */
     private $settingsSections;
+    /**
+     * @var
+     */
     private $settingsFields;
 
     /**
@@ -92,10 +98,6 @@ class OptionBuilder
             return false;
         }
 
-        if ($this->params['global_variable'] == "" && $this->params['global_variable'] !== false) {
-            $this->params['global_variable'] = str_replace( '-', '_', $this->params['opt_name'] );
-        }
-
         $this->getCustomizer()->init( $this );
 
         $this->loadTranslations();
@@ -108,7 +110,7 @@ class OptionBuilder
         $this->getValidator()->init( $this );
 
         // Display admin notices in dev_mode
-        if (true == $this->params['dev_mode']) {
+        if ($this->container->get('kernel')->isDebug()) {
             $this->getDebugger()->init( $this );
         }
 
@@ -117,6 +119,9 @@ class OptionBuilder
         return true;
     }
 
+    /**
+     * @return object
+     */
     public function getCustomizer()
     {
         return $this->container->get( 'mozart.option.customizer' );
@@ -188,21 +193,33 @@ class OptionBuilder
         return $this->container->get( 'mozart.option.fieldmanager' );
     }
 
+    /**
+     * @return null
+     */
     public function getOutputCSS()
     {
         return $this->outputCSS;
     }
 
+    /**
+     * @param $css
+     */
     public function addToOutputCSS( $css )
     {
         $this->outputCSS .= $css;
     }
 
+    /**
+     * @return string
+     */
     public function getCompilerCSS()
     {
         return $this->compilerCSS;
     }
 
+    /**
+     * @param $css
+     */
     public function addToCompilerCSS( $css )
     {
         $this->compilerCSS .= $css;
@@ -250,8 +267,6 @@ class OptionBuilder
             // possible: options, theme_mods, theme_mods_expanded, transient, network
             'customizer'        => false,
             // setting to true forces get_theme_mod_expanded
-            'global_variable'   => '',
-            // Changes global variable from $GLOBALS['YOUR_OPT_NAME'] to whatever you set here. false disables the global variable
             'output'            => true,
             // Dynamically generate CSS
             'compiler'          => true,
@@ -304,7 +319,6 @@ class OptionBuilder
                 ),
             ),
             'show_importer'     => true,
-            'dev_mode'          => false,
             'system_info'       => false
         );
     }
@@ -439,35 +453,6 @@ class OptionBuilder
     }
 
     /**
-     * Set a global variable by the global_variable argument
-     *
-     * @return bool
-     */
-    public function setGlobalVariable()
-    {
-        if ($this->params['global_variable']) {
-            $option_global = $this->params['global_variable'];
-
-            if (isset( $this->transients['last_save'] )) {
-                // Deprecated
-                $GLOBALS[$option_global]['REDUX_last_saved'] = $this->transients['last_save'];
-                // Last save key
-                $GLOBALS[$option_global]['REDUX_LAST_SAVE'] = $this->transients['last_save'];
-            }
-            if (isset( $this->transients['last_compiler'] )) {
-                // Deprecated
-                $GLOBALS[$option_global]['REDUX_COMPILER'] = $this->transients['last_compiler'];
-                // Last compiler hook key
-                $GLOBALS[$option_global]['REDUX_LAST_COMPILER'] = $this->transients['last_compiler'];
-            }
-
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
      * This is used to set an arbitrary option in the options array
      *
      * @param mixed $value the value of the option being added
@@ -509,9 +494,6 @@ class OptionBuilder
 
             $this->options = $value;
 
-            // Set a global variable by the global_variable argument.
-            $this->setGlobalVariable();
-
             // Saving the transient values
             $this->setTransients();
         }
@@ -539,13 +521,10 @@ class OptionBuilder
 
         // Get transient values
         $this->getTransients();
-
-        // Set a global variable by the global_variable argument.
-        $this->setGlobalVariable();
     }
 
     /**
-     * @return array|mixed|string|void
+     * @return mixed
      */
     public function getOptions()
     {
@@ -557,7 +536,6 @@ class OptionBuilder
             return get_theme_mods();
         } elseif ($this->params['database'] === 'network') {
             return get_site_option( $this->params['opt_name'], array() );
-//            return json_decode( stripslashes( json_encode( $result ) ), true );
         }
 
         return get_option( $this->params['opt_name'], array() );
@@ -937,7 +915,7 @@ class OptionBuilder
                     $this->getImporter()->add_submenu();
                 }
 
-                if (true == $this->params['dev_mode']) {
+                if ($this->getDebugger()->isEnabled()) {
                     $this->getDebugger()->add_submenu();
                 }
 
@@ -1065,6 +1043,9 @@ class OptionBuilder
 //        $this->getFontManager()->enqueueTypographyFonts();
     }
 
+    /**
+     * @return string
+     */
     public function getLastSave()
     {
         return !empty( $this->transients['last_save'] ) ? $this->transients['last_save'] : '';
@@ -1505,6 +1486,10 @@ class OptionBuilder
         );
     }
 
+    /**
+     * @param $key
+     * @param $value
+     */
     public function addLocalizeData( $key, $value )
     {
 
@@ -2030,6 +2015,11 @@ class OptionBuilder
         }
     }
 
+    /**
+     * @param $id
+     * @param $title
+     * @param $page
+     */
     private function addSettingsSection( $id, $title, $page )
     {
         $this->settingsSections[$page][$id] = array(
@@ -2038,6 +2028,13 @@ class OptionBuilder
         );
     }
 
+    /**
+     * @param $id
+     * @param $title
+     * @param $page
+     * @param string $section
+     * @param array $args
+     */
     private function addSettingsField( $id, $title, $page, $section = 'default', $args = array() )
     {
         $this->settingsFields[$page][$section][$id] = array(
@@ -2460,7 +2457,7 @@ class OptionBuilder
         }
 
         // Debug object output
-        if ($this->params['dev_mode'] == true) {
+        if ($this->getDebugger()->isEnabled()) {
             $mainContent .= $this->getDebugger()->render();
         }
 

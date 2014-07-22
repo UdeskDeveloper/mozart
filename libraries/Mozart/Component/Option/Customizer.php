@@ -121,7 +121,6 @@ class Customizer
                         rtrim( $key, "]" )
                     );
                     $data[$key] = $value;
-                    $GLOBALS[$this->builder->args['global_variable']][$key] = $value;
                     $this->builder->setOption( $key, $value );
                 }
             }

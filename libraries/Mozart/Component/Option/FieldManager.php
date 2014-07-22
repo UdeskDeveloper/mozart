@@ -122,7 +122,7 @@ class FieldManager
 
         $fieldClass = $this->getFieldClass( $field['type'] );
 
-        if ($fieldClass && method_exists( $fieldClass, 'output' ) && $this->_can_output_css( $field )
+        if ($fieldClass && method_exists( $fieldClass, 'output' ) && $this->canOutputCSS( $field )
         ) {
             if (!isset( $field['compiler'] )) {
                 $field['compiler'] = "";
@@ -160,7 +160,6 @@ class FieldManager
 
         $theField = new $fieldClass( $this->builder, $field, $this->builder->getOption( $field['id'] ) );
 
-        // Move dev_mode check to a new if/then block
         if (!wp_script_is(
             'redux-field-' . $field['type'] . '-js',
             'enqueued'
@@ -565,35 +564,40 @@ class FieldManager
      *
      * @return bool
      */
-    public function _can_output_css( $field )
+    public function canOutputCSS( $field )
     {
         $return = true;
 
         if (isset( $field['force_output'] ) && $field['force_output'] == true) {
-            return $return;
+            return false;
         }
 
-        $globalVar = $this->builder->getParam( 'global_variable' );
+        /**
+         * $field['required'] is an array of three values:
+         * Parent field ID, comparison operator, and value which affects the field’s visibility.
+         */
+        if (empty( $field['required'] ) || !isset( $field['required'][0] )) {
+            return false;
+        }
 
-        if (!empty( $field['required'] )) {
-            if (isset( $field['required'][0] )) {
-                if (!is_array( $field['required'][0] ) && count( $field['required'] ) == 3) {
-                    $parentValue = $GLOBALS[$globalVar][$field['required'][0]];
-                    $checkValue = $field['required'][2];
-                    $operation = $field['required'][1];
-                    $return = $this->builder->compareValueDependencies( $parentValue, $checkValue, $operation );
-                } elseif (is_array( $field['required'][0] )) {
-                    foreach ($field['required'] as $required) {
-                        if (!is_array( $required[0] ) && count( $required ) == 3) {
-                            $parentValue = $GLOBALS[$globalVar][$required[0]];
-                            $checkValue = $required[2];
-                            $operation = $required[1];
-                            $return = $this->builder->compareValueDependencies( $parentValue, $checkValue, $operation );
-                        }
-                        if (!$return) {
-                            return $return;
-                        }
-                    }
+        if (!is_array( $field['required'][0] ) &&
+            count( $field['required'] ) == 3
+        ) {
+            $parentValue = $this->fields[$field['required'][0]];
+            $checkValue = $field['required'][2];
+            $operation = $field['required'][1];
+            $return = $this->builder->compareValueDependencies( $parentValue, $checkValue, $operation );
+        } elseif (is_array( $field['required'][0] )) {
+            foreach ($field['required'] as $required) {
+                if (!is_array( $required[0] ) && count( $required ) == 3) {
+                    $return = $this->builder->compareValueDependencies(
+                        $this->fields[$required[0]],
+                        $required[2],
+                        $required[1]
+                    );
+                }
+                if (!$return) {
+                    return false;
                 }
             }
         }

@@ -13,11 +13,22 @@ class Debugger
      */
     protected $builder;
 
+    private $enabled = false;
+
+    /**
+     * @return boolean
+     */
+    public function isEnabled()
+    {
+        return $this->enabled;
+    }
+
     /**
      * @param OptionBuilder $builder
      */
     public function init(OptionBuilder $builder)
     {
+        $this->enabled = true;
         $this->builder = $builder;
     }
 

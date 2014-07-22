@@ -6,7 +6,7 @@
 $container->setParameter(
     "mozart.option",
     array(
-        'opt_name'           => 'mozart-options',
+        'opt_name'           => 'mozart',
         // This is where your data is stored in the database and also becomes your global variable name.
         'display_name'       => wp_get_theme()->get( 'Name' ),
         // Name that appears at the top of your panel
@@ -26,10 +26,6 @@ $container->setParameter(
         'async_typography'   => false,
         // Use a asynchronous font on the front end or font string
         'admin_bar'          => true,
-        // Show the panel pages on the admin bar
-        'global_variable'    => 'mozart',
-        // Set a different name for your global variable other than the opt_name
-        'dev_mode'           => false,
         // Show the time the page took to load, etc
         'customizer'         => true,
         // Enable basic customizer support
