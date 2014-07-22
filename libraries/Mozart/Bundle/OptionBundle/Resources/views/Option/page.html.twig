@@ -1,0 +1,134 @@
+<div class="wrap"><h2></h2></div>
+<div class="clear"></div>
+<div class="wrap">
+
+	<noscript>
+		<div class="no-js">{{ "Warning- This options panel will not work properly without javascript!"|translate }}</div>
+	</noscript>
+
+	<input type="hidden" id="ajaxsecurity" name="security" value="{{ nonce }}"/>
+
+	<div class="redux-container {% if params.open_expanded %}fully-expanded{% endif %} {{ params.class }}">
+
+		<form method="post" action="{{ url }}" enctype="multipart/form-data" id="redux-form-wrapper">
+			<input type="hidden" id="redux-compiler-hook" name="{{ params.opt_name }}[compiler]" value=""/>
+			<input type="hidden" id="currentSection" name="{{ params.opt_name }}[redux-section]" value=""/>
+
+			<input type='hidden' name='option_page' value='{{ params.opt_name|escape }}_group'/>
+			<input type="hidden" name="action" value="update"/>
+			<input type="hidden" id="_wpnonce" name="_wpnonce" value="{{ page_nonce }}"/>
+			<input type="hidden" name="_wp_http_referer" value="{{ referer|escape }}"/>
+
+			<input type="hidden" id="last_tab" name="{{ params.opt_name }}[last_tab]" value="{{ last_tab }}"/>
+
+			<div id="redux-header">
+				{% if params.display_name is not empty %}
+					<div class="display_header">
+						<h2>{{ params.display_name }}</h2>
+
+						{% if params.display_version is not empty %}
+							<span>{{ params.display_version }}</span>
+						{% endif %}
+					</div>
+				{% endif %}
+
+				<div id="{{ params.page_icon }}" class="icon32"></div>
+				<div class="clear"></div>
+			</div>
+
+			{% if params.intro_text is defined and params.intro_text is not empty %}
+				<div id="redux-intro-text">
+					{{ params.intro_text }}
+				</div>
+			{% endif %}
+
+			<div id="redux-sticky">
+				<div id="info_bar">
+					<a href="javascript:void(0);"
+					   class="expand_options {% if params.open_expanded %}expanded{% endif %}">
+						{{ "Expand"|translate }}
+					</a>
+
+					<div class="redux-action_bar">
+						{{ include "MozartOptionBundle:Option:actionBar.html.twig" }}
+					</div>
+					<div class="redux-ajax-loading" alt="{{ "Working..."|translate }}">&nbsp;</div>
+
+					<div class="clear"></div>
+				</div>
+
+				{{ message }}
+
+				<div class="redux-save-warn notice-yellow">
+					<strong>{{ "Settings have changed, you should save them!"|translate }}</strong>
+				</div>
+
+				<div class="redux-field-errors notice-red">
+					<strong>
+						<span></span>
+						{{ 'error(s) were found!'|translate }}
+					</strong>
+				</div>
+
+				<div class="redux-field-warnings notice-yellow">
+					<strong><span></span>
+						{{ 'warning(s) were found!'|translate }}
+					</strong>
+				</div>
+
+			</div>
+
+			<div class="clear"></div>
+
+			<div class="redux-sidebar">
+				{{ include 'MozartOptionBundle:Option:sidebar.html.twig' }}
+			</div>
+
+			<div class="redux-main">
+				{{ mainContent }}
+
+				{% if params.system_info is true %}
+					<div id="system_info_default_section_group" class="redux-group-tab">
+						<h3>{{ "System Info"|translate }}</h3>
+
+						<div id="redux-system-info">';
+							{{ systemInfo }}
+						</div>
+					</div>
+				{% endif %}
+				<div class="clear"></div>
+			</div>
+			<div class="clear"></div>
+			<div id="redux-sticky-padder" style="display: none;">&nbsp;</div>
+			<div id="redux-footer-sticky">
+				<div id="redux-footer">
+
+					{% if params.share_icons is defined and params.share_icons is traversable %}
+						<div id="redux-share">
+							{% for link in params.share_icons %}
+								<a href="{{ link.url }}" title="{{ link.title }}" target="_blank">
+
+									{% if link.icon is not empty %}
+										<i class="{{ link.icon }}"></i>
+									{% else %}
+										<img src="{{ link.img }}"/>
+									{% endif %}
+								</a>
+							{% endfor %}
+						</div>
+					{% endif %}
+
+					<div class="redux-action_bar">
+						{{ include "MozartOptionBundle:Option:actionBar.html.twig" }}
+					</div>
+					<div class="redux-ajax-loading" alt="{{ "Working..."|translate }}">&nbsp;</div>
+					<div class="clear"></div>
+				</div>
+			</div>
+		</form>
+	</div>
+	{% if params.footer_text is not empty %}
+		<div id="redux-sub-footer">{{ params.footer_text }}</div>
+	{% endif %}
+	<div class="clear"></div>
+</div><!--wrap-->

@@ -1,0 +1,71 @@
+<ul class="redux-group-menu">
+
+	{{ sectionsOutput }}
+
+	{% if params.show_importer is true %}
+
+		<li id="import_export_default_section_group_li" class="redux-group-tab-link-li">
+			<a href="javascript:void(0);" id="import_export_default_section_group_li_a"
+			   class="redux-group-tab-link-a"
+			   data-rel="import_export_default">
+				{% if params.icon_type == 'image' %}
+					{% if params.import_icon is not empty %}
+						<img src="{{ params.import_icon }}" alt=""/>
+					{% endif %}
+				{% else %}
+					{% if params.import_icon is not empty %}
+						<i class="{{ params.import_icon }} {{ params.import_icon_class }}"></i>
+					{% else %}
+						<i class="el-icon-refresh {{ params.import_icon_class }}"></i>
+					{% endif %}
+				{% endif %}
+				<span class="group_title">{{ "Import / Export"|translate }}</span>
+			</a>
+		</li>
+		<li class="divide">&nbsp;</li>
+	{% endif %}
+
+	{% if params.dev_mode is true %}
+		<li id="dev_mode_default_section_group_li" class="redux-group-tab-link-li">
+
+			<a href="javascript:void(0);" id="dev_mode_default_section_group_li_a"
+			   class="redux-group-tab-link-a"
+			   data-rel="dev_mode_default">
+				{% if params.icon_type == 'image' %}
+					{% if params.dev_mode_icon is not empty %}
+						<img src="{{ params.dev_mode_icon }}" alt=""/>
+					{% endif %}
+				{% else %}
+					{% if params.dev_mode_icon is not empty %}
+						<i class="{{ params.dev_mode_icon }} {{ params.dev_mode_icon_class }}"></i>
+					{% else %}
+						<i class="el-icon-info-sign {{ params.dev_mode_icon_class }}"></i>
+					{% endif %}
+				{% endif %}
+				<span class="group_title">{{ "Options Object"|translate }}</span>
+			</a>
+		</li>
+		<li class="divide">&nbsp;</li>
+	{% endif %}
+
+	{% if params.system_info is true %}
+		<li id="system_info_default_section_group_li" class="redux-group-tab-link-li">
+			<a href="javascript:void(0);" id="system_info_default_section_group_li_a"
+			   class="redux-group-tab-link-a"
+			   data-rel="system_info_default">
+				{% if params.icon_type == 'image' %}
+					{% if params.system_info_icon is not empty %}
+						<img src="{{ params.system_info_icon }}" alt=""/>
+					{% endif %}
+				{% else %}
+					{% if params.system_info_icon is not empty %}
+						<i class="{{ params.system_info_icon }} {{ params.system_info_icon_class }}"></i>
+					{% else %}
+						<i class="el-icon-info-sign {{ params.system_info_icon_class }}"></i>
+					{% endif %}
+				{% endif %}
+				<span class="group_title">{{ "System Info"|translate }}</span>
+			</a>
+		</li>
+	{% endif %}
+</ul>
