@@ -7,37 +7,27 @@ namespace Mozart\Component\Option;
 
 use Mozart\Component\Debug\SystemInfo;
 use Mozart\Component\Form\Field\Typography;
-use Mozart\Component\Support\Str;
 use Mozart\Component\Option\Extension\ExtensionManager;
 use Mozart\Component\Option\Section\SectionManager;
+use Mozart\Component\Support\Str;
+use Symfony\Component\Debug\Exception\ClassNotFoundException;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use W3_ObjectCache;
 
 /**
  * Class OptionBuilder
  * @package Mozart\Component\Option
  */
-class OptionBuilder implements OptionBuilderInterface
+class OptionBuilder
 {
-    const NAME = 'mozart';
-    /**
-     * @var
-     */
-    public static $_properties;
     /**
      * @var array
      */
-    public $wp_data = array();
-    /**
-     * @var array
-     */
-    public $font_groups = array();
+    private $wp_data = array();
     /**
      * @var string
      */
-    public $page = '';
-    /**
-     * @var bool
-     */
-    public $saved = false;
+    private $page = '';
     /**
      * Fields by type used in the panel
      *
@@ -45,106 +35,65 @@ class OptionBuilder implements OptionBuilderInterface
      */
     private $fields = array();
     /**
-     * @var string
+     * @var array
      */
-    public $current_tab = ''; // Current section to display, cookies
+    private $errors = array(); // Errors
     /**
      * @var array
      */
-    protected $sections = array();
+    private $warnings = array(); // Warnings
     /**
      * @var array
      */
-    public $errors = array(); // Errors
-    /**
-     * @var array
-     */
-    public $warnings = array(); // Warnings
-    /**
-     * @var array
-     */
-    public $options = array(); // Option values
+    private $options = array(); // Option values
     /**
      * @var null
      */
-    public $options_defaults = null; // Option defaults
+    private $options_defaults = null; // Option defaults
     /**
      * @var array
      */
-    public $notices = array(); // Option defaults
+    private $compiler_fields = array(); // Fields that trigger the compiler hook
     /**
      * @var array
      */
-    public $compiler_fields = array(); // Fields that trigger the compiler hook
+    private $required = array(); // Information that needs to be localized
     /**
      * @var array
      */
-    public $required = array(); // Information that needs to be localized
+    private $required_child = array(); // Information that needs to be localized
     /**
      * @var array
      */
-    public $required_child = array(); // Information that needs to be localized
+    private $localize_data = array(); // Information that needs to be localized
     /**
      * @var array
      */
-    public $localize_data = array(); // Information that needs to be localized
-    /**
-     * @var array
-     */
-    public $fonts = array(); // Information that needs to be localized
-    /**
-     * @var array
-     */
-    public $folds = array(); // The itms that need to fold.
-    /**
-     * @var string
-     */
-    public $path = '';
-    /**
-     * @var array
-     */
-    public $changed_values = array(); // Values that have been changed on save. Orig values.
-    /**
-     * @var array
-     */
-    public $output = array(); // Fields with CSS output selectors
+    private $folds = array(); // The itms that need to fold.
     /**
      * @var null
      */
-    public $outputCSS = null; // CSS that get auto-appended to the header
+    private $outputCSS = null; // CSS that get auto-appended to the header
+    /**
+     * @var array
+     */
+    private $fieldsValues = array(); //all fields values in an id=>value array so we can check dependencies
+    /**
+     * @var array
+     */
+    private $fieldsHidden = array(); //all fields that didn't pass the dependency test and are hidden
+    /**
+     * @var array
+     */
+    private $toHide = array(); // Values to hide on page load
     /**
      * @var null
      */
-    public $compilerCSS = null; // CSS that get sent to the compiler hook
-    /**
-     * @var null
-     */
-    public $customizerCSS = null; // CSS that goes to the customizer
+    private $typography = null; //values to generate google font CSS
     /**
      * @var array
      */
-    public $fieldsValues = array(); //all fields values in an id=>value array so we can check dependencies
-    /**
-     * @var array
-     */
-    public $fieldsHidden = array(); //all fields that didn't pass the dependency test and are hidden
-    /**
-     * @var array
-     */
-    public $toHide = array(); // Values to hide on page load
-    /**
-     * @var null
-     */
-    public $typography = null; //values to generate google font CSS
-
-    /**
-     * @var array
-     */
-    public $typography_preview = array();
-    /**
-     * @var array
-     */
-    public $params = array();
+    private $params = array();
 
     /**
      * @var bool
@@ -164,48 +113,20 @@ class OptionBuilder implements OptionBuilderInterface
     private $hidden_perm_sections = array(); //  Hidden sections specified by 'permissions' arg.
 
     /**
-     * @var Importer
+     * @var ContainerInterface
      */
-    protected $importer;
+    private $container;
     /**
-     * @var Debugger
+     * @var
      */
-    protected $debugger;
+    private $transients_check;
 
     /**
-     * @var ExtensionManager
+     * @param ContainerInterface $container
      */
-    private $extensionManager;
-    /**
-     * @var SectionManager
-     */
-    private $sectionManager;
-
-    private $mozartRootUrl;
-    private $mozartRootDir;
-
-    /**
-     * @param Importer $importer
-     * @param Debugger $debugger
-     * @param ExtensionManager $extensionManager
-     * @param SectionManager $sectionManager
-     * @param $mozartRootUrl
-     * @param $mozartRootDir
-     */
-    public function __construct(
-        Importer $importer,
-        Debugger $debugger,
-        ExtensionManager $extensionManager,
-        SectionManager $sectionManager,
-        $mozartRootUrl,
-        $mozartRootDir
-    ) {
-        $this->importer = $importer;
-        $this->debugger = $debugger;
-        $this->extensionManager = $extensionManager;
-        $this->sectionManager = $sectionManager;
-        $this->mozartRootUrl = $mozartRootUrl;
-        $this->mozartRootDir = $mozartRootDir;
+    public function __construct( ContainerInterface $container )
+    {
+        $this->container = $container;
     }
 
     /**
@@ -220,8 +141,6 @@ class OptionBuilder implements OptionBuilderInterface
             return false;
         }
 
-        $this->setSections( $this->sectionManager->getSections() );
-
         if ($this->params['global_variable'] == "" && $this->params['global_variable'] !== false) {
             $this->params['global_variable'] = str_replace( '-', '_', $this->params['opt_name'] );
         }
@@ -235,10 +154,10 @@ class OptionBuilder implements OptionBuilderInterface
 
         // Display admin notices in dev_mode
         if (true == $this->params['dev_mode']) {
-            $this->debugger->init( $this );
+            $this->getDebugger()->init( $this );
         }
 
-        $this->importer->init( $this );
+        $this->getImporter()->init( $this );
 
         return true;
     }
@@ -267,23 +186,6 @@ class OptionBuilder implements OptionBuilderInterface
     /**
      * @return array
      */
-    public function getSections()
-    {
-        return $this->sections;
-    }
-
-    /**
-     * @param array $sections
-     */
-    public function setSections( $sections )
-    {
-
-        $this->sections = $sections;
-    }
-
-    /**
-     * @return array
-     */
     public function getParams()
     {
         return $this->params;
@@ -298,14 +200,70 @@ class OptionBuilder implements OptionBuilderInterface
         return $this->params[$param];
     }
 
+    /**
+     * Initialize all extensions
+     */
     protected function loadExtensions()
     {
-
-        foreach ($this->extensionManager->getExtensions() as $extension) {
+        foreach ($this->getExtensionManager()->getExtensions() as $extension) {
             $extension->extend( $this );
         }
     }
 
+    /**
+     * @return ExtensionManager
+     */
+    public function getExtensionManager()
+    {
+        return $this->container->get( 'mozart.option.extensionmanager' );
+    }
+
+    /**
+     * @return Validator
+     */
+    public function getValidator() {
+        return $this->container->get('mozart.option.validator');
+    }
+
+    /**
+     * @return SectionManager
+     */
+    public function getSectionManager()
+    {
+        return $this->container->get( 'mozart.option.sectionmanager' );
+    }
+
+    /**
+     * @return FontManager
+     */
+    public function getFontManager()
+    {
+        return $this->container->get( 'mozart.option.fontmanager' );
+    }
+
+    /**
+     * @return Importer
+     */
+    public function getImporter()
+    {
+        return $this->container->get( 'mozart.option.importer' );
+    }
+
+    /**
+     * @return Debugger
+     */
+    public function getDebugger()
+    {
+        return $this->container->get( 'mozart.option.debugger' );
+    }
+
+    /**
+     * @return FieldManager
+     */
+    public function getFieldManager()
+    {
+        return $this->container->get( 'mozart.option.fieldmanager' );
+    }
 
     /**
      * @return array
@@ -470,7 +428,7 @@ class OptionBuilder implements OptionBuilderInterface
 
         if (strpos( $locale, '_' ) === false) {
             if (file_exists(
-                $this->mozartRootDir . '/translations/option/' . strtolower(
+                $this->container->getParameter( 'wp.plugin.dir' ) . '/mozart' . '/translations/option/' . strtolower(
                     $locale
                 ) . '_' . strtoupper( $locale ) . '.mo'
             )) {
@@ -479,7 +437,7 @@ class OptionBuilder implements OptionBuilderInterface
         }
         load_textdomain(
             'mozart-options',
-            $this->mozartRootDir . '/translations/option/' . $locale . '.mo'
+            $this->container->getParameter( 'wp.plugin.dir' ) . '/mozart' . '/translations/option/' . $locale . '.mo'
         );
     }
 
@@ -646,6 +604,9 @@ class OptionBuilder implements OptionBuilderInterface
         $this->setGlobalVariable();
     }
 
+    /**
+     * @return array|mixed|string|void
+     */
     public function getOptions()
     {
         if ($this->params['database'] === "transient") {
@@ -787,7 +748,7 @@ class OptionBuilder implements OptionBuilderInterface
                     case "font-icon":
                     case "font-icons":
                     case "icons":
-                        foreach ($this->getFontIcons() as $k) {
+                        foreach ($this->getFontManager()->getFontIcons() as $k) {
                             $data[$k] = $k;
                         }
                         break;
@@ -855,70 +816,51 @@ class OptionBuilder implements OptionBuilderInterface
      */
     private function getDefaultOptions()
     {
-        if (!is_null( $this->getSections() ) && is_null( $this->options_defaults )) {
+        if (!empty( $this->options_defaults )) {
+            return $this->options_defaults;
+        }
 
-            // fill the cache
-            foreach ($this->getSections() as $sk => $section) {
-                if (!isset( $section['id'] )) {
-                    if (!is_numeric( $sk ) || !isset( $section['title'] )) {
-                        $section['id'] = $sk;
-                    } else {
-                        $section['id'] = sanitize_title( $section['title'], $sk );
+        // fill the cache
+        foreach ($this->getSectionManager()->getSections() as $alias => $section) {
+            if (isset( $section['fields'] )) {
+                foreach ($section['fields'] as $k => $field) {
+                    if (empty( $field['id'] ) && empty( $field['type'] )) {
+                        continue;
                     }
-                    $this->sections[$sk] = $section;
-                }
-                if (isset( $section['fields'] )) {
-                    foreach ($section['fields'] as $k => $field) {
-                        if (empty( $field['id'] ) && empty( $field['type'] )) {
-                            continue;
-                        }
-                        if ($field['type'] == "section" && isset( $field['indent'] ) && $field['indent'] == "true") {
-                            $field['class'] = isset( $field['class'] ) ? $field['class'] : '';
-                            $field['class'] .= "redux-section-indent-start";
-                            $this->sections[$sk]['fields'][$k] = $field;
-                        }
+                    if ($field['type'] == "section" && isset( $field['indent'] ) && $field['indent'] == "true") {
+                        $field['class'] = isset( $field['class'] ) ? $field['class'] : '';
+                        $field['class'] .= "redux-section-indent-start";
+                        $this->sections[$alias]['fields'][$k] = $field;
+                    }
 
-                        $this->addField( $field );
+                    $this->addField( $field );
 
-                        if (isset( $field['default'] )) {
-                            $this->options_defaults[$field['id']] = $field['default'];
-                        } elseif (isset( $field['options'] )) {
-                            // Sorter data filter
-                            if ($field['type'] == "sorter" && isset( $field['data'] ) && !empty( $field['data'] ) && is_array(
-                                    $field['data']
-                                )
-                            ) {
-                                if (!isset( $field['params'] )) {
-                                    $field['params'] = array();
-                                }
-                                foreach ($field['data'] as $key => $data) {
-                                    if (!isset( $field['params'][$key] )) {
-                                        $field['params'][$key] = array();
-                                    }
-                                    $field['options'][$key] = $this->get_wordpress_data(
-                                        $data,
-                                        $field['params'][$key]
-                                    );
-                                }
+                    if (isset( $field['default'] )) {
+                        $this->options_defaults[$field['id']] = $field['default'];
+                    } elseif (isset( $field['options'] )) {
+                        // Sorter data filter
+                        if ($field['type'] == "sorter" && isset( $field['data'] ) && !empty( $field['data'] ) && is_array(
+                                $field['data']
+                            )
+                        ) {
+                            if (!isset( $field['params'] )) {
+                                $field['params'] = array();
                             }
-                            $this->options_defaults[$field['id']] = $field['options'];
+                            foreach ($field['data'] as $key => $data) {
+                                if (!isset( $field['params'][$key] )) {
+                                    $field['params'][$key] = array();
+                                }
+                                $field['options'][$key] = $this->get_wordpress_data(
+                                    $data,
+                                    $field['params'][$key]
+                                );
+                            }
                         }
+                        $this->options_defaults[$field['id']] = $field['options'];
                     }
                 }
             }
         }
-
-        /**
-         * filter 'redux/options/{opt_name}/defaults'
-         *
-         * @param array $defaults option default values
-         */
-        $this->transients['changed_values'] = isset( $this->transients['changed_values'] ) ? $this->transients['changed_values'] : array();
-        $this->options_defaults = apply_filters(
-            "redux/options/{$this->params['opt_name']}/defaults",
-            $this->options_defaults,
-            $this->transients['changed_values']
-        );
 
         return $this->options_defaults;
     }
@@ -929,9 +871,9 @@ class OptionBuilder implements OptionBuilderInterface
     public function _fold_values()
     {
 
-        if (!is_null( $this->getSections() )) {
+        if (!is_null( $this->getSectionManager()->getSections() )) {
 
-            foreach ($this->getSections() as $section) {
+            foreach ($this->getSectionManager()->getSections() as $section) {
                 if (isset( $section['fields'] )) {
                     foreach ($section['fields'] as $field) {
                         if (isset( $field['fields'] ) && is_array( $field['fields'] )) {
@@ -1154,7 +1096,7 @@ class OptionBuilder implements OptionBuilderInterface
      */
     public function _options_page()
     {
-        $this->importer->checkEnabled();
+        $this->getImporter()->checkEnabled();
 
         if ($this->params['menu_type'] == 'submenu') {
             $this->add_submenu(
@@ -1178,7 +1120,7 @@ class OptionBuilder implements OptionBuilderInterface
 
             if (true === $this->params['allow_sub_menu']) {
                 if (!isset( $section['type'] ) || $section['type'] != 'divide') {
-                    foreach ($this->getSections() as $k => $section) {
+                    foreach ($this->getSectionManager()->getSections() as $k => $section) {
                         $canBeSubSection = ( $k > 0 && ( !isset( $this->sections[( $k )]['type'] ) || $this->sections[( $k )]['type'] != "divide" ) ) ? true : false;
 
                         if (!isset( $section['title'] ) || ( $canBeSubSection && ( isset( $section['subsection'] ) && $section['subsection'] == true ) )) {
@@ -1199,7 +1141,6 @@ class OptionBuilder implements OptionBuilderInterface
                             $section['title'],
                             $this->params['page_permissions'],
                             $this->params['page_slug'] . '&tab=' . $k,
-                            //create_function( '$a', "return null;" )
                             '__return_null'
                         );
                     }
@@ -1208,12 +1149,13 @@ class OptionBuilder implements OptionBuilderInterface
                     remove_submenu_page( $this->params['page_slug'], $this->params['page_slug'] );
                 }
 
-                if (true == $this->params['show_importer'] && false == $this->importer->isEnabled()) {
-                    $this->importer->add_submenu();
+                if (true == $this->params['show_importer'] && false == $this->getImporter()->isEnabled()
+                ) {
+                    $this->getImporter()->add_submenu();
                 }
 
                 if (true == $this->params['dev_mode']) {
-                    $this->debugger->add_submenu();
+                    $this->getDebugger()->add_submenu();
                 }
 
                 if (true == $this->params['system_info']) {
@@ -1310,6 +1252,25 @@ class OptionBuilder implements OptionBuilderInterface
     }
 
     /**
+     * @param $fieldType
+     * @return bool|string
+     */
+    protected function getFieldClass( $fieldType )
+    {
+        $fieldClass = "Mozart\\Component\\Form\\Field\\" . ucfirst( Str::camel( $fieldType ) );
+
+        if (false === class_exists( $fieldClass )) {
+            if (false === class_exists( $fieldClass . 'Field' )) {
+                return false;
+            } else {
+                $fieldClass = $fieldClass . 'Field';
+            }
+        }
+
+        return $fieldClass;
+    }
+
+    /**
      * Enqueue CSS and Google fonts for front end
      *
      * @return void
@@ -1320,7 +1281,7 @@ class OptionBuilder implements OptionBuilderInterface
             return;
         }
 
-        foreach ($this->getSections() as $k => $section) {
+        foreach ($this->getSectionManager()->getSections() as $k => $section) {
             if (isset( $section['type'] ) && ( $section['type'] == 'divide' )) {
                 continue;
             }
@@ -1333,24 +1294,17 @@ class OptionBuilder implements OptionBuilderInterface
                     continue;
                 }
 
-                $fieldClass = "Mozart\\Component\\Form\\Field\\" . ucfirst(Str::camel( $field['type'] ));
-                if (!isset( $field['compiler'] )) {
-                    $field['compiler'] = "";
-                }
+                $fieldClass = $this->getFieldClass( $field['type'] );
 
-                if (false === class_exists( $fieldClass )) {
-                    if (false === class_exists( $fieldClass . 'Field' )) {
-                        continue;
-                    } else {
-                        $fieldClass = $fieldClass . 'Field';
-                    }
-                }
-
-                if (!empty( $this->options[$field['id']] ) && method_exists(
+                if ($fieldClass && !empty( $this->options[$field['id']] ) && method_exists(
                         $fieldClass,
                         'output'
                     ) && $this->_can_output_css( $field )
                 ) {
+                    if (!isset( $field['compiler'] )) {
+                        $field['compiler'] = "";
+                    }
+
                     if (!empty( $field['output'] ) && !is_array( $field['output'] )) {
                         $field['output'] = array( $field['output'] );
                     }
@@ -1435,11 +1389,13 @@ class OptionBuilder implements OptionBuilderInterface
     {
         global $wp_styles;
 
-        if ($this->importer->isEnabled()) {
+        if ($this->getImporter()->isEnabled()) {
 
             wp_enqueue_script(
                 'redux-field-import-export-js',
-                $this->mozartRootUrl . '/public/bundles/mozart/option/js/import_export/import_export.js',
+                $this->container->getParameter(
+                    'wp.plugin.uri'
+                ) . '/mozart' . '/public/bundles/mozart/option/js/import_export/import_export.js',
                 array( 'jquery', 'redux-js' ),
                 time(),
                 true
@@ -1447,7 +1403,9 @@ class OptionBuilder implements OptionBuilderInterface
 
             wp_enqueue_style(
                 'redux-field-import-export-css',
-                $this->mozartRootUrl . '/public/bundles/mozart/option/css/import_export/import_export.css',
+                $this->container->getParameter(
+                    'wp.plugin.uri'
+                ) . '/mozart' . '/public/bundles/mozart/option/css/import_export/import_export.css',
                 time(),
                 true
             );
@@ -1474,10 +1432,14 @@ class OptionBuilder implements OptionBuilderInterface
             // select2 CSS
             wp_register_style(
                 'select2-css',
-                $this->mozartRootUrl . '/public/bundles/mozart/option/js/vendor/select2/select2.css',
+                $this->container->getParameter(
+                    'wp.plugin.uri'
+                ) . '/mozart' . '/public/bundles/mozart/option/js/vendor/select2/select2.css',
                 array(),
                 filemtime(
-                    $this->mozartRootDir . '/public/bundles/mozart/option/js/vendor/select2/select2.css'
+                    $this->container->getParameter(
+                        'wp.plugin.dir'
+                    ) . '/mozart' . '/public/bundles/mozart/option/js/vendor/select2/select2.css'
                 ),
                 'all'
             );
@@ -1487,20 +1449,28 @@ class OptionBuilder implements OptionBuilderInterface
             // JS
             wp_register_script(
                 'select2-sortable-js',
-                $this->mozartRootUrl . '/public/bundles/mozart/option/js/vendor/select2.sortable.min.js',
+                $this->container->getParameter(
+                    'wp.plugin.uri'
+                ) . '/mozart' . '/public/bundles/mozart/option/js/vendor/select2.sortable.min.js',
                 array( 'jquery' ),
                 filemtime(
-                    $this->mozartRootDir . '/public/bundles/mozart/option/js/vendor/select2.sortable.min.js'
+                    $this->container->getParameter(
+                        'wp.plugin.dir'
+                    ) . '/mozart' . '/public/bundles/mozart/option/js/vendor/select2.sortable.min.js'
                 ),
                 true
             );
 
             wp_register_script(
                 'select2-js',
-                $this->mozartRootUrl . '/public/bundles/mozart/option/js/vendor/select2/select2.min.js',
+                $this->container->getParameter(
+                    'wp.plugin.uri'
+                ) . '/mozart' . '/public/bundles/mozart/option/js/vendor/select2/select2.min.js',
                 array( 'jquery', 'select2-sortable-js' ),
                 filemtime(
-                    $this->mozartRootDir . '/public/bundles/mozart/option/js/vendor/select2/select2.min.js'
+                    $this->container->getParameter(
+                        'wp.plugin.dir'
+                    ) . '/mozart' . '/public/bundles/mozart/option/js/vendor/select2/select2.min.js'
                 ),
                 true
             );
@@ -1510,46 +1480,70 @@ class OptionBuilder implements OptionBuilderInterface
 
         wp_register_style(
             'redux-css',
-            $this->mozartRootUrl . '/public/bundles/mozart/option/css/redux.css',
+            $this->container->getParameter(
+                'wp.plugin.uri'
+            ) . '/mozart' . '/public/bundles/mozart/option/css/redux.css',
             array( 'farbtastic' ),
-            filemtime( $this->mozartRootDir . '/public/bundles/mozart/option/css/redux.css' ),
+            filemtime(
+                $this->container->getParameter(
+                    'wp.plugin.dir'
+                ) . '/mozart' . '/public/bundles/mozart/option/css/redux.css'
+            ),
             'all'
         );
 
         wp_register_style(
             'admin-css',
-            $this->mozartRootUrl . '/public/bundles/mozart/option/css/admin.css',
+            $this->container->getParameter(
+                'wp.plugin.uri'
+            ) . '/mozart' . '/public/bundles/mozart/option/css/admin.css',
             array( 'farbtastic' ),
-            filemtime( $this->mozartRootDir . '/public/bundles/mozart/option/css/admin.css' ),
+            filemtime(
+                $this->container->getParameter(
+                    'wp.plugin.dir'
+                ) . '/mozart' . '/public/bundles/mozart/option/css/admin.css'
+            ),
             'all'
         );
 
         wp_register_style(
             'redux-elusive-icon',
-            $this->mozartRootUrl . '/public/bundles/mozart/option/css/vendor/elusive-icons/elusive-webfont.css',
+            $this->container->getParameter(
+                'wp.plugin.uri'
+            ) . '/mozart' . '/public/bundles/mozart/option/css/vendor/elusive-icons/elusive-webfont.css',
             array(),
             filemtime(
-                $this->mozartRootDir . '/public/bundles/mozart/option/css/vendor/elusive-icons/elusive-webfont.css'
+                $this->container->getParameter(
+                    'wp.plugin.dir'
+                ) . '/mozart' . '/public/bundles/mozart/option/css/vendor/elusive-icons/elusive-webfont.css'
             ),
             'all'
         );
 
         wp_register_style(
             'redux-elusive-icon-ie7',
-            $this->mozartRootUrl . '/public/bundles/mozart/option/css/vendor/elusive-icons/elusive-webfont-ie7.css',
+            $this->container->getParameter(
+                'wp.plugin.uri'
+            ) . '/mozart' . '/public/bundles/mozart/option/css/vendor/elusive-icons/elusive-webfont-ie7.css',
             array(),
             filemtime(
-                $this->mozartRootDir . '/public/bundles/mozart/option/css/vendor/elusive-icons/elusive-webfont-ie7.css'
+                $this->container->getParameter(
+                    'wp.plugin.dir'
+                ) . '/mozart' . '/public/bundles/mozart/option/css/vendor/elusive-icons/elusive-webfont-ie7.css'
             ),
             'all'
         );
 
         wp_register_style(
             'qtip-css',
-            $this->mozartRootUrl . '/public/bundles/mozart/option/css/vendor/qtip/jquery.qtip.css',
+            $this->container->getParameter(
+                'wp.plugin.uri'
+            ) . '/mozart' . '/public/bundles/mozart/option/css/vendor/qtip/jquery.qtip.css',
             array(),
             filemtime(
-                $this->mozartRootDir . '/public/bundles/mozart/option/css/vendor/qtip/jquery.qtip.css'
+                $this->container->getParameter(
+                    'wp.plugin.dir'
+                ) . '/mozart' . '/public/bundles/mozart/option/css/vendor/qtip/jquery.qtip.css'
             ),
             'all'
         );
@@ -1558,11 +1552,15 @@ class OptionBuilder implements OptionBuilderInterface
 
         wp_register_style(
             'jquery-ui-css',
-            $this->mozartRootUrl . '/public/bundles/mozart/option/css/vendor/jquery-ui-bootstrap/jquery-ui-1.10.0.custom.css'
+            $this->container->getParameter(
+                'wp.plugin.uri'
+            ) . '/mozart' . '/public/bundles/mozart/option/css/vendor/jquery-ui-bootstrap/jquery-ui-1.10.0.custom.css'
             ,
             '',
             filemtime(
-                $this->mozartRootDir . '/public/bundles/mozart/option/css/vendor/jquery-ui-bootstrap/jquery-ui-1.10.0.custom.css'
+                $this->container->getParameter(
+                    'wp.plugin.dir'
+                ) . '/mozart' . '/public/bundles/mozart/option/css/vendor/jquery-ui-bootstrap/jquery-ui-1.10.0.custom.css'
             ),
             'all'
         );
@@ -1576,9 +1574,15 @@ class OptionBuilder implements OptionBuilderInterface
         if (is_rtl()) {
             wp_register_style(
                 'redux-rtl-css',
-                $this->mozartRootUrl . '/public/bundles/mozart/option/css/rtl.css',
+                $this->container->getParameter(
+                    'wp.plugin.uri'
+                ) . '/mozart' . '/public/bundles/mozart/option/css/rtl.css',
                 '',
-                filemtime( $this->mozartRootDir . '/public/bundles/mozart/option/css/rtl.css' ),
+                filemtime(
+                    $this->container->getParameter(
+                        'wp.plugin.dir'
+                    ) . '/mozart' . '/public/bundles/mozart/option/css/rtl.css'
+                ),
                 'all'
             );
             wp_enqueue_style( 'redux-rtl-css' );
@@ -1629,10 +1633,14 @@ class OptionBuilder implements OptionBuilderInterface
 
             wp_register_style(
                 'color-picker-css',
-                $this->mozartRootUrl . '/public/bundles/mozart/option/css/color-picker/color-picker.css',
+                $this->container->getParameter(
+                    'wp.plugin.uri'
+                ) . '/mozart' . '/public/bundles/mozart/option/css/color-picker/color-picker.css',
                 array(),
                 filemtime(
-                    $this->mozartRootDir . '/public/bundles/mozart/option/css/color-picker/color-picker.css'
+                    $this->container->getParameter(
+                        'wp.plugin.dir'
+                    ) . '/mozart' . '/public/bundles/mozart/option/css/color-picker/color-picker.css'
                 ),
                 'all'
             );
@@ -1651,7 +1659,9 @@ class OptionBuilder implements OptionBuilderInterface
 
         wp_register_script(
             'qtip-js',
-            $this->mozartRootUrl . '/public/bundles/mozart/option/js/vendor/qtip/jquery.qtip.js',
+            $this->container->getParameter(
+                'wp.plugin.uri'
+            ) . '/mozart' . '/public/bundles/mozart/option/js/vendor/qtip/jquery.qtip.js',
             array( 'jquery' ),
             '2.2.0',
             true
@@ -1659,7 +1669,9 @@ class OptionBuilder implements OptionBuilderInterface
 
         wp_register_script(
             'serializeForm-js',
-            $this->mozartRootUrl . '/public/bundles/mozart/option/js/vendor/jquery.serializeForm.js',
+            $this->container->getParameter(
+                'wp.plugin.uri'
+            ) . '/mozart' . '/public/bundles/mozart/option/js/vendor/jquery.serializeForm.js',
             array( 'jquery' ),
             '1.0.0',
             true
@@ -1671,10 +1683,14 @@ class OptionBuilder implements OptionBuilderInterface
             wp_enqueue_style( 'admin-css' );
             wp_register_script(
                 'redux-vendor',
-                $this->mozartRootUrl . '/public/bundles/mozart/option/js/vendor.min.js',
+                $this->container->getParameter(
+                    'wp.plugin.uri'
+                ) . '/mozart' . '/public/bundles/mozart/option/js/vendor.min.js',
                 array( 'jquery' ),
                 filemtime(
-                    $this->mozartRootDir . '/public/bundles/mozart/option/js/vendor.min.js'
+                    $this->container->getParameter(
+                        'wp.plugin.dir'
+                    ) . '/mozart' . '/public/bundles/mozart/option/js/vendor.min.js'
                 ),
                 true
             );
@@ -1692,31 +1708,27 @@ class OptionBuilder implements OptionBuilderInterface
 
         wp_register_script(
             'redux-js',
-            $this->mozartRootUrl . '/public/bundles/mozart/option/js/redux.js',
+            $this->container->getParameter( 'wp.plugin.uri' ) . '/mozart' . '/public/bundles/mozart/option/js/redux.js',
             $depArray,
-            filemtime( $this->mozartRootDir . '/public/bundles/mozart/option/js/redux.js' ),
+            filemtime(
+                $this->container->getParameter(
+                    'wp.plugin.dir'
+                ) . '/mozart' . '/public/bundles/mozart/option/js/redux.js'
+            ),
             true
         );
 
-        foreach ($this->getSections() as $section) {
+        foreach ($this->getSectionManager()->getSections() as $section) {
             if (isset( $section['fields'] )) {
                 foreach ($section['fields'] as $field) {
                     if (!isset( $field['type'] ) || $field['type'] == 'callback') {
                         continue;
                     }
 
-                    $fieldClass = "Mozart\\Component\\Form\\Field\\" . ucfirst(Str::camel( $field['type'] ));
+                    $fieldClass = $this->getFieldClass( $field['type'] );
 
-                    if (false === class_exists( $fieldClass )) {
-                        if (false === class_exists( $fieldClass . 'Field' )) {
-                            continue;
-                        } else {
-                            $fieldClass = $fieldClass . 'Field';
-                        }
-                    }
-
-                    if (false === method_exists( $fieldClass, 'enqueue' )
-                        && false === method_exists( $fieldClass, 'localize' )
+                    if (!$fieldClass || ( false === method_exists( $fieldClass, 'enqueue' )
+                            && false === method_exists( $fieldClass, 'localize' ) )
                     ) {
                         continue;
                     }
@@ -2114,7 +2126,8 @@ class OptionBuilder implements OptionBuilderInterface
             )
         );
 
-        if (is_null( $this->getSections() )) {
+        $sections = $this->getSectionManager()->getSections();
+        if (empty( $sections )) {
             return;
         }
 
@@ -2122,7 +2135,7 @@ class OptionBuilder implements OptionBuilderInterface
 
         $runUpdate = false;
 
-        foreach ($this->getSections() as $k => $section) {
+        foreach ($sections as $k => $section) {
             if (isset( $section['type'] ) && $section['type'] == 'divide') {
                 continue;
             }
@@ -2369,7 +2382,7 @@ class OptionBuilder implements OptionBuilderInterface
                         $th .= '<br /><a href="#TB_inline?width=600&height=800&inlineId=' . $field['id'] . '-settings" class="thickbox"><small>View Source</small></a>';
                     }
 
-                    $this->check_dependencies( $field );
+                    $this->checkDependencies( $field );
 
                     add_settings_field(
                         "{$fieldk}_field",
@@ -2557,7 +2570,11 @@ class OptionBuilder implements OptionBuilderInterface
         $this->transients['last_save_mode'] = "normal"; // Last save mode
 
         // Validate fields (if needed)
-        $plugin_options = $this->_validate_values( $plugin_options, $this->options, $this->getSections() );
+        $plugin_options = $this->_validate_values(
+            $plugin_options,
+            $this->options,
+            $this->getSectionManager()->getSections()
+        );
 
         if (!empty( $this->errors ) || !empty( $this->warnings )) {
             $this->transients['notices'] = array( 'errors' => $this->errors, 'warnings' => $this->warnings );
@@ -2582,10 +2599,10 @@ class OptionBuilder implements OptionBuilderInterface
         if ($this->params['database'] == 'transient' || $this->params['database'] == 'theme_mods' || $this->params['database'] == 'theme_mods_expanded') {
             $this->setOptions( $plugin_options );
 
-            return;
+            return false;
         }
 
-        if (defined( 'WP_CACHE' ) && WP_CACHE && class_exists( 'W3_ObjectCache' )) {
+        if (defined( 'WP_CACHE' ) && WP_CACHE && class_exists( '\W3_ObjectCache' )) {
             $w3 = W3_ObjectCache::instance();
             $key = $w3->_get_cache_key( $this->params['opt_name'] . '-transients', 'transient' );
             $w3->delete( $key, 'transient', true );
@@ -2596,159 +2613,18 @@ class OptionBuilder implements OptionBuilderInterface
         return $plugin_options;
     }
 
-    /**
-     * Validate values from options form (used in settings api validate function)
-     * calls the custom validation class for the field so authors can override with custom classes
-     *
-     * @param array $plugin_options
-     * @param array $options
-     *
-     * @return array $plugin_options
-     */
-    public function _validate_values( $plugin_options, $options, $sections )
-    {
-        foreach ($sections as $k => $section) {
-            if (isset( $section['fields'] )) {
-                foreach ($section['fields'] as $fkey => $field) {
-                    $field['section_id'] = $k;
-
-                    if (isset( $field['type'] ) && ( $field['type'] == 'checkbox' || $field['type'] == 'checkbox_hide_below' || $field['type'] == 'checkbox_hide_all' )) {
-                        if (!isset( $plugin_options[$field['id']] )) {
-                            $plugin_options[$field['id']] = 0;
-                        }
-                    }
-
-                    // Default 'not_empty 'flag to false.
-                    $isNotEmpty = false;
-
-                    // Make sure 'validate' field is set.
-                    if (isset( $field['validate'] )) {
-
-                        // Make sure 'validate field' is set to 'not_empty' or 'email_not_empty'
-                        if ($field['validate'] == 'not_empty' || $field['validate'] == 'email_not_empty' || $field['validate'] == 'numeric_not_empty') {
-
-                            // Set the flag.
-                            $isNotEmpty = true;
-                        }
-                    }
-
-                    // Check for empty id value
-                    if (!isset( $plugin_options[$field['id']] ) || $plugin_options[$field['id']] == '') {
-
-                        // If we are looking for an empty value, in the case of 'not_empty'
-                        // then we need to keep processing.
-                        if (!$isNotEmpty) {
-
-                            // Empty id and not checking for 'not_empty.  Bail out...
-                            continue;
-                        }
-                    }
-
-                    // Force validate of custom field types
-                    if (isset( $field['type'] ) && !isset( $field['validate'] )) {
-                        if ($field['type'] == 'color' || $field['type'] == 'color_gradient') {
-                            $field['validate'] = 'color';
-                        } elseif ($field['type'] == 'date') {
-                            $field['validate'] = 'date';
-                        }
-                    }
-
-                    if (isset( $field['validate'] )) {
-                        $validateClass = 'Mozart\\Component\\Form\\Validation\\' . ucfirst(Str::camel($field['validate']));
-
-                        if (class_exists( $validateClass )) {
-
-                            if (empty ( $options[$field['id']] )) {
-                                $options[$field['id']] = '';
-                            }
-
-                            if (isset( $plugin_options[$field['id']] ) && is_array(
-                                    $plugin_options[$field['id']]
-                                ) && !empty( $plugin_options[$field['id']] )
-                            ) {
-                                foreach ($plugin_options[$field['id']] as $key => $value) {
-                                    $before = $after = null;
-                                    if (isset( $plugin_options[$field['id']][$key] ) && !empty( $plugin_options[$field['id']][$key] )) {
-                                        if (is_array( $plugin_options[$field['id']][$key] )) {
-                                            $before = $plugin_options[$field['id']][$key];
-                                        } else {
-                                            $before = trim( $plugin_options[$field['id']][$key] );
-                                        }
-                                    }
-
-                                    if (isset( $options[$field['id']][$key] ) && !empty( $options[$field['id']][$key] )) {
-                                        $after = $options[$field['id']][$key];
-                                    }
-
-                                    $validation = new $validate( $this, $field, $before, $after );
-                                    if (!empty( $validation->value )) {
-                                        $plugin_options[$field['id']][$key] = $validation->value;
-                                    } else {
-                                        unset( $plugin_options[$field['id']][$key] );
-                                    }
-
-                                    if (isset( $validation->error )) {
-                                        $this->errors[] = $validation->error;
-                                    }
-
-                                    if (isset( $validation->warning )) {
-                                        $this->warnings[] = $validation->warning;
-                                    }
-                                }
-                            } else {
-                                if (is_array( $plugin_options[$field['id']] )) {
-                                    $pofi = $plugin_options[$field['id']];
-                                } else {
-                                    $pofi = trim( $plugin_options[$field['id']] );
-                                }
-
-                                $validation = new $validateClass( $this, $field, $pofi, $options[$field['id']] );
-                                $plugin_options[$field['id']] = $validation->value;
-
-                                if (isset( $validation->error )) {
-                                    $this->errors[] = $validation->error;
-                                }
-
-                                if (isset( $validation->warning )) {
-                                    $this->warnings[] = $validation->warning;
-                                }
-                            }
-
-                            continue;
-                        }
-                    }
-
-                    if (isset( $field['validate_callback'] ) && function_exists( $field['validate_callback'] )) {
-                        $callbackvalues = call_user_func(
-                            $field['validate_callback'],
-                            $field,
-                            $plugin_options[$field['id']],
-                            $options[$field['id']]
-                        );
-                        $plugin_options[$field['id']] = $callbackvalues['value'];
-
-                        if (isset( $callbackvalues['error'] )) {
-                            $this->errors[] = $callbackvalues['error'];
-                        }
-
-                        if (isset( $callbackvalues['warning'] )) {
-                            $this->warnings[] = $callbackvalues['warning'];
-                        }
-                    }
-                }
-            }
-        }
-
-        return $plugin_options;
-    }
 
     /**
      * Return Section Menu HTML
-     *
-     * @return void
+     * @param $k
+     * @param $section
+     * @param string $suffix
+     * @param array $sections
+     * @return string
      */
     public function section_menu( $k, $section, $suffix = "", $sections = array() )
     {
+        $string = "";
         $display = true;
 
         $section['class'] = isset( $section['class'] ) ? ' ' . $section['class'] : '';
@@ -2760,14 +2636,13 @@ class OptionBuilder implements OptionBuilderInterface
         }
 
         if (!$display) {
-            return "";
+            return $string;
         }
 
         if (empty( $sections )) {
-            $sections = $this->getSections();
+            $sections = $this->getSectionManager()->getSections();
         }
 
-        $string = "";
         if (( isset( $this->params['icon_type'] ) && $this->params['icon_type'] == 'image' ) || ( isset( $section['icon_type'] ) && $section['icon_type'] == 'image' )) {
             $icon = ( !isset( $section['icon'] ) ) ? '' : '<img class="image_icon_type" src="' . $section['icon'] . '" /> ';
         } else {
@@ -2791,8 +2666,6 @@ class OptionBuilder implements OptionBuilderInterface
             $string .= '<li class="divide' . $section['class'] . '">&nbsp;</li>';
         } elseif (!isset( $section['subsection'] ) || $section['subsection'] != true) {
 
-            // DOVY! REPLACE $k with $section['ID'] when used properly.
-            //$active = ( ( is_numeric($this->current_tab) && $this->current_tab == $k ) || ( !is_numeric($this->current_tab) && $this->current_tab === $k )  ) ? ' active' : '';
             $subsections = ( isset( $sections[( $k + 1 )] ) && isset( $sections[( $k + 1 )]['subsection'] ) && $sections[( $k + 1 )]['subsection'] == true ) ? true : false;
             $subsectionsClass = $subsections ? ' hasSubSections' : '';
             $extra_icon = $subsections ? '<span class="extraIconSubsections"><i class="el el-icon-chevron-down">&nbsp;</i></span>' : '';
@@ -2861,154 +2734,45 @@ class OptionBuilder implements OptionBuilderInterface
      */
     public function _options_page_html()
     {
-        echo '<div class="wrap"><h2></h2></div>'; // Stupid hack for Wordpress alerts and warnings
-
-        echo '<div class="clear"></div>';
-        echo '<div class="wrap">';
-
-        // Do we support JS?
-        echo '<noscript><div class="no-js">' . __(
-                'Warning- This options panel will not work properly without javascript!',
-                'mozart-options'
-            ) . '</div></noscript>';
-
-        // Security is vital!
-        echo '<input type="hidden" id="ajaxsecurity" name="security" value="' . wp_create_nonce(
-                'redux_ajax_nonce'
-            ) . '" />';
-
-        // Main container
-        $expanded = ( $this->params['open_expanded'] ) ? ' fully-expanded' : '';
-
-        echo '<div class="redux-container' . $expanded . ( !empty( $this->params['class'] ) ? ' ' . $this->params['class'] : '' ) . '">';
         $url = './options.php';
         if ($this->params['database'] == "network" && $this->params['network_admin']) {
             if (is_network_admin()) {
                 $url = './edit.php?action=redux_' . $this->params['opt_name'];
             }
         }
-        echo '<form method="post" action="' . $url . '" enctype="multipart/form-data" id="redux-form-wrapper">';
-        echo '<input type="hidden" id="redux-compiler-hook" name="' . $this->params['opt_name'] . '[compiler]" value="" />';
-        echo '<input type="hidden" id="currentSection" name="' . $this->params['opt_name'] . '[redux-section]" value="" />';
 
-        settings_fields( "{$this->params['opt_name']}_group" );
-
-        // Last tab?
-        $this->options['last_tab'] = ( isset( $_GET['tab'] ) && !isset( $this->transients['last_save_mode'] ) ) ? $_GET['tab'] : '';
-
-        echo '<input type="hidden" id="last_tab" name="' . $this->params['opt_name'] . '[last_tab]" value="' . $this->options['last_tab'] . '" />';
-
-        // Header area
-        echo '<div id="redux-header">';
-
-        if (!empty( $this->params['display_name'] )) {
-            echo '<div class="display_header">';
-            echo '<h2>' . $this->params['display_name'] . '</h2>';
-
-            if (!empty( $this->params['display_version'] )) {
-                echo '<span>' . $this->params['display_version'] . '</span>';
-            }
-
-            echo '</div>';
-        }
-
-        // Page icon
-        echo '<div id="' . $this->params['page_icon'] . '" class="icon32"></div>';
-
-        echo '<div class="clear"></div>';
-        echo '</div>';
-
-        // Intro text
-        if (isset( $this->params['intro_text'] )) {
-            echo '<div id="redux-intro-text">';
-            echo $this->params['intro_text'];
-            echo '</div>';
-        }
-
-        // Stickybar
-        echo '<div id="redux-sticky">';
-        echo '<div id="info_bar">';
-
-        $expanded = ( $this->params['open_expanded'] ) ? ' expanded' : '';
-
-        echo '<a href="javascript:void(0);" class="expand_options' . $expanded . '">' . __(
-                'Expand',
-                'mozart-options'
-            ) . '</a>';
-        echo '<div class="redux-action_bar">';
-        submit_button( __( 'Save Changes', 'mozart-options' ), 'primary', 'redux_save', false );
-
-        if (false === $this->params['hide_reset']) {
-            echo '&nbsp;';
-            submit_button(
-                __( 'Reset Section', 'mozart-options' ),
-                'secondary',
-                $this->params['opt_name'] . '[defaults-section]',
-                false
-            );
-            echo '&nbsp;';
-            submit_button(
-                __( 'Reset All', 'mozart-options' ),
-                'secondary',
-                $this->params['opt_name'] . '[defaults]',
-                false
-            );
-        }
-
-        echo '</div>';
-
-        echo '<div class="redux-ajax-loading" alt="' . __( 'Working...', 'mozart-options' ) . '">&nbsp;</div>';
-        echo '<div class="clear"></div>';
-        echo '</div>';
+        $message = '';
 
         // Warning bar
         if (isset( $this->transients['last_save_mode'] )) {
 
             if ($this->transients['last_save_mode'] == "import") {
-                echo '<div class="admin-notice notice-blue saved_notice"><strong>'
+                $message = '<div class="admin-notice notice-blue saved_notice"><strong>'
                     . __( 'Settings Imported!', 'mozart-options' )
                     . '</strong></div>';
             } elseif ($this->transients['last_save_mode'] == "defaults") {
-                echo '<div class="saved_notice admin-notice notice-yellow"><strong>' .
+                $message = '<div class="saved_notice admin-notice notice-yellow"><strong>' .
                     __( 'All Defaults Restored!', 'mozart-options' )
                     . '</strong></div>';
             } elseif ($this->transients['last_save_mode'] == "defaults_section") {
 
-                echo '<div class="saved_notice admin-notice notice-yellow"><strong>' .
+                $message = '<div class="saved_notice admin-notice notice-yellow"><strong>' .
                     __( 'Section Defaults Restored!', 'mozart-options' )
                     . '</strong></div>';
             } else {
-                echo '<div class="saved_notice admin-notice notice-green"><strong>' .
+                $message = '<div class="saved_notice admin-notice notice-green"><strong>' .
                     __( 'Settings Saved!', 'mozart-options' )
                     . '</strong></div>';
             }
             unset( $this->transients['last_save_mode'] );
-
         }
 
-        echo '<div class="redux-save-warn notice-yellow"><strong>' .
-            __( 'Settings have changed, you should save them!', 'mozart-options' )
-            . '</strong></div>';
-
-        echo '<div class="redux-field-errors notice-red"><strong><span></span> ' . __(
-                'error(s) were found!',
-                'mozart-options'
-            ) . '</strong></div>';
-
-        echo '<div class="redux-field-warnings notice-yellow"><strong><span></span> ' . __(
-                'warning(s) were found!',
-                'mozart-options'
-            ) . '</strong></div>';
-
-        echo '</div>';
-
-        echo '<div class="clear"></div>';
-
-        // Sidebar
-        echo '<div class="redux-sidebar">';
-        echo '<ul class="redux-group-menu">';
-
-        foreach ($this->getSections() as $k => $section) {
+        $sectionsOutput = '';
+        $mainContent = '';
+        foreach ($this->getSectionManager()->getSections() as $k => $section) {
+            var_dump( $sectionsOutput );
+            var_dump( $mainContent );
+            var_dump( $section );
             $title = isset( $section['title'] ) ? $section['title'] : '';
 
             $skip_sec = false;
@@ -3023,52 +2787,13 @@ class OptionBuilder implements OptionBuilderInterface
             }
 
             if (false == $skip_sec) {
-                echo $this->section_menu( $k, $section );
+                $sectionsOutput .= $this->section_menu( $k, $section );
                 $skip_sec = false;
-            }
-        }
-
-        // Import / Export tab
-        if (true == $this->params['show_importer'] && false == $this->importer->isEnabled()) {
-            $this->importer->render_tab();
-        }
-
-        // Debug tab
-        if ($this->params['dev_mode'] == true) {
-            $this->debugger->render_tab();
-        }
-
-        if ($this->params['system_info'] === true) {
-            echo '<li id="system_info_default_section_group_li" class="redux-group-tab-link-li">';
-
-            if (!empty( $this->params['icon_type'] ) && $this->params['icon_type'] == 'image') {
-                $icon = ( !isset( $this->params['system_info_icon'] ) ) ? '' : '<img src="' . $this->params['system_info_icon'] . '" /> ';
-            } else {
-                $icon_class = ( !isset( $this->params['system_info_icon_class'] ) ) ? '' : ' ' . $this->params['system_info_icon_class'];
-                $icon = ( !isset( $this->params['system_info_icon'] ) ) ? '<i class="el-icon-info-sign' . $icon_class . '"></i>' : '<i class="icon-' . $this->params['system_info_icon'] . $icon_class . '"></i> ';
-            }
-
-            echo '<a href="javascript:void(0);" id="system_info_default_section_group_li_a" class="redux-group-tab-link-a custom-tab" data-rel="system_info_default">' . $icon . ' <span class="group_title">' . __(
-                    'System Info',
-                    'mozart-options'
-                ) . '</span></a>';
-            echo '</li>';
-        }
-
-        echo '</ul>';
-        echo '</div>';
-
-        echo '<div class="redux-main">';
-
-        foreach ($this->getSections() as $k => $section) {
-            if (isset( $section['customizer_only'] ) && $section['customizer_only'] == true) {
-                continue;
             }
 
             $section['class'] = isset( $section['class'] ) ? ' ' . $section['class'] : '';
-            echo '<div id="' . $k . '_section_group' . '" class="redux-group-tab' . $section['class'] . '" data-rel="' . $k . '">';
+            $mainContent .= '<div id="' . $k . '_section_group' . '" class="redux-group-tab' . $section['class'] . '" data-rel="' . $k . '">';
 
-            // Don't display in the
             $display = true;
             if (isset( $_GET['page'] ) && $_GET['page'] == $this->params['page_slug']) {
                 if (isset( $section['panel'] ) && $section['panel'] == "false") {
@@ -3077,116 +2802,111 @@ class OptionBuilder implements OptionBuilderInterface
             }
 
             if ($display) {
-                do_settings_sections( $this->params['opt_name'] . $k . '_section_group' );
+                $mainContent .= $this->doSettingsSections( $this->params['opt_name'] . $k . '_section_group' );
             }
-            echo "</div>";
+            $mainContent .= "</div>";
         }
 
         // Import / Export output
-        if (true == $this->params['show_importer'] && false == $this->importer->isEnabled()) {
-            echo '<fieldset id="' . $this->params['opt_name'] . '-importer_core" class="redux-field-container redux-field redux-field-init redux-container-importer" data-id="importer_core" data-type="importer">';
-            $this->importer->render();
-            echo '</fieldset>';
-
+        if (true == $this->params['show_importer'] && false == $this->container->get(
+                'mozart.option.importer'
+            )->isEnabled()
+        ) {
+            $mainContent .= '<fieldset id="' . $this->params['opt_name'] . '-importer_core" class="redux-field-container redux-field redux-field-init redux-container-importer" data-id="importer_core" data-type="importer">';
+            $mainContent .= $this->getImporter()->render();
+            $mainContent .= '</fieldset>';
         }
 
         // Debug object output
         if ($this->params['dev_mode'] == true) {
-            $this->debugger->render();
+            $mainContent .= $this->getDebugger()->render();
         }
 
-        if ($this->params['system_info'] === true) {
-            echo '<div id="system_info_default_section_group' . '" class="redux-group-tab">';
-            echo '<h3>' . __( 'System Info', 'mozart-options' ) . '</h3>';
 
-            echo '<div id="redux-system-info">';
-            echo SystemInfo::get();
-            echo '</div>';
+        $context = array(
+            'nonce'          => wp_create_nonce( 'redux_ajax_nonce' ),
+            'page_nonce'     => wp_create_nonce( "{$this->params['opt_name']}_group-options" ),
+            'params'         => $this->params,
+            'url'            => $url,
+            'referer'        => wp_unslash( $_SERVER['REQUEST_URI'] ),
+            'last_tab'       => ( isset( $_GET['tab'] ) && !isset( $this->transients['last_save_mode'] ) ) ? $_GET['tab'] : '',
+            'message'        => $message,
+            'sectionsOutput' => $sectionsOutput,
+            'mainContent'    => $mainContent,
+            'systemInfo'     => SystemInfo::get()
+        );
 
-            echo '</div>';
-        }
+        var_dump( $context );
 
-        echo '<div class="clear"></div>';
-        echo '</div>';
-        echo '<div class="clear"></div>';
-
-        echo '<div id="redux-sticky-padder" style="display: none;">&nbsp;</div>';
-        echo '<div id="redux-footer-sticky"><div id="redux-footer">';
-
-        if (isset( $this->params['share_icons'] )) {
-            echo '<div id="redux-share">';
-
-            foreach ($this->params['share_icons'] as $link) {
-                // SHIM, use URL now
-                if (isset( $link['link'] ) && !empty( $link['link'] )) {
-                    $link['url'] = $link['link'];
-                    unset( $link['link'] );
-                }
-
-                echo '<a href="' . $link['url'] . '" title="' . $link['title'] . '" target="_blank">';
-
-                if (isset( $link['icon'] ) && !empty( $link['icon'] )) {
-                    echo '<i class="' . $link['icon'] . '"></i>';
-                } else {
-                    echo '<img src="' . $link['img'] . '"/>';
-                }
-
-                echo '</a>';
-            }
-
-            echo '</div>';
-        }
-
-        echo '<div class="redux-action_bar">';
-        submit_button( __( 'Save Changes', 'mozart-options' ), 'primary', 'redux_save', false );
-
-        if (false === $this->params['hide_reset']) {
-            echo '&nbsp;';
-            submit_button(
-                __( 'Reset Section', 'mozart-options' ),
-                'secondary',
-                $this->params['opt_name'] . '[defaults-section]',
-                false
-            );
-            echo '&nbsp;';
-            submit_button(
-                __( 'Reset All', 'mozart-options' ),
-                'secondary',
-                $this->params['opt_name'] . '[defaults]',
-                false
-            );
-        }
-
-        echo '</div>';
-
-        echo '<div class="redux-ajax-loading" alt="' . __( 'Working...', 'mozart-options' ) . '">&nbsp;</div>';
-        echo '<div class="clear"></div>';
-
-        echo '</div>';
-        echo '</form>';
-        echo '</div></div>';
-
-        echo ( isset( $this->params['footer_text'] ) ) ? '<div id="redux-sub-footer">' . $this->params['footer_text'] . '</div>' : '';
-
-
-        echo '<div class="clear"></div>';
-        echo '</div><!--wrap-->';
-
-        if ($this->params['dev_mode'] == true) {
-            if (current_user_can( 'administrator' )) {
-                global $wpdb;
-                echo "<br /><pre>";
-                print_r( $wpdb->queries );
-                echo "</pre>";
-            }
-
-            echo '<br /><div class="redux-timer">' . get_num_queries() . ' queries in ' . timer_stop(
-                    0
-                ) . ' seconds</div>';
-        }
+        echo $this->container->get( 'templating' )->render( 'MozartOptionBundle:Option:page.html.twig', $context );
 
         $this->set_transients();
 
+    }
+
+    /**
+     * @param $page
+     * @return string
+     */
+    private function doSettingsSections( $page )
+    {
+        global $wp_settings_sections, $wp_settings_fields;
+
+        $return = '';
+
+        if (!isset( $wp_settings_sections[$page] )) {
+            return $return;
+        }
+
+        foreach ((array)$wp_settings_sections[$page] as $section) {
+            if ($section['title']) {
+                $return .= "<h3>{$section['title']}</h3>\n";
+            }
+
+            if ($section['callback']) {
+                call_user_func( $section['callback'], $section );
+            }
+
+            if (!isset( $wp_settings_fields ) || !isset( $wp_settings_fields[$page] ) || !isset( $wp_settings_fields[$page][$section['id']] )) {
+                continue;
+            }
+            $return .= '<table class="form-table">';
+            $return .= $this->doSettingsFields( $page, $section['id'] );
+            $return .= '</table>';
+        }
+
+        return $return;
+    }
+
+    /**
+     * @param $page
+     * @param $section
+     * @return string
+     */
+    private function doSettingsFields( $page, $section )
+    {
+        global $wp_settings_fields;
+        $return = '';
+
+        if (!isset( $wp_settings_fields[$page][$section] )) {
+            return $return;
+        }
+
+        foreach ((array)$wp_settings_fields[$page][$section] as $field) {
+            $return .= '<tr>';
+            if (!empty( $field['args']['label_for'] )) {
+                $return .= '<th scope="row"><label for="' . esc_attr(
+                        $field['args']['label_for']
+                    ) . '">' . $field['title'] . '</label></th>';
+            } else {
+                $return .= '<th scope="row">' . $field['title'] . '</th>';
+            }
+            $return .= '<td>';
+            $return .= call_user_func( $field['callback'], $field['args'] );
+            $return .= '</td>';
+            $return .= '</tr>';
+        }
+        return $return;
     }
 
     /**
@@ -3196,142 +2916,13 @@ class OptionBuilder implements OptionBuilderInterface
      *
      * @return void
      */
-    public function _section_desc(
-        $section
-    ) {
+    public function _section_desc( $section )
+    {
         $id = trim( rtrim( $section['id'], '_section' ), $this->params['opt_name'] );
 
         if (isset( $this->sections[$id]['desc'] ) && !empty( $this->sections[$id]['desc'] )) {
             echo '<div class="redux-section-desc">' . $this->sections[$id]['desc'] . '</div>';
         }
-    }
-
-    /**
-     * Field HTML OUTPUT.
-     * Gets option from options array, then calls the specific field type class - allows extending by other devs
-     *
-     * @param array $field
-     * @param string $v
-     *
-     * @return void
-     */
-    public function _field_input(
-        $field,
-        $v = null
-    ) {
-        if (isset( $field['callback'] ) && function_exists( $field['callback'] )) {
-            $value = ( isset( $this->options[$field['id']] ) ) ? $this->options[$field['id']] : '';
-            call_user_func( $field['callback'], $field, $value );
-
-            return;
-        }
-
-        if (isset( $field['type'] )) {
-
-            // If the field is set not to display in the panel
-            $display = true;
-            if (isset( $_GET['page'] ) && $_GET['page'] == $this->params['page_slug']) {
-                if (isset( $field['panel'] ) && $field['panel'] == false) {
-                    $display = false;
-                }
-            }
-
-            if (!$display) {
-                return;
-            }
-
-            $fieldClass = "Mozart\\Component\\Form\\Field\\" . ucfirst(Str::camel( $field['type'] ));
-
-
-            if (false === class_exists( $fieldClass )) {
-                if (false === class_exists( $fieldClass . 'Field' )) {
-                    return false;
-                } else {
-                    $fieldClass = $fieldClass . 'Field';
-                }
-            }
-
-            $value = isset( $this->options[$field['id']] ) ? $this->options[$field['id']] : '';
-
-            if ($v !== null) {
-                $value = $v;
-            }
-
-            if (!isset( $field['name_suffix'] )) {
-                $field['name_suffix'] = "";
-            }
-
-            $fieldObject = new $fieldClass( $field, $value, $this );
-
-            //save the values into a unique array in case we need it for dependencies
-            $this->fieldsValues[$field['id']] = ( isset( $value['url'] ) && is_array(
-                    $value
-                ) ) ? $value['url'] : $value;
-
-            //create default data und class string and checks the dependencies of an object
-            $class_string = '';
-            $data_string = '';
-
-            $this->check_dependencies( $field );
-
-            if (!isset( $field['fields'] ) || empty( $field['fields'] )) {
-                echo '<fieldset id="' . $this->params['opt_name'] . '-' . $field['id'] . '" class="redux-field-container redux-field redux-field-init redux-container-' . $field['type'] . ' ' . $class_string . '" data-id="' . $field['id'] . '" ' . $data_string . ' data-type="' . $field['type'] . '">';
-            }
-
-            $fieldObject->render();
-
-            if (!empty( $field['desc'] )) {
-                $field['description'] = $field['desc'];
-            }
-
-            echo ( isset( $field['description'] ) && $field['type'] != "info" && $field['type'] !== "section" && !empty( $field['description'] ) ) ? '<div class="description field-desc">' . $field['description'] . '</div>' : '';
-
-            if (!isset( $field['fields'] ) || empty( $field['fields'] )) {
-                echo '</fieldset>';
-            }
-        }
-    }
-
-    /**
-     * Can Output CSS
-     * Check if a field meets its requirements before outputting to CSS
-     *
-     * @param $field
-     *
-     * @return bool
-     */
-    public function _can_output_css( $field )
-    {
-        $return = true;
-
-        if (isset( $field['force_output'] ) && $field['force_output'] == true) {
-            return $return;
-        }
-
-        if (!empty( $field['required'] )) {
-            if (isset( $field['required'][0] )) {
-                if (!is_array( $field['required'][0] ) && count( $field['required'] ) == 3) {
-                    $parentValue = $GLOBALS[$this->params['global_variable']][$field['required'][0]];
-                    $checkValue = $field['required'][2];
-                    $operation = $field['required'][1];
-                    $return = $this->compareValueDependencies( $parentValue, $checkValue, $operation );
-                } elseif (is_array( $field['required'][0] )) {
-                    foreach ($field['required'] as $required) {
-                        if (!is_array( $required[0] ) && count( $required ) == 3) {
-                            $parentValue = $GLOBALS[$this->params['global_variable']][$required[0]];
-                            $checkValue = $required[2];
-                            $operation = $required[1];
-                            $return = $this->compareValueDependencies( $parentValue, $checkValue, $operation );
-                        }
-                        if (!$return) {
-                            return $return;
-                        }
-                    }
-                }
-            }
-        }
-
-        return $return;
     }
 
     /**
@@ -3347,12 +2938,10 @@ class OptionBuilder implements OptionBuilderInterface
      *
      * @return array $params
      */
-    public function check_dependencies(
-        $field
-    ) {
+    public function checkDependencies( $field )
+    {
         if (!empty( $field['required'] )) {
 
-            //$this->folds[$field['id']] = $this->folds[$field['id']] ? $this->folds[$field['id']] : array();
             if (!isset( $this->required_child[$field['id']] )) {
                 $this->required_child[$field['id']] = array();
             }
@@ -3569,312 +3158,12 @@ class OptionBuilder implements OptionBuilderInterface
         return $data_string;
     }
 
-    private function getFontIcons()
-    {
-        return array(
-            'el-icon-address-book-alt',
-            'el-icon-address-book',
-            'el-icon-adjust-alt',
-            'el-icon-adjust',
-            'el-icon-adult',
-            'el-icon-align-center',
-            'el-icon-align-justify',
-            'el-icon-align-left',
-            'el-icon-align-right',
-            'el-icon-arrow-down',
-            'el-icon-arrow-left',
-            'el-icon-arrow-right',
-            'el-icon-arrow-up',
-            'el-icon-asl',
-            'el-icon-asterisk',
-            'el-icon-backward',
-            'el-icon-ban-circle',
-            'el-icon-barcode',
-            'el-icon-behance',
-            'el-icon-bell',
-            'el-icon-blind',
-            'el-icon-blogger',
-            'el-icon-bold',
-            'el-icon-book',
-            'el-icon-bookmark-empty',
-            'el-icon-bookmark',
-            'el-icon-braille',
-            'el-icon-briefcase',
-            'el-icon-broom',
-            'el-icon-brush',
-            'el-icon-bulb',
-            'el-icon-bullhorn',
-            'el-icon-calendar-sign',
-            'el-icon-calendar',
-            'el-icon-camera',
-            'el-icon-car',
-            'el-icon-caret-down',
-            'el-icon-caret-left',
-            'el-icon-caret-right',
-            'el-icon-caret-up',
-            'el-icon-cc',
-            'el-icon-certificate',
-            'el-icon-check-empty',
-            'el-icon-check',
-            'el-icon-chevron-down',
-            'el-icon-chevron-left',
-            'el-icon-chevron-right',
-            'el-icon-chevron-up',
-            'el-icon-child',
-            'el-icon-circle-arrow-down',
-            'el-icon-circle-arrow-left',
-            'el-icon-circle-arrow-right',
-            'el-icon-circle-arrow-up',
-            'el-icon-cloud-alt',
-            'el-icon-cloud',
-            'el-icon-cog-alt',
-            'el-icon-cog',
-            'el-icon-cogs',
-            'el-icon-comment-alt',
-            'el-icon-comment',
-            'el-icon-compass-alt',
-            'el-icon-compass',
-            'el-icon-credit-card',
-            'el-icon-css',
-            'el-icon-dashboard',
-            'el-icon-delicious',
-            'el-icon-deviantart',
-            'el-icon-digg',
-            'el-icon-download-alt',
-            'el-icon-download',
-            'el-icon-dribbble',
-            'el-icon-edit',
-            'el-icon-eject',
-            'el-icon-envelope-alt',
-            'el-icon-envelope',
-            'el-icon-error-alt',
-            'el-icon-error',
-            'el-icon-eur',
-            'el-icon-exclamation-sign',
-            'el-icon-eye-close',
-            'el-icon-eye-open',
-            'el-icon-facebook',
-            'el-icon-facetime-video',
-            'el-icon-fast-backward',
-            'el-icon-fast-forward',
-            'el-icon-female',
-            'el-icon-file-alt',
-            'el-icon-file-edit-alt',
-            'el-icon-file-edit',
-            'el-icon-file-new-alt',
-            'el-icon-file-new',
-            'el-icon-file',
-            'el-icon-film',
-            'el-icon-filter',
-            'el-icon-fire',
-            'el-icon-flag-alt',
-            'el-icon-flag',
-            'el-icon-flickr',
-            'el-icon-folder-close',
-            'el-icon-folder-open',
-            'el-icon-folder-sign',
-            'el-icon-folder',
-            'el-icon-font',
-            'el-icon-fontsize',
-            'el-icon-fork',
-            'el-icon-forward-alt',
-            'el-icon-forward',
-            'el-icon-foursquare',
-            'el-icon-friendfeed-rect',
-            'el-icon-friendfeed',
-            'el-icon-fullscreen',
-            'el-icon-gbp',
-            'el-icon-gift',
-            'el-icon-github-text',
-            'el-icon-github',
-            'el-icon-glass',
-            'el-icon-glasses',
-            'el-icon-globe-alt',
-            'el-icon-globe',
-            'el-icon-googleplus',
-            'el-icon-graph-alt',
-            'el-icon-graph',
-            'el-icon-group-alt',
-            'el-icon-group',
-            'el-icon-guidedog',
-            'el-icon-hand-down',
-            'el-icon-hand-left',
-            'el-icon-hand-right',
-            'el-icon-hand-up',
-            'el-icon-hdd',
-            'el-icon-headphones',
-            'el-icon-hearing-impaired',
-            'el-icon-heart-alt',
-            'el-icon-heart-empty',
-            'el-icon-heart',
-            'el-icon-home-alt',
-            'el-icon-home',
-            'el-icon-hourglass',
-            'el-icon-idea-alt',
-            'el-icon-idea',
-            'el-icon-inbox-alt',
-            'el-icon-inbox-box',
-            'el-icon-inbox',
-            'el-icon-indent-left',
-            'el-icon-indent-right',
-            'el-icon-info-sign',
-            'el-icon-instagram',
-            'el-icon-iphone-home',
-            'el-icon-italic',
-            'el-icon-key',
-            'el-icon-laptop-alt',
-            'el-icon-laptop',
-            'el-icon-lastfm',
-            'el-icon-leaf',
-            'el-icon-lines',
-            'el-icon-link',
-            'el-icon-linkedin',
-            'el-icon-list-alt',
-            'el-icon-list',
-            'el-icon-livejournal',
-            'el-icon-lock-alt',
-            'el-icon-lock',
-            'el-icon-magic',
-            'el-icon-magnet',
-            'el-icon-male',
-            'el-icon-map-marker-alt',
-            'el-icon-map-marker',
-            'el-icon-mic-alt',
-            'el-icon-mic',
-            'el-icon-minus-sign',
-            'el-icon-minus',
-            'el-icon-move',
-            'el-icon-music',
-            'el-icon-myspace',
-            'el-icon-network',
-            'el-icon-off',
-            'el-icon-ok-circle',
-            'el-icon-ok-sign',
-            'el-icon-ok',
-            'el-icon-opensource',
-            'el-icon-paper-clip-alt',
-            'el-icon-paper-clip',
-            'el-icon-path',
-            'el-icon-pause-alt',
-            'el-icon-pause',
-            'el-icon-pencil-alt',
-            'el-icon-pencil',
-            'el-icon-person',
-            'el-icon-phone-alt',
-            'el-icon-phone',
-            'el-icon-photo-alt',
-            'el-icon-photo',
-            'el-icon-picasa',
-            'el-icon-picture',
-            'el-icon-pinterest',
-            'el-icon-plane',
-            'el-icon-play-alt',
-            'el-icon-play-circle',
-            'el-icon-play',
-            'el-icon-plus-sign',
-            'el-icon-plus',
-            'el-icon-podcast',
-            'el-icon-print',
-            'el-icon-puzzle',
-            'el-icon-qrcode',
-            'el-icon-question-sign',
-            'el-icon-question',
-            'el-icon-quotes-alt',
-            'el-icon-quotes',
-            'el-icon-random',
-            'el-icon-record',
-            'el-icon-reddit',
-            'el-icon-refresh',
-            'el-icon-remove-circle',
-            'el-icon-remove-sign',
-            'el-icon-remove',
-            'el-icon-repeat-alt',
-            'el-icon-repeat',
-            'el-icon-resize-full',
-            'el-icon-resize-horizontal',
-            'el-icon-resize-small',
-            'el-icon-resize-vertical',
-            'el-icon-return-key',
-            'el-icon-retweet',
-            'el-icon-reverse-alt',
-            'el-icon-road',
-            'el-icon-rss',
-            'el-icon-scissors',
-            'el-icon-screen-alt',
-            'el-icon-screen',
-            'el-icon-screenshot',
-            'el-icon-search-alt',
-            'el-icon-search',
-            'el-icon-share-alt',
-            'el-icon-share',
-            'el-icon-shopping-cart-sign',
-            'el-icon-shopping-cart',
-            'el-icon-signal',
-            'el-icon-skype',
-            'el-icon-slideshare',
-            'el-icon-smiley-alt',
-            'el-icon-smiley',
-            'el-icon-soundcloud',
-            'el-icon-speaker',
-            'el-icon-spotify',
-            'el-icon-stackoverflow',
-            'el-icon-star-alt',
-            'el-icon-star-empty',
-            'el-icon-star',
-            'el-icon-step-backward',
-            'el-icon-step-forward',
-            'el-icon-stop-alt',
-            'el-icon-stop',
-            'el-icon-stumbleupon',
-            'el-icon-tag',
-            'el-icon-tags',
-            'el-icon-tasks',
-            'el-icon-text-height',
-            'el-icon-text-width',
-            'el-icon-th-large',
-            'el-icon-th-list',
-            'el-icon-th',
-            'el-icon-thumbs-down',
-            'el-icon-thumbs-up',
-            'el-icon-time-alt',
-            'el-icon-time',
-            'el-icon-tint',
-            'el-icon-torso',
-            'el-icon-trash-alt',
-            'el-icon-trash',
-            'el-icon-tumblr',
-            'el-icon-twitter',
-            'el-icon-universal-access',
-            'el-icon-unlock-alt',
-            'el-icon-unlock',
-            'el-icon-upload',
-            'el-icon-usd',
-            'el-icon-user',
-            'el-icon-viadeo',
-            'el-icon-video-alt',
-            'el-icon-video-chat',
-            'el-icon-video',
-            'el-icon-view-mode',
-            'el-icon-vimeo',
-            'el-icon-vkontakte',
-            'el-icon-volume-down',
-            'el-icon-volume-off',
-            'el-icon-volume-up',
-            'el-icon-w3c',
-            'el-icon-warning-sign',
-            'el-icon-website-alt',
-            'el-icon-website',
-            'el-icon-wheelchair',
-            'el-icon-wordpress',
-            'el-icon-wrench-alt',
-            'el-icon-wrench',
-            'el-icon-youtube',
-            'el-icon-zoom-in',
-            'el-icon-zoom-out'
-        );
-    }
 
-
+    /**
+     * @param $fields
+     * @param array $field
+     * @return bool
+     */
     public function isFieldInUseByType( $fields, $field = array() )
     {
         foreach ($field as $name) {
@@ -3886,7 +3175,12 @@ class OptionBuilder implements OptionBuilderInterface
         return false;
     }
 
-    public function isFieldInUse($sections, $field)
+    /**
+     * @param $sections
+     * @param $field
+     * @return bool
+     */
+    public function isFieldInUse( $sections, $field )
     {
         foreach ($sections as $k => $section) {
             if (!isset( $section['title'] )) {
