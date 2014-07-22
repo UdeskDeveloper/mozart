@@ -76,7 +76,7 @@ class CustomizerExtension implements ExtensionInterface
         if ('' !== $this->requestStack->get( 'customized' )
             || $this->currentPage === "admin-ajax.php"
         ) {
-            if (current_user_can( $this->builder->args['page_permissions'] )) {
+            if (current_user_can( $this->builder->getParam('page_permissions') )) {
                 add_action(
                     'customize_register',
                     array( $this, 'registerCustomizer' )
@@ -86,7 +86,7 @@ class CustomizerExtension implements ExtensionInterface
 
         if ('' !== $this->requestStack->get( 'customized' )) {
             add_action(
-                "redux/options/{$this->builder->args['opt_name']}/options",
+                "redux/options/{$this->builder->getParam('opt_name')}/options",
                 array( $this, '_override_values' ),
                 100
             );
@@ -117,13 +117,13 @@ class CustomizerExtension implements ExtensionInterface
     public function _override_values( $data )
     {
         if (isset( $this->request['customized'] )) {
-            $this->orig_options = $this->builder->options;
+            $this->orig_options = $this->builder->getOptions();
             $options = json_decode( stripslashes_deep( $this->request['customized'] ), true );
 
             foreach ($options as $key => $value) {
-                if (strpos( $key, $this->builder->args['opt_name'] ) !== false) {
+                if (strpos( $key, $this->builder->getParam('opt_name') ) !== false) {
                     $key = str_replace(
-                        $this->builder->args['opt_name'] . '[',
+                        $this->builder->getParam('opt_name') . '[',
                         '',
                         rtrim( $key, "]" )
                     );
@@ -284,7 +284,7 @@ class CustomizerExtension implements ExtensionInterface
                     //'sanitize_js_callback' =>array( &$parent, '_field_input' ),
                 );
 
-                $option['id'] = $this->builder->args['opt_name'] . '[' . $option['id'] . ']';
+                $option['id'] = $this->builder->getParam('opt_name') . '[' . $option['id'] . ']';
 
                 if ($option['type'] != "heading" || !empty( $option['type'] )) {
                     $wp_customize->add_setting( $option['id'], $customSetting );
@@ -449,8 +449,8 @@ class CustomizerExtension implements ExtensionInterface
         $changed = array();
 
         foreach ($options as $key => $value) {
-            if (strpos( $key, $this->builder->args['opt_name'] ) !== false) {
-                $key = str_replace( $this->builder->args['opt_name'] . '[', '', rtrim( $key, "]" ) );
+            if (strpos( $key, $this->builder->getParam('opt_name') ) !== false) {
+                $key = str_replace( $this->builder->getParam('opt_name') . '[', '', rtrim( $key, "]" ) );
 
                 if (false === isset( $this->orig_options[$key] )
                     || $this->orig_options[$key] != $value
@@ -469,7 +469,7 @@ class CustomizerExtension implements ExtensionInterface
         }
 
         if (!empty( $changed )) {
-            setcookie( "redux-saved-{$this->builder->args['opt_name']}", 1, time() + 1000, "/" );
+            setcookie( "redux-saved-{$this->builder->getParam('opt_name')}", 1, time() + 1000, "/" );
         }
 
         if ($compiler) {
@@ -477,7 +477,7 @@ class CustomizerExtension implements ExtensionInterface
             $this->builder->no_output = true;
             $this->builder->_enqueue_output();
             do_action(
-                "redux/options/{$this->builder->args['opt_name']}/compiler",
+                "redux/options/{$this->builder->getParam('opt_name')}/compiler",
                 $this->builder->options,
                 $this->builder->compilerCSS
             );
@@ -509,7 +509,7 @@ class CustomizerExtension implements ExtensionInterface
                 'Your current options will be replaced with the values of this preset. Would you like to proceed?',
                 'redux-framework'
             ),
-            'opt_name'       => $this->builder->args['opt_name'],
+            'opt_name'       => $this->builder->getParam('opt_name'),
             //'folds'             => $this->folds,
             'options'        => $this->builder->options,
             'defaults'       => $this->builder->options_defaults,
@@ -551,7 +551,7 @@ class CustomizerExtension implements ExtensionInterface
                 'Your current options will be replaced with the values of this preset.  Would you like to proceed?',
                 'redux-framework'
             ),
-            'opt_name'       => $this->builder->args['opt_name'],
+            'opt_name'       => $this->builder->getParam('opt_name'),
             //'folds'             => $this->folds,
             'field'          => $this->builder->options,
             'defaults'       => $this->builder->options_defaults,
@@ -564,7 +564,7 @@ class CustomizerExtension implements ExtensionInterface
             $localize
         );
 
-        do_action( 'redux-enqueue-' . $this->builder->args['opt_name'] );
+        do_action( 'redux-enqueue-' . $this->builder->getParam('opt_name') );
 
         foreach ($this->builder->getSections() as $section) {
             if (!isset( $section['fields'] )) {
