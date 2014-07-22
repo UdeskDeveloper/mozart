@@ -60,11 +60,13 @@ class FieldManager
      */
     private $builder;
 
-    public function addHiddenField($field_id, $data) {
+    public function addHiddenField( $field_id, $data )
+    {
         $this->hidden_perm_fields[$field_id] = $data;
     }
 
-    public function addCompilerField($fieldId) {
+    public function addCompilerField( $fieldId )
+    {
         $this->compiler_fields[$fieldId] = 1;
     }
 
@@ -137,37 +139,41 @@ class FieldManager
                 ( isset( $field['compiler'] ) &&
                     !empty( $field['compiler'] ) ) ||
                 $field['type'] == "typography" ||
-                $field['type'] == "icon_select" )) {
+                $field['type'] == "icon_select" )
+            ) {
                 $enqueue->output();
             }
         }
     }
 
-    public function enqueueScripts( $field ) {
+    public function enqueueScripts( $field )
+    {
         if (!isset( $field['type'] ) || $field['type'] == 'callback') {
             return;
         }
 
         $fieldClass = $this->getFieldClass( $field['type'] );
 
-        if (!$fieldClass ||  false === method_exists( $fieldClass, 'enqueue' )   ) {
+        if (!$fieldClass || false === method_exists( $fieldClass, 'enqueue' )) {
             return;
         }
 
-        $theField = new $fieldClass( $this->builder, $field, $this->builder->getOption($field['id']) );
+        $theField = new $fieldClass( $this->builder, $field, $this->builder->getOption( $field['id'] ) );
 
         // Move dev_mode check to a new if/then block
         if (!wp_script_is(
-                'redux-field-' . $field['type'] . '-js',
-                'enqueued'
-            ) ) {
+            'redux-field-' . $field['type'] . '-js',
+            'enqueued'
+        )
+        ) {
             $theField->enqueue();
         }
 
         unset( $theField );
     }
 
-    public function localizeFieldData($field, $localizeData) {
+    public function localizeFieldData( $field, $localizeData )
+    {
         if (!isset( $field['type'] ) || $field['type'] == 'callback') {
             return $localizeData;
         }
@@ -179,7 +185,7 @@ class FieldManager
         ) {
             return $localizeData;
         }
-        $theField = new $fieldClass( $this->builder, $field, $this->builder->getOption($field['id']) );
+        $theField = new $fieldClass( $this->builder, $field, $this->builder->getOption( $field['id'] ) );
 
         if (method_exists( $fieldClass, 'localize' )) {
             if (!isset( $localizeData[$field['type']] )) {
@@ -191,7 +197,8 @@ class FieldManager
         return $localizeData;
     }
 
-    public function addLocalizeData($localizeData) {
+    public function addLocalizeData( $localizeData )
+    {
 
         $localizeData['required'] = $this->getRequired();
         $localizeData['required_child'] = $this->getRequiredChild();
@@ -243,14 +250,14 @@ class FieldManager
      * @param string $v
      *
      * @throws \Symfony\Component\Debug\Exception\ClassNotFoundException
-     * @return void
      */
     public function fieldInput( $field, $v = null )
     {
+        $output = '';
         if (isset( $field['callback'] ) && function_exists( $field['callback'] )) {
-            call_user_func( $field['callback'], $field, $this->builder->getOption( $field['id'] ) );
+            $output = call_user_func( $field['callback'], $field, $this->builder->getOption( $field['id'] ) );
 
-            return;
+            return $output;
         }
 
         if (isset( $field['type'] )) {
@@ -264,7 +271,7 @@ class FieldManager
             }
 
             if (!$display) {
-                return;
+                return $output;
             }
 
             $fieldClass = $this->getFieldClass( $field['type'] );
@@ -298,23 +305,28 @@ class FieldManager
             $this->checkDependencies( $field );
 
             if (!isset( $field['fields'] ) || empty( $field['fields'] )) {
-                echo '<fieldset id="' . $this->builder->getParam(
+                $output .= '<fieldset id="' . $this->builder->getParam(
                         'opt_name'
                     ) . '-' . $field['id'] . '" class="redux-field-container redux-field redux-field-init redux-container-' . $field['type'] . ' ' . $class_string . '" data-id="' . $field['id'] . '" ' . $data_string . ' data-type="' . $field['type'] . '">';
             }
 
+            ob_start();
             $fieldObject->render();
+            $output .= ob_get_contents();
+            ob_end_clean();
 
             if (!empty( $field['desc'] )) {
                 $field['description'] = $field['desc'];
             }
 
-            echo ( isset( $field['description'] ) && $field['type'] != "info" && $field['type'] !== "section" && !empty( $field['description'] ) ) ? '<div class="description field-desc">' . $field['description'] . '</div>' : '';
+            $output .= ( isset( $field['description'] ) && $field['type'] != "info" && $field['type'] !== "section" && !empty( $field['description'] ) ) ? '<div class="description field-desc">' . $field['description'] . '</div>' : '';
 
             if (!isset( $field['fields'] ) || empty( $field['fields'] )) {
-                echo '</fieldset>';
+                $output .= '</fieldset>';
             }
         }
+
+        return $output;
     }
 
     /**

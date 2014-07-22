@@ -38,7 +38,7 @@
 
 			{% if params.intro_text is defined and params.intro_text is not empty %}
 				<div id="redux-intro-text">
-					{{ params.intro_text }}
+					{{ params.intro_text|raw }}
 				</div>
 			{% endif %}
 
@@ -57,7 +57,7 @@
 					<div class="clear"></div>
 				</div>
 
-				{{ message }}
+				{{ message|raw }}
 
 				<div class="redux-save-warn notice-yellow">
 					<strong>{{ "Settings have changed, you should save them!"|translate }}</strong>
@@ -85,7 +85,7 @@
 			</div>
 
 			<div class="redux-main">
-				{{ mainContent }}
+				{{ mainContent|raw }}
 
 				{% if params.system_info == true %}
 					<div id="system_info_default_section_group" class="redux-group-tab">
