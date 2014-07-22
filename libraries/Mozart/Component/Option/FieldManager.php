@@ -60,6 +60,14 @@ class FieldManager
      */
     private $builder;
 
+    public function addHiddenField($field_id, $data) {
+        $this->hidden_perm_fields[$field_id] = $data;
+    }
+
+    public function addCompilerField($fieldId) {
+        $this->compiler_fields[$fieldId] = 1;
+    }
+
     /**
      * @param OptionBuilder $builder
      */
@@ -122,7 +130,7 @@ class FieldManager
                 $field['output'] = array( $field['output'] );
             }
 
-            $enqueue = new $fieldClass( $this, $field, $this->builder->getOption( $field['id'] ) );
+            $enqueue = new $fieldClass( $this->builder, $field, $this->builder->getOption( $field['id'] ) );
 
             if (( ( isset( $field['output'] ) &&
                     !empty( $field['output'] ) ) ||
@@ -135,11 +143,84 @@ class FieldManager
         }
     }
 
+    public function enqueueScripts( $field ) {
+        if (!isset( $field['type'] ) || $field['type'] == 'callback') {
+            return;
+        }
+
+        $fieldClass = $this->getFieldClass( $field['type'] );
+
+        if (!$fieldClass ||  false === method_exists( $fieldClass, 'enqueue' )   ) {
+            return;
+        }
+
+        $theField = new $fieldClass( $this->builder, $field, $this->builder->getOption($field['id']) );
+
+        // Move dev_mode check to a new if/then block
+        if (!wp_script_is(
+                'redux-field-' . $field['type'] . '-js',
+                'enqueued'
+            ) ) {
+            $theField->enqueue();
+        }
+
+        unset( $theField );
+    }
+
+    public function localizeFieldData($field, $localizeData) {
+        if (!isset( $field['type'] ) || $field['type'] == 'callback') {
+            return $localizeData;
+        }
+
+        $fieldClass = $this->getFieldClass( $field['type'] );
+
+        if (!$fieldClass || ( false === method_exists( $fieldClass, 'enqueue' )
+                && false === method_exists( $fieldClass, 'localize' ) )
+        ) {
+            return $localizeData;
+        }
+        $theField = new $fieldClass( $this->builder, $field, $this->builder->getOption($field['id']) );
+
+        if (method_exists( $fieldClass, 'localize' )) {
+            if (!isset( $localizeData[$field['type']] )) {
+                $localizeData[$field['type']] = array();
+            }
+            $localizeData[$field['type']][$field['id']] = $theField->localize( $field );
+        }
+
+        return $localizeData;
+    }
+
+    public function addLocalizeData($localizeData) {
+
+        $localizeData['required'] = $this->getRequired();
+        $localizeData['required_child'] = $this->getRequiredChild();
+        $localizeData['fields'] = $this->getFields();
+
+        $localizeData['folds'] = $this->folds;
+
+        // Make sure the children are all hidden properly.
+        foreach ($this->getFields() as $key => $value) {
+            if (in_array( $key, $this->fieldsHidden )) {
+                foreach ($value as $k => $v) {
+                    if (!in_array( $k, $this->fieldsHidden )) {
+                        $this->fieldsHidden[] = $k;
+                        $this->folds[$k] = "hide";
+                    }
+                }
+            }
+        }
+
+        $localizeData['fieldsHidden'] = $this->fieldsHidden;
+
+        return $localizeData;
+    }
+
     /**
      * @param $fieldType
      * @return bool|string
      */
-    protected function getFieldClass( $fieldType )
+    public function getFieldClass( $fieldType )
     {
         $fieldClass = "Mozart\\Component\\Form\\Field\\" . ucfirst( Str::camel( $fieldType ) );
 
@@ -164,7 +245,7 @@ class FieldManager
      * @throws \Symfony\Component\Debug\Exception\ClassNotFoundException
      * @return void
      */
-    public function _field_input( $field, $v = null )
+    public function fieldInput( $field, $v = null )
     {
         if (isset( $field['callback'] ) && function_exists( $field['callback'] )) {
             call_user_func( $field['callback'], $field, $this->builder->getOption( $field['id'] ) );
@@ -199,7 +280,7 @@ class FieldManager
             }
 
             try {
-                $fieldObject = new $fieldClass( $field, $value, $this );
+                $fieldObject = new $fieldClass( $this->builder, $field, $value );
             } catch ( \ErrorException $e ) {
                 /** @var \ErrorException $e */
                 throw new  ClassNotFoundException( 'No Class Found for "' . $field['type'] . '" type', $e );
