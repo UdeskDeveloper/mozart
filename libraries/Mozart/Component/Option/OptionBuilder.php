@@ -10,7 +10,6 @@ use Mozart\Component\Form\Field\Typography;
 use Mozart\Component\Option\Extension\ExtensionManager;
 use Mozart\Component\Option\Section\SectionManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use W3_ObjectCache;
 
 /**
  * Class OptionBuilder
@@ -29,14 +28,6 @@ class OptionBuilder
     /**
      * @var array
      */
-    private $errors = array(); // Errors
-    /**
-     * @var array
-     */
-    private $warnings = array(); // Warnings
-    /**
-     * @var array
-     */
     private $options = array(); // Option values
     /**
      * @var null
@@ -50,10 +41,6 @@ class OptionBuilder
      * @var null
      */
     private $outputCSS = null; // CSS that get auto-appended to the header
-    /**
-     * @var null
-     */
-    private $typography = null; //values to generate google font CSS
     /**
      * @var array
      */
@@ -80,6 +67,10 @@ class OptionBuilder
      * @var
      */
     private $transients_check;
+    /**
+     * @var string
+     */
+    private $compilerCSS;
 
     /**
      * @param ContainerInterface $container
@@ -113,8 +104,8 @@ class OptionBuilder
         $this->loadOptions();
 
         $this->getFieldManager()->init( $this );
-        $this->getFontManager()->init($this);
-        $this->getValidator()->init($this);
+        $this->getFontManager()->init( $this );
+        $this->getValidator()->init( $this );
 
         // Display admin notices in dev_mode
         if (true == $this->params['dev_mode']) {
@@ -198,6 +189,22 @@ class OptionBuilder
     public function getFieldManager()
     {
         return $this->container->get( 'mozart.option.fieldmanager' );
+    }
+
+    public function getOutputCSS() {
+        return $this->outputCSS;
+    }
+
+    public function addToOutputCSS($css) {
+        $this->outputCSS .= $css;
+    }
+
+    public function getCompilerCSS() {
+        return $this->compilerCSS;
+    }
+
+    public function addToCompilerCSS($css) {
+        $this->compilerCSS .= $css;
     }
 
     /**
@@ -508,7 +515,7 @@ class OptionBuilder
             $this->setGlobalVariable();
 
             // Saving the transient values
-            $this->set_transients();
+            $this->setTransients();
         }
     }
 
@@ -921,35 +928,8 @@ class OptionBuilder
             );
 
             if (true === $this->params['allow_sub_menu']) {
-                if (!isset( $section['type'] ) || $section['type'] != 'divide') {
-                    foreach ($this->getSectionManager()->getSections() as $k => $section) {
-                        $canBeSubSection = ( $k > 0 && ( !isset( $this->sections[( $k )]['type'] ) || $this->sections[( $k )]['type'] != "divide" ) ) ? true : false;
 
-                        if (!isset( $section['title'] ) || ( $canBeSubSection && ( isset( $section['subsection'] ) && $section['subsection'] == true ) )) {
-                            continue;
-                        }
-
-                        if (isset( $section['submenu'] ) && $section['submenu'] == false) {
-                            continue;
-                        }
-
-                        if (isset( $section['customizer_only'] ) && $section['customizer_only'] == true) {
-                            continue;
-                        }
-
-                        add_submenu_page(
-                            $this->params['page_slug'],
-                            $section['title'],
-                            $section['title'],
-                            $this->params['page_permissions'],
-                            $this->params['page_slug'] . '&tab=' . $k,
-                            '__return_null'
-                        );
-                    }
-
-                    // Remove parent submenu item instead of adding null item.
-                    remove_submenu_page( $this->params['page_slug'], $this->params['page_slug'] );
-                }
+                $this->getSectionManager()->addSubmenuPages($this->params['page_slug'], $this->params['page_permissions']);
 
                 if (true == $this->params['show_importer'] && false == $this->getImporter()->isEnabled()
                 ) {
@@ -1081,59 +1061,11 @@ class OptionBuilder
         if (isset( $this->no_output )) {
             return;
         }
+//        $this->getFontManager()->enqueueTypographyFonts();
+    }
 
-        if (!empty( $this->typography ) && !empty( $this->typography ) && filter_var(
-                $this->params['output'],
-                FILTER_VALIDATE_BOOLEAN
-            )
-        ) {
-            $version = !empty( $this->transients['last_save'] ) ? $this->transients['last_save'] : '';
-            $typography = new Typography( null, null, $this );
-
-            if ($this->params['async_typography'] && !empty( $this->typography )) {
-                $families = array();
-                foreach ($this->typography as $key => $value) {
-                    $families[] = $key;
-                }
-
-                ?>
-                <style>.wf-loading *, .wf-inactive * {
-                        visibility : hidden;
-                    }
-
-                    .wf-active * {
-                        visibility : visible;
-                    }</style>
-                <script>
-                    /* You can add more configuration options to webfontloader by previously defining the WebFontConfig with your options */
-                    if ( typeof WebFontConfig === "undefined" ) {
-                        WebFontConfig = {};
-                    }
-                    WebFontConfig['google'] = {families: [<?php echo $typography->makeGoogleWebfontString( $this->typography )?>]};
-
-                    (function () {
-                        var wf = document.createElement( 'script' );
-                        wf.src = 'https://ajax.googleapis.com/ajax/libs/webfont/1.5.0/webfont.js';
-                        wf.type = 'text/javascript';
-                        wf.async = 'true';
-                        var s = document.getElementsByTagName( 'script' )[0];
-                        s.parentNode.insertBefore( wf, s );
-                    })();
-                </script>
-            <?php
-            } else {
-                $protocol = ( !empty( $_SERVER['HTTPS'] ) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443 ) ? "https:" : "http:";
-
-                wp_register_style(
-                    'redux-google-fonts',
-                    $protocol . $typography->makeGoogleWebfontLink( $this->typography ),
-                    '',
-                    $version
-                );
-                wp_enqueue_style( 'redux-google-fonts' );
-            }
-        }
-
+    public function getLastSave() {
+        return !empty( $this->transients['last_save'] ) ? $this->transients['last_save'] : '';
     }
 
     /**
@@ -1168,7 +1100,7 @@ class OptionBuilder
 
 
         if ($this->isFieldInUseByType(
-            $this->getFields(),
+            $this->getFieldManager()->getFields(),
             array(
                 'background',
                 'border',
@@ -1349,7 +1281,7 @@ class OptionBuilder
 
         // Load jQuery sortable for slides, sorter, sortable and group
         if ($this->isFieldInUseByType(
-            $this->getFields(),
+            $this->getFieldManager()->getFields(),
             array(
                 'slides',
                 'sorter',
@@ -1363,18 +1295,18 @@ class OptionBuilder
         }
 
         // Load jQuery UI Datepicker for date
-        if ($this->isFieldInUseByType( $this->getFields(), array( 'date' ) )) {
+        if ($this->isFieldInUseByType( $this->getFieldManager()->getFields(), array( 'date' ) )) {
             wp_enqueue_script( 'jquery-ui-datepicker' );
         }
 
         // Load jQuery UI Accordion for slides and group
-        if ($this->isFieldInUseByType( $this->getFields(), array( 'slides', 'group' ) )) {
+        if ($this->isFieldInUseByType( $this->getFieldManager()->getFields(), array( 'slides', 'group' ) )) {
             wp_enqueue_script( 'jquery-ui-accordion' );
         }
 
         // Load wp-color-picker for color, color_gradient, link_color, border, background and typography
         if ($this->isFieldInUseByType(
-            $this->getFields(),
+            $this->getFieldManager()->getFields(),
             array(
                 'background',
                 'color',
@@ -1474,80 +1406,18 @@ class OptionBuilder
         );
 
         foreach ($this->getSectionManager()->getSections() as $section) {
-            if (isset( $section['fields'] )) {
-                foreach ($section['fields'] as $field) {
-                    if (!isset( $field['type'] ) || $field['type'] == 'callback') {
-                        continue;
-                    }
-
-                    $fieldClass = $this->getFieldClass( $field['type'] );
-
-                    if (!$fieldClass || ( false === method_exists( $fieldClass, 'enqueue' )
-                            && false === method_exists( $fieldClass, 'localize' ) )
-                    ) {
-                        continue;
-                    }
-
-                    if (!isset( $this->options[$field['id']] )) {
-                        $this->options[$field['id']] = "";
-                    }
-
-                    $theField = new $fieldClass( $this, $field, $this->options[$field['id']] );
-
-                    // Move dev_mode check to a new if/then block
-                    if (!wp_script_is(
-                            'redux-field-' . $field['type'] . '-js',
-                            'enqueued'
-                        ) && class_exists( $fieldClass ) && method_exists( $fieldClass, 'enqueue' )
-                    ) {
-                        $theField->enqueue();
-                    }
-
-                    if (method_exists( $fieldClass, 'localize' )) {
-                        $params = $theField->localize( $field );
-                        if (!isset( $this->localize_data[$field['type']] )) {
-                            $this->localize_data[$field['type']] = array();
-                        }
-                        $this->localize_data[$field['type']][$field['id']] = $theField->localize( $field );
-                    }
-
-                    unset( $theField );
-                }
+            if (!isset( $section['fields'] )) {
+                continue;
+            }
+            foreach ($section['fields'] as $field) {
+                $this->getFieldManager()->enqueueScripts($field);
+                $this->localize_data = $this->getFieldManager()->localizeFieldData($field, $this->localize_data);
             }
         }
 
-        $this->localize_data['required'] = $this->getFieldManager()->getRequired();
-        $this->localize_data['fonts'] = $this->fonts;
-        $this->localize_data['required_child'] = $this->getFieldManager()->getRequiredChild();
-        $this->localize_data['fields'] = $this->getFields();
+        $this->localize_data = $this->getFieldManager()->addLocalizeData($this->localize_data);
+        $this->localize_data = $this->getFontManager()->addLocalizeData($this->localize_data);
 
-        if (isset( $this->font_groups['google'] )) {
-            $this->localize_data['googlefonts'] = $this->font_groups['google'];
-        }
-
-        if (isset( $this->font_groups['std'] )) {
-            $this->localize_data['stdfonts'] = $this->font_groups['std'];
-        }
-
-        if (isset( $this->font_groups['customfonts'] )) {
-            $this->localize_data['customfonts'] = $this->font_groups['customfonts'];
-        }
-
-        $this->localize_data['folds'] = $this->folds;
-
-        // Make sure the children are all hidden properly.
-        foreach ($this->getFields() as $key => $value) {
-            if (in_array( $key, $this->fieldsHidden )) {
-                foreach ($value as $k => $v) {
-                    if (!in_array( $k, $this->fieldsHidden )) {
-                        $this->fieldsHidden[] = $k;
-                        $this->folds[$k] = "hide";
-                    }
-                }
-            }
-        }
-
-        $this->localize_data['fieldsHidden'] = $this->fieldsHidden;
         $this->localize_data['options'] = $this->options;
         $this->localize_data['defaults'] = $this->options_defaults;
 
@@ -1632,6 +1502,10 @@ class OptionBuilder
             '1.5.0',
             true
         );
+    }
+
+    public function addLocalizeData($key, $value) {
+
     }
 
     /**
@@ -1925,7 +1799,7 @@ class OptionBuilder
                             $default = isset( $this->options_defaults[$field_id] ) ? $this->options_defaults[$field_id] : '';
                             $data = isset( $this->options[$field_id] ) ? $this->options[$field_id] : $default;
 
-                            $this->hidden_perm_fields[$field_id] = $data;
+                            $this->getFieldManager()->addHiddenField($field_id, $data);
                         }
                     }
 
@@ -1971,8 +1845,7 @@ class OptionBuilder
                         if (!current_user_can( $field['permissions'] )) {
                             $data = isset( $this->options[$field['id']] ) ? $this->options[$field['id']] : $this->options_defaults[$field['id']];
 
-                            $this->hidden_perm_fields[$field['id']] = $data;
-
+                            $this->getFieldManager()->addHiddenField($field['id'], $data);
                             continue;
                         }
                     }
@@ -2099,54 +1972,48 @@ class OptionBuilder
                         }
                     }
 
-                    if (!isset( $field['class'] )) { // No errors please
-                        $field['class'] = "";
-                    }
-                    $id = $field['id'];
+                    $folds = $this->getFieldManager()->getFolds();
 
-                    if (empty( $field ) || !$field || $field == false) {
-                        unset( $this->sections[$k]['fields'][$fieldk] );
-                        continue;
-                    }
+                    $field['class'] = isset($field['class']) ? $field['class'] : "";
 
-                    if (!empty( $this->folds[$field['id']]['parent'] )) { // This has some fold items, hide it by default
+                    if (!empty( $folds[$field['id']]['parent'] )) { // This has some fold items, hide it by default
                         $field['class'] .= " fold";
                     }
 
-                    if (!empty( $this->folds[$field['id']]['children'] )) { // Sets the values you shoe fold children on
+                    if (!empty( $folds[$field['id']]['children'] )) { // Sets the values you shoe fold children on
                         $field['class'] .= " foldParent";
                     }
 
                     if (!empty( $field['compiler'] )) {
                         $field['class'] .= " compiler";
-                        $this->compiler_fields[$field['id']] = 1;
+                        $this->getFieldManager()->addCompilerField($field['id']);
                     }
 
-                    if (isset( $field['unit'] ) && !isset( $field['units'] )) {
-                        $field['units'] = $field['unit'];
-                        unset( $field['unit'] );
-                    }
+                    $this->getSectionManager()->updateSection($k, array(
+                            'fields' => array(
+                                $fieldk => $field
+                            )
+                        )
+                    );
 
-                    $this->sections[$k]['fields'][$fieldk] = $field;
+//                    if (isset( $this->params['display_source'] )) {
+//                        $th .= '<div id="' . $field['id'] . '-settings" style="display:none;"><pre>' . var_export(
+//                                $this->sections[$k]['fields'][$fieldk],
+//                                true
+//                            ) . '</pre></div>';
+//                        $th .= '<br /><a href="#TB_inline?width=600&height=800&inlineId=' . $field['id'] . '-settings" class="thickbox"><small>View Source</small></a>';
+//                    }
 
-                    if (isset( $this->params['display_source'] )) {
-                        $th .= '<div id="' . $field['id'] . '-settings" style="display:none;"><pre>' . var_export(
-                                $this->sections[$k]['fields'][$fieldk],
-                                true
-                            ) . '</pre></div>';
-                        $th .= '<br /><a href="#TB_inline?width=600&height=800&inlineId=' . $field['id'] . '-settings" class="thickbox"><small>View Source</small></a>';
-                    }
-
-                    $this->checkDependencies( $field );
+                    $this->getFieldManager()->checkDependencies( $field );
 
                     add_settings_field(
                         "{$fieldk}_field",
                         $th,
-                        array( &$this, '_field_input' ),
+                        array( $this->getFieldManager(), 'fieldInput' ),
                         "{$this->params['opt_name']}{$k}_section_group",
                         "{$this->params['opt_name']}{$k}_section",
                         $field
-                    ); // checkbox
+                    );
                 }
             }
         }
@@ -2160,7 +2027,7 @@ class OptionBuilder
             $this->enqueueScriptsOutput();
 
             unset( $this->transients['run_compiler'] );
-            $this->set_transients();
+            $this->setTransients();
         }
     }
 
@@ -2178,7 +2045,7 @@ class OptionBuilder
     /**
      *
      */
-    public function set_transients()
+    public function setTransients()
     {
         if (!isset( $this->transients ) || !isset( $this->transients_check ) || $this->transients != $this->transients_check) {
             update_option( $this->params['opt_name'] . '-transients', $this->transients );
@@ -2257,7 +2124,7 @@ class OptionBuilder
                 }
 
                 $plugin_options = array_merge( $plugin_options, $imported_options );
-                $this->set_transients();
+                $this->setTransients();
 
                 return $plugin_options;
             }
@@ -2281,15 +2148,15 @@ class OptionBuilder
             $this->transients['run_compiler'] = 1;
             $this->transients['last_save_mode'] = "defaults"; // Last save mode
 
-            $this->set_transients(); // Update the transients
+            $this->setTransients(); // Update the transients
 
             return $plugin_options;
         }
 
         // Section reset to defaults
         if (!empty( $plugin_options['defaults-section'] )) {
-            if (isset( $plugin_options['redux-section'] ) && isset( $this->sections[$plugin_options['redux-section']]['fields'] )) {
-                foreach ($this->sections[$plugin_options['redux-section']]['fields'] as $field) {
+            if (isset( $plugin_options['redux-section'] )) {
+                foreach ((array)$this->getSectionManager()->getSection($plugin_options['redux-section'])['fields'] as $field) {
                     if (isset( $this->options_defaults[$field['id']] )) {
                         $plugin_options[$field['id']] = $this->options_defaults[$field['id']];
                     } else {
@@ -2317,7 +2184,7 @@ class OptionBuilder
             $this->transients['last_save_mode'] = "defaults_section"; // Last save mode
 
             unset( $plugin_options['defaults'], $plugin_options['defaults_section'], $plugin_options['import'], $plugin_options['import_code'], $plugin_options['import_link'], $plugin_options['compiler'], $plugin_options['redux-section'] );
-            $this->set_transients();
+            $this->setTransients();
 
             return $plugin_options;
         }
@@ -2325,14 +2192,18 @@ class OptionBuilder
         $this->transients['last_save_mode'] = "normal"; // Last save mode
 
         // Validate fields (if needed)
-        $plugin_options = $this->_validate_values(
+        $plugin_options = $this->getValidator()->_validate_values(
             $plugin_options,
             $this->options,
             $this->getSectionManager()->getSections()
         );
 
-        if (!empty( $this->errors ) || !empty( $this->warnings )) {
-            $this->transients['notices'] = array( 'errors' => $this->errors, 'warnings' => $this->warnings );
+        if (count( $this->getValidator()->getErrors() ) > 0 ||
+            count( $this->getValidator()->getWarnings() ) > 0) {
+            $this->transients['notices'] = array(
+                'errors' => $this->getValidator()->getErrors(),
+                'warnings' => $this->getValidator()->getWarnings()
+            );
         }
 
 
@@ -2357,13 +2228,13 @@ class OptionBuilder
             return false;
         }
 
-        if (defined( 'WP_CACHE' ) && WP_CACHE && class_exists( '\W3_ObjectCache' )) {
-            $w3 = W3_ObjectCache::instance();
-            $key = $w3->_get_cache_key( $this->params['opt_name'] . '-transients', 'transient' );
-            $w3->delete( $key, 'transient', true );
-        }
+//        if (defined( 'WP_CACHE' ) && WP_CACHE && class_exists( '\W3_ObjectCache' )) {
+//            $w3 = W3_ObjectCache::instance();
+//            $key = $w3->_get_cache_key( $this->params['opt_name'] . '-transients', 'transient' );
+//            $w3->delete( $key, 'transient', true );
+//        }
 
-        $this->set_transients( $this->transients );
+        $this->setTransients( $this->transients );
 
         return $plugin_options;
     }
@@ -2525,9 +2396,6 @@ class OptionBuilder
         $sectionsOutput = '';
         $mainContent = '';
         foreach ($this->getSectionManager()->getSections() as $k => $section) {
-            var_dump( $sectionsOutput );
-            var_dump( $mainContent );
-            var_dump( $section );
             $title = isset( $section['title'] ) ? $section['title'] : '';
 
             $skip_sec = false;
@@ -2541,9 +2409,8 @@ class OptionBuilder
                 continue;
             }
 
-            if (false == $skip_sec) {
+            if (false === $skip_sec) {
                 $sectionsOutput .= $this->section_menu( $k, $section );
-                $skip_sec = false;
             }
 
             $section['class'] = isset( $section['class'] ) ? ' ' . $section['class'] : '';
@@ -2588,14 +2455,13 @@ class OptionBuilder
             'message'        => $message,
             'sectionsOutput' => $sectionsOutput,
             'mainContent'    => $mainContent,
-            'systemInfo'     => SystemInfo::get()
+            'systemInfo'     => ''
+//            'systemInfo' => SystemInfo::get()
         );
-
-        var_dump( $context );
 
         echo $this->container->get( 'templating' )->render( 'MozartOptionBundle:Option:page.html.twig', $context );
 
-        $this->set_transients();
+        $this->setTransients();
 
     }
 
@@ -2675,8 +2541,8 @@ class OptionBuilder
     {
         $id = trim( rtrim( $section['id'], '_section' ), $this->params['opt_name'] );
 
-        if (isset( $this->sections[$id]['desc'] ) && !empty( $this->sections[$id]['desc'] )) {
-            echo '<div class="redux-section-desc">' . $this->sections[$id]['desc'] . '</div>';
+        if ($this->getSectionManager()->getSection($id)['desc'] != '' ) {
+            echo '<div class="redux-section-desc">' . $this->getSectionManager()->getSection($id)['desc'] . '</div>';
         }
     }
 
