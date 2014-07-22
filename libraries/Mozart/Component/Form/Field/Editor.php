@@ -32,7 +32,7 @@ class Editor extends Field
             unset( $this->field['editor_options'] );
         }
 
-        $this->field['args'] = wp_parse_args( $this->field['args'], $defaults );
+        $this->field['args'] = array_merge( $defaults, $this->field['args'] );
 
         wp_editor( $this->value, $this->field['id'], $this->field['args'] );
     }

@@ -31,7 +31,7 @@ class Dimensions extends Field
             ),
         );
 
-        $this->field = wp_parse_args( $this->field, $defaults );
+        $this->field = array_merge( $defaults, $this->field );
 
         $defaults = array(
             'width'  => '',
@@ -39,7 +39,7 @@ class Dimensions extends Field
             'units'  => 'px'
         );
 
-        $this->value = wp_parse_args( $this->value, $defaults );
+        $this->value = array_merge( $defaults, $this->value );
 
         if (isset( $this->value['unit'] )) {
             $this->value['units'] = $this->value['unit'];
@@ -320,12 +320,12 @@ class Dimensions extends Field
         if (!empty( $style )) {
             if (!empty( $this->field['output'] ) && is_array( $this->field['output'] )) {
                 $keys = implode( ",", $this->field['output'] );
-                $this->builder->outputCSS .= $keys . "{" . $style . '}';
+                $this->builder->addToOutputCSS( $keys . "{" . $style . '}');
             }
 
             if (!empty( $this->field['compiler'] ) && is_array( $this->field['compiler'] )) {
                 $keys = implode( ",", $this->field['compiler'] );
-                $this->builder->compilerCSS .= $keys . "{" . $style . '}';
+                $this->builder->addToCompilerCSS( $keys . "{" . $style . '}');
             }
         }
     }

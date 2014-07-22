@@ -19,7 +19,7 @@ class ColorRGBA extends Field
             'alpha' => '',
         );
 
-        $this->value = wp_parse_args( $this->value, $defaults );
+        $this->value = array_merge( $defaults, $this->value );
 
         echo '<input data-id="' . $this->field['id'] . '" name="' . $this->field['name'] . '[color]' . $this->field['name_suffix'] . '" id="' . $this->field['id'] . '-color" class="redux-color_rgba redux-color_rgba-init ' . $this->field['class'] . '"  type="text" value="' . $this->value['color'] . '"  data-default-color="' . $this->field['default']['color'] . '" data-defaultvalue="' . $this->field['default']['color'] . '" data-opacity="' . $this->value['alpha'] . '" />';
         echo '<input data-id="' . $this->field['id'] . '-alpha" name="' . $this->field['name'] . '[alpha]' . $this->field['name_suffix'] . '" id="' . $this->field['id'] . '-alpha" type="hidden" value="' . $this->value['alpha'] . '" />';
@@ -48,6 +48,7 @@ class ColorRGBA extends Field
         }
 
         if (!empty( $this->value )) {
+            $style = '';
             $mode = ( isset( $this->field['mode'] ) && !empty( $this->field['mode'] ) ? $this->field['mode'] : 'color' );
 
             if ($this->value['alpha'] == "0.00" || empty( $this->value['color'] )) {
@@ -60,12 +61,12 @@ class ColorRGBA extends Field
 
             if (!empty( $this->field['output'] ) && is_array( $this->field['output'] )) {
                 $css = $this->parseCSS( $this->field['output'], $style, $this->value );
-                $this->builder->outputCSS .= $css;
+                $this->builder->addToOutputCSS( $css);
             }
 
             if (!empty( $this->field['compiler'] ) && is_array( $this->field['compiler'] )) {
                 $css = $this->parseCSS( $this->field['compiler'], $style, $this->value );
-                $this->builder->compilerCSS .= $css;
+                $this->builder->addToOutputCSS( $css);
             }
         }
     }

@@ -19,7 +19,7 @@ class ColorGradient extends Field
             'to'   => ''
         );
 
-        $this->value = wp_parse_args( $this->value, $defaults );
+        $this->value = array_merge( $defaults, $this->value );
 
         echo '<div class="colorGradient"><strong>' . __( 'From ', 'mozart-options' ) . '</strong>&nbsp;';
         echo '<input data-id="' . $this->field['id'] . '" id="' . $this->field['id'] . '-from" name="' . $this->field['name'] . '[from]' . $this->field['name_suffix'] . '" value="' . $this->value['from'] . '" class="redux-color redux-color-init ' . $this->field['class'] . '"  type="text" data-default-color="' . $this->field['default']['from'] . '" />';
