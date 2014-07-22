@@ -25,7 +25,7 @@ class Border extends Field
             'right'  => true,
         );
 
-        $this->field = wp_parse_args( $this->field, $defaults );
+        $this->field = array_merge( $defaults, $this->field );
 
         $defaults = array(
             'top'    => '',
@@ -36,7 +36,7 @@ class Border extends Field
             'style'  => '',
         );
 
-        $this->value = wp_parse_args( $this->value, $defaults );
+        $this->value = array_merge( $defaults, $this->value );
 
         $value = array(
             'top'    => isset( $this->value['border-top'] ) ? filter_var(
@@ -82,7 +82,7 @@ class Border extends Field
             'left'   => '',
         );
 
-        $this->value = wp_parse_args( $this->value, $defaults );
+        $this->value = array_merge( $defaults, $this->value );
 
         if (isset( $this->field['select2'] )) { // if there are any let's pass them to js
             $select2_params = json_encode( $this->field['select2'] );
@@ -160,13 +160,21 @@ class Border extends Field
             echo '<select original-title="' . __(
                     'Border style',
                     'mozart-options'
-                ) . '" id="' . $this->field['id'] . '[border-style]" name="' . $this->builder->args['opt_name'] . '[' . $this->field['id'] . '][border-style]' . $this->field['name_suffix'] . '" class="tips redux-border-style ' . $this->field['class'] . '" rows="6" data-id="' . $this->field['id'] . '">';
+                ) . '" id="' . $this->field['id'] . '[border-style]" name="' .
+                $this->builder->getParam('opt_name') . '[' . $this->field['id'] . '][border-style]' .
+                $this->field['name_suffix'] . '" class="tips redux-border-style ' . $this->field['class'] . '" rows="6" data-id="' . $this->field['id'] . '">';
             foreach ($options as $k => $v) {
                 echo '<option value="' . $k . '"' . selected( $value['style'], $k, false ) . '>' . $v . '</option>';
             }
             echo '</select>';
         } else {
-            echo '<input type="hidden" id="' . $this->field['id'] . '[border-style]" name="' . $this->builder->args['opt_name'] . '[' . $this->field['id'] . '][border-style]' . $this->field['name_suffix'] . '" value="' . $this->value['style'] . '" data-id="' . $this->field['id'] . '">';
+            echo '<input type="hidden" id="' .
+                $this->field['id'] . '[border-style]" name="' .
+                $this->builder->getParam('opt_name') . '[' .
+                $this->field['id'] . '][border-style]' .
+                $this->field['name_suffix'] . '" value="' .
+                $this->value['style'] . '" data-id="' .
+                $this->field['id'] . '">';
         }
 
         /**
@@ -179,9 +187,10 @@ class Border extends Field
                 $default = ( isset( $this->field['default']['color'] ) ) ? $this->field['default']['color'] : '#ffffff';
             }
 
-            echo '<input name="' . $this->builder->args['opt_name'] . '[' . $this->field['id'] . '][border-color]' . $this->field['name_suffix'] . '" id="' . $this->field['id'] . '-border" class="redux-border-color redux-color redux-color-init ' . $this->field['class'] . '"  type="text" value="' . $this->value['color'] . '"  data-default-color="' . $default . '" data-id="' . $this->field['id'] . '" />';
+            echo '<input name="' . $this->builder->getParam('opt_name') . '[' . $this->field['id'] . '][border-color]' . $this->field['name_suffix'] . '" id="' . $this->field['id'] . '-border" class="redux-border-color redux-color redux-color-init ' . $this->field['class'] . '"  type="text" value="' . $this->value['color'] . '"  data-default-color="' . $default . '" data-id="' . $this->field['id'] . '" />';
         } else {
-            echo '<input type="hidden" id="' . $this->field['id'] . '[border-color]" name="' . $this->builder->args['opt_name'] . '[' . $this->field['id'] . '][border-color]' . $this->field['name_suffix'] . '" value="' . $this->value['style'] . '" data-id="' . $this->field['id'] . '">';
+            echo '<input type="hidden" id="' . $this->field['id'] . '[border-color]" name="' .
+                $this->builder->getParam('opt_name') . '[' . $this->field['id'] . '][border-color]' . $this->field['name_suffix'] . '" value="' . $this->value['style'] . '" data-id="' . $this->field['id'] . '">';
         }
     }
 
@@ -270,12 +279,12 @@ class Border extends Field
 
         if (!empty( $this->field['output'] ) && is_array( $this->field['output'] )) {
             $keys = implode( ",", $this->field['output'] );
-            $this->builder->outputCSS .= $keys . "{" . $style . '}';
+            $this->builder->addToOutputCSS( $keys . "{" . $style . '}');
         }
 
         if (!empty( $this->field['compiler'] ) && is_array( $this->field['compiler'] )) {
             $keys = implode( ",", $this->field['compiler'] );
-            $this->builder->compilerCSS .= $keys . "{" . $style . '}';
+            $this->builder->addToCompilerCSS( $keys . "{" . $style . '}');
         }
     }
 }

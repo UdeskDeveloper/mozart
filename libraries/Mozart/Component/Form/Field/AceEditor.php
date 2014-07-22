@@ -92,8 +92,10 @@ class AceEditor extends Field
             'maxLines' => 30,
         );
 
-        if (isset( $field['options'] ) && !empty( $field['options'] ) && is_array( $field['options'] )) {
-            $params = wp_parse_args( $field['options'], $params );
+        if (isset( $field['options'] ) &&
+            !empty( $field['options'] ) &&
+            is_array( $field['options'] )) {
+            $params = array_merge($params, $field['options'] );
         }
 
         return $params;

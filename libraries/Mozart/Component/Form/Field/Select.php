@@ -39,7 +39,7 @@ class Select extends Field
                  * @param  array $icon_file File for the icons
                  */
                 $icons_file = apply_filters(
-                    "redux/{$this->builder->args['opt_name']}/field/font/icons/file",
+                    "redux/{$this->builder->getParam('opt_name')}/field/font/icons/file",
                     $icons_file
                 );
                 if (file_exists( $icons_file )) {

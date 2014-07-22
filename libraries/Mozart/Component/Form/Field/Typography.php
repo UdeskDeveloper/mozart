@@ -858,12 +858,12 @@ class Typography extends Field
         if (!empty( $style )) {
             if (!empty( $this->field['output'] ) && is_array( $this->field['output'] )) {
                 $keys = implode( ",", $this->field['output'] );
-                $this->builder->outputCSS .= $keys . "{" . $style . '}';
+                $this->builder->addToOutputCSS( $keys . "{" . $style . '}');
             }
 
             if (!empty( $this->field['compiler'] ) && is_array( $this->field['compiler'] )) {
                 $keys = implode( ",", $this->field['compiler'] );
-                $this->builder->compilerCSS .= $keys . "{" . $style . '}';
+                $this->builder->addToCompilerCSS($keys . "{" . $style . '}');
             }
         }
         // Google only stuff!

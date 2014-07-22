@@ -36,14 +36,18 @@ class Group extends Field
 
         echo '<table style="margin-top: 0;" class="redux-groups-accordion redux-group form-table no-border">';
 
-        //echo '<input type="hidden" class="slide-sort" data-name="' . $this->builder->args['opt_name'] . '[' . $this->field['id'] . '][@][slide_sort]" id="' . $this->field['id'] . '-slide_sort" value="" />';
+        //echo '<input type="hidden" class="slide-sort" data-name="' . $this->builder->getParam('opt_name') . '[' . $this->field['id'] . '][@][slide_sort]" id="' . $this->field['id'] . '-slide_sort" value="" />';
         //$field_is_title = true;
         foreach ($this->field['fields'] as $key => $field) {
-            $field['name'] = $this->builder->args['opt_name'] . '[' . $field['id'] . ']';
+            $field['name'] = $this->builder->getParam('opt_name') . '[' . $field['id'] . ']';
             echo '<tr valign="top">';
             $th = "";
             if (isset( $field['title'] ) && isset( $field['type'] ) && $field['type'] !== "info" && $field['type'] !== "group" && $field['type'] !== "section") {
-                $default_mark = ( isset( $field['default'] ) && !empty( $field['default'] ) && isset( $this->builder->options[$field['id']] ) && $this->builder->options[$field['id']] == $field['default'] && !empty( $this->builder->args['default_mark'] ) && isset( $field['default'] ) ) ? $this->builder->args['default_mark'] : '';
+                $default_mark = ( isset( $field['default'] ) &&
+                    !empty( $field['default'] ) &&
+                    $this->builder->getOption($field['id']) == $field['default'] &&
+                    !empty( $this->builder->args['default_mark'] ) &&
+                    isset( $field['default'] ) ) ? $this->builder->getParam('default_mark') : '';
                 if (!empty( $field['title'] )) {
                     $th = $field['title'] . $default_mark . "";
                 }
@@ -70,7 +74,7 @@ class Group extends Field
             } else {
                 $value = "";
             }
-            $this->builder->_field_input( $field, $value );
+            $this->builder->getFieldManager()->fieldInput( $field, $value );
             echo '</td></tr>';
         }
         echo '</table>';
@@ -80,7 +84,7 @@ class Group extends Field
             ) . ' ' . $this->field['groupname'] . '</a>';
         echo '</div></div>';
 
-        echo '</div><a href="javascript:void(0);" class="button redux-groups-add button-primary" rel-id="' . $this->field['id'] . '-ul" rel-name="' . $this->builder->args['opt_name'] . '[' . $this->field['id'] . '][slide_title][]">' . __(
+        echo '</div><a href="javascript:void(0);" class="button redux-groups-add button-primary" rel-id="' . $this->field['id'] . '-ul" rel-name="' . $this->builder->getParam('opt_name') . '[' . $this->field['id'] . '][slide_title][]">' . __(
                 'Add',
                 'mozart-options'
             ) . ' ' . $this->field['groupname'] . '</a><br/>';
@@ -92,7 +96,7 @@ class Group extends Field
     public function support_multi($content, $field, $sort)
     {
         //convert name
-        $name = $this->builder->args['opt_name'] . '[' . $field['id'] . ']';
+        $name = $this->builder->getParam('opt_name') . '[' . $field['id'] . ']';
         $content = str_replace( $name, $name . '[' . $sort . ']', $content );
         //we should add $sort to id to fix problem with select field
         $content = str_replace(
@@ -130,7 +134,7 @@ class Group extends Field
 
     public function enqueue_dependencies($field_type)
     {
-        $fieldClass = "Mozart\\Component\\Form\\Field\\" . ucfirst(Str::camel( $field_type ));
+        $fieldClass = "Mozart\\Component\\Form\\Field\\" . Str::camel( $field_type );
 
         if (false === class_exists( $fieldClass )) {
             if (false === class_exists( $fieldClass . 'Field' )) {

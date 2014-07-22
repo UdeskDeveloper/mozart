@@ -47,7 +47,7 @@ class Checkbox extends Field
 
                 echo '<li>';
                 echo '<label for="' . strtr(
-                        $this->builder->args['opt_name'] . '[' . $this->field['id'] . '][' . $k . ']',
+                        $this->builder->getParam('opt_name') . '[' . $this->field['id'] . '][' . $k . ']',
                         array(
                             '[' => '_',
                             ']' => ''
@@ -55,7 +55,7 @@ class Checkbox extends Field
                     ) . '_' . array_search( $k, array_keys( $this->field['options'] ) ) . '">';
                 echo '<input type="hidden" class="checkbox-check" data-val="1" name="' . $this->field['name'] . '[' . $k . ']' . $this->field['name_suffix'] . '" value="' . $this->value[$k] . '" ' . '/>';
                 echo '<input type="checkbox" class="checkbox ' . $this->field['class'] . '" id="' . strtr(
-                        $this->builder->args['opt_name'] . '[' . $this->field['id'] . '][' . $k . ']',
+                        $this->builder->getParam('opt_name') . '[' . $this->field['id'] . '][' . $k . ']',
                         array(
                             '[' => '_',
                             ']' => ''
@@ -73,7 +73,7 @@ class Checkbox extends Field
         } elseif (empty( $this->field['data'] )) {
 
             echo ( !empty( $this->field['desc'] ) ) ? ' <ul class="data-full"><li><label for="' . strtr(
-                    $this->builder->args['opt_name'] . '[' . $this->field['id'] . ']',
+                    $this->builder->getParam('opt_name') . '[' . $this->field['id'] . ']',
                     array(
                         '[' => '_',
                         ']' => ''
@@ -84,7 +84,7 @@ class Checkbox extends Field
             //$ch_value = 1; // checked($this->value, '1', false) == "" ? "0" : "1";
             echo '<input type="hidden" class="checkbox-check" data-val="1" name="' . $this->field['name'] . $this->field['name_suffix'] . '" value="' . $this->value . '" ' . '/>';
             echo '<input type="checkbox" id="' . strtr(
-                    $this->builder->args['opt_name'] . '[' . $this->field['id'] . ']',
+                    $this->builder->getParam('opt_name') . '[' . $this->field['id'] . ']',
                     array(
                         '[' => '_',
                         ']' => ''

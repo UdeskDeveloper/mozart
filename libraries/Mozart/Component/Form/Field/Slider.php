@@ -271,7 +271,7 @@ class Slider extends Field
 
         $fieldID = $this->field['id'];
         $fieldName = $this->field['name'];
-        //$fieldName = $this->builder->args['opt_name'] . '[' . $this->field['id'] . ']';
+        //$fieldName = $this->builder->getParam('opt_name') . '[' . $this->field['id'] . ']';
 
         // Set handle number variable.
         $twoHandles = false;

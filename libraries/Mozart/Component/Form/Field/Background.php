@@ -31,7 +31,7 @@ class Background extends Field
             'transparent'           => true,
         );
 
-        $this->field = wp_parse_args( $this->field, $defaults );
+        $this->field = array_merge($defaults, $this->field );
 
         // No errors please
         $defaults = array(
@@ -46,7 +46,7 @@ class Background extends Field
             'media'                 => array(),
         );
 
-        $this->value = wp_parse_args( $this->value, $defaults );
+        $this->value = array_merge($defaults, $this->value );
 
         $defaults = array(
             'id'        => '',
@@ -55,7 +55,7 @@ class Background extends Field
             'thumbnail' => '',
         );
 
-        $this->value['media'] = wp_parse_args( $this->value['media'], $defaults );
+        $this->value['media'] = array_merge($defaults, $this->value['media'] );
 
         // select2 args
         if (isset( $this->field['select2'] )) { // if there are any let's pass them to js
@@ -280,20 +280,53 @@ class Background extends Field
                 'mozart-options'
             );
 
-            echo '<input placeholder="' . $placeholder . '" type="text" class="redux-background-input ' . $hide . 'upload ' . $this->field['class'] . '" name="' . $this->field['name'] . '[background-image]' . $this->field['name_suffix'] . '" id="' . $this->builder->args['opt_name'] . '[' . $this->field['id'] . '][background-image]" value="' . $this->value['background-image'] . '" />';
-            echo '<input type="hidden" class="upload-id ' . $this->field['class'] . '" name="' . $this->field['name'] . '[media][id]' . $this->field['name_suffix'] . '" id="' . $this->builder->args['opt_name'] . '[' . $this->field['id'] . '][media][id]" value="' . $this->value['media']['id'] . '" />';
-            echo '<input type="hidden" class="upload-height" name="' . $this->field['name'] . '[media][height]' . $this->field['name_suffix'] . '" id="' . $this->builder->args['opt_name'] . '[' . $this->field['id'] . '][media][height]" value="' . $this->value['media']['height'] . '" />';
-            echo '<input type="hidden" class="upload-width" name="' . $this->field['name'] . '[media][width]' . $this->field['name_suffix'] . '" id="' . $this->builder->args['opt_name'] . '[' . $this->field['id'] . '][media][width]" value="' . $this->value['media']['width'] . '" />';
-            echo '<input type="hidden" class="upload-thumbnail" name="' . $this->field['name'] . '[media][thumbnail]' . $this->field['name_suffix'] . '" id="' . $this->builder->args['opt_name'] . '[' . $this->field['id'] . '][media][thumbnail]" value="' . $this->value['media']['thumbnail'] . '" />';
+            echo '<input placeholder="' . $placeholder .
+                '" type="text" class="redux-background-input ' .
+                $hide . 'upload ' .
+                $this->field['class'] . '" name="' .
+                $this->field['name'] . '[background-image]' .
+                $this->field['name_suffix'] . '" id="' .
+                $this->builder->getParam('opt_name') . '[' .
+                $this->field['id'] . '][background-image]" value="' .
+                $this->value['background-image'] . '" />';
+            echo '<input type="hidden" class="upload-id ' .
+                $this->field['class'] . '" name="' .
+                $this->field['name'] . '[media][id]' .
+                $this->field['name_suffix'] . '" id="' .
+                $this->builder->getParam('opt_name') .
+                '[' . $this->field['id'] . '][media][id]" value="' .
+                $this->value['media']['id'] . '" />';
+            echo '<input type="hidden" class="upload-height" name="' .
+                $this->field['name'] . '[media][height]' .
+                $this->field['name_suffix'] . '" id="' .
+                $this->builder->getParam('opt_name') . '[' .
+                $this->field['id'] . '][media][height]" value="' .
+                $this->value['media']['height'] . '" />';
+            echo '<input type="hidden" class="upload-width" name="' .
+                $this->field['name'] . '[media][width]' .
+                $this->field['name_suffix'] . '" id="' .
+                $this->builder->getParam('opt_name') . '[' .
+                $this->field['id'] .
+                '][media][width]" value="' .
+                $this->value['media']['width'] . '" />';
+            echo '<input type="hidden" class="upload-thumbnail" name="' .
+                $this->field['name'] . '[media][thumbnail]' .
+                $this->field['name_suffix'] . '" id="' .
+                $this->builder->getParam('opt_name') . '[' .
+                $this->field['id'] . '][media][thumbnail]" value="' .
+                $this->value['media']['thumbnail'] . '" />';
 
             //Preview
             $hide = '';
 
-            if (( isset( $this->field['preview_media'] ) && $this->field['preview_media'] === false ) || empty( $this->value['background-image'] )) {
+            if (( isset( $this->field['preview_media'] ) &&
+                    $this->field['preview_media'] === false ) ||
+                empty( $this->value['background-image'] )) {
                 $hide = 'hide ';
             }
 
-            if (empty( $this->value['media']['thumbnail'] ) && !empty( $this->value['background-image'] )) { // Just in case
+            if (empty( $this->value['media']['thumbnail'] ) &&
+                !empty( $this->value['background-image'] )) { // Just in case
                 if (!empty( $this->value['media']['id'] )) {
                     $image = wp_get_attachment_image_src(
                         $this->value['media']['id'],
@@ -309,8 +342,11 @@ class Background extends Field
             }
 
             echo '<div class="' . $hide . 'screenshot">';
-            echo '<a class="of-uploaded-image" href="' . $this->value['background-image'] . '" target="_blank">';
-            echo '<img class="redux-option-image" id="image_' . $this->value['media']['id'] . '" src="' . $this->value['media']['thumbnail'] . '" alt="" target="_blank" rel="external" />';
+            echo '<a class="of-uploaded-image" href="' .
+                $this->value['background-image'] . '" target="_blank">';
+            echo '<img class="redux-option-image" id="image_' .
+                $this->value['media']['id'] . '" src="' .
+                $this->value['media']['thumbnail'] . '" alt="" target="_blank" rel="external" />';
             echo '</a>';
             echo '</div>';
 
@@ -328,7 +364,9 @@ class Background extends Field
                 $hide = ' hide';
             }
 
-            echo '<span class="button removeCSS redux-remove-background' . $hide . '" id="reset_' . $this->field['id'] . '" rel="' . $this->field['id'] . '">' . __(
+            echo '<span class="button removeCSS redux-remove-background' .
+                $hide . '" id="reset_' .
+                $this->field['id'] . '" rel="' . $this->field['id'] . '">' . __(
                     'Remove',
                     'mozart-options'
                 ) . '</span>';
@@ -346,7 +384,8 @@ class Background extends Field
                 $css = "display:none;";
             }
             $css .= "height: " . $this->field['preview_height'] . ";";
-            echo '<p class="clear ' . $this->field['id'] . '_previewer background-preview" style="' . $css . '">&nbsp;</p>';
+            echo '<p class="clear ' . $this->field['id'] . '_previewer background-preview" style="' .
+                $css . '">&nbsp;</p>';
 
         endif;
     }
@@ -404,12 +443,12 @@ class Background extends Field
 
             if (!empty( $this->field['output'] ) && is_array( $this->field['output'] )) {
                 $keys = implode( ",", $this->field['output'] );
-                $this->builder->outputCSS .= $keys . "{" . $style . '}';
+                $this->builder->addToOutputCSS($keys . "{" . $style . '}');
             }
 
             if (!empty( $this->field['compiler'] ) && is_array( $this->field['compiler'] )) {
                 $keys = implode( ",", $this->field['compiler'] );
-                $this->builder->compilerCSS .= $keys . "{" . $style . '}';
+                $this->builder->addToCompilerCSS( $keys . "{" . $style . '}');
             }
         }
     }

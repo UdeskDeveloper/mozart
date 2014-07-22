@@ -166,7 +166,7 @@ class Slides extends Field
                     'mozart-options'
                 ) . '</span>';
 
-            echo '<span class="button remove-image' . $hide . '" id="reset_' . $x . '" rel="' . $this->builder->args['opt_name'] . '[' . $this->field['id'] . '][attachment_id]">' . __(
+            echo '<span class="button remove-image' . $hide . '" id="reset_' . $x . '" rel="' . $this->builder->getParam('opt_name') . '[' . $this->field['id'] . '][attachment_id]">' . __(
                     'Remove',
                     'mozart-options'
                 ) . '</span>';

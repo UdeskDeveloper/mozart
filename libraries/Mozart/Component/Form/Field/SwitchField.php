@@ -38,7 +38,7 @@ class SwitchField extends Field
         echo '<label class="cb-enable' . $cb_enabled . '" data-id="' . $this->field['id'] . '"><span>' . $on . '</span></label>';
         echo '<label class="cb-disable' . $cb_disabled . '" data-id="' . $this->field['id'] . '"><span>' . $off . '</span></label>';
         //echo '<input type="hidden" class="checkbox checkbox-input' . $this->field['class'] . '" id="' . $this->field['id'] . '" name="' . $this->field['name'] . $this->field['name_suffix'] . '" value="' . $this->value . '" />';
-        echo '<input type="hidden" class="checkbox checkbox-input' . $this->field['class'] . '" id="' . $this->field['id'] . '" name="' . $this->builder->args['opt_name'] . '[' . $this->field['id'] . ']' . $this->field['name_suffix'] . '" value="' . $this->value . '" />';
+        echo '<input type="hidden" class="checkbox checkbox-input' . $this->field['class'] . '" id="' . $this->field['id'] . '" name="' . $this->builder->getParam('opt_name') . '[' . $this->field['id'] . ']' . $this->field['name_suffix'] . '" value="' . $this->value . '" />';
         echo '</div>';
     }
 
