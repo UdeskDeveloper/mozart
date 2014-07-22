@@ -2,7 +2,7 @@
 
 	{{ sectionsOutput }}
 
-	{% if params.show_importer is true %}
+	{% if params.show_importer == true %}
 
 		<li id="import_export_default_section_group_li" class="redux-group-tab-link-li">
 			<a href="javascript:void(0);" id="import_export_default_section_group_li_a"
@@ -25,7 +25,7 @@
 		<li class="divide">&nbsp;</li>
 	{% endif %}
 
-	{% if params.dev_mode is true %}
+	{% if params.dev_mode == true %}
 		<li id="dev_mode_default_section_group_li" class="redux-group-tab-link-li">
 
 			<a href="javascript:void(0);" id="dev_mode_default_section_group_li_a"
@@ -48,7 +48,7 @@
 		<li class="divide">&nbsp;</li>
 	{% endif %}
 
-	{% if params.system_info is true %}
+	{% if params.system_info == true %}
 		<li id="system_info_default_section_group_li" class="redux-group-tab-link-li">
 			<a href="javascript:void(0);" id="system_info_default_section_group_li_a"
 			   class="redux-group-tab-link-a"

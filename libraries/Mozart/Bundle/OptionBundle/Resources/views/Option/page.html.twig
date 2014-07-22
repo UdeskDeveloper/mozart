@@ -50,7 +50,7 @@
 					</a>
 
 					<div class="redux-action_bar">
-						{{ include "MozartOptionBundle:Option:actionBar.html.twig" }}
+						{% include "MozartOptionBundle:Option:actionBar.html.twig" %}
 					</div>
 					<div class="redux-ajax-loading" alt="{{ "Working..."|translate }}">&nbsp;</div>
 
@@ -81,13 +81,13 @@
 			<div class="clear"></div>
 
 			<div class="redux-sidebar">
-				{{ include 'MozartOptionBundle:Option:sidebar.html.twig' }}
+				{%  include 'MozartOptionBundle:Option:sidebar.html.twig' %}
 			</div>
 
 			<div class="redux-main">
 				{{ mainContent }}
 
-				{% if params.system_info is true %}
+				{% if params.system_info == true %}
 					<div id="system_info_default_section_group" class="redux-group-tab">
 						<h3>{{ "System Info"|translate }}</h3>
 
@@ -103,7 +103,7 @@
 			<div id="redux-footer-sticky">
 				<div id="redux-footer">
 
-					{% if params.share_icons is defined and params.share_icons is traversable %}
+					{% if params.share_icons is defined and params.share_icons is iterable %}
 						<div id="redux-share">
 							{% for link in params.share_icons %}
 								<a href="{{ link.url }}" title="{{ link.title }}" target="_blank">
@@ -119,7 +119,7 @@
 					{% endif %}
 
 					<div class="redux-action_bar">
-						{{ include "MozartOptionBundle:Option:actionBar.html.twig" }}
+						{% include "MozartOptionBundle:Option:actionBar.html.twig" %}
 					</div>
 					<div class="redux-ajax-loading" alt="{{ "Working..."|translate }}">&nbsp;</div>
 					<div class="clear"></div>

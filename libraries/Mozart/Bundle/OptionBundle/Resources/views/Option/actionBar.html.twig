@@ -1,7 +1,7 @@
 <input type="submit" name="redux_save" id="redux_save" class="button button-primary"
        value="{{ "Save Changes"|translate }}">
 
-{% if params.hide_reset is false %}
+{% if params.hide_reset == false %}
 	&nbsp;<input type="submit" name="mozart-options[defaults-section]"
 	             id="{{ params.opt_name }}[defaults-section]"
 	             class="button" value="{{ "Reset Section"|translate }}">
