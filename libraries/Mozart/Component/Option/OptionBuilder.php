@@ -1140,12 +1140,12 @@ class OptionBuilder
                 'select2-sortable-js',
                 $this->container->getParameter(
                     'wp.plugin.uri'
-                ) . '/mozart' . '/public/bundles/mozart/option/js/vendor/select2.sortable.min.js',
+                ) . '/mozart' . '/public/bundles/mozart/option/js/vendor/select2.sortable.js',
                 array( 'jquery' ),
                 filemtime(
                     $this->container->getParameter(
                         'wp.plugin.dir'
-                    ) . '/mozart' . '/public/bundles/mozart/option/js/vendor/select2.sortable.min.js'
+                    ) . '/mozart' . '/public/bundles/mozart/option/js/vendor/select2.sortable.js'
                 ),
                 true
             );
@@ -1154,12 +1154,12 @@ class OptionBuilder
                 'select2-js',
                 $this->container->getParameter(
                     'wp.plugin.uri'
-                ) . '/mozart' . '/public/bundles/mozart/option/js/vendor/select2/select2.min.js',
+                ) . '/mozart' . '/public/bundles/mozart/option/js/vendor/select2/select2.js',
                 array( 'jquery', 'select2-sortable-js' ),
                 filemtime(
                     $this->container->getParameter(
                         'wp.plugin.dir'
-                    ) . '/mozart' . '/public/bundles/mozart/option/js/vendor/select2/select2.min.js'
+                    ) . '/mozart' . '/public/bundles/mozart/option/js/vendor/select2/select2.js'
                 ),
                 true
             );
@@ -1347,6 +1347,26 @@ class OptionBuilder
         add_thickbox();
 
         wp_register_script(
+            'jquery-alphanum',
+            $this->container->getParameter(
+                'wp.plugin.uri'
+            ) . '/mozart' . '/public/bundles/mozart/option/js/vendor/jquery.alphanum.js',
+            array( 'jquery' ),
+            '2.2.0',
+            true
+        );
+
+        wp_register_script(
+            'jquery-typewatch',
+            $this->container->getParameter(
+                'wp.plugin.uri'
+            ) . '/mozart' . '/public/bundles/mozart/option/js/vendor/jquery.typewatch.js',
+            array( 'jquery' ),
+            '2.2.0',
+            true
+        );
+
+        wp_register_script(
             'qtip-js',
             $this->container->getParameter(
                 'wp.plugin.uri'
@@ -1366,39 +1386,18 @@ class OptionBuilder
             true
         );
 
-        // Embed the compress version unless in dev mode
-        // dev_mode = true
-        if (isset( $this->params['dev_mode'] ) && $this->params['dev_mode'] == true) {
-            wp_enqueue_style( 'admin-css' );
-            wp_register_script(
-                'redux-vendor',
-                $this->container->getParameter(
-                    'wp.plugin.uri'
-                ) . '/mozart' . '/public/bundles/mozart/option/js/vendor.min.js',
-                array( 'jquery' ),
-                filemtime(
-                    $this->container->getParameter(
-                        'wp.plugin.dir'
-                    ) . '/mozart' . '/public/bundles/mozart/option/js/vendor.min.js'
-                ),
-                true
-            );
-
-            // dev_mode - false
-        } else {
-            wp_enqueue_style( 'redux-css' );
-        }
-
-        $depArray = array( 'jquery', 'qtip-js', 'serializeForm-js', );
-
-        if (true == $this->params['dev_mode']) {
-            array_push( $depArray, 'redux-vendor' );
-        }
+        wp_enqueue_style( 'redux-css' );
 
         wp_register_script(
             'redux-js',
             $this->container->getParameter( 'wp.plugin.uri' ) . '/mozart' . '/public/bundles/mozart/option/js/redux.js',
-            $depArray,
+            array(
+                'jquery',
+                'qtip-js',
+                'serializeForm-js',
+                'jquery-typewatch',
+                'jquery-alphanum'
+            ),
             filemtime(
                 $this->container->getParameter(
                     'wp.plugin.dir'
@@ -2031,18 +2030,20 @@ class OptionBuilder
         }
     }
 
-    private function addSettingsSection($id, $title, $page) {
+    private function addSettingsSection( $id, $title, $page )
+    {
         $this->settingsSections[$page][$id] = array(
-            'id' => $id,
+            'id'    => $id,
             'title' => $title
         );
     }
 
-    private function addSettingsField($id, $title, $page, $section = 'default', $args = array()) {
+    private function addSettingsField( $id, $title, $page, $section = 'default', $args = array() )
+    {
         $this->settingsFields[$page][$section][$id] = array(
-            'id' => $id,
+            'id'    => $id,
             'title' => $title,
-            'args' => $args
+            'args'  => $args
         );
     }
 
@@ -2501,11 +2502,12 @@ class OptionBuilder
                 $return .= "<h3>{$section['title']}</h3>\n";
             }
 
-            $return .= $this->getSectionDescriptionOutput($section);
+            $return .= $this->getSectionDescriptionOutput( $section );
 
             if (!isset( $this->settingsFields ) ||
                 !isset( $this->settingsFields[$page] ) ||
-                !isset( $this->settingsFields[$page][$section['id']] )) {
+                !isset( $this->settingsFields[$page][$section['id']] )
+            ) {
                 continue;
             }
             $return .= '<table class="form-table">';
@@ -2539,7 +2541,7 @@ class OptionBuilder
                 $return .= '<th scope="row">' . $field['title'] . '</th>';
             }
             $return .= '<td>';
-            $return .= $this->getFieldManager()->fieldInput($field['args']);
+            $return .= $this->getFieldManager()->fieldInput( $field['args'] );
             $return .= '</td>';
             $return .= '</tr>';
         }
@@ -2559,7 +2561,9 @@ class OptionBuilder
         $id = trim( rtrim( $section['id'], '_section' ), $this->params['opt_name'] );
 
         if ($this->getSectionManager()->getSection( $id )['desc'] != '') {
-            $output .= '<div class="redux-section-desc">' . $this->getSectionManager()->getSection( $id )['desc'] . '</div>';
+            $output .= '<div class="redux-section-desc">' . $this->getSectionManager()->getSection(
+                    $id
+                )['desc'] . '</div>';
         }
 
         return $output;
