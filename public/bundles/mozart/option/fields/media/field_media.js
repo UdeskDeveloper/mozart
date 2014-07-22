@@ -1,12 +1,5 @@
 /*global redux_change, wp, redux*/
 
-/**
- * Media Uploader
- * Dependencies        : jquery, wp media uploader
- * Feature added by    : Smartik - http://smartik.ws/
- * Date                  : 05.28.2013
- */
-
 (function( $ ) {
     "use strict";
 

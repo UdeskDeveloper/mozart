@@ -1,12 +1,5 @@
 /*global redux_change, redux*/
 
-/**
- * Switch
- * Dependencies        : jquery
- * Feature added by    : Smartik - http://smartik.ws/
- * Date            : 03.17.2013
- */
-
 (function( $ ) {
     "use strict";
 

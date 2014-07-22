@@ -140,13 +140,9 @@
 			function ( e ) {
 				$.redux.check_dependencies( this );
 			}
-		);
-
-		$( "body" ).on(
-			'check_dependencies', function ( e, variable ) {
+		).on( 'check_dependencies', function ( e, variable ) {
 				$.redux.check_dependencies( variable );
-			}
-		);
+			} );
 
 		$( 'td > fieldset:empty,td > div:empty' ).parent().parent().hide();
 	};
@@ -291,15 +287,6 @@
 				}
 
 				$( '#currentSection' ).val( relid );
-				if ( !$( this ).parents( '.postbox-container:first' ).length ) {
-					// Set the proper page cookie
-					$.cookie(
-						'redux_current_tab', relid, {
-							expires: 7,
-							path   : '/'
-						}
-					);
-				}
 
 				if ( el.find( '#' + relid + '_section_group_li' ).parents( '.redux-group-tab-link-li' ).length ) {
 					var parentID = el.find( '#' + relid + '_section_group_li' ).parents( '.redux-group-tab-link-li' ).attr( 'id' ).split( '_' );
@@ -385,30 +372,16 @@
 		var tab = decodeURI( (new RegExp( 'tab' + '=' + '(.+?)(&|$)' ).exec( location.search ) || [, ''])[1] );
 
 		if ( tab !== "" ) {
-			if ( $.cookie( "redux_current_tab_get" ) !== tab ) {
-				$.cookie(
-					'redux_current_tab', tab, {
-						expires: 7,
-						path   : '/'
-					}
-				);
-				$.cookie(
-					'redux_current_tab_get', tab, {
-						expires: 7,
-						path   : '/'
-					}
-				);
-
-				$( '#' + tab + '_section_group_li' ).click();
-			}
-		} else if ( $.cookie( 'redux_current_tab_get' ) !== "" ) {
-			$.removeCookie( 'redux_current_tab_get' );
+			$( '#' + tab + '_section_group_li' ).click();
 		}
+//		else if ( $.cookie( 'redux_current_tab_get' ) !== "" ) {
+//			$.removeCookie( 'redux_current_tab_get' );
+//		}
 
-		var sTab = $( '#' + $.cookie( "redux_current_tab" ) + '_section_group_li_a' );
+		var sTab = $( '#' + tab + '_section_group_li_a' );
 
 		// Tab the first item or the saved one
-		if ( $.cookie( "redux_current_tab" ) === null || typeof ($.cookie( "redux_current_tab" )) === "undefined" || sTab.length === 0 ) {
+		if ( sTab.length === 0 ) {
 			$( '.redux-container' ).find( '.redux-group-tab-link-a:first' ).click();
 		} else {
 			sTab.click();
