@@ -6,8 +6,14 @@
 namespace Mozart\Component\Option;
 
 
+use Mozart\Component\Form\Field\Typography;
+
 class FontManager
 {
+    /**
+     * @var null
+     */
+    private $typography = null; //values to generate google font CSS
     /**
      * @var array
      */
@@ -17,6 +23,91 @@ class FontManager
      */
     private $fonts = array(); // Information that needs to be localized
 
+    /**
+     * @var OptionBuilder
+     */
+    private $builder;
+
+    /**
+     * @param OptionBuilder $builder
+     */
+    public function init( OptionBuilder $builder )
+    {
+        $this->builder = $builder;
+    }
+
+    public function enqueueTypographyFonts(){
+
+        if (!empty( $this->typography ) && !empty( $this->typography ) && filter_var(
+                $this->builder->getParam('output'),
+                FILTER_VALIDATE_BOOLEAN
+            )
+        ) {
+            $version = $this->builder->getLastSave();
+            $typography = new Typography( null, null, $this->builder );
+
+            if ($this->builder->getParam('async_typography') && !empty( $this->typography )) {
+                $families = array();
+                foreach ($this->typography as $key => $value) {
+                    $families[] = $key;
+                }
+
+                ?>
+                <style>.wf-loading *, .wf-inactive * {
+                        visibility : hidden;
+                    }
+
+                    .wf-active * {
+                        visibility : visible;
+                    }</style>
+                <script>
+                    /* You can add more configuration options to webfontloader by previously defining the WebFontConfig with your options */
+                    if ( typeof WebFontConfig === "undefined" ) {
+                        WebFontConfig = {};
+                    }
+                    WebFontConfig['google'] = {families: [<?php echo $typography->makeGoogleWebfontString( $this->typography )?>]};
+
+                    (function () {
+                        var wf = document.createElement( 'script' );
+                        wf.src = 'https://ajax.googleapis.com/ajax/libs/webfont/1.5.0/webfont.js';
+                        wf.type = 'text/javascript';
+                        wf.async = 'true';
+                        var s = document.getElementsByTagName( 'script' )[0];
+                        s.parentNode.insertBefore( wf, s );
+                    })();
+                </script>
+            <?php
+            } else {
+                $protocol = ( !empty( $_SERVER['HTTPS'] ) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443 ) ? "https:" : "http:";
+
+                wp_register_style(
+                    'redux-google-fonts',
+                    $protocol . $typography->makeGoogleWebfontLink( $this->typography ),
+                    '',
+                    $version
+                );
+                wp_enqueue_style( 'redux-google-fonts' );
+            }
+        }
+    }
+    
+    public function addLocalizeData($localizeData) {
+        $localizeData['fonts'] = $this->fonts;
+
+        if (isset( $this->font_groups['google'] )) {
+            $localizeData['googlefonts'] = $this->font_groups['google'];
+        }
+
+        if (isset( $this->font_groups['std'] )) {
+            $localizeData['stdfonts'] = $this->font_groups['std'];
+        }
+
+        if (isset( $this->font_groups['customfonts'] )) {
+            $localizeData['customfonts'] = $this->font_groups['customfonts'];
+        }
+
+        return $localizeData;
+    }
     /**
      * @return array
      */
