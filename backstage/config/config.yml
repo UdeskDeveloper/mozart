@@ -6,7 +6,7 @@ imports:
     - { resource: mozart/application.php }
 
     # mozart components configuration
-    - { resource: mozart/component/option.php }
+    - { resource: mozart/component/config.php }
 
     # security
     - { resource: security.yml }
