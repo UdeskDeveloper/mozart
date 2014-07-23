@@ -1,7 +1,14 @@
 imports:
     - { resource: parameters.php }
+
+    # mozart configuration
     - { resource: mozart/wordpress.php }
-    - { resource: mozart/option.php }
+    - { resource: mozart/application.php }
+
+    # mozart components configuration
+    - { resource: mozart/component/option.php }
+
+    # security
     - { resource: security.yml }
 
 framework:

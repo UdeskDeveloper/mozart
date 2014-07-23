@@ -1,0 +1,30 @@
+services:
+    mozart.config.importer:
+        class: Mozart\Component\Config\Importer
+    mozart.config.debugger:
+        class: Mozart\Component\Config\Debugger
+    mozart.config.fontmanager:
+        class: Mozart\Component\Config\FontManager
+    mozart.config.fieldmanager:
+        class: Mozart\Component\Config\FieldManager
+    mozart.config.validator:
+        class: Mozart\Component\Config\Validator
+    mozart.config.builder:
+        class: Mozart\Component\Config\ConfigFactory
+        arguments:
+            - @service_container
+    mozart.config.manager:
+        class: Mozart\Bundle\ConfigBundle\Model\OptionManager
+        arguments:
+            - @service_container
+    mozart.config.sectionmanager:
+        class: Mozart\Component\Config\Section\SectionManager
+    mozart.config.controller:
+        class: Mozart\Bundle\ConfigBundle\Controller\OptionController
+        arguments:
+            - @mozart.config.builder
+            - %mozart.config%
+    mozart.config.customizer:
+        class: Mozart\Component\Config\Customizer
+        arguments:
+            - @request_stack

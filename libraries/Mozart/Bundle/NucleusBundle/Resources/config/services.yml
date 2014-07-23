@@ -1,29 +1,29 @@
 parameters:
-    mozart_nucleus.configuration.manager.class: Mozart\Bundle\NucleusBundle\Wordpress\ConfigurationManager
-    mozart_nucleus.security.authentication.provider.class: Mozart\Bundle\NucleusBundle\Security\Authentication\Provider\WordpressProvider
-    mozart_nucleus.security.authentication.listener.class: Mozart\Bundle\NucleusBundle\Security\Firewall\WordpressListener
-    mozart_nucleus.security.logout.handler.cookie_clearing.class: Mozart\Bundle\NucleusBundle\Security\Http\Logout\WordpressCookieClearingLogoutHandler
-    mozart_nucleus.security.cookie.service.class: Mozart\Bundle\NucleusBundle\Security\Http\WordpressCookieService
-    mozart_nucleus.security.encoder.phpass.class: Mozart\Bundle\NucleusBundle\Security\Encoder\PhpassPasswordEncoder
-    mozart_nucleus.table_prefix.subscriber.class: Mozart\Bundle\NucleusBundle\Subscriber\TablePrefixSubscriber
+    mozart.configuration.manager.class: Mozart\Bundle\NucleusBundle\Wordpress\ConfigurationManager
+    mozart.security.authentication.provider.class: Mozart\Bundle\NucleusBundle\Security\Authentication\Provider\WordpressProvider
+    mozart.security.authentication.listener.class: Mozart\Bundle\NucleusBundle\Security\Firewall\WordpressListener
+    mozart.security.logout.handler.cookie_clearing.class: Mozart\Bundle\NucleusBundle\Security\Http\Logout\WordpressCookieClearingLogoutHandler
+    mozart.security.cookie.service.class: Mozart\Bundle\NucleusBundle\Security\Http\WordpressCookieService
+    mozart.security.encoder.phpass.class: Mozart\Bundle\NucleusBundle\Security\Encoder\PhpassPasswordEncoder
+    mozart.table_prefix.subscriber.class: Mozart\Bundle\NucleusBundle\Subscriber\TablePrefixSubscriber
 
 services:
-    mozart_nucleus.twig.extension:
+    mozart.twig.extension:
         class: Mozart\Bundle\NucleusBundle\Twig\Extension\NucleusExtension
         arguments:
             - @service_container
         tags:
             - {name: twig.extension}
 
-    mozart_nucleus.twig.wordpress:
+    mozart.twig.wordpress:
         class: Mozart\Bundle\NucleusBundle\Twig\Extension\WordpressExtension
         arguments:
             - @service_container
         tags:
             - { name: twig.extension }
 
-    mozart_nucleus.configuration.manager:
-        class: %mozart_nucleus.configuration.manager.class%
+    mozart.configuration.manager:
+        class: %mozart.configuration.manager.class%
         arguments:
             - %wp.site.uri%
             - %wp.cookie.path%
@@ -31,35 +31,35 @@ services:
             - %wp.key.logged_in%
             - %wp.salt.logged_in%
 
-    mozart_nucleus.security.authentication.provider:
-        class: %mozart_nucleus.security.authentication.provider.class%
+    mozart.security.authentication.provider:
+        class: %mozart.security.authentication.provider.class%
         public: false
 
-    mozart_nucleus.security.authentication.listener:
-        class: %mozart_nucleus.security.authentication.listener.class%
+    mozart.security.authentication.listener:
+        class: %mozart.security.authentication.listener.class%
         arguments:
             - @security.context
-            - @mozart_nucleus.security.cookie.service
+            - @mozart.security.cookie.service
             - @security.authentication.manager
             - @logger
             - @event_dispatcher
         tags:
             - {name: monolog.logger, channel: security}
 
-    mozart_nucleus.security.logout.handler.cookie_clearing:
-        class: %mozart_nucleus.security.logout.handler.cookie_clearing.class%
+    mozart.security.logout.handler.cookie_clearing:
+        class: %mozart.security.logout.handler.cookie_clearing.class%
         parent: security.logout.handler.cookie_clearing
         arguments:
-            - @mozart_nucleus.configuration.manager
+            - @mozart.configuration.manager
 
-    mozart_nucleus.security.cookie.service:
-        class: %mozart_nucleus.security.cookie.service.class%
+    mozart.security.cookie.service:
+        class: %mozart.security.cookie.service.class%
 
-    mozart_nucleus.security.encoder.phpass:
-        class: %mozart_nucleus.security.encoder.phpass.class%
+    mozart.security.encoder.phpass:
+        class: %mozart.security.encoder.phpass.class%
 
-    mozart_nucleus.table_prefix.subscriber:
-        class: %mozart_nucleus.table_prefix.subscriber.class%
+    mozart.table_prefix.subscriber:
+        class: %mozart.table_prefix.subscriber.class%
         arguments:
             - %database_table_prefix%
         tags:
@@ -68,4 +68,4 @@ services:
     mozart.nucleus.option.section:
         class: Mozart\Bundle\NucleusBundle\Option\Section\MozartSection
         tags:
-            - {name: mozart.option.section, alias: mozart}
+            - {name: mozart.config.section, alias: mozart}

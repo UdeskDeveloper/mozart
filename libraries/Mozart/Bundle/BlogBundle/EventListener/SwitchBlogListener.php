@@ -5,7 +5,7 @@ namespace Mozart\Bundle\BlogBundle\EventListener;
 use  Mozart\Bundle\BlogBundle\Event\SwitchBlogEvent;
 use  Mozart\Bundle\PostBundle\Model\AttachmentManager;
 use  Mozart\Bundle\CommentBundle\Model\CommentManager;
-use  Mozart\Bundle\OptionBundle\Model\OptionManager;
+use  Mozart\Bundle\ConfigBundle\Model\OptionManager;
 use  Mozart\Bundle\PostBundle\Model\PostManager;
 use  Mozart\Bundle\PostBundle\Model\PostMetaManager;
 use  Mozart\Bundle\TaxonomyBundle\Model\TermManager;
@@ -48,7 +48,7 @@ class SwitchBlogListener
     {
         $em = $event->getBlog()->getEntityManager();
 
-        $this->container->set( 'mozart.option.manager', new OptionManager( $em ) );
+        $this->container->set( 'mozart.config.manager', new OptionManager( $em ) );
         $this->container->set( 'mozart_post.manager', new PostManager( $em ) );
         $this->container->set( 'mozart_post.meta.manager', new PostMetaManager( $em ) );
         $this->container->set( 'mozart_post.attachment_manager', new AttachmentManager( $em ) );
@@ -62,7 +62,7 @@ class SwitchBlogListener
     private function updateWordpressTwigExtension(SwitchBlogEvent $event)
     {
         /** @var $extension WordpressExtension */
-        $extension = $this->container->get( 'mozart_nucleus.twig.wordpress' );
+        $extension = $this->container->get( 'mozart.twig.wordpress' );
         $extension->reloadManagers();
     }
 }

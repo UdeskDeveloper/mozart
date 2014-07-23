@@ -1,6 +1,9 @@
 security:
     encoders:
         Symfony\Component\Security\Core\User\User: plaintext
+        # Add the WordPress password encoder
+        Mozart\Bundle\UserBundle\Entity\User:
+            id: mozart.security.encoder.phpass
 
     role_hierarchy:
         ROLE_ADMIN:       ROLE_USER
@@ -12,6 +15,9 @@ security:
                 users:
                     user:  { password: userpass, roles: [ 'ROLE_USER' ] }
                     admin: { password: adminpass, roles: [ 'ROLE_ADMIN' ] }
+        # Add the WordPress user provider
+        wordpress:
+            entity: { class: Mozart\Bundle\UserBundle\Entity\User, property: username }
 
     firewalls:
         dev:
@@ -24,12 +30,17 @@ security:
 
         secured_area:
             pattern:    ^/demo/secured/
+            # Add the WordPress firewall. Allow you to read WordPress's login state in Symfony app.
+            mozart: ~
+            # Optional. Symfony's default form login works for WordPress user too.
             form_login:
-                check_path: _security_check
-                login_path: _demo_login
+                 check_path: /demo/secured/login_check
+                 login_path: /demo/secured/login
+                 default_target_path: /demo/secured/hello/world
+            # Optional. Use this to logout.
             logout:
-                path:   _demo_logout
-                target: _demo
+                path:   /demo/secured/logout
+                target: /demo/secured/login
             #anonymous: ~
             #http_basic:
             #    realm: "Secured Demo Area"

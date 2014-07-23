@@ -39,7 +39,7 @@ class WordpressFactory extends AbstractFactory
      */
     protected function createAuthProvider(ContainerBuilder $container, $id, $config, $userProviderId)
     {
-        $templateId     = 'mozart_nucleus.security.authentication.provider';
+        $templateId     = 'mozart.security.authentication.provider';
         $authProviderId = $templateId . '.' . $id;
 
         $container
@@ -60,22 +60,22 @@ class WordpressFactory extends AbstractFactory
     protected function createListener($container, $id, $config, $userProviderId)
     {
         // Create the WordPress cookie service
-        $templateId      = 'mozart_nucleus.security.cookie.service';
+        $templateId      = 'mozart.security.cookie.service';
         $cookieServiceId = $templateId . '.' . $id;
 
         /** @var $cookieService Definition */
         $cookieService = $container->setDefinition( $cookieServiceId, new DefinitionDecorator( $templateId ) );
-        $cookieService->addArgument( new Reference( 'mozart_nucleus.configuration.manager' ) );
+        $cookieService->addArgument( new Reference( 'mozart.configuration.manager' ) );
         $cookieService->addArgument( new Reference( $userProviderId ) );
         $cookieService->addArgument( $this->options );
         $cookieService->addArgument( new Reference( 'logger' ) );
 
         // Add CookieClearingLogoutHandler to logout
         if ($container->hasDefinition( 'security.logout_listener.' . $id )) {
-            $cookieHandlerId = 'mozart_nucleus.security.logout.handler.cookie_clearing.' . $id;
+            $cookieHandlerId = 'mozart.security.logout.handler.cookie_clearing.' . $id;
             $container->setDefinition(
                 $cookieHandlerId,
-                new DefinitionDecorator( 'mozart_nucleus.security.logout.handler.cookie_clearing' )
+                new DefinitionDecorator( 'mozart.security.logout.handler.cookie_clearing' )
             );
 
             $container
@@ -86,7 +86,7 @@ class WordpressFactory extends AbstractFactory
         $listenerId = $this->getListenerId();
         $listener   = $container->setDefinition(
             $listenerId,
-            new DefinitionDecorator( 'mozart_nucleus.security.authentication.listener' )
+            new DefinitionDecorator( 'mozart.security.authentication.listener' )
         );
         $listener->replaceArgument( 1, new Reference( $cookieServiceId ) );
 
@@ -100,7 +100,7 @@ class WordpressFactory extends AbstractFactory
      */
     protected function getListenerId()
     {
-        return 'mozart_nucleus.authentication.listener';
+        return 'mozart.authentication.listener';
     }
 
     public function getPosition()

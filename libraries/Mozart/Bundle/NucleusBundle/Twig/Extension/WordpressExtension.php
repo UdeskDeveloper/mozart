@@ -8,7 +8,7 @@ use Mozart\Bundle\UserBundle\Entity\User;
 use Mozart\Bundle\AttachmentBundle\Model\AttachmentManager;
 use Mozart\Bundle\BlogBundle\Model\BlogManager;
 use Mozart\Bundle\CommentBundle\Model\CommentManager;
-use Mozart\Bundle\OptionBundle\Model\OptionManager;
+use Mozart\Bundle\ConfigBundle\Model\OptionManager;
 use Mozart\Bundle\PostBundle\Model\PostManager;
 use Mozart\Bundle\PostBundle\Model\PostMetaManager;
 use Mozart\Bundle\TaxonomyBundle\Model\TermManager;
@@ -79,7 +79,7 @@ class WordpressExtension extends \Twig_Extension
 
     public function reloadManagers()
     {
-        $this->optionManager     = $this->container->get( 'mozart.option.manager' );
+        $this->optionManager     = $this->container->get( 'mozart.config.manager' );
         $this->postManager       = $this->container->get( 'mozart_post.manager' );
         $this->postMetaManager   = $this->container->get( 'mozart_post.meta.manager' );
         $this->attachmentManager = $this->container->get( 'mozart_post.attachment_manager' );

@@ -94,14 +94,10 @@ foreach ($wordressInfos as $root => $values) {
             $value = $parameterBag->escapeValue( $value );
             $container->setParameter( "wp.$root.$name", $value );
             $container->setParameter( "wordpress.$root.$name", $value );
-            unset( $wordressInfos[$root][$name] );
         }
     } else {
         $value = $parameterBag->escapeValue( $values );
         $container->setParameter( "wp.$root", $value );
         $container->setParameter( "wordpress.$root", $value );
-        unset( $wordressInfos[$root] );
     }
 }
-unset( $wordressInfos );
-unset( $parameterBag );

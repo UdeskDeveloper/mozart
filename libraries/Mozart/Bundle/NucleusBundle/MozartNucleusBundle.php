@@ -41,5 +41,34 @@ class MozartNucleusBundle extends Bundle
         if (!Type::hasType( WordpressIdType::NAME )) {
             Type::addType( WordpressIdType::NAME, 'Mozart\Bundle\NucleusBundle\Types\WordpressIdType' );
         }
+
+//
+//        Action::listen('init', $this, 'init')->dispatch();
+//        Action::listen('generate_rewrite_rules', $this, 'rewrite')->dispatch();
+//
+//        if (Application::get('rewrite') && !is_admin()) {
+//            add_filter('script_loader_src', array($this, 'rewriteAssetUrl'));
+//            add_filter('style_loader_src', array($this, 'rewriteAssetUrl'));
+//            add_filter('stylesheet_directory_uri', array($this, 'rewriteAssetUrl'));
+//            add_filter('template_directory_uri', array($this, 'rewriteAssetUrl'));
+//            add_filter('bloginfo', array($this, 'rewriteAssetUrl'));
+//            add_filter('plugins_url', array($this, 'rewriteAssetUrl'));
+//        }
+//
+//        // Admin actions
+//        Action::listen('admin_head', $this, 'adminHead')->dispatch();
+    }
+
+    /**
+     * Run a series of methods at WP init hook
+     *
+     * @return void
+     */
+    public function init()
+    {
+//        if (Application::get('cleanup')) $this->cleanup();
+//
+//        $access = Application::get('access');
+//        if (!empty($access) && is_array($access)) $this->restrict();
     }
 }

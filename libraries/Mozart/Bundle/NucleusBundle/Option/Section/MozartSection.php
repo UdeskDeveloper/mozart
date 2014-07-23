@@ -5,14 +5,14 @@
 
 namespace Mozart\Bundle\NucleusBundle\Option\Section;
 
-use Mozart\Component\Option\Section\OptionSection;
+use Mozart\Component\Config\Section\ConfigSection;
 
 /**
  * Class MozartSection
  *
- * @package Mozart\Bundle\OptionBundle\Option\Section
+ * @package Mozart\Bundle\ConfigBundle\Option\Section
  */
-class MozartSection extends OptionSection
+class MozartSection extends ConfigSection
 {
 
     /**

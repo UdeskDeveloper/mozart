@@ -1,7 +1,7 @@
 <?php
 namespace Mozart\Component\Form\Field;
 
-use Mozart\Component\Option\Utils;
+use Mozart\Component\Config\Utils;
 use Mozart\Component\Form\Field;
 
 class ColorRGBA extends Field

@@ -11,7 +11,7 @@ use Mozart\Bundle\FieldBundle\MozartFieldBundle;
 use Mozart\Bundle\MediaBundle\MozartMediaBundle;
 use Mozart\Bundle\MenuBundle\MozartMenuBundle;
 use Mozart\Bundle\NucleusBundle\MozartNucleusBundle;
-use Mozart\Bundle\OptionBundle\MozartOptionBundle;
+use Mozart\Bundle\ConfigBundle\MozartConfigBundle;
 use Mozart\Bundle\PostBundle\MozartPostBundle;
 use Mozart\Bundle\ShortcodeBundle\MozartShortcodeBundle;
 use Mozart\Bundle\TaxonomyBundle\MozartTaxonomyBundle;
@@ -68,7 +68,7 @@ class MozartKernel extends Kernel
             new MozartFieldBundle(),
             new MozartMediaBundle(),
             new MozartMenuBundle(),
-            new MozartOptionBundle(),
+            new MozartConfigBundle(),
             new MozartPostBundle(),
             new MozartShortcodeBundle(),
             new MozartTaxonomyBundle(),

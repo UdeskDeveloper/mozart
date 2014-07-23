@@ -53,7 +53,7 @@ class UserMeta extends ModelUserMeta
     /**
      * Get user
      *
-     * @return \ Mozart\Bundle\UserBundle\Model\UserInterface|null
+     * @return \Mozart\Bundle\UserBundle\Model\UserInterface|null
      */
     public function getUser()
     {

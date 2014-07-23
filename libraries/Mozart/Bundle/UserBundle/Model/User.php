@@ -60,12 +60,12 @@ class User implements UserInterface, \Serializable
     protected $metas;
 
     /**
-     * @var \ Mozart\Bundle\UserBundle\Entity\Post
+     * @var \Mozart\Bundle\PostBundle\Entity\Post
      */
     private $posts;
 
     /**
-     * @var \ Mozart\Bundle\UserBundle\Entity\Comment
+     * @var \Mozart\Bundle\CommentBundle\Entity\Comment
      */
     private $comments;
 

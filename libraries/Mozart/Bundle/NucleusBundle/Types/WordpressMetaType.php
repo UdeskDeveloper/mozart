@@ -9,28 +9,48 @@ namespace Mozart\Bundle\NucleusBundle\Types;
 use Doctrine\DBAL\Types\TextType;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 
+/**
+ * Class WordpressMetaType
+ * @package Mozart\Bundle\NucleusBundle\Types
+ */
 class WordpressMetaType extends TextType
 {
+    /**
+     *
+     */
     const NAME = 'wordpressmeta';
 
-    public function convertToPHPValue($value, AbstractPlatform $platform)
+    /**
+     * @param mixed $value
+     * @param AbstractPlatform $platform
+     * @return mixed
+     */
+    public function convertToPHPValue( $value, AbstractPlatform $platform )
     {
-        if ($this->isSerialized($value)) {
-            return @unserialize($value);
+        if ($this->isSerialized( $value )) {
+            return @unserialize( $value );
         }
 
         return $value;
     }
 
-    public function convertToDatabaseValue($value, AbstractPlatform $platform)
+    /**
+     * @param mixed $value
+     * @param AbstractPlatform $platform
+     * @return mixed|string
+     */
+    public function convertToDatabaseValue( $value, AbstractPlatform $platform )
     {
-        if (is_array($value) || is_object($value)) {
-            return serialize($value);
+        if (is_array( $value ) || is_object( $value )) {
+            return serialize( $value );
         }
 
         return $value;
     }
 
+    /**
+     * @return string
+     */
     public function getName()
     {
         return self::NAME;
@@ -45,34 +65,40 @@ class WordpressMetaType extends TextType
      * @param  mixed $data Value to check to see if was serialized.
      * @return bool  False if not serialized and true if it was.
      */
-    private function isSerialized($data)
+    private function isSerialized( $data )
     {
         // if it isn't a string, it isn't serialized
-        if (!is_string($data))
+        if (!is_string( $data )) {
             return false;
-        $data = trim($data);
-        if ('N;' == $data)
+        }
+        $data = trim( $data );
+        if ('N;' == $data) {
             return true;
-        $length = strlen($data);
-        if ($length < 4)
+        }
+        $length = strlen( $data );
+        if ($length < 4) {
             return false;
-        if (':' !== $data[1])
+        }
+        if (':' !== $data[1]) {
             return false;
-        $lastc = $data[$length-1];
-        if (';' !== $lastc && '}' !== $lastc)
+        }
+        $lastc = $data[$length - 1];
+        if (';' !== $lastc && '}' !== $lastc) {
             return false;
+        }
         $token = $data[0];
         switch ($token) {
             case 's' :
-                if ( '"' !== $data[$length-2] )
+                if ('"' !== $data[$length - 2]) {
                     return false;
+                }
             case 'a' :
             case 'O' :
-                return (bool) preg_match( "/^{$token}:[0-9]+:/s", $data );
+                return (bool)preg_match( "/^{$token}:[0-9]+:/s", $data );
             case 'b' :
             case 'i' :
             case 'd' :
-                return (bool) preg_match( "/^{$token}:[0-9.E-]+;\$/", $data );
+                return (bool)preg_match( "/^{$token}:[0-9.E-]+;\$/", $data );
         }
 
         return false;
