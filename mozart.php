@@ -17,7 +17,8 @@ add_action(
 	'plugins_loaded',
 	function () {
 		require_once __DIR__ . '/backstage/bootstrap.php';
-	}
+	},
+    11
 );
 
 //if (is_admin()) {
