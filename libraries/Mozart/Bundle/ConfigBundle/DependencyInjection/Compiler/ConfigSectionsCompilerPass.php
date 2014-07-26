@@ -31,7 +31,7 @@ class ConfigSectionsCompilerPass implements CompilerPassInterface
             }
         }
 
-        $container->setParameter( 'settings', get_option( 'mozart-options', array() ) );
+//        $container->setParameter( 'settings', get_option( 'mozart-options', array() ) );
     }
 
 }

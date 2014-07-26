@@ -6,9 +6,15 @@
 namespace Mozart\Bundle\ConfigBundle\Twig\Extension;
 
 use Mozart\Bundle\ConfigBundle\Model\OptionManagerInterface;
+use Mozart\Component\Config\ConfigFactory;
 
 class OptionTemplateExtension extends \Twig_Extension
 {
+    /**
+     * @var ConfigFactory
+     */
+    private $configFactory;
+
     /**
      * {@inheritDoc}
      */
@@ -28,13 +34,18 @@ class OptionTemplateExtension extends \Twig_Extension
     protected $optionManager;
 
     /**
+     * @param ConfigFactory $configFactory
      * @param OptionManagerInterface $optionManager
-     * @param string[]               $sectionOrder  The order in which sections will be rendered.
+     * @param string[] $sectionOrder The order in which sections will be rendered.
      */
-    public function __construct( OptionManagerInterface $optionManager, array $sectionOrder = array() )
-    {
+    public function __construct(
+        ConfigFactory $configFactory,
+        OptionManagerInterface $optionManager,
+        array $sectionOrder = array()
+    ) {
         $this->optionManager = $optionManager;
-        $this->sectionOrder  = $sectionOrder;
+        $this->sectionOrder = $sectionOrder;
+        $this->configFactory = $configFactory;
     }
 
     /**
@@ -53,10 +64,11 @@ class OptionTemplateExtension extends \Twig_Extension
     public function getFunctions()
     {
         return array(
-            new \Twig_SimpleFunction( 'setting', array( $this, 'findOneOptionByName' ) ),
-            new \Twig_SimpleFunction( 'sett', array( $this, 'findOneOptionByName' ) ),
-            new \Twig_SimpleFunction( 'option', array( $this, 'findOneOptionByName' ) ),
-            new \Twig_SimpleFunction( 'opt', array( $this, 'findOneOptionByName' ) ),
+//            new \Twig_SimpleFunction( 'setting', array( $this, 'findOneOptionByName' ) ),
+//            new \Twig_SimpleFunction( 'sett', array( $this, 'findOneOptionByName' ) ),
+            new \Twig_SimpleFunction( 'option', array( $this, 'getConfig' ) ),
+            new \Twig_SimpleFunction( 'opt', array( $this, 'getConfig' ) ),
+            new \Twig_SimpleFunction( 'config', array( $this, 'getConfig' ) )
         );
     }
 
@@ -87,6 +99,10 @@ class OptionTemplateExtension extends \Twig_Extension
         }
 
         return $finalSectionOrder;
+    }
+
+    public function getConfig($name) {
+        return $this->configFactory->getOption($name);
     }
 
     /**

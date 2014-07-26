@@ -8,6 +8,7 @@ namespace Mozart\Component\Config;
 
 use Mozart\Component\Support\Str;
 use Symfony\Component\Debug\Exception\ClassNotFoundException;
+use Symfony\Component\Debug\Exception\FatalErrorException;
 
 /**
  * Class FieldManager
@@ -276,6 +277,10 @@ class FieldManager
 
             $fieldClass = $this->getFieldClass( $field['type'] );
 
+            if (!$fieldClass) {
+                return $output;
+            }
+
             $value = $this->builder->getOption( $field['id'] );
 
             if ($v !== null) {
@@ -288,9 +293,10 @@ class FieldManager
 
             try {
                 $fieldObject = new $fieldClass( $this->builder, $field, $value );
-            } catch ( \ErrorException $e ) {
-                /** @var \ErrorException $e */
-                throw new  ClassNotFoundException( 'No Class Found for "' . $field['type'] . '" type', $e );
+            } catch ( \ErrorException $e) {
+                echo  $e->getMessage() . ' - ' . $fieldClass;
+            } catch ( \Exception $e ) {
+                echo $e->getMessage() . ' - ' . $fieldClass;
             }
 
             //save the values into a unique array in case we need it for dependencies

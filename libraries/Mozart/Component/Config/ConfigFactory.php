@@ -78,10 +78,12 @@ class ConfigFactory
      */
     private $settingsFields;
 
+    private $booted = false;
+
     /**
      * @param ContainerInterface $container
      */
-    public function __construct( ContainerInterface $container )
+    public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
     }
@@ -90,8 +92,9 @@ class ConfigFactory
      * @param  array $params
      * @return bool
      */
-    public function boot( $params = array() )
+    public function boot($params = array())
     {
+
         $this->params = array_merge( $this->getDefaultArgs(), $params );
 
         if (empty( $this->params['opt_name'] )) {
@@ -103,20 +106,24 @@ class ConfigFactory
         $this->loadTranslations();
 
         // Grab database values
-        $this->loadOptions();
+        if (false === $this->booted) {
+            $this->loadOptions();
+            $this->booted = true;
+        }
 
         $this->getFieldManager()->init( $this );
         $this->getFontManager()->init( $this );
         $this->getValidator()->init( $this );
 
         // Display admin notices in dev_mode
-        if ($this->container->get('kernel')->isDebug()) {
+        if ($this->container->get( 'kernel' )->isDebug()) {
             $this->getDebugger()->init( $this );
         }
 
         $this->getImporter()->init( $this );
 
-        return true;
+
+        return $this;
     }
 
     /**
@@ -140,7 +147,7 @@ class ConfigFactory
      * @param $param
      * @return mixed
      */
-    public function getParam( $param )
+    public function getParam($param)
     {
         return $this->params[$param];
     }
@@ -204,7 +211,7 @@ class ConfigFactory
     /**
      * @param $css
      */
-    public function addToOutputCSS( $css )
+    public function addToOutputCSS($css)
     {
         $this->outputCSS .= $css;
     }
@@ -220,7 +227,7 @@ class ConfigFactory
     /**
      * @param $css
      */
-    public function addToCompilerCSS( $css )
+    public function addToCompilerCSS($css)
     {
         $this->compilerCSS .= $css;
     }
@@ -326,7 +333,7 @@ class ConfigFactory
     /**
      * @param \WP_Admin_Bar $wp_admin_bar
      */
-    public function adminBarMenuForNetwork( \WP_Admin_Bar $wp_admin_bar )
+    public function adminBarMenuForNetwork(\WP_Admin_Bar $wp_admin_bar)
     {
         $params = array(
             'id'     => $this->params['opt_name'] . '_network_admin',
@@ -343,7 +350,7 @@ class ConfigFactory
      *
      * @return array|string
      */
-    public function stripslashes_deep( $value )
+    public function stripslashes_deep($value)
     {
         $value = is_array( $value ) ?
             array_map( 'stripslashes_deep', $value ) :
@@ -405,21 +412,23 @@ class ConfigFactory
      *
      * @return mixed $default
      */
-    public function getDefaultOption( $opt_name, $default = null )
+    public function getDefaultOption($opt_name, $default = null)
     {
-        if ($this->params['default_show'] == true) {
-
-            if (empty( $this->options_defaults )) {
-                $this->getDefaultOptions(); // fill cache
-            }
-
-            $default = array_key_exists(
-                $opt_name,
-                $this->options_defaults
-            ) ? $this->options_defaults[$opt_name] : $default;
+        if (empty( $this->options_defaults )) {
+            $this->getDefaultOptions(); // fill cache
         }
 
+        $default = array_key_exists(
+            $opt_name,
+            $this->options_defaults
+        ) ? $this->options_defaults[$opt_name] : $default;
+
+
         return $default;
+    }
+
+    public function get($opt_name, $default = null) {
+        return $this->getOption($opt_name, $default);
     }
 
     /**
@@ -430,14 +439,22 @@ class ConfigFactory
      *
      * @return mixed
      */
-    public function getOption( $opt_name, $default = null )
+    public function getOption($opt_name, $default = null)
     {
-        return ( !empty( $this->options[$opt_name] ) ) ? $this->options[$opt_name] : $this->getDefaultOption(
-            $opt_name,
-            $default
-        );
+        if (false === $this->booted) {
+            $this->loadOptions();
+            $this->booted = true;
+        }
+        if (empty( $this->options[$opt_name] )) {
+            return $this->getDefaultOption( $opt_name, $default );
+        }
+
+        return $this->options[$opt_name];
     }
 
+    public function set( $opt_name, $value = '') {
+        $this->setOption($opt_name, $value);
+    }
     /**
      * This is used to set an arbitrary option in the options array
      *
@@ -446,7 +463,7 @@ class ConfigFactory
      *
      * @return void
      */
-    public function setOption( $opt_name, $value = '' )
+    public function setOption($opt_name, $value = '')
     {
         $this->options[$opt_name] = $value;
         $this->setOptions( $this->options );
@@ -457,7 +474,7 @@ class ConfigFactory
      *
      * @param mixed $value the value of the option being added
      */
-    public function setOptions( $value = '' )
+    public function setOptions($value = '')
     {
         $this->transients['last_save'] = time();
 
@@ -500,6 +517,24 @@ class ConfigFactory
     }
 
     /**
+     * @return mixed
+     */
+    public function getOptions()
+    {
+        if ($this->params['database'] === "transient") {
+            return get_transient( $this->params['opt_name'] . '-transient' );
+        } elseif ($this->params['database'] === "theme_mods") {
+            return get_theme_mod( $this->params['opt_name'] . '-mods' );
+        } elseif ($this->params['database'] === 'theme_mods_expanded') {
+            return get_theme_mods();
+        } elseif ($this->params['database'] === 'network') {
+            return get_site_option( $this->params['opt_name'], array() );
+        }
+
+        return get_option( $this->params['opt_name'], array() );
+    }
+
+    /**
      * This is used to get options from the database
      *
      */
@@ -524,30 +559,12 @@ class ConfigFactory
     }
 
     /**
-     * @return mixed
-     */
-    public function getOptions()
-    {
-        if ($this->params['database'] === "transient") {
-            return get_transient( $this->params['opt_name'] . '-transient' );
-        } elseif ($this->params['database'] === "theme_mods") {
-            return get_theme_mod( $this->params['opt_name'] . '-mods' );
-        } elseif ($this->params['database'] === 'theme_mods_expanded') {
-            return get_theme_mods();
-        } elseif ($this->params['database'] === 'network') {
-            return get_site_option( $this->params['opt_name'], array() );
-        }
-
-        return get_option( $this->params['opt_name'], array() );
-    }
-
-    /**
      * Get Wordpress specific data from the DB and return in a usable array
      * @param  bool $type
      * @param  array $params
      * @return array|string
      */
-    public function get_wordpress_data( $type = false, $params = array() )
+    public function get_wordpress_data($type = false, $params = array())
     {
         $data = "";
 
@@ -717,7 +734,7 @@ class ConfigFactory
      *
      * @return void
      */
-    public function show( $opt_name, $default = '' )
+    public function show($opt_name, $default = '')
     {
         $option = $this->getOption( $opt_name );
         if (!is_array( $option ) && $option != '') {
@@ -791,7 +808,7 @@ class ConfigFactory
      * @param $page_slug
      * @return void
      */
-    private function add_submenu( $page_parent, $page_title, $menu_title, $page_permissions, $page_slug )
+    private function add_submenu($page_parent, $page_title, $menu_title, $page_permissions, $page_slug)
     {
         global $submenu;
 
@@ -1490,7 +1507,7 @@ class ConfigFactory
      * @param $key
      * @param $value
      */
-    public function addLocalizeData( $key, $value )
+    public function addLocalizeData($key, $value)
     {
 
     }
@@ -1596,7 +1613,7 @@ class ConfigFactory
      * @param $field
      * @return string default_output
      */
-    public function get_default_output_string( $field )
+    public function get_default_output_string($field)
     {
         $default_output = "";
 
@@ -1654,7 +1671,7 @@ class ConfigFactory
      * @param $field
      * @return string
      */
-    public function get_header_html( $field )
+    public function get_header_html($field)
     {
         global $current_user;
 
@@ -2020,7 +2037,7 @@ class ConfigFactory
      * @param $title
      * @param $page
      */
-    private function addSettingsSection( $id, $title, $page )
+    private function addSettingsSection($id, $title, $page)
     {
         $this->settingsSections[$page][$id] = array(
             'id'    => $id,
@@ -2035,7 +2052,7 @@ class ConfigFactory
      * @param string $section
      * @param array $args
      */
-    private function addSettingsField( $id, $title, $page, $section = 'default', $args = array() )
+    private function addSettingsField($id, $title, $page, $section = 'default', $args = array())
     {
         $this->settingsFields[$page][$section][$id] = array(
             'id'    => $id,
@@ -2074,7 +2091,7 @@ class ConfigFactory
      *
      * @return array|mixed|string|void
      */
-    public function _validate_options( $plugin_options )
+    public function _validate_options($plugin_options)
     {
         if (!empty( $this->hidden_perm_fields ) && is_array( $this->hidden_perm_fields )) {
             foreach ($this->hidden_perm_fields as $id => $data) {
@@ -2265,7 +2282,7 @@ class ConfigFactory
      * @param array $sections
      * @return string
      */
-    public function section_menu( $k, $section, $suffix = "", $sections = array() )
+    public function section_menu($k, $section, $suffix = "", $sections = array())
     {
         $string = "";
         $display = true;
@@ -2486,7 +2503,7 @@ class ConfigFactory
      * @param $page
      * @return string
      */
-    private function doSettingsSections( $page )
+    private function doSettingsSections($page)
     {
         $return = '';
 
@@ -2520,7 +2537,7 @@ class ConfigFactory
      * @param $section
      * @return string
      */
-    private function doSettingsFields( $page, $section )
+    private function doSettingsFields($page, $section)
     {
         $return = '';
 
@@ -2552,7 +2569,7 @@ class ConfigFactory
      *
      * @return string
      */
-    public function getSectionDescriptionOutput( $section )
+    public function getSectionDescriptionOutput($section)
     {
         $output = '';
         $id = trim( rtrim( $section['id'], '_section' ), $this->params['opt_name'] );
@@ -2575,7 +2592,7 @@ class ConfigFactory
      *
      * @return bool
      */
-    public function compareValueDependencies( $parentValue, $checkValue, $operation )
+    public function compareValueDependencies($parentValue, $checkValue, $operation)
     {
         $return = false;
 
@@ -2694,7 +2711,7 @@ class ConfigFactory
      *
      * @return string $data_string example output: data-id='true'
      */
-    public function create_data_string( $data = array() )
+    public function create_data_string($data = array())
     {
         $data_string = "";
 
@@ -2714,7 +2731,7 @@ class ConfigFactory
      * @param array $field
      * @return bool
      */
-    public function isFieldInUseByType( $fields, $field = array() )
+    public function isFieldInUseByType($fields, $field = array())
     {
         foreach ($field as $name) {
             if (array_key_exists( $name, $fields )) {
@@ -2730,7 +2747,7 @@ class ConfigFactory
      * @param $field
      * @return bool
      */
-    public function isFieldInUse( $sections, $field )
+    public function isFieldInUse($sections, $field)
     {
         foreach ($sections as $k => $section) {
             if (!isset( $section['title'] )) {
