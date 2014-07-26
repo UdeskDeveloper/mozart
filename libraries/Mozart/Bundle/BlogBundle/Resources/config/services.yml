@@ -1,10 +1,10 @@
 services:
-    mozart_blog.manager:
+    mozart.blog.manager:
         class: Mozart\Bundle\BlogBundle\Model\BlogManager
         arguments:
             - @service_container
 
-    mozart_blog.event_listener.switch_blog:
+    mozart.blog.event_listener.switch_blog:
         class: Mozart\Bundle\BlogBundle\EventListener\SwitchBlogListener
         arguments:
             - @service_container

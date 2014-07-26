@@ -49,11 +49,11 @@ class SwitchBlogListener
         $em = $event->getBlog()->getEntityManager();
 
         $this->container->set( 'mozart.config.manager', new OptionManager( $em ) );
-        $this->container->set( 'mozart_post.manager', new PostManager( $em ) );
-        $this->container->set( 'mozart_post.meta.manager', new PostMetaManager( $em ) );
-        $this->container->set( 'mozart_post.attachment_manager', new AttachmentManager( $em ) );
-        $this->container->set( 'mozart_taxonomy.term.manager', new TermManager( $em ) );
-        $this->container->set( 'mozart_comment.manager', new CommentManager( $em ) );
+        $this->container->set( 'mozart.post.manager', new PostManager( $em ) );
+        $this->container->set( 'mozart.post.meta.manager', new PostMetaManager( $em ) );
+        $this->container->set( 'mozart.post.attachment_manager', new AttachmentManager( $em ) );
+        $this->container->set( 'mozart.taxonomy.term.manager', new TermManager( $em ) );
+        $this->container->set( 'mozart.comment.manager', new CommentManager( $em ) );
     }
 
     /**
