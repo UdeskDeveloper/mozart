@@ -9,7 +9,7 @@ services:
         class: Mozart\Component\Config\FieldManager
     mozart.config.validator:
         class: Mozart\Component\Config\Validator
-    mozart.config.builder:
+    config.factory:
         class: Mozart\Component\Config\ConfigFactory
         arguments:
             - @service_container
@@ -22,9 +22,17 @@ services:
     mozart.config.controller:
         class: Mozart\Bundle\ConfigBundle\Controller\OptionController
         arguments:
-            - @mozart.config.builder
+            - @config.factory
             - %mozart.config%
     mozart.config.customizer:
         class: Mozart\Component\Config\Customizer
         arguments:
             - @request_stack
+    mozart.config.twig.extension:
+        class: Mozart\Bundle\ConfigBundle\Twig\Extension\OptionTemplateExtension
+        arguments:
+            - @config.factory
+            - @mozart.config.manager
+            - []
+        tags:
+            - { name: twig.extension }

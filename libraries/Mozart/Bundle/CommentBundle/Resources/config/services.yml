@@ -1,5 +1,5 @@
 services:
-    mozart_comment.manager:
+    mozart.comment.manager:
         class: Mozart\Bundle\CommentBundle\Model\CommentManager
         arguments:
             - @service_container
