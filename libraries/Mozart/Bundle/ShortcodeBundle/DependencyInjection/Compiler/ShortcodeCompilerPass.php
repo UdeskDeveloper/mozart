@@ -18,12 +18,12 @@ class ShortcodeCompilerPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-        if (false === $container->hasDefinition( 'mozart_shortcode.shortcode_chain' )) {
+        if (false === $container->hasDefinition( 'mozart.shortcode.shortcode_chain' )) {
             return;
         }
 
         $definition = $container->getDefinition(
-            'mozart_shortcode.shortcode_chain'
+            'mozart.shortcode.shortcode_chain'
         );
 
         foreach ($container->findTaggedServiceIds( 'wordpress.shortcode' ) as $id => $attributes) {

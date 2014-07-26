@@ -16,12 +16,12 @@ class PostTypesCompilerPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-        if ( false === $container->hasDefinition( 'mozart_post.post_type_manager' ) ) {
+        if ( false === $container->hasDefinition( 'mozart.post.post_type_manager' ) ) {
             return;
         }
 
         $definition = $container->getDefinition(
-            'mozart_post.post_type_manager'
+            'mozart.post.post_type_manager'
         );
 
         foreach ( $container->findTaggedServiceIds( 'wordpress.post_type' ) as $id => $attributes ) {

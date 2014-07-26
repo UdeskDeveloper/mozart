@@ -38,7 +38,7 @@ class LoginWidget extends Widget
                 array(
                     'key'               => 'field_53c2f0d57a7d2',
                     'label'             => 'Title',
-                    'name'              => 'mozart_user_login_title',
+                    'name'              => 'mozart.user_login_title',
                     'prefix'            => '',
                     'type'              => 'text',
                     'instructions'      => '',
@@ -80,7 +80,7 @@ class LoginWidget extends Widget
         echo $this->templating->render(
             'MozartUserBundle:Account:widgets/login.html.twig',
             array(
-                'title'         => apply_filters( 'widget_title', $instance['mozart_user_login_title'] ),
+                'title'         => apply_filters( 'widget_title', $instance['mozart.user_login_title'] ),
                 'before_widget' => $args['before_widget'],
                 'after_widget'  => $args['after_widget'],
                 'before_title'  => $args['before_title'],

@@ -15,11 +15,11 @@ class UserCapabilitiesPerPostTypeCompilerPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-        if (false === $container->hasDefinition( 'mozart_post.post_type_manager' )) {
+        if (false === $container->hasDefinition( 'mozart.post.post_type_manager' )) {
             return;
         }
 
-        $postTypes = $container->get( 'mozart_post.post_type_manager' )->getPostTypes();
+        $postTypes = $container->get( 'mozart.post.post_type_manager' )->getPostTypes();
 
         foreach ($postTypes as $postType) {
             // TODO: add the capabilities

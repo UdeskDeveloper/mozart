@@ -16,12 +16,12 @@ class WidgetsCompilerPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-        if (false === $container->hasDefinition( 'mozart_widget.widget_manager' )) {
+        if (false === $container->hasDefinition( 'mozart.widget.widget_manager' )) {
             return;
         }
 
         $definition = $container->getDefinition(
-            'mozart_widget.widget_manager'
+            'mozart.widget.widget_manager'
         );
 
         foreach ($container->findTaggedServiceIds( 'wordpress.widget' ) as $id => $attributes) {

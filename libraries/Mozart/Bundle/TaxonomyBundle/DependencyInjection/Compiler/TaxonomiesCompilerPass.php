@@ -16,12 +16,12 @@ class TaxonomiesCompilerPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-        if (false === $container->hasDefinition( 'mozart_taxonomy.taxonomy_manager' )) {
+        if (false === $container->hasDefinition( 'mozart.taxonomy.taxonomy_manager' )) {
             return;
         }
 
         $definition = $container->getDefinition(
-            'mozart_taxonomy.taxonomy_manager'
+            'mozart.taxonomy.taxonomy_manager'
         );
 
         foreach ($container->findTaggedServiceIds( 'wordpress.taxonomy' ) as $id => $attributes) {

@@ -16,12 +16,12 @@ class ThemesCompilerPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-        if (false === $container->hasDefinition( 'mozart_theme.theme_chain' )) {
+        if (false === $container->hasDefinition( 'mozart.theme.theme_chain' )) {
             return;
         }
 
         $definition = $container->getDefinition(
-            'mozart_theme.theme_chain'
+            'mozart.theme.theme_chain'
         );
 
         foreach ($container->findTaggedServiceIds( 'wordpress.theme' ) as $id => $attributes) {

@@ -1,53 +1,53 @@
 services:
-    mozart_theme.sidebar.primary:
+    mozart.theme.sidebar.primary:
         class: Mozart\Bundle\ThemeBundle\Sidebar\PrimarySidebar
         tags:
             - { name: wordpress.sidebar }
-    mozart_theme.sidebar.left:
+    mozart.theme.sidebar.left:
         class: Mozart\Bundle\ThemeBundle\Sidebar\LeftSidebar
         tags:
             - { name: wordpress.sidebar }
-    mozart_theme.sidebar.right:
+    mozart.theme.sidebar.right:
         class: Mozart\Bundle\ThemeBundle\Sidebar\RightSidebar
         tags:
             - { name: wordpress.sidebar }
-    mozart_theme.sidebar.top:
+    mozart.theme.sidebar.top:
         class: Mozart\Bundle\ThemeBundle\Sidebar\TopSidebar
         tags:
             - { name: wordpress.sidebar }
-    mozart_theme.sidebar.bottom:
+    mozart.theme.sidebar.bottom:
         class: Mozart\Bundle\ThemeBundle\Sidebar\BottomSidebar
         tags:
             - { name: wordpress.sidebar }
-    mozart_theme.sidebar.content_top:
+    mozart.theme.sidebar.content_top:
         class: Mozart\Bundle\ThemeBundle\Sidebar\ContentTopSidebar
         tags:
             - { name: wordpress.sidebar }
-    mozart_theme.sidebar.content_bottom:
+    mozart.theme.sidebar.content_bottom:
         class: Mozart\Bundle\ThemeBundle\Sidebar\ContentBottomSidebar
         tags:
             - { name: wordpress.sidebar }
-    mozart_theme.sidebar.footer_one:
+    mozart.theme.sidebar.footer_one:
         class: Mozart\Bundle\ThemeBundle\Sidebar\FooterOneSidebar
         tags:
             - { name: wordpress.sidebar }
-    mozart_theme.sidebar.footer_two:
+    mozart.theme.sidebar.footer_two:
         class: Mozart\Bundle\ThemeBundle\Sidebar\FooterTwoSidebar
         tags:
             - { name: wordpress.sidebar }
-    mozart_theme.sidebar.footer_three:
+    mozart.theme.sidebar.footer_three:
         class: Mozart\Bundle\ThemeBundle\Sidebar\FooterThreeSidebar
         tags:
             - { name: wordpress.sidebar }
-    mozart_theme.sidebar.footer_four:
+    mozart.theme.sidebar.footer_four:
         class: Mozart\Bundle\ThemeBundle\Sidebar\FooterFourSidebar
         tags:
             - { name: wordpress.sidebar }
-    mozart_theme.sidebar.footer_bottom_left:
+    mozart.theme.sidebar.footer_bottom_left:
         class: Mozart\Bundle\ThemeBundle\Sidebar\FooterBottomLeftSidebar
         tags:
             - { name: wordpress.sidebar }
-    mozart_theme.sidebar.footer_bottom_right:
+    mozart.theme.sidebar.footer_bottom_right:
         class: Mozart\Bundle\ThemeBundle\Sidebar\FooterBottomRightSidebar
         tags:
             - { name: wordpress.sidebar }

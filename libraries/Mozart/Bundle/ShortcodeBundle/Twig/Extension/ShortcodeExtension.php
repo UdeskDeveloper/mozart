@@ -26,7 +26,7 @@ class ShortcodeExtension extends \Twig_Extension
      */
     public function getName()
     {
-        return 'mozart_shortcode';
+        return 'mozart.shortcode';
     }
 
     /**

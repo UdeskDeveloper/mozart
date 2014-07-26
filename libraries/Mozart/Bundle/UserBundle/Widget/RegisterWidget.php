@@ -34,7 +34,7 @@ class RegisterWidget extends Widget
                 array(
                     'key'               => 'field_53c2f16572c5d',
                     'label'             => 'Title',
-                    'name'              => 'mozart_user_register_widget_title',
+                    'name'              => 'mozart.user_register_widget_title',
                     'prefix'            => '',
                     'type'              => 'text',
                     'instructions'      => '',
@@ -76,7 +76,7 @@ class RegisterWidget extends Widget
         echo $this->templating->render(
             'MozartUserBundle:Account:widgets/register.html.twig',
             array(
-                'title'         => apply_filters( 'widget_title', $instance['mozart_user_register_widget_title'] ),
+                'title'         => apply_filters( 'widget_title', $instance['mozart.user_register_widget_title'] ),
                 'before_widget' => $args['before_widget'],
                 'after_widget'  => $args['after_widget'],
                 'before_title'  => $args['before_title'],

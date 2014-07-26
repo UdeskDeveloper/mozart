@@ -1,15 +1,15 @@
 services:
-    mozart_user.meta.manager:
+    mozart.user.meta.manager:
         class: Mozart\Bundle\UserBundle\Model\UserMetaManager
         arguments:
             - @service_container
-    mozart_user.widget.login:
+    mozart.user.widget.login:
         class: Mozart\Bundle\UserBundle\Widget\LoginWidget
         arguments:
             - @templating
         tags:
             - { name: wordpress.widget }
-    mozart_user.widget.register:
+    mozart.user.widget.register:
         class: Mozart\Bundle\UserBundle\Widget\RegisterWidget
         arguments:
             - @templating

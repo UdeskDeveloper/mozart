@@ -26,11 +26,11 @@ class MozartShortcodeBundle extends Bundle
 
     public function onWordpressInit()
     {
-        if (!$this->container->has( 'mozart_shortcode.shortcode_chain' )) {
+        if (!$this->container->has( 'mozart.shortcode.shortcode_chain' )) {
             return;
         }
 
-        $shortcodes = $this->container->get( 'mozart_shortcode.shortcode_chain' )
+        $shortcodes = $this->container->get( 'mozart.shortcode.shortcode_chain' )
             ->getShortcodes();
 
         foreach ($shortcodes as $name => $shortcode) {

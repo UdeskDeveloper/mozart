@@ -5,6 +5,7 @@
 
 namespace Mozart\Bundle\TaxonomyBundle;
 
+use Mozart\Component\Support\Str;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\DependencyInjection\Exception\BadMethodCallException;
 
@@ -60,7 +61,9 @@ abstract class Taxonomy implements TaxonomyInterface
     {
         $className = get_class( $this );
         if (substr( $className, -8 ) != 'Taxonomy') {
-            throw new BadMethodCallException( 'This taxonomy class does not follow the naming convention; you must overwrite the getName() method.' );
+            throw new BadMethodCallException(
+                'This taxonomy class does not follow the naming convention; you must overwrite the getName() method.'
+            );
         }
         $classBaseName = substr( strrchr( $className, '\\' ), 1, -8 );
 
@@ -80,7 +83,7 @@ abstract class Taxonomy implements TaxonomyInterface
      */
     public function getLabel()
     {
-        return ucwords( $this->getName() );
+        return ucwords( str_replace( '_', ' ', $this->getName() ) );
     }
 
     /**
@@ -88,7 +91,7 @@ abstract class Taxonomy implements TaxonomyInterface
      */
     public function getLabelPlural()
     {
-        return $this->getLabel() . 's';
+        return Str::plural( $this->getLabel() );
     }
 
     /**
@@ -97,7 +100,7 @@ abstract class Taxonomy implements TaxonomyInterface
     public function getLabels()
     {
         $singular = $this->getLabel();
-        $plural   = $this->getLabelPlural();
+        $plural = $this->getLabelPlural();
 
         return array(
             'name'              => _x( $plural, 'taxonomy general name' ),

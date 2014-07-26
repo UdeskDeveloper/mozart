@@ -40,7 +40,7 @@ class MozartWidgetBundle extends Bundle
     public function registerSidebars()
     {
         if (false === $GLOBALS['wp_registered_sidebars'] || false === $this->container->has(
-                'mozart_widget.sidebar_manager'
+                'mozart.widget.sidebar_manager'
             )
         ) {
             return false;
@@ -48,7 +48,7 @@ class MozartWidgetBundle extends Bundle
 
         add_theme_support( 'widgets' );
 
-        $sidebars = $this->container->get( 'mozart_widget.sidebar_manager' )->getSidebars();
+        $sidebars = $this->container->get( 'mozart.widget.sidebar_manager' )->getSidebars();
 
         foreach ($sidebars as $sidebar) {
 
@@ -65,13 +65,13 @@ class MozartWidgetBundle extends Bundle
     {
 
         if (false === isset( $GLOBALS['wp_widget_factory'] ) || false === $this->container->has(
-                'mozart_widget.widget_manager'
+                'mozart.widget.widget_manager'
             )
         ) {
             return false;
         }
 
-        $widgets = $this->container->get( 'mozart_widget.widget_manager' )->getWidgets();
+        $widgets = $this->container->get( 'mozart.widget.widget_manager' )->getWidgets();
 
         $GLOBALS['wp_widget_factory']->widgets = array_merge( $GLOBALS['wp_widget_factory']->widgets, $widgets );
     }

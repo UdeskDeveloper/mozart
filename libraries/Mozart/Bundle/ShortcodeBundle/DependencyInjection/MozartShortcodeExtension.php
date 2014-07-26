@@ -29,12 +29,4 @@ class MozartShortcodeExtension extends Extension
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('services.yml');
     }
-
-    /**
-     * @return string
-     */
-    public function getAlias()
-    {
-        return 'mozart_shortcode';
-    }
 }

@@ -38,11 +38,11 @@ class MozartTaxonomyBundle extends Bundle
      */
     public function registerTaxonomies()
     {
-        if (!$this->container->has( 'mozart_taxonomy.taxonomy_manager' )) {
+        if (!$this->container->has( 'mozart.taxonomy.taxonomy_manager' )) {
             return;
         }
 
-        $taxonomies = $this->container->get( 'mozart_taxonomy.taxonomy_manager' )
+        $taxonomies = $this->container->get( 'mozart.taxonomy.taxonomy_manager' )
             ->getTaxonomies();
 
         foreach ($taxonomies as $name => $taxonomy) {
