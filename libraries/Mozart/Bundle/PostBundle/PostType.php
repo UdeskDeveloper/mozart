@@ -5,6 +5,7 @@
 
 namespace Mozart\Bundle\PostBundle;
 
+use Mozart\Component\Support\Str;
 use Symfony\Component\DependencyInjection\Container;
 
 /**
@@ -88,7 +89,7 @@ class PostType implements PostTypeInterface
      */
     public function getPluralName()
     {
-        return translate( $this->getName() . 's' );
+        return translate( Str::plural($this->getName()) );
     }
 
     /**
