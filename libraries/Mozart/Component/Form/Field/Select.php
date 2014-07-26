@@ -23,7 +23,9 @@ class Select extends Field
                 $this->field['args'] = array();
             }
 
-            if ($this->field['data'] == "elusive-icons" || $this->field['data'] == "elusive-icon" || $this->field['data'] == "elusive") {
+            if ($this->field['data'] == "elusive-icons" ||
+                $this->field['data'] == "elusive-icon" ||
+                $this->field['data'] == "elusive") {
                 $icons_file = \Mozart::parameter(
                         'wp.plugin.dir'
                     ) . '/mozart/public/bundles/mozart/form/fields/select/elusive-icons.php';
