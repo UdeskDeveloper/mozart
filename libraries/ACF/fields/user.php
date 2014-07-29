@@ -264,11 +264,11 @@ class acf_field_user extends acf_field {
 		if( !empty($field['value']) ) {
 			
 			// force value to array
-			$value = acf_force_type_array( $value );
+			$field['value'] = acf_force_type_array( $field['value'] );
 			
 			
 			// convert values to int
-			$value = array_map('intval', $value);
+			$field['value'] = array_map('intval', $field['value']);
 			
 			
 			$users = get_users(array(

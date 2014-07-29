@@ -137,26 +137,6 @@ class acf_input {
 		
 	}
 	
-	
-	/*
-	*  save_post
-	*
-	*  description
-	*
-	*  @type	function
-	*  @date	8/10/13
-	*  @since	5.0.0
-	*
-	*  @param	$post_id (int)
-	*  @return	$post_id (int)
-	*/
-	
-	function save_post( $post_id ) {
-		
-		
-	}
-	
-	
 	function ajax_validate_save_post() {
 		
 		// validate

@@ -2,7 +2,7 @@
 Contributors: elliotcondon
 Tags: custom, field, custom field, advanced, simple fields, magic fields, more fields, repeater, matrix, post, type, text, textarea, file, image, edit, admin
 Requires at least: 3.5.0
-Tested up to: 3.8.1
+Tested up to: 3.9.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -106,6 +106,34 @@ http://support.advancedcustomfields.com/
 
 
 == Changelog ==
+
+= 5.0.2 =
+* Field group: Fixed bug deleteing fields after they are moved to another group
+* Field group: Fixed PHP error preventing redirect after group is duplicated
+* Field group: Fixed blank conditional logic UI
+* Field group: Fixed taxonomy term location rule not saving
+* Image field: Added functionality to edit/crop image within popup
+* File field: Added functionality to edit/crop image within popup
+* Core: Added toggle checkbox to export field group list
+* Core: Fixed logic to include minified scripts and styles
+
+= 5.0.1 =
+* Gallery field: Added auto save when change is detected
+* Gallery field: Added logic to better render grid with non cropped image sizes
+* Gallery field: Fixed JS error causing attachment data to not save
+* Post object field: Fixed empty value being returned for deleted posts
+* Taxonomy field: Fixed PHP error in checkbox mode when value is empty
+* User field: Fixed PHP error preventing choices from being loaded
+* Taxonomy field: Fixed null value returned on front end
+* Flexible Content field: Fixed bug preventing layouts without sub fields from loading correctly
+* Flexible Content field: Fixed bug preventing layout reorder from saving
+* Relationship field: Fixed result elements setting compatibility with ACF4
+* Field group: Added logic to remember "Show Field Keys" screen option
+* Core: Updated Select2 to v3.5.0
+* Core: Added logic to allow values to save on an empty post (no title, content, excerpt)
+* Core: Minor bug fixes
+* Language: Updated German translation - Thanks to Thomas Meyer
+* Language: Updated Hungarian translation - Thanks to Tihanyi Balázs
 
 = 5.0.0 =
 * Overhaul of HTML & CSS

@@ -239,6 +239,7 @@ class acf_field_file extends acf_field {
 			// create array to hold value data
 			$value = array(
 				'ID'			=> $attachment->ID,
+				'id'			=> $attachment->ID,
 				'alt'			=> get_post_meta($attachment->ID, '_wp_attachment_image_alt', true),
 				'title'			=> $attachment->post_title,
 				'caption'		=> $attachment->post_excerpt,

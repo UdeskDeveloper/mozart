@@ -7,22 +7,20 @@ $disabled = empty($groups) ? 1 : 0;
 
 
 // UI needs at least 1 conditional logic rule
-if( empty($groups) )
-{
+if( empty($groups) ) {
+	
 	$groups = array(
 		
 		// group 0
 		array(
 			
 			// rule 0
-			array(
-				'field'		=>	'',
-				'operator'	=>	'==',
-				'value'		=>	'',
-			)
+			array()
+		
 		)
 		
 	);
+	
 }
 
 ?>
@@ -72,7 +70,15 @@ if( empty($groups) )
 					<table class="acf-table acf-clear-table">
 						<tbody>
 						<?php foreach( $group as $rule_id => $rule ): 
-																
+							
+							// valid rule
+							$rule = wp_parse_args( $rule, array(
+								'field'		=>	'',
+								'operator'	=>	'==',
+								'value'		=>	'',
+							));
+							
+										
 							// $group_id must be completely different to $rule_id to avoid JS issues
 							$rule_id = "rule_{$rule_id}";
 							$prefix = "{$field['prefix']}[conditional_logic][{$group_id}][{$rule_id}]";

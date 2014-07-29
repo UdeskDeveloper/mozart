@@ -268,7 +268,8 @@ class acf_field_select extends acf_field {
 		
 		
 		// prepende orphans
-		if( !empty($field['value']) ) {
+		/*
+if( !empty($field['value']) ) {
 			
 			foreach( $field['value'] as $v ) {
 				
@@ -287,6 +288,7 @@ class acf_field_select extends acf_field {
 			}
 			
 		}
+*/
 		
 		
 		// null

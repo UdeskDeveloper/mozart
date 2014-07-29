@@ -632,7 +632,7 @@ function acf_render_field_setting( $field, $setting, $global = false ) {
 		
 	// copy across the $setting value
 	// Note: tab field contains no name for it's $setting (its just a message)
-	if( $setting['name'] && isset($field[ $setting['name'] ]) ) {
+	if( isset($setting['name'], $field[ $setting['name'] ]) ) {
 		
 		$setting['value'] = $field[ $setting['name'] ];
 		
@@ -1422,11 +1422,22 @@ function acf_decode_taxonomy_term( $string ) {
 	
 	// vars
 	$data = explode(':', $string);
+	$taxonomy = 'category';
+	$term = '';
+	
+	
+	// check data
+	if( isset($data[1]) ) {
+		
+		$taxonomy = $data[0];
+		$term = $data[1];
+		
+	}
 	
 	
 	// add data to $r
-	$r['taxonomy'] = $data[0];
-	$r['term'] = $data[1];
+	$r['taxonomy'] = $taxonomy;
+	$r['term'] = $term;
 	
 	
 	// return
@@ -1495,18 +1506,19 @@ function acf_cache_get( $key, &$found ) {
 
 function acf_force_type_array( $var ) {
 	
-	// bail early if empty
-	if( empty($var) && !is_numeric($var) ) {
-		
-		return array();
-	}
-	
-	
 	// is array?
 	if( is_array($var) ) {
 	
 		return $var;
 	
+	}
+	
+	
+	// bail early if empty
+	if( empty($var) && !is_numeric($var) ) {
+		
+		return array();
+		
 	}
 	
 	
@@ -2256,6 +2268,118 @@ function acf_convert_date_to_js( $date ) {
 	
 	// return
 	return $date;
+	
+}
+
+
+/*
+*  acf_update_user_setting
+*
+*  description
+*
+*  @type	function
+*  @date	15/07/2014
+*  @since	5.0.0
+*
+*  @param	$post_id (int)
+*  @return	$post_id (int)
+*/
+
+function acf_update_user_setting( $name, $value ) {
+	
+	// get current user id
+	$user_id = get_current_user_id();
+	
+	
+	// get user settings
+	$settings = get_user_meta( $user_id, 'acf_user_settings', false );
+	
+	
+	// find settings
+	if( isset($settings[0]) ) {
+	
+		$settings = $settings[0];
+	
+	} else {
+		
+		$settings = array();
+		
+	}
+	
+	
+	// append setting
+	$settings[ $name ] = $value;
+	
+	
+	// update user data
+	return update_metadata('user', $user_id, 'acf_user_settings', $settings);
+	
+	
+}
+
+
+/*
+*  acf_get_user_setting
+*
+*  description
+*
+*  @type	function
+*  @date	15/07/2014
+*  @since	5.0.0
+*
+*  @param	$post_id (int)
+*  @return	$post_id (int)
+*/
+
+function acf_get_user_setting( $name = '', $default = false ) {
+	
+	// get current user id
+	$user_id = get_current_user_id();
+	
+	
+	// get user settings
+	$settings = get_user_meta( $user_id, 'acf_user_settings', false );
+	
+	
+	// bail arly if no settings
+	if( empty($settings[0][$name]) ) {
+		
+		return $default;
+		
+	}
+	
+	
+	// return
+	return $settings[0][$name];
+	
+}
+
+
+/*
+*  acf_in_array
+*
+*  description
+*
+*  @type	function
+*  @date	22/07/2014
+*  @since	5.0.0
+*
+*  @param	$post_id (int)
+*  @return	$post_id (int)
+*/
+
+function acf_in_array( $value, $array ) {
+	
+	// bail early if not array
+	if( !is_array($array) ) {
+		
+		return false;
+		
+	}
+	
+	
+	// find value in array
+	return in_array($value, $array);
 	
 }
 

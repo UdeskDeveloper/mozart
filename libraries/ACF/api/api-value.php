@@ -276,14 +276,15 @@ function acf_update_option( $option = '', $value = false, $autoload = 'no' ) {
 /*
 *  acf_delete_value
 *
-*  
+*  This function will delete a value from the database
 *
 *  @type	function
 *  @date	28/09/13
 *  @since	5.0.0
 *
-*  @param	$field (array)
-*  @return	$field (array)
+*  @param	$post_id (mixed)
+*  @param	$key (string)
+*  @return	$field (boolean)
 */
 
 function acf_delete_value( $post_id = 0, $key = '' ) {
@@ -328,7 +329,5 @@ function acf_delete_value( $post_id = 0, $key = '' ) {
 	// return
 	return $return;
 }
-
-
 
 ?>

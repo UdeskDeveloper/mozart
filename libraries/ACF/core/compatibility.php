@@ -25,6 +25,7 @@ class acf_compatibility {
 		add_filter('acf/get_valid_field/type=textarea',		array($this, 'get_valid_textarea_field'), 20, 1);
 		add_filter('acf/get_valid_field/type=relationship',	array($this, 'get_valid_relationship_field'), 20, 1);
 		add_filter('acf/get_valid_field/type=post_object',	array($this, 'get_valid_relationship_field'), 20, 1);
+		add_filter('acf/get_valid_field/type=page_link',	array($this, 'get_valid_relationship_field'), 20, 1);
 		add_filter('acf/get_valid_field/type=image',		array($this, 'get_valid_image_field'), 20, 1);
 		add_filter('acf/get_valid_field/type=file',			array($this, 'get_valid_image_field'), 20, 1);
 		add_filter('acf/get_valid_field/type=wysiwyg',		array($this, 'get_valid_wysiwyg_field'), 20, 1);
@@ -154,7 +155,7 @@ class acf_compatibility {
 	function get_valid_relationship_field( $field ) {
 		
 		// remove 'all' from post_type
-		if( is_array($field['post_type']) && in_array('all', $field['post_type']) ) {
+		if( acf_in_array('all', $field['post_type']) ) {
 			
 			$field['post_type'] = array();
 			
@@ -162,11 +163,20 @@ class acf_compatibility {
 		
 		
 		// remove 'all' from taxonomy
-		if( is_array($field['taxonomy']) && in_array('all', $field['taxonomy']) ) {
+		if( acf_in_array('all', $field['taxonomy']) ) {
 			
 			$field['taxonomy'] = array();
 			
 		}
+		
+		
+		// save_format is now return_format
+		if( !empty($field['result_elements']) ) {
+			
+			$field['elements'] = acf_extract_var( $field, 'result_elements' );
+			
+		}
+		
 		
 		
 		// return
@@ -328,7 +338,7 @@ class acf_compatibility {
 	function get_valid_field_group( $field_group ) {
 		
 		// bail ealry if field group contains key ( is ACF5 )
-		if( ! empty($field_group['key']) ) {
+		if( !empty($field_group['key']) ) {
 			
 			return $field_group;
 			
@@ -341,7 +351,6 @@ class acf_compatibility {
 		
 		// add missing key
 		$field_group['key'] = empty($field_group['id']) ? uniqid('group_') : 'group_' . $field_group['id'];
-		
 		
 		// extract options
 		if( !empty($field_group['options']) ) {
@@ -356,7 +365,7 @@ class acf_compatibility {
 		// some location rules have changed
 		if( !empty($field_group['location']) ) {
 			
-			// location rules changed to groups in v...
+			// location rules changed to groups
 			if( isset($field_group['location']['rules']) ) {
 				
 				// extract location
@@ -408,43 +417,64 @@ class acf_compatibility {
 		 	);
 		 	
 		 	
-			
-			foreach( $field_group['location'] as $group_i => $group ) {
+			// loop over location groups
+			foreach( array_keys($field_group['location']) as $i ) {
 				
-				if( !empty($group) ) {
+				// extract group
+				$group = acf_extract_var( $field_group['location'], $i );
+				
+				
+				// bail early if group is empty
+				if( empty($group) ) {
 					
-					foreach( $group as $rule_i => $rule ) {
+					continue;
+					
+				}
+				
+				
+				// loop over group rules
+				foreach( array_keys($group) as $j ) {
+					
+					// extract rule
+					$rule = acf_extract_var( $group, $j );
+					
+					
+					// migrate param
+					if( isset($param_replace[ $rule['param'] ]) ) {
 						
-					 	if( array_key_exists($rule['param'], $param_replace) ) {
-						 	
-						 	$field_group['location'][ $group_i ][ $rule_i ]['param'] = $param_replace[ $rule['param'] ];
-						 	
-					 	}
+						$rule['param'] = $param_replace[ $rule['param'] ];
+						
+					}
+					
 					 	
+				 	// category / taxonomy terms are saved differently
+				 	if( $rule['param'] == 'post_category' || $rule['param'] == 'post_taxonomy' ) {
 					 	
-					 	// category / taxonomy terms are saved differently
-					 	if( $rule['param'] == 'post_category' || $rule['param'] == 'post_taxonomy' ) {
+					 	if( is_numeric($rule['value']) ) {
 						 	
-						 	if( is_numeric($rule['value']) ) {
-							 	
-							 	$term_id = $rule['value'];
-							 	$taxonomy = $wpdb->get_var( $wpdb->prepare( "SELECT taxonomy FROM $wpdb->term_taxonomy WHERE term_id = %d LIMIT 1", $term_id) );
-							 	$term = get_term( $term_id, $taxonomy );
-							 	
-							 	// update rule value
-							 	$field_group['location'][ $group_i ][ $rule_i ]['value'] = "{$term->taxonomy}:{$term->slug}";
-							 	
-						 	}
-						 	// if
+						 	$term_id = $rule['value'];
+						 	$taxonomy = $wpdb->get_var( $wpdb->prepare( "SELECT taxonomy FROM $wpdb->term_taxonomy WHERE term_id = %d LIMIT 1", $term_id) );
+						 	$term = get_term( $term_id, $taxonomy );
+						 	
+						 	// update rule value
+						 	$rule['value'] = "{$term->taxonomy}:{$term->slug}";
 						 	
 					 	}
 					 	// if
-						
-					}
-					// foreach
-					
+					 	
+				 	}
+				 	// if
+				 	
+				 	
+				 	// append rule
+				 	$group[ $j ] = $rule;
+				 	
 				}
-				// if
+				// foreach
+				
+				
+				// append group
+				$field_group['location'][ $i ] = $group;
 				
 			}
 			// foreach

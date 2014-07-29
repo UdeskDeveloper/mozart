@@ -68,7 +68,7 @@ function acf_get_valid_field_group( $field_group = false ) {
 	
 	// filter
 	$field_group = apply_filters('acf/get_valid_field_group', $field_group);
-	
+
 	
 	// return
 	return $field_group;
@@ -333,7 +333,7 @@ function _acf_get_field_group_by_id( $post_id = 0 ) {
 		
 	}
 	
-	
+		
 	// validate
 	$field_group = acf_get_valid_field_group( $field_group );
 

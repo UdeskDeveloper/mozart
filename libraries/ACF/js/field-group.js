@@ -129,15 +129,7 @@
 			
 			$(document).on('change', '#adv-settings input[name="show_field_keys"]', function(){
 				
-				if( $(this).val() == "1" ) {
-				
-					_this.$fields.addClass('show-field-keys');
-				
-				} else {
-					
-					_this.$fields.removeClass('show-field-keys');
-					
-				}
+				_this.toggle_field_keys( $(this).val() );
 				
 			});
 			
@@ -162,6 +154,84 @@
 			this.conditions.init();
 			this.locations.init();
 			this.options.init();
+			
+			
+			// render
+			this.render();
+		},
+		
+		
+		/*
+		*  render
+		*
+		*  description
+		*
+		*  @type	function
+		*  @date	15/07/2014
+		*  @since	5.0.0
+		*
+		*  @param	$post_id (int)
+		*  @return	$post_id (int)
+		*/
+		
+		render : function(){
+			
+			// vars
+			var options = acf.serialize_form( $('#adv-settings') );
+			
+			
+			// convert types
+			options.show_field_keys = parseInt(options.show_field_keys);
+			
+			
+			// show field keys	
+			if( options.show_field_keys ) {
+			
+				this.$fields.addClass('show-field-keys');
+			
+			} else {
+				
+				this.$fields.removeClass('show-field-keys');
+				
+			}
+			
+		},
+		
+		
+		/*
+		*  toggle_field_keys
+		*
+		*  description
+		*
+		*  @type	function
+		*  @date	15/07/2014
+		*  @since	5.0.0
+		*
+		*  @param	$post_id (int)
+		*  @return	$post_id (int)
+		*/
+		
+		toggle_field_keys : function( val ){
+			
+			// vars
+			val = parseInt(val);
+			
+			
+			// update user setting
+			acf.update_user_setting('show_field_keys', val);
+			
+			
+			// toggle class
+			if( val ) {
+			
+				this.$fields.addClass('show-field-keys');
+			
+			} else {
+				
+				this.$fields.removeClass('show-field-keys');
+				
+			}
+			
 		},
 		
 		
@@ -970,6 +1040,10 @@
 		
 		move_field_confirm : function( $field, html ){
 			
+			// reference
+			var self = this;
+			
+			
 			// update popup
 			acf.update_popup({
 				content : html
@@ -1003,7 +1077,13 @@
 							content : html
 						});
 						
-						acf.field_group.delete_field( $field );
+						
+						// remove field's ID to prevent it being deleted on save
+						self.update_field_meta( $field, 'ID', '');
+						
+						
+						// delete field (just for animation)
+						self.delete_field( $field );
 						
 					}
 				});
@@ -1520,6 +1600,17 @@
 		
 		update_select : function( $select, choices ){
 			
+			// default choices
+			if( !choices || choices.length == 0 ) {
+				
+				choices = [{
+					'value' : '',
+					'label' : ''
+				}];
+				
+			}
+			
+			
 			// vars
 			var value = $select.val();
 			
@@ -1633,7 +1724,7 @@
 			if( choices.length == 0 )
 			{
 				choices.push({
-					'value' : 'null',
+					'value' : '',
 					'label' : acf.l10n.no_fields
 				});
 			}

@@ -149,6 +149,7 @@ class acf_field_gallery extends acf_field {
 	
 	function ajax_update_attachment() {
 		
+		
 		// validate
 		if( ! wp_verify_nonce($_REQUEST['nonce'], 'acf_nonce') ) {
 		
@@ -162,6 +163,7 @@ class acf_field_gallery extends acf_field {
 			wp_send_json_error();
 			
 		}
+		
 		
 		foreach( $_REQUEST['attachments'] as $id => $changes ) {
 			
@@ -617,6 +619,7 @@ class acf_field_gallery extends acf_field {
 			// create $attachment
 			$a = array(
 				'ID'			=> $post->ID,
+				'id'			=> $post->ID,
 				'alt'			=> get_post_meta($post->ID, '_wp_attachment_image_alt', true),
 				'title'			=> $post->post_title,
 				'caption'		=> $post->post_excerpt,

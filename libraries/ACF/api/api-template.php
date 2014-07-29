@@ -1170,7 +1170,7 @@ function acf_form( $args = array() ) {
 	
 	
 	// defaults
-	$args = acf_parse_args( $args, array(
+	$args = wp_parse_args( $args, array(
 		'id'					=> 'acf-form',
 		'post_id'				=> false,
 		'new_post'				=> false,
@@ -1179,12 +1179,7 @@ function acf_form( $args = array() ) {
 		'post_title'			=> false,
 		'post_content'			=> false,
 		'form'					=> true,
-		'form_attributes'		=> array(
-			'id'					=> 'post',
-			'class'					=> '',
-			'action'				=> '',
-			'method'				=> 'post',
-		),
+		'form_attributes'		=> array(),
 		'return'				=> add_query_arg( 'updated', 'true', $url ),
 		'html_before_fields'	=> '',
 		'html_after_fields'		=> '',
@@ -1193,6 +1188,13 @@ function acf_form( $args = array() ) {
 		'label_placement'		=> 'top',
 		'instruction_placement'	=> 'label',
 		'field_el'				=> 'div'
+	));
+	
+	$args['form_attributes'] = wp_parse_args( $args['form_attributes'], array(
+		'id'					=> 'post',
+		'class'					=> '',
+		'action'				=> '',
+		'method'				=> 'post',
 	));
 	
 	
@@ -1221,7 +1223,7 @@ function acf_form( $args = array() ) {
 	
 	
 	// attributes
-	$args['form_attributes']['class'] .= " acf-form {$args['id']}";
+	$args['form_attributes']['class'] .= ' acf-form';
 	
 	
 	// vars

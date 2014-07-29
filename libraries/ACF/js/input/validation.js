@@ -88,7 +88,7 @@
 			
 			
 			// vars
-			var data = acf.serialize_form( $form );
+			var data = acf.serialize_form( $form, 'acf' );
 				
 			
 			// append AJAX action		
@@ -140,11 +140,10 @@
 			
 			
 			// validate json
-			if( !json || json.result == 1)
-			{
+			if( !json || typeof json.result === 'undefined' || json.result == 1) {
 			
 				// remove hidden postboxes (this will stop them from being posted to save)
-				$form.find('.acf-postbox:hidden').remove();
+				$form.find('.acf-postbox.acf-hidden').remove();
 					
 					
 				// bypass JS and submit form

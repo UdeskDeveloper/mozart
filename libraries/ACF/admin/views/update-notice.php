@@ -17,7 +17,7 @@ $nonce2 = wp_create_nonce( 'rollback-acf_' . $rollback );
 		
 		<div class="content">
 			
-			<?php if( !$pro && !empty($addons) ): ?>
+		<?php if( !$pro && !empty($addons) ): ?>
 				
 			<h2><?php _e("ACF PRO Required",'acf'); ?></h2>
 			
@@ -29,7 +29,7 @@ $nonce2 = wp_create_nonce( 'rollback-acf_' . $rollback );
 			
 			<p><a id="acf-notice-action" href="<?php echo admin_url('update.php?action=upgrade-plugin&plugin=' . $basename . '&_wpnonce=' . $nonce1 . '&_acfrollback=' . $nonce2 ); ?>" class="acf-button blue"><?php printf(__("Roll back to ACF v%s", 'acf'), $rollback ); ?></a> <a id="acf-notice-action" href="#" class="acf-button"><?php _e("Learn why ACF PRO is required for my site", 'acf'); ?></a></p>
 			
-			<?php else: ?>	
+		<?php else: ?>	
 				
 			<h2><?php _e("Database Upgrade Required",'acf'); ?></h2>
 			
@@ -50,7 +50,7 @@ $nonce2 = wp_create_nonce( 'rollback-acf_' . $rollback );
 			})(jQuery);
 			</script>
 			
-			<?php endif; ?>
+		<?php endif; ?>
 			
 		</div>
 	</div>

@@ -792,6 +792,9 @@
 					
 						acf.do_action('sortstop', ui.item, ui.placeholder);
 						
+						// save
+						acf.field_group.save_field( $el );
+						
 						
 		   			}
 				});

@@ -374,7 +374,7 @@ class acf_field_relationship extends acf_field {
 		// load posts in 1 query to save multiple DB calls from following code
 		if( count($value) > 1 ) {
 			
-			$posts = get_posts(array(
+			get_posts(array(
 				'posts_per_page'	=> -1,
 				'post_type'			=> acf_get_post_types(),
 				'post_status'		=> 'any',
@@ -384,16 +384,24 @@ class acf_field_relationship extends acf_field {
 		}
 		
 		
+		// vars
+		$posts = array();
+		
+		
 		// update value to include $post
-		foreach( array_keys($value) as $i ) {
+		foreach( $value as $post_id ) {
 			
-			$value[ $i ] = get_post( $value[ $i ] );
+			if( $post = get_post( $post_id ) ) {
+				
+				$posts[] = $post;
+				
+			}
 			
 		}
 		
 		
 		// return
-		return $value;
+		return $posts;
 	}
 	
 	

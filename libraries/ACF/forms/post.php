@@ -39,6 +39,7 @@ class acf_form_post {
 		
 		
 		// save
+		add_filter('wp_insert_post_empty_content',		array($this, 'wp_insert_post_empty_content'), 10, 2);
 		add_action('save_post', 						array($this, 'save_post'), 10, 1);
 		
 		
@@ -464,6 +465,34 @@ class acf_form_post {
 		// return
 		wp_send_json_success( $r );
 		
+	}
+	
+	
+	/*
+	*  wp_insert_post_empty_content
+	*
+	*  This function will allow WP to insert a new post without title / content if ACF data exists
+	*
+	*  @type	function
+	*  @date	16/07/2014
+	*  @since	5.0.1
+	*
+	*  @param	$maybe_empty (bool) whether the post should be considered "empty"
+	*  @param	$postarr (array) Array of post data
+	*  @return	$maybe_empty
+	*/
+	
+	function wp_insert_post_empty_content( $maybe_empty, $postarr ) {
+		
+		if( $maybe_empty && !empty($_POST['_acfchanged']) ) {
+			
+			$maybe_empty = false;
+			
+		}
+
+		
+		// return
+		return $maybe_empty;
 	}
 	
 	
