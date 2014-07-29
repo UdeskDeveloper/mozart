@@ -8,6 +8,9 @@ parameters:
     mozart.table_prefix.subscriber.class: Mozart\Bundle\NucleusBundle\Subscriber\TablePrefixSubscriber
 
 services:
+    mozart.multisite:
+        class: Mozart\Component\Multisite\Multisite
+
     mozart.twig.extension:
         class: Mozart\Bundle\NucleusBundle\Twig\Extension\NucleusExtension
         arguments:
