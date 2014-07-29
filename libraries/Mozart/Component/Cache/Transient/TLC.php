@@ -3,7 +3,8 @@
  * Copyright 2014 Alexandru Furculita <alex@rhetina.com>
  */
 
-namespace Mozart\Bundle\CacheBundle\Transient;
+namespace Mozart\Component\Cache\Transient;
+
 class TLC
 {
     public $key;
@@ -18,7 +19,7 @@ class TLC
     public function __construct($key)
     {
         $this->raw_key = $key;
-        $this->key     = md5( $key );
+        $this->key = md5( $key );
     }
 
     public function get()
@@ -38,8 +39,9 @@ class TLC
             }
         } else {
             // Soft expiration
-            if ( $data[0] !== 0 && $data[0] < time() )
+            if ($data[0] !== 0 && $data[0] < time()) {
                 $this->schedule_background_fetch();
+            }
 
             return $data[1];
         }
@@ -52,8 +54,19 @@ class TLC
 
     private function schedule_background_fetch()
     {
-        if ( ! $this->has_update_lock() ) {
-            set_transient( 'tlc_up__' . $this->key, array( $this->new_update_lock(), $this->raw_key, $this->expiration, $this->callback, $this->params, $this->extend_on_fail ), 300 );
+        if (!$this->has_update_lock()) {
+            set_transient(
+                'tlc_up__' . $this->key,
+                array(
+                    $this->new_update_lock(),
+                    $this->raw_key,
+                    $this->expiration,
+                    $this->callback,
+                    $this->params,
+                    $this->extend_on_fail
+                ),
+                300
+            );
             add_action( 'shutdown', array( $this, 'spawn_server' ) );
         }
 
@@ -62,16 +75,17 @@ class TLC
 
     private function has_update_lock()
     {
-        return (bool) $this->get_update_lock();
+        return (bool)$this->get_update_lock();
     }
 
     private function get_update_lock()
     {
         $lock = get_transient( 'tlc_up__' . $this->key );
-        if ( $lock )
+        if ($lock) {
             return $lock[0];
-        else
+        } else {
             return false;
+        }
     }
 
     private function new_update_lock()
@@ -84,10 +98,12 @@ class TLC
     public function fetch_and_cache()
     {
         // If you don't supply a callback, we can't update it for you!
-        if ( empty( $this->callback ) )
+        if (empty( $this->callback )) {
             return false;
-        if ( $this->has_update_lock() && ! $this->owns_update_lock() )
-            return; // Race... let the other process handle it
+        }
+        if ($this->has_update_lock() && !$this->owns_update_lock()) {
+            return;
+        } // Race... let the other process handle it
         try {
             $data = call_user_func_array( $this->callback, $this->params );
             $this->set( $data );
@@ -95,8 +111,8 @@ class TLC
             if ($this->extend_on_fail > 0) {
                 $data = $this->raw_get();
                 if ($data) {
-                    $data             = $data[1];
-                    $old_expiration   = $this->expiration;
+                    $data = $data[1];
+                    $old_expiration = $this->expiration;
                     $this->expiration = $this->extend_on_fail;
                     $this->set( $data );
                     $this->expiration = $old_expiration;
@@ -119,7 +135,7 @@ class TLC
     {
         // We set the timeout as part of the transient data.
         // The actual transient has a far-future TTL. This allows for soft expiration.
-        $expiration           = ( $this->expiration > 0 ) ? time() + $this->expiration : 0;
+        $expiration = ( $this->expiration > 0 ) ? time() + $this->expiration : 0;
         $transient_expiration = ( $this->expiration > 0 ) ? $this->expiration + 31536000 : 0; // 31536000 = 60*60*24*365 ~= one year
         set_transient( 'tlc__' . $this->key, array( $expiration, $data ), $transient_expiration );
 
@@ -134,28 +150,37 @@ class TLC
     public function spawn_server()
     {
         $server_url = home_url( '/?tlc_transients_request' );
-        wp_remote_post( $server_url, array( 'body' => array( '_tlc_update' => $this->lock, 'key' => $this->raw_key ), 'timeout' => 0.01, 'blocking' => false, 'sslverify' => apply_filters( 'https_local_ssl_verify', true ) ) );
+        wp_remote_post(
+            $server_url,
+            array(
+                'body'      => array( '_tlc_update' => $this->lock, 'key' => $this->raw_key ),
+                'timeout'   => 0.01,
+                'blocking'  => false,
+                'sslverify' => apply_filters( 'https_local_ssl_verify', true )
+            )
+        );
     }
 
-    public function updates_with( $callback, $params = array() )
+    public function updates_with($callback, $params = array())
     {
         $this->callback = $callback;
-        if ( is_array( $params ) )
+        if (is_array( $params )) {
             $this->params = $params;
+        }
 
         return $this;
     }
 
     public function expires_in($seconds)
     {
-        $this->expiration = (int) $seconds;
+        $this->expiration = (int)$seconds;
 
         return $this;
     }
 
     public function extend_on_fail($seconds)
     {
-        $this->extend_on_fail = (int) $seconds;
+        $this->extend_on_fail = (int)$seconds;
 
         return $this;
     }
