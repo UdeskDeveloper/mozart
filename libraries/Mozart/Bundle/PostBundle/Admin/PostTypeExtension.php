@@ -5,8 +5,8 @@
 
 namespace Mozart\Bundle\PostBundle\Admin;
 
-use Mozart\Bundle\PostBundle\PostType;
-use Mozart\Bundle\PostBundle\PostTypeExtensionInterface;
+use Mozart\Component\Post\PostType;
+use Mozart\Component\Post\PostTypeExtensionInterface;
 
 /**
  * Class PostTypeExtension
