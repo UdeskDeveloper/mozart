@@ -5,7 +5,7 @@
 
 namespace Mozart\Bundle\ConfigBundle;
 
-use Mozart\Bundle\ConfigBundle\DependencyInjection\Compiler\OptionExtensionsCompilerPass;
+use Mozart\Bundle\ConfigBundle\Controller\OptionController;
 use Mozart\Bundle\ConfigBundle\DependencyInjection\Compiler\ConfigSectionsCompilerPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
@@ -31,6 +31,13 @@ class MozartConfigBundle extends Bundle
      */
     public function boot()
     {
-        $this->container->get( 'mozart.config.controller' )->initOptionManager( );
+        add_action('init', array($this->getController(), 'initOptionManager'));
+    }
+
+    /**
+     * @return OptionController
+     */
+    private function getController() {
+        return $this->container->get( 'mozart.config.controller' );
     }
 }
