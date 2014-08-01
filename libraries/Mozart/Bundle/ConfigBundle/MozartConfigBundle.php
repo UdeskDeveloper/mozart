@@ -6,6 +6,7 @@
 namespace Mozart\Bundle\ConfigBundle;
 
 use Mozart\Bundle\ConfigBundle\Controller\OptionController;
+use Mozart\Bundle\ConfigBundle\DependencyInjection\Compiler\ConfigPagesCompilerPass;
 use Mozart\Bundle\ConfigBundle\DependencyInjection\Compiler\ConfigSectionsCompilerPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
@@ -24,6 +25,7 @@ class MozartConfigBundle extends Bundle
     {
         parent::build( $container );
         $container->addCompilerPass( new ConfigSectionsCompilerPass() );
+        $container->addCompilerPass( new ConfigPagesCompilerPass() );
     }
 
     /**
@@ -31,13 +33,14 @@ class MozartConfigBundle extends Bundle
      */
     public function boot()
     {
-        add_action('init', array($this->getController(), 'initOptionManager'));
+        add_action( 'init', array( $this->getController(), 'initOptionManager' ) );
     }
 
     /**
      * @return OptionController
      */
-    private function getController() {
+    private function getController()
+    {
         return $this->container->get( 'mozart.config.controller' );
     }
 }
