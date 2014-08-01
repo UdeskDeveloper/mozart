@@ -5,6 +5,9 @@
 
 namespace Mozart\Bundle\FieldBundle;
 
+use Mozart\Bundle\FieldBundle\ACF\Extension\NavMenu;
+use Mozart\Bundle\FieldBundle\ACF\Extension\StarRating;
+use Mozart\Bundle\FieldBundle\ACF\Extension\Url;
 use Mozart\Bundle\FieldBundle\ACF\Extension\UserRole;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
@@ -26,8 +29,9 @@ class MozartFieldBundle extends Bundle
     public function registerAdvancedCustomFields()
     {
         // TODO: move this MenuBundle and register with FieldBundle's DIExtension
-        new \Mozart\Bundle\FieldBundle\ACF\Extension\NavMenu();
-        new \Mozart\Bundle\FieldBundle\ACF\Extension\StarRating();
+        new NavMenu();
+        new StarRating();
         new UserRole();
+        new Url();
     }
 }
