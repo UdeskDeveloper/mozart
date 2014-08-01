@@ -29,5 +29,11 @@ class MozartTaxonomyExtension extends Extension
 
         $loader = new YamlFileLoader( $container, new FileLocator( __DIR__ . '/../Resources/config' ) );
         $loader->load( 'services.yml' );
+
+        $this->addClassesToCompile(array(
+                "Mozart\\Bundle\\TaxonomyBundle\\TaxonomyInterface",
+                "Mozart\\Bundle\\TaxonomyBundle\\Taxonomy"
+            )
+        );
     }
 }
