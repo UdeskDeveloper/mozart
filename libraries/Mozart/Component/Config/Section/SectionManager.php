@@ -25,7 +25,7 @@ class SectionManager
      */
     public function addSection( ConfigSectionInterface $section, $alias = null )
     {
-        if (null === $alias) {
+        if (null === $alias || '' === $alias) {
             $alias = $section->getAlias();
         }
 

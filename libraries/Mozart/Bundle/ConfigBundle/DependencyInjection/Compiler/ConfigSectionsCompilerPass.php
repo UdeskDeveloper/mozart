@@ -24,14 +24,14 @@ class ConfigSectionsCompilerPass implements CompilerPassInterface
         );
         foreach ($taggedServices as $id => $tagAttributes) {
             foreach ($tagAttributes as $attributes) {
+                if (!isset($attributes["alias"])) {
+                    $attributes["alias"] = '';
+                }
                 $definition->addMethodCall(
                     'addSection',
                     array( new Reference( $id ), $attributes["alias"] )
                 );
             }
         }
-
-//        $container->setParameter( 'settings', get_option( 'mozart-options', array() ) );
     }
-
 }
