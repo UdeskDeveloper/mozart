@@ -25,8 +25,26 @@ class MozartPluginBundle extends Bundle
     public function boot()
     {
         add_action( 'init', array( $this->container->get( 'mozart.plugin.manager' ), 'init' ) );
-        add_action( 'deactivated_plugin', array( $this, 'clearCache' ), 10, 2 );
-        add_action( 'activated_plugin', array( $this, 'clearCache' ), 10, 2 );
+        add_action(
+            'deactivated_plugin',
+            function () use ($this) {
+                add_action(
+                    'wp_loader',
+                    array( $this, 'clearCache' ),
+                    1000
+                );
+            },
+            10,
+            2
+        );
+        add_action( 'activated_plugin',
+            function () use ($this) {
+                add_action(
+                    'wp_loader',
+                    array( $this, 'clearCache' ),
+                    1000
+                );
+            }, 10, 2 );
     }
 
     public function clearCache($plugin, $network_activation)
