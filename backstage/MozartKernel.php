@@ -1,9 +1,9 @@
 <?php
-
 use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
 use Knp\Bundle\MarkdownBundle\KnpMarkdownBundle;
 use Liip\ThemeBundle\LiipThemeBundle;
 use Mopa\Bundle\BootstrapBundle\MopaBootstrapBundle;
+use Mozart\Bundle\AjaxBundle\MozartAjaxBundle;
 use Mozart\Bundle\BlogBundle\MozartBlogBundle;
 use Mozart\Bundle\CacheBundle\MozartCacheBundle;
 use Mozart\Bundle\CommentBundle\MozartCommentBundle;
@@ -37,11 +37,12 @@ use Symfony\Component\Config\Loader\LoaderInterface;
 class MozartKernel extends Kernel
 {
 
+
     /**
      * @param string $environment
      * @param bool $debug
      */
-    public function __construct( $environment, $debug )
+    public function __construct($environment, $debug)
     {
         parent::__construct( $environment, $debug );
     }
@@ -60,8 +61,11 @@ class MozartKernel extends Kernel
             new SensioFrameworkExtraBundle(),
             new LiipThemeBundle(),
             new KnpMarkdownBundle(),
+            new JMS\DiExtraBundle\JMSDiExtraBundle($this),
+            new JMS\AopBundle\JMSAopBundle(),
             // load core modules
             new MozartNucleusBundle(),
+            new MozartAjaxBundle(),
             new MozartBlogBundle(),
             new MozartCacheBundle(),
             new MozartCommentBundle(),
@@ -84,6 +88,7 @@ class MozartKernel extends Kernel
         if (in_array( $this->getEnvironment(), array( 'dev', 'test' ) )) {
             $bundles[] = new WebProfilerBundle();
             $bundles[] = new SensioGeneratorBundle();
+            $bundles[] = new JMS\DebuggingBundle\JMSDebuggingBundle($this);
         }
 
         return $bundles;
@@ -132,7 +137,7 @@ class MozartKernel extends Kernel
     /**
      * @param LoaderInterface $loader
      */
-    public function registerContainerConfiguration( LoaderInterface $loader )
+    public function registerContainerConfiguration(LoaderInterface $loader)
     {
         $loader->load( __DIR__ . '/config/config_' . $this->getEnvironment() . '.yml' );
     }
@@ -159,5 +164,19 @@ class MozartKernel extends Kernel
     public function getName()
     {
         return 'mozart';
+    }
+
+    protected function getContainerBaseClass()
+    {
+        if (in_array($this->getEnvironment(), array('dev', 'test'))) {
+            return '\JMS\DebuggingBundle\DependencyInjection\TraceableContainer';
+        }
+
+        return parent::getContainerBaseClass();
+    }
+
+    protected function getContainerClass()
+    {
+        return 'MozartOrchestra' . ( $this->debug ? 'NSAied' : '' );
     }
 }
