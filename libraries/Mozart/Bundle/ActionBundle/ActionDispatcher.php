@@ -29,6 +29,8 @@ class ActionDispatcher implements EventDispatcherInterface
      */
     public function dispatch($eventName, Event $event = null)
     {
+        global $wp_current_filter;
+
         if (null === $event) {
             $event = new Event();
         }
@@ -41,7 +43,29 @@ class ActionDispatcher implements EventDispatcherInterface
 
         $this->doDispatch( $this->getListeners( $eventName ), $eventName, $event );
 
+        array_pop( $wp_current_filter );
+
         return $event;
+    }
+
+    /**
+     * Triggers the listeners of an event.
+     *
+     * This method can be overridden to add functionality that is executed
+     * for each listener.
+     *
+     * @param callable[] $listeners The event listeners.
+     * @param string     $eventName The name of the event to dispatch.
+     * @param Event      $event     The event object to pass to the event handlers/listeners.
+     */
+    protected function doDispatch($listeners, $eventName, Event $event)
+    {
+        foreach ($listeners as $listener) {
+            call_user_func( $listener, $event, $eventName, $this );
+            if ($event->isPropagationStopped()) {
+                break;
+            }
+        }
     }
 
     /**
@@ -103,7 +127,41 @@ class ActionDispatcher implements EventDispatcherInterface
      */
     public function getListeners($eventName = null)
     {
-        // TODO: Implement getListeners() method.
+        global $wp_filter, $wp_actions, $merged_filters, $wp_current_filter;
+
+        if (!isset( $wp_actions[$eventName] )) {
+            $wp_actions[$eventName] = 1;
+        } else {
+            ++$wp_actions[$eventName];
+        }
+
+        // Do 'all' actions first
+        if (isset( $wp_filter['all'] )) {
+            $wp_current_filter[] = $eventName;
+            $all_args = func_get_args();
+            _wp_call_all_hook( $all_args );
+        }
+
+        if (!isset( $wp_filter[$eventName] )) {
+            if (isset( $wp_filter['all'] )) {
+                array_pop( $wp_current_filter );
+            }
+
+            return [ ];
+        }
+
+        if (!isset( $wp_filter['all'] )) {
+            $wp_current_filter[] = $eventName;
+        }
+
+        // Sort
+        if (!isset( $merged_filters[$eventName] )) {
+            ksort( $wp_filter[$eventName] );
+            $merged_filters[$eventName] = true;
+        }
+
+//        reset( $wp_filter[ $eventName ] );
+        return $wp_filter[$eventName];
     }
 
     /**
