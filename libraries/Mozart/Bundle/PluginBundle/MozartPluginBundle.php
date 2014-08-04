@@ -54,6 +54,8 @@ class MozartPluginBundle extends Bundle
         if ($filesystem->exists( $this->container->getParameter( 'kernel.cache_dir' ) )) {
             $filesystem->remove( $this->container->getParameter( 'kernel.cache_dir' ) );
         }
+
+        flush_rewrite_rules();
     }
 
 }
