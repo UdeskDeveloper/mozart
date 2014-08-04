@@ -10,7 +10,7 @@ use Mozart\Component\Cache\FragmentCache;
 /**
  * Cache navigation menus.
  */
-class Menu_Cache extends FragmentCache
+class MenuCache extends FragmentCache
 {
 
     public function enable()
@@ -126,7 +126,7 @@ class Menu_Cache extends FragmentCache
      * Generate and timestamp menu output.
      *
      * @param string $name
-     * @param array $args
+     * @param array  $args
      *
      * @return string
      */
