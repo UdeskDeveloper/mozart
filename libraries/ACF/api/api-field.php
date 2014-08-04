@@ -284,7 +284,6 @@ function acf_get_fields( $parent = false ) {
 	
 	}
 	
-	
 	// validate
 	if( !$parent )
 	{
