@@ -17,7 +17,8 @@ class ConfigSection implements ConfigSectionInterface
     {
     }
 
-    public function getAlias() {
+    public function getAlias()
+    {
         $className     = get_class( $this );
         $classBaseName = substr( strrchr( $className, '\\' ), 1 );
 

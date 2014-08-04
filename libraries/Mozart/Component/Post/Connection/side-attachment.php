@@ -1,24 +1,26 @@
 <?php
 namespace Mozart\Component\Post\Connection;
 
-class P2P_Side_Attachment extends P2P_Side_Post {
+class side-attachment extends P2P_Side_Post
+{
+    protected $item_type = 'P2P_Item_Attachment';
 
-	protected $item_type = 'P2P_Item_Attachment';
+    public function __construct($query_vars)
+    {
+        $this->query_vars = $query_vars;
 
-	function __construct( $query_vars ) {
-		$this->query_vars = $query_vars;
+        $this->query_vars['post_type'] = array( 'attachment' );
+    }
 
-		$this->query_vars['post_type'] = array( 'attachment' );
-	}
+    public function can_create_item()
+    {
+        return false;
+    }
 
-	function can_create_item() {
-		return false;
-	}
-
-	function get_base_qv( $q ) {
-		return array_merge( parent::get_base_qv( $q ), array(
-			'post_status' => 'inherit'
-		) );
-	}
+    public function get_base_qv($q)
+    {
+        return array_merge( parent::get_base_qv( $q ), array(
+            'post_status' => 'inherit'
+        ) );
+    }
 }
-

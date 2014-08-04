@@ -10,7 +10,7 @@ class Date
      *
      *
      */
-    function __construct( $parent, $field, $value, $current )
+    public function __construct($parent, $field, $value, $current)
     {
         $this->parent = $parent;
         $this->field = $field;
@@ -30,7 +30,7 @@ class Date
      *
      *
      */
-    function validate()
+    public function validate()
     {
         $string = str_replace( '/', '', $this->value );
 

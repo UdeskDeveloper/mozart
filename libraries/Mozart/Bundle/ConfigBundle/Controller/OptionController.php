@@ -250,7 +250,7 @@ class OptionController
      *
      * @return void
      */
-    public function activate( $network_wide )
+    public function activate($network_wide)
     {
         if (function_exists( 'is_multisite' ) && is_multisite()) {
             if ($network_wide) {
@@ -279,7 +279,7 @@ class OptionController
      *
      * @return void
      */
-    public function deactivate( $network_wide )
+    public function deactivate($network_wide)
     {
         if (function_exists( 'is_multisite' ) && is_multisite()) {
             if ($network_wide) {
@@ -308,7 +308,7 @@ class OptionController
      *
      * @return void
      */
-    public function activate_new_site( $blog_id )
+    public function activate_new_site($blog_id)
     {
         if (1 !== did_action( 'wpmu_new_blog' )) {
             return;
@@ -386,7 +386,7 @@ class OptionController
      * Add settings action link to plugins page
      * @param $links
      */
-    public function add_action_links( $links )
+    public function add_action_links($links)
     {
         // In case we ever want to do this...
         return $links;

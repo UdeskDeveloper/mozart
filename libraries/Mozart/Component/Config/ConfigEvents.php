@@ -31,4 +31,4 @@ final class ConfigEvents
      * @see \Drupal\Core\Config\ConfigFactoryInterface::rename().
      */
     const RENAME = 'config.rename';
-} 
+}

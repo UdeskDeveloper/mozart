@@ -10,7 +10,7 @@ class NoSpecialChars
      *
      *
      */
-    function __construct( $parent, $field, $value, $current )
+    public function __construct($parent, $field, $value, $current)
     {
         $this->parent = $parent;
         $this->field = $field;
@@ -30,7 +30,7 @@ class NoSpecialChars
      *
      *
      */
-    function validate()
+    public function validate()
     {
         if (!preg_match( '/[^a-zA-Z0-9_ -]/s', $this->value ) == 0) {
             $this->warning = $this->field;

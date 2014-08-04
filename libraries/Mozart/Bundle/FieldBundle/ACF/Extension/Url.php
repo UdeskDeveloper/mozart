@@ -5,7 +5,6 @@
 
 namespace Mozart\Bundle\FieldBundle\ACF\Extension;
 
-
 class Url extends \acf_field
 {
     /*
@@ -21,8 +20,8 @@ class Url extends \acf_field
     *  @return	n/a
     */
 
-    function __construct() {
-
+    public function __construct()
+    {
         // vars
         $this->name = 'url';
         $this->label = __("Url",'acf');
@@ -33,11 +32,9 @@ class Url extends \acf_field
             'append'		=> ''
         );
 
-
         // do not delete!
         parent::__construct();
     }
-
 
     /*
     *  render_field()
@@ -51,15 +48,15 @@ class Url extends \acf_field
     *  @date	23/01/13
     */
 
-    function render_field( $field ) {
-
+    public function render_field($field)
+    {
         // vars
         $o = array( 'type', 'id', 'class', 'name', 'value', 'placeholder' );
         $e = '';
 
 
         // prepend
-        if( $field['prepend'] !== "" ) {
+        if ($field['prepend'] !== "") {
 
             $field['class'] .= ' acf-is-prepended';
             $e .= '<div class="acf-input-prepend">' . $field['prepend'] . '</div>';
@@ -68,7 +65,7 @@ class Url extends \acf_field
 
 
         // append
-        if( $field['append'] !== "" ) {
+        if ($field['append'] !== "") {
 
             $field['class'] .= ' acf-is-appended';
             $e .= '<div class="acf-input-append">' . $field['append'] . '</div>';
@@ -78,7 +75,7 @@ class Url extends \acf_field
 
         // populate atts
         $atts = array();
-        foreach( $o as $k ) {
+        foreach ($o as $k) {
 
             $atts[ $k ] = $field[ $k ];
 
@@ -109,8 +106,8 @@ class Url extends \acf_field
     *  @param	$field	- an array holding all the field's data
     */
 
-    function render_field_settings( $field ) {
-
+    public function render_field_settings($field)
+    {
         // default_value
         acf_render_field_setting( $field, array(
                 'label'			=> __('Default Value','acf'),
@@ -118,7 +115,6 @@ class Url extends \acf_field
                 'type'			=> 'text',
                 'name'			=> 'default_value',
             ));
-
 
         // placeholder
         acf_render_field_setting( $field, array(
@@ -128,7 +124,6 @@ class Url extends \acf_field
                 'name'			=> 'placeholder',
             ));
 
-
         // prepend
         acf_render_field_setting( $field, array(
                 'label'			=> __('Prepend','acf'),
@@ -136,7 +131,6 @@ class Url extends \acf_field
                 'type'			=> 'text',
                 'name'			=> 'prepend',
             ));
-
 
         // append
         acf_render_field_setting( $field, array(
@@ -147,4 +141,4 @@ class Url extends \acf_field
             ));
 
     }
-} 
+}

@@ -18,9 +18,9 @@ class SiteTransient implements TransientInterface
      *
      * @see   set_transient()
      *
-     * @param string $transient Transient name. Expected to not be SQL-escaped.
-     * @param mixed $value Transient value. Expected to not be SQL-escaped.
-     * @param int $expiration Time until expiration in seconds, default 0
+     * @param string $transient  Transient name. Expected to not be SQL-escaped.
+     * @param mixed  $value      Transient value. Expected to not be SQL-escaped.
+     * @param int    $expiration Time until expiration in seconds, default 0
      *
      * @return bool False if value was not set and true if value was set.
      */
@@ -38,7 +38,7 @@ class SiteTransient implements TransientInterface
          */
         $value = apply_filters( 'pre_set_site_transient_' . $transient, $value );
 
-        $expiration = (int)$expiration;
+        $expiration = (int) $expiration;
 
         if (wp_using_ext_object_cache()) {
             $result = wp_cache_set( $transient, $value, 'site-transient', $expiration );

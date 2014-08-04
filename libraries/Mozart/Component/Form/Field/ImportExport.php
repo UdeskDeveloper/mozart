@@ -19,7 +19,6 @@ class ImportExport extends Field
         $this->builder->import_export->field_args = $args;
     }
 
-
     /**
      * Field Render Function.
      * Takes the vars and outputs the HTML for the field in the settings

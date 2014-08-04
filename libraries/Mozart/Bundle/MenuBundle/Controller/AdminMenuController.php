@@ -5,7 +5,6 @@
 
 namespace Mozart\Bundle\MenuBundle\Controller;
 
-
-class AdminMenuController {
-
-} 
+class AdminMenuController
+{
+}

@@ -11,7 +11,7 @@ class ColorRGBA
      * @param $value
      * @param $current
      */
-    function __construct( $parent, $field, $value, $current )
+    public function __construct($parent, $field, $value, $current)
     {
         $this->parent = $parent;
         $this->field = $field;
@@ -31,7 +31,7 @@ class ColorRGBA
      * @param $color
      * @return array
      */
-    function validate_color_rgba( $color )
+    public function validate_color_rgba($color)
     {
         if ($color == "transparent") {
             return $color;
@@ -48,12 +48,11 @@ class ColorRGBA
         return array( 'hex' => $color, 'rgba' => $this->hex2rgba( $color ) );
     }
 
-
     /**
      * Field Render Function.
      * Takes the color hex value and converts to a rgba.
      * @param $hex
-     * @param string $alpha
+     * @param  string $alpha
      * @return string
      */
     private function hex2rgba($hex, $alpha = '')
@@ -79,14 +78,13 @@ class ColorRGBA
         }
     }
 
-
     /**
      * Field Render Function.
      * Takes the vars and outputs the HTML for the field in the settings
      *
      *
      */
-    function validate()
+    public function validate()
     {
         if (is_array( $this->value )) { // If array
             foreach ($this->value as $k => $value) {

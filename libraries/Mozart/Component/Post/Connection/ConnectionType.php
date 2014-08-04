@@ -23,7 +23,7 @@ class ConnectionType
 
         $labels = array();
         foreach (array( 'from', 'to' ) as $key) {
-            $labels[$key] = (array)_p2p_pluck( $args, $key . '_labels' );
+            $labels[$key] = (array) _p2p_pluck( $args, $key . '_labels' );
         }
 
         $this->labels = $labels;
@@ -129,12 +129,14 @@ class ConnectionType
     {
         if (!method_exists( 'P2P_Directed_Connection_Type', $method )) {
             trigger_error( "Method '$method' does not exist.", E_USER_ERROR );
+
             return;
         }
 
         $r = $this->direction_from_item( $args[0] );
         if (!$r) {
             trigger_error( sprintf( "Can't determine direction for '%s' type.", $this->name ), E_USER_WARNING );
+
             return false;
         }
 
@@ -264,7 +266,7 @@ class ConnectionType
             return true;
         }
 
-        foreach ((array)$post_types as $post_type) {
+        foreach ((array) $post_types as $post_type) {
             if ($side->recognize_post_type( $post_type )) {
                 return true;
             }
@@ -338,7 +340,7 @@ class ConnectionType
             return false;
         }
 
-        $order = (int)p2p_get_meta( $p2p_id, $key, true );
+        $order = (int) p2p_get_meta( $p2p_id, $key, true );
 
         $adjacent = $directed->get_connected(
             $to,
@@ -368,12 +370,12 @@ class ConnectionType
      * @param mixed The current item
      *
      * @return bool|array False if the connections aren't sortable,
-     *   associative array otherwise:
-     * array(
-     *   'parent' => bool|object
-     *   'previous' => bool|object
-     *   'next' => bool|object
-     * )
+     *                    associative array otherwise:
+     *                    array(
+     *                    'parent' => bool|object
+     *                    'previous' => bool|object
+     *                    'next' => bool|object
+     *                    )
      */
     public function get_adjacent_items($item)
     {
@@ -418,9 +420,9 @@ class ConnectionType
      *
      * Populates each of the outer querie's $post objects with a 'connected' property, containing a list of connected posts
      *
-     * @param object|array $items WP_Query instance or list of post objects
-     * @param string|array $extra_qv Additional query vars for the inner query.
-     * @param string $prop_name The name of the property used to store the list of connected items on each post object.
+     * @param object|array $items     WP_Query instance or list of post objects
+     * @param string|array $extra_qv  Additional query vars for the inner query.
+     * @param string       $prop_name The name of the property used to store the list of connected items on each post object.
      */
     public function each_connected($items, $extra_qv = array(), $prop_name = 'connected')
     {
@@ -497,4 +499,3 @@ class ConnectionType
         return $label;
     }
 }
-

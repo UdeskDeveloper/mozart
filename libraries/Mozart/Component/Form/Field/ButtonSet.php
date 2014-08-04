@@ -31,7 +31,6 @@ class ButtonSet extends Field
         'id' => 'Identifier',
     );
 
-
     /**
      * Field Render Function.
      * Takes the vars and outputs the HTML for the field in the settings

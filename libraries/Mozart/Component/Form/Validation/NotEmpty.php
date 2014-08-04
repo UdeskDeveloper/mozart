@@ -10,7 +10,7 @@ class NotEmpty
      *
      *
      */
-    function __construct( $parent, $field, $value, $current )
+    public function __construct($parent, $field, $value, $current)
     {
         $this->parent = $parent;
         $this->field = $field;
@@ -30,7 +30,7 @@ class NotEmpty
      *
      *
      */
-    function validate()
+    public function validate()
     {
         if (!isset( $this->value ) || empty( $this->value )) {
             $this->value = ( isset( $this->current ) ) ? $this->current : '';

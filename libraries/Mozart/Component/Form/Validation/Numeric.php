@@ -10,7 +10,7 @@ class Numeric
      *
      *
      */
-    function __construct( $parent, $field, $value, $current )
+    public function __construct($parent, $field, $value, $current)
     {
         $this->parent = $parent;
         $this->field = $field;
@@ -30,7 +30,7 @@ class Numeric
      *
      *
      */
-    function validate()
+    public function validate()
     {
         if (!is_numeric( $this->value )) {
             $this->value = ( isset( $this->current ) ) ? $this->current : '';

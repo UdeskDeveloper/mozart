@@ -10,7 +10,7 @@ class CommaNumeric
      *
      *
      */
-    function __construct( $parent, $field, $value, $current )
+    public function __construct($parent, $field, $value, $current)
     {
         $this->parent = $parent;
         $this->field = $field;
@@ -30,7 +30,7 @@ class CommaNumeric
      *
      *
      */
-    function validate()
+    public function validate()
     {
         $this->value = str_replace( ' ', '', $this->value );
 

@@ -5,7 +5,6 @@
 
 namespace Mozart\Component\Form\Field;
 
-
 use Mozart\Component\Form\Field;
 
 class Table extends Field
@@ -119,4 +118,4 @@ class Table extends Field
         </table>
     <?php
     }
-} 
+}

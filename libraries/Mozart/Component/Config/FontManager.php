@@ -5,7 +5,6 @@
 
 namespace Mozart\Component\Config;
 
-
 use Mozart\Component\Form\Field\Typography;
 
 class FontManager
@@ -31,13 +30,13 @@ class FontManager
     /**
      * @param ConfigFactory $builder
      */
-    public function init( ConfigFactory $builder )
+    public function init(ConfigFactory $builder)
     {
         $this->builder = $builder;
     }
 
-    public function enqueueTypographyFonts(){
-
+    public function enqueueTypographyFonts()
+    {
         if (!empty( $this->typography ) && !empty( $this->typography ) && filter_var(
                 $this->builder->getParam('output'),
                 FILTER_VALIDATE_BOOLEAN
@@ -62,7 +61,7 @@ class FontManager
                     }</style>
                 <script>
                     /* You can add more configuration options to webfontloader by previously defining the WebFontConfig with your options */
-                    if ( typeof WebFontConfig === "undefined" ) {
+                    if (typeof WebFontConfig === "undefined") {
                         WebFontConfig = {};
                     }
                     WebFontConfig['google'] = {families: [<?php echo $typography->makeGoogleWebfontString( $this->typography )?>]};
@@ -90,8 +89,9 @@ class FontManager
             }
         }
     }
-    
-    public function addLocalizeData($localizeData) {
+
+    public function addLocalizeData($localizeData)
+    {
         $localizeData['fonts'] = $this->fonts;
 
         if (isset( $this->font_groups['google'] )) {
@@ -415,4 +415,4 @@ class FontManager
             'el-icon-zoom-out'
         );
     }
-} 
+}

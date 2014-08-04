@@ -1,7 +1,6 @@
 <?php
 namespace Mozart\Component\Form\Field;
 
-use Mozart\Component\Config\Utils;
 use Mozart\Component\Form\Field;
 
 class ColorRGBA extends Field
@@ -71,7 +70,6 @@ class ColorRGBA extends Field
         }
     }
 
-
     /**
      * Field Render Function.
      * Takes the color hex value and converts to a rgba.
@@ -98,7 +96,6 @@ class ColorRGBA extends Field
             return 'rgba(' . $rgb . ',' . $alpha . ')';
         }
     }
-
 
     /**
      * Parse CSS from output/compiler array

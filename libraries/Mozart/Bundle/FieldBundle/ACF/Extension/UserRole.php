@@ -5,9 +5,8 @@
 
 namespace Mozart\Bundle\FieldBundle\ACF\Extension;
 
-
-class UserRole  extends \acf_field {
-
+class UserRole  extends \acf_field
+{
     /*
     *  __construct
     *
@@ -152,15 +151,13 @@ class UserRole  extends \acf_field {
         $all_roles = $wp_roles->roles;
 
         $selected_roles = array();
-        if( !empty( $field['value'] ) && 'object' == $field['return_value'] ) {
-            foreach( $field['value'] as $value ) {
+        if ( !empty( $field['value'] ) && 'object' == $field['return_value'] ) {
+            foreach ($field['value'] as $value) {
                 $selected_roles[] = $value->name;
             }
-        }
-        else {
+        } else {
             $selected_roles = $field['value'];
         }
-
 
         if( $field['field_type'] == 'select' || $field['field_type'] == 'multi_select' ) :
             $multiple = ( $field['field_type'] == 'multi_select' ) ? 'multiple="multiple"' : '';
@@ -197,7 +194,6 @@ class UserRole  extends \acf_field {
         endif;
     }
 
-
     /*
     *  format_value()
     *
@@ -214,17 +210,16 @@ class UserRole  extends \acf_field {
     *  @return	$value	- the modified value
     */
 
-    function format_value($value, $post_id, $field)
+    public function format_value($value, $post_id, $field)
     {
-        if( $field['return_value'] == 'object' )
-        {
-            foreach( $value as $key => $name ) {
+        if ($field['return_value'] == 'object') {
+            foreach ($value as $key => $name) {
                 $value[$key] = get_role( $name );
             }
         }
+
         return $value;
     }
-
 
     /*
     *  format_value_for_api()
@@ -242,17 +237,16 @@ class UserRole  extends \acf_field {
     *  @return	$value	- the modified value
     */
 
-    function format_value_for_api($value, $post_id, $field)
+    public function format_value_for_api($value, $post_id, $field)
     {
 
         // format
-        if( $field['return_value'] == 'object' )
-        {
-            foreach( $value as $key => $name ) {
+        if ($field['return_value'] == 'object') {
+            foreach ($value as $key => $name) {
                 $value[$key] = get_role( $name );
             }
         }
 
         return $value;
     }
-} 
+}

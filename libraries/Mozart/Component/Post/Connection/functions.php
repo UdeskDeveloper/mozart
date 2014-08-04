@@ -8,48 +8,49 @@
  * @param array $args
  * @return bool|object False on failure, P2P_Connection_Type instance on success.
  */
-function p2p_register_connection_type( $args ) {
-	if ( !did_action('init') ) {
-		trigger_error( "Connection types should not be registered before the 'init' hook." );
-	}
+function p2p_register_connection_type($args)
+{
+    if ( !did_action('init') ) {
+        trigger_error( "Connection types should not be registered before the 'init' hook." );
+    }
 
-	$argv = func_get_args();
+    $argv = func_get_args();
 
-	if ( count( $argv ) > 1 ) {
-		$args = array();
-		foreach ( array( 'from', 'to', 'reciprocal' ) as $i => $key ) {
-			if ( isset( $argv[ $i ] ) )
-				$args[ $key ] = $argv[ $i ];
-		}
-	} else {
-		$args = $argv[0];
-	}
+    if ( count( $argv ) > 1 ) {
+        $args = array();
+        foreach ( array( 'from', 'to', 'reciprocal' ) as $i => $key ) {
+            if ( isset( $argv[ $i ] ) )
+                $args[ $key ] = $argv[ $i ];
+        }
+    } else {
+        $args = $argv[0];
+    }
 
-	if ( isset( $args['id'] ) ) {
-		$args['name'] = _p2p_pluck( $args, 'id' );
-	}
+    if ( isset( $args['id'] ) ) {
+        $args['name'] = _p2p_pluck( $args, 'id' );
+    }
 
-	if ( isset( $args['prevent_duplicates'] ) ) {
-		$args['duplicate_connections'] = !$args['prevent_duplicates'];
-	}
+    if ( isset( $args['prevent_duplicates'] ) ) {
+        $args['duplicate_connections'] = !$args['prevent_duplicates'];
+    }
 
-	if ( isset( $args['show_ui'] ) ) {
-		$args['admin_box'] = array(
-			'show' => _p2p_pluck( $args, 'show_ui' )
-		);
+    if ( isset( $args['show_ui'] ) ) {
+        $args['admin_box'] = array(
+            'show' => _p2p_pluck( $args, 'show_ui' )
+        );
 
-		if ( isset( $args['context'] ) )
-			$args['admin_box']['context'] = _p2p_pluck( $args, 'context' );
-	}
+        if ( isset( $args['context'] ) )
+            $args['admin_box']['context'] = _p2p_pluck( $args, 'context' );
+    }
 
-	if ( !isset( $args['admin_box'] ) )
-		$args['admin_box'] = 'any';
+    if ( !isset( $args['admin_box'] ) )
+        $args['admin_box'] = 'any';
 
-	$ctype = P2P_Connection_Type_Factory::register( $args );
+    $ctype = P2P_Connection_Type_Factory::register( $args );
 
-	do_action( 'p2p_registered_connection_type', $ctype, $args );
+    do_action( 'p2p_registered_connection_type', $ctype, $args );
 
-	return $ctype;
+    return $ctype;
 }
 
 /**
@@ -59,8 +60,9 @@ function p2p_register_connection_type( $args ) {
  *
  * @return bool|object False if connection type not found, P2P_Connection_Type instance on success.
  */
-function p2p_type( $p2p_type ) {
-	return P2P_Connection_Type_Factory::get_instance( $p2p_type );
+function p2p_type($p2p_type)
+{
+    return P2P_Connection_Type_Factory::get_instance( $p2p_type );
 }
 
 /**
@@ -71,12 +73,13 @@ function p2p_type( $p2p_type ) {
  *
  * @return bool
  */
-function p2p_connection_exists( $p2p_type, $args = array() ) {
-	$args['fields'] = 'count';
+function p2p_connection_exists( $p2p_type, $args = array() )
+{
+    $args['fields'] = 'count';
 
-	$r = p2p_get_connections( $p2p_type, $args );
+    $r = p2p_get_connections( $p2p_type, $args );
 
-	return (bool) $r;
+    return (bool) $r;
 }
 
 /**
@@ -93,78 +96,80 @@ function p2p_connection_exists( $p2p_type, $args = array() ) {
  *
  * @return array
  */
-function p2p_get_connections( $p2p_type, $args = array() ) {
-	$args = wp_parse_args( $args, array(
-		'direction' => 'from',
-		'from' => 'any',
-		'to' => 'any',
-		'fields' => 'all',
-	) );
+function p2p_get_connections( $p2p_type, $args = array() )
+{
+    $args = wp_parse_args( $args, array(
+        'direction' => 'from',
+        'from' => 'any',
+        'to' => 'any',
+        'fields' => 'all',
+    ) );
 
-	$r = array();
+    $r = array();
 
-	foreach ( _p2p_expand_direction( $args['direction'] ) as $direction ) {
-		$dirs = array( $args['from'], $args['to'] );
+    foreach ( _p2p_expand_direction( $args['direction'] ) as $direction ) {
+        $dirs = array( $args['from'], $args['to'] );
 
-		if ( 'to' == $direction ) {
-			$dirs = array_reverse( $dirs );
-		}
+        if ('to' == $direction) {
+            $dirs = array_reverse( $dirs );
+        }
 
-		if ( 'object_id' == $args['fields'] )
-			$fields = ( 'to' == $direction ) ? 'p2p_from' : 'p2p_to';
-		else
-			$fields = $args['fields'];
+        if ( 'object_id' == $args['fields'] )
+            $fields = ( 'to' == $direction ) ? 'p2p_from' : 'p2p_to';
+        else
+            $fields = $args['fields'];
 
-		$r = array_merge( $r, _p2p_get_connections( $p2p_type, array(
-			'from' => $dirs[0],
-			'to' => $dirs[1],
-			'fields' => $fields
-		) ) );
-	}
+        $r = array_merge( $r, _p2p_get_connections( $p2p_type, array(
+            'from' => $dirs[0],
+            'to' => $dirs[1],
+            'fields' => $fields
+        ) ) );
+    }
 
-	if ( 'count' == $args['fields'] )
-		return array_sum( $r );
+    if ( 'count' == $args['fields'] )
+        return array_sum( $r );
 
-	return $r;
+    return $r;
 }
 
 /** @internal */
-function _p2p_get_connections( $p2p_type, $args = array() ) {
-	global $wpdb;
+function _p2p_get_connections( $p2p_type, $args = array() )
+{
+    global $wpdb;
 
-	$where = $wpdb->prepare( 'WHERE p2p_type = %s', $p2p_type );
+    $where = $wpdb->prepare( 'WHERE p2p_type = %s', $p2p_type );
 
-	foreach ( array( 'from', 'to' ) as $key ) {
-		if ( 'any' == $args[ $key ] )
-			continue;
+    foreach ( array( 'from', 'to' ) as $key ) {
+        if ( 'any' == $args[ $key ] )
+            continue;
 
-		if ( empty( $args[ $key ] ) )
-			return array();
+        if ( empty( $args[ $key ] ) )
+            return array();
 
-		$value = scbUtil::array_to_sql( _p2p_normalize( $args[ $key ] ) );
+        $value = scbUtil::array_to_sql( _p2p_normalize( $args[ $key ] ) );
 
-		$where .= " AND p2p_$key IN ($value)";
-	}
+        $where .= " AND p2p_$key IN ($value)";
+    }
 
-	switch ( $args['fields'] ) {
-	case 'p2p_id':
-	case 'p2p_from':
-	case 'p2p_to':
-		$sql_field = $args['fields'];
-		break;
-	case 'count':
-		$sql_field = 'COUNT(*)';
-		break;
-	default:
-		$sql_field = '*';
-	}
+    switch ($args['fields']) {
+    case 'p2p_id':
+    case 'p2p_from':
+    case 'p2p_to':
+        $sql_field = $args['fields'];
+        break;
+    case 'count':
+        $sql_field = 'COUNT(*)';
+        break;
+    default:
+        $sql_field = '*';
+    }
 
-	$query = "SELECT $sql_field FROM $wpdb->p2p $where";
+    $query = "SELECT $sql_field FROM $wpdb->p2p $where";
 
-	if ( '*' == $sql_field )
-		return $wpdb->get_results( $query );
-	else
-		return $wpdb->get_col( $query );
+    if ( '*' == $sql_field )
+        return $wpdb->get_results( $query );
+    else
+        return $wpdb->get_col( $query );
 }
 
 /**
@@ -174,10 +179,11 @@ function _p2p_get_connections( $p2p_type, $args = array() ) {
  *
  * @return object
  */
-function p2p_get_connection( $p2p_id ) {
-	global $wpdb;
+function p2p_get_connection($p2p_id)
+{
+    global $wpdb;
 
-	return $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $wpdb->p2p WHERE p2p_id = %d", $p2p_id ) );
+    return $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $wpdb->p2p WHERE p2p_id = %d", $p2p_id ) );
 }
 
 /**
@@ -188,42 +194,43 @@ function p2p_get_connection( $p2p_id ) {
  *
  * @return bool|int False on failure, p2p_id on success.
  */
-function p2p_create_connection( $p2p_type, $args ) {
-	global $wpdb;
+function p2p_create_connection($p2p_type, $args)
+{
+    global $wpdb;
 
-	$args = wp_parse_args( $args, array(
-		'direction' => 'from',
-		'from' => false,
-		'to' => false,
-		'meta' => array()
-	) );
+    $args = wp_parse_args( $args, array(
+        'direction' => 'from',
+        'from' => false,
+        'to' => false,
+        'meta' => array()
+    ) );
 
-	list( $from ) = _p2p_normalize( $args['from'] );
-	list( $to ) = _p2p_normalize( $args['to'] );
+    list( $from ) = _p2p_normalize( $args['from'] );
+    list( $to ) = _p2p_normalize( $args['to'] );
 
-	if ( !$from || !$to )
-		return false;
+    if ( !$from || !$to )
+        return false;
 
-	$dirs = array( $from, $to );
+    $dirs = array( $from, $to );
 
-	if ( 'to' == $args['direction'] ) {
-		$dirs = array_reverse( $dirs );
-	}
+    if ('to' == $args['direction']) {
+        $dirs = array_reverse( $dirs );
+    }
 
-	$wpdb->insert( $wpdb->p2p, array(
-		'p2p_type' => $p2p_type,
-		'p2p_from' => $dirs[0],
-		'p2p_to' => $dirs[1]
-	) );
+    $wpdb->insert( $wpdb->p2p, array(
+        'p2p_type' => $p2p_type,
+        'p2p_from' => $dirs[0],
+        'p2p_to' => $dirs[1]
+    ) );
 
-	$p2p_id = $wpdb->insert_id;
+    $p2p_id = $wpdb->insert_id;
 
-	foreach ( $args['meta'] as $key => $value )
-		p2p_add_meta( $p2p_id, $key, $value );
+    foreach ( $args['meta'] as $key => $value )
+        p2p_add_meta( $p2p_id, $key, $value );
 
-	do_action( 'p2p_created_connection', $p2p_id );
+    do_action( 'p2p_created_connection', $p2p_id );
 
-	return $p2p_id;
+    return $p2p_id;
 }
 
 /**
@@ -234,10 +241,11 @@ function p2p_create_connection( $p2p_type, $args ) {
  *
  * @return int Number of connections deleted
  */
-function p2p_delete_connections( $p2p_type, $args = array() ) {
-	$args['fields'] = 'p2p_id';
+function p2p_delete_connections( $p2p_type, $args = array() )
+{
+    $args['fields'] = 'p2p_id';
 
-	return p2p_delete_connection( p2p_get_connections( $p2p_type, $args ) );
+    return p2p_delete_connection( p2p_get_connections( $p2p_type, $args ) );
 }
 
 /**
@@ -247,38 +255,43 @@ function p2p_delete_connections( $p2p_type, $args = array() ) {
  *
  * @return int Number of connections deleted
  */
-function p2p_delete_connection( $p2p_id ) {
-	global $wpdb;
+function p2p_delete_connection($p2p_id)
+{
+    global $wpdb;
 
-	if ( empty( $p2p_id ) )
-		return 0;
+    if ( empty( $p2p_id ) )
+        return 0;
 
-	$p2p_ids = array_map( 'absint', (array) $p2p_id );
+    $p2p_ids = array_map( 'absint', (array) $p2p_id );
 
-	do_action( 'p2p_delete_connections', $p2p_ids );
+    do_action( 'p2p_delete_connections', $p2p_ids );
 
-	$where = "WHERE p2p_id IN (" . implode( ',', $p2p_ids ) . ")";
+    $where = "WHERE p2p_id IN (" . implode( ',', $p2p_ids ) . ")";
 
-	$count = $wpdb->query( "DELETE FROM $wpdb->p2p $where" );
-	$wpdb->query( "DELETE FROM $wpdb->p2pmeta $where" );
+    $count = $wpdb->query( "DELETE FROM $wpdb->p2p $where" );
+    $wpdb->query( "DELETE FROM $wpdb->p2pmeta $where" );
 
-	return $count;
+    return $count;
 }
 
-function p2p_get_meta( $p2p_id, $key = '', $single = false ) {
-	return get_metadata( 'p2p', $p2p_id, $key, $single );
+function p2p_get_meta($p2p_id, $key = '', $single = false)
+{
+    return get_metadata( 'p2p', $p2p_id, $key, $single );
 }
 
-function p2p_update_meta( $p2p_id, $key, $value, $prev_value = '' ) {
-	return update_metadata( 'p2p', $p2p_id, $key, $value, $prev_value );
+function p2p_update_meta($p2p_id, $key, $value, $prev_value = '')
+{
+    return update_metadata( 'p2p', $p2p_id, $key, $value, $prev_value );
 }
 
-function p2p_add_meta( $p2p_id, $key, $value, $unique = false ) {
-	return add_metadata( 'p2p', $p2p_id, $key, $value, $unique );
+function p2p_add_meta($p2p_id, $key, $value, $unique = false)
+{
+    return add_metadata( 'p2p', $p2p_id, $key, $value, $unique );
 }
 
-function p2p_delete_meta( $p2p_id, $key, $value = '' ) {
-	return delete_metadata( 'p2p', $p2p_id, $key, $value );
+function p2p_delete_meta($p2p_id, $key, $value = '')
+{
+    return delete_metadata( 'p2p', $p2p_id, $key, $value );
 }
 
 /**
@@ -287,17 +300,18 @@ function p2p_delete_meta( $p2p_id, $key, $value = '' ) {
  * @param object|array A P2P_List instance, a WP_Query instance, or a list of post objects
  * @param array $args (optional)
  */
-function p2p_list_posts( $posts, $args = array() ) {
-	if ( is_a( $posts, 'P2P_List' ) ) {
-		$list = $posts;
-	} else {
-		if ( is_a( $posts, 'WP_Query' ) )
-			$posts = $posts->posts;
+function p2p_list_posts( $posts, $args = array() )
+{
+    if ( is_a( $posts, 'P2P_List' ) ) {
+        $list = $posts;
+    } else {
+        if ( is_a( $posts, 'WP_Query' ) )
+            $posts = $posts->posts;
 
-		$list = new P2P_List( $posts, 'P2P_Item_Post' );
-	}
+        $list = new P2P_List( $posts, 'P2P_Item_Post' );
+    }
 
-	return P2P_List_Renderer::render( $list, $args );
+    return P2P_List_Renderer::render( $list, $args );
 }
 
 /**
@@ -308,18 +322,18 @@ function p2p_list_posts( $posts, $args = array() ) {
  * @param array List of connected objects
  * @param string Name of connected array property
  */
-function p2p_distribute_connected( $items, $connected, $prop_name ) {
-	$indexed_list = array();
+function p2p_distribute_connected($items, $connected, $prop_name)
+{
+    $indexed_list = array();
 
-	foreach ( $items as $item ) {
-		$item->$prop_name = array();
-		$indexed_list[ $item->ID ] = $item;
-	}
+    foreach ($items as $item) {
+        $item->$prop_name = array();
+        $indexed_list[ $item->ID ] = $item;
+    }
 
-	$groups = scb_list_group_by( $connected, '_p2p_get_other_id' );
+    $groups = scb_list_group_by( $connected, '_p2p_get_other_id' );
 
-	foreach ( $groups as $outer_item_id => $connected_items ) {
-		$indexed_list[ $outer_item_id ]->$prop_name = $connected_items;
-	}
+    foreach ($groups as $outer_item_id => $connected_items) {
+        $indexed_list[ $outer_item_id ]->$prop_name = $connected_items;
+    }
 }
-

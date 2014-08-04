@@ -5,7 +5,6 @@
 
 namespace Mozart\Component\Multisite;
 
-
 class Multisite
 {
     /**
@@ -15,7 +14,7 @@ class Multisite
      *
      * @return bool True if multisite is enabled, false otherwise.
      */
-    function isEnabled()
+    public function isEnabled()
     {
         if (defined( 'MULTISITE' )) {
             return MULTISITE;
@@ -27,4 +26,4 @@ class Multisite
 
         return false;
     }
-} 
+}

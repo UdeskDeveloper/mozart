@@ -130,7 +130,7 @@ class Typography extends Field
      * @param  string $value
      * @return array
      */
-    public function localize( $field, $value = "" )
+    public function localize($field, $value = "")
     {
         $params = array();
 
@@ -721,7 +721,7 @@ class Typography extends Field
      * @param $fonts
      * @return string
      */
-    public function makeGoogleWebfontLink( $fonts )
+    public function makeGoogleWebfontLink($fonts)
     {
         $link = "";
         $subsets = array();
@@ -764,7 +764,7 @@ class Typography extends Field
      * @param $fonts
      * @return string
      */
-    public function makeGoogleWebfontString( $fonts )
+    public function makeGoogleWebfontString($fonts)
     {
         $link = "";
         $subsets = array();
@@ -1133,7 +1133,7 @@ class Typography extends Field
      *
      * @return string Message string
      */
-    private function getJSONErrorMessage( $errorCode )
+    private function getJSONErrorMessage($errorCode)
     {
         switch ($errorCode) {
             case JSON_ERROR_DEPTH:
@@ -1158,7 +1158,7 @@ class Typography extends Field
      * @param $var
      * @return array
      */
-    private function getSubsets( $var )
+    private function getSubsets($var)
     {
         $result = array();
 
@@ -1188,7 +1188,7 @@ class Typography extends Field
      * @param $var
      * @return array
      */
-    private function getVariants( $var )
+    private function getVariants($var)
     {
         $result = array();
         $italic = array();

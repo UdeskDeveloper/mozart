@@ -37,9 +37,9 @@ class Customizer
 
     /**
      * @param ConfigFactory $builder
-     * @param RequestStack $request
+     * @param RequestStack  $request
      */
-    public function __construct( RequestStack $requestStack )
+    public function __construct(RequestStack $requestStack)
     {
         $this->currentPage = $GLOBALS['pagenow'];
         $this->requestStack = $requestStack;
@@ -48,7 +48,7 @@ class Customizer
     /**
      * Boot the extension
      */
-    public function init( ConfigFactory $builder )
+    public function init(ConfigFactory $builder)
     {
         $this->builder = $builder;
 
@@ -107,7 +107,7 @@ class Customizer
      *
      * @return mixed
      */
-    public function _override_values( $data )
+    public function _override_values($data)
     {
         if (isset( $this->request['customized'] )) {
             $this->orig_options = $this->builder->getOptions();
@@ -167,7 +167,7 @@ class Customizer
     /**
      * @param \WP_Customize_Manager $wp_customize
      */
-    public function registerCustomizer( \WP_Customize_Manager $wp_customize )
+    public function registerCustomizer(\WP_Customize_Manager $wp_customize)
     {
         $order = array(
             'heading' => -500,
@@ -426,7 +426,7 @@ class Customizer
     /**
      * @param $plugin_options
      */
-    public function customizer_save_before( $plugin_options )
+    public function customizer_save_before($plugin_options)
     {
         $this->before_save = $this->builder->getOptions();
     }
@@ -434,7 +434,7 @@ class Customizer
     /**
      * @param \WP_Customize_Manager $wp_customize
      */
-    public function customizer_save_after( \WP_Customize_Manager $wp_customize )
+    public function customizer_save_after(\WP_Customize_Manager $wp_customize)
     {
         $options = json_decode( stripslashes_deep( $this->request['customized'] ), true );
         $compiler = false;
@@ -596,7 +596,7 @@ class Customizer
      *
      * @return
      */
-    public function _field_validation( $plugin_options, $two )
+    public function _field_validation($plugin_options, $two)
     {
         echo $two;
 

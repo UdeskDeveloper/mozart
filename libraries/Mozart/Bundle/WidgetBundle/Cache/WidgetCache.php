@@ -53,9 +53,9 @@ class WidgetCache extends FragmentCache
     /**
      * Set up and echo widget cache
      *
-     * @param array $instance
+     * @param array  $instance
      * @param object $widget
-     * @param array $args
+     * @param array  $args
      *
      * @return bool false
      */
@@ -80,7 +80,7 @@ class WidgetCache extends FragmentCache
      * Generate widget output, capture with buffer and timestamp.
      *
      * @param string $name
-     * @param array $args
+     * @param array  $args
      *
      * @return string
      */

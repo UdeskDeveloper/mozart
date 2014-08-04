@@ -1,159 +1,177 @@
 <?php
 namespace Mozart\Component\Post\Connection;
 
-class P2P_Side_Post extends P2P_Side {
+class side-post extends P2P_Side
+{
+    protected $item_type = 'P2P_Item_Post';
 
-	protected $item_type = 'P2P_Item_Post';
+    public function __construct($query_vars)
+    {
+        $this->query_vars = $query_vars;
+    }
 
-	function __construct( $query_vars ) {
-		$this->query_vars = $query_vars;
-	}
+    public function get_object_type()
+    {
+        return 'post';
+    }
 
-	public function get_object_type() {
-		return 'post';
-	}
+    public function first_post_type()
+    {
+        return $this->query_vars['post_type'][0];
+    }
 
-	public function first_post_type() {
-		return $this->query_vars['post_type'][0];
-	}
+    private function get_ptype()
+    {
+        $ptype = $this->first_post_type();
 
-	private function get_ptype() {
-		$ptype = $this->first_post_type();
+        $ptype_object = get_post_type_object( $ptype );
 
-		$ptype_object = get_post_type_object( $ptype );
+        if (!$ptype_object) {
+            throw new P2P_Exception( "Can't find $ptype." );
+        }
 
-		if ( !$ptype_object ) {
-			throw new P2P_Exception( "Can't find $ptype." );
-		}
+        return $ptype_object;
+    }
 
-		return $ptype_object;
-	}
+    public function get_base_qv($q)
+    {
+        if ( isset( $q['post_type'] ) && 'any' != $q['post_type'] ) {
+            $common = array_intersect( $this->query_vars['post_type'], (array) $q['post_type'] );
 
-	function get_base_qv( $q ) {
-		if ( isset( $q['post_type'] ) && 'any' != $q['post_type'] ) {
-			$common = array_intersect( $this->query_vars['post_type'], (array) $q['post_type'] );
+            if ( !$common )
+                unset( $q['post_type'] );
+        }
 
-			if ( !$common )
-				unset( $q['post_type'] );
-		}
+        return array_merge( $this->query_vars, $q, array(
+            'suppress_filters' => false,
+            'ignore_sticky_posts' => true,
+        ) );
+    }
 
-		return array_merge( $this->query_vars, $q, array(
-			'suppress_filters' => false,
-			'ignore_sticky_posts' => true,
-		) );
-	}
+    public function get_desc()
+    {
+        return implode( ', ', array_map( array( $this, 'post_type_label' ), $this->query_vars['post_type'] ) );
+    }
 
-	function get_desc() {
-		return implode( ', ', array_map( array( $this, 'post_type_label' ), $this->query_vars['post_type'] ) );
-	}
+    private function post_type_label($post_type)
+    {
+        $cpt = get_post_type_object( $post_type );
 
-	private function post_type_label( $post_type ) {
-		$cpt = get_post_type_object( $post_type );
-		return $cpt ? $cpt->label : $post_type;
-	}
+        return $cpt ? $cpt->label : $post_type;
+    }
 
-	function get_title() {
-		return $this->get_labels()->name;
-	}
+    public function get_title()
+    {
+        return $this->get_labels()->name;
+    }
 
-	function get_labels() {
-		try {
-			$labels = $this->get_ptype()->labels;
-		} catch ( P2P_Exception $e ) {
-			trigger_error( $e->getMessage(), E_USER_WARNING );
-			$labels = new stdClass;
-		}
+    public function get_labels()
+    {
+        try {
+            $labels = $this->get_ptype()->labels;
+        } catch ( P2P_Exception $e ) {
+            trigger_error( $e->getMessage(), E_USER_WARNING );
+            $labels = new stdClass;
+        }
 
-		return $labels;
-	}
+        return $labels;
+    }
 
-	function can_edit_connections() {
-		try {
-			return current_user_can( $this->get_ptype()->cap->edit_posts );
-		} catch ( P2P_Exception $e ) {
-			trigger_error( $e->getMessage(), E_USER_WARNING );
-			return false;
-		}
-	}
+    public function can_edit_connections()
+    {
+        try {
+            return current_user_can( $this->get_ptype()->cap->edit_posts );
+        } catch ( P2P_Exception $e ) {
+            trigger_error( $e->getMessage(), E_USER_WARNING );
 
-	function can_create_item() {
-		if ( count( $this->query_vars['post_type'] ) > 1 )
-			return false;
+            return false;
+        }
+    }
 
-		if ( count( $this->query_vars ) > 1 )
-			return false;
+    public function can_create_item()
+    {
+        if ( count( $this->query_vars['post_type'] ) > 1 )
+            return false;
 
-		return true;
-	}
+        if ( count( $this->query_vars ) > 1 )
+            return false;
 
-	function translate_qv( $qv ) {
-		$map = array(
-			'include' => 'post__in',
-			'exclude' => 'post__not_in',
-			'search' => 's',
-			'page' => 'paged',
-			'per_page' => 'posts_per_page'
-		);
+        return true;
+    }
 
-		foreach ( $map as $old => $new )
-			if ( isset( $qv["p2p:$old"] ) )
-				$qv[$new] = _p2p_pluck( $qv, "p2p:$old" );
+    public function translate_qv($qv)
+    {
+        $map = array(
+            'include' => 'post__in',
+            'exclude' => 'post__not_in',
+            'search' => 's',
+            'page' => 'paged',
+            'per_page' => 'posts_per_page'
+        );
 
-		return $qv;
-	}
+        foreach ( $map as $old => $new )
+            if ( isset( $qv["p2p:$old"] ) )
+                $qv[$new] = _p2p_pluck( $qv, "p2p:$old" );
 
-	function do_query( $args ) {
-		return new WP_Query( $args );
-	}
+        return $qv;
+    }
 
-	function capture_query( $args ) {
-		$q = new WP_Query;
-		$q->_p2p_capture = true;
+    public function do_query($args)
+    {
+        return new WP_Query( $args );
+    }
 
-		$q->query( $args );
+    public function capture_query($args)
+    {
+        $q = new WP_Query;
+        $q->_p2p_capture = true;
 
-		return $q->_p2p_sql;
-	}
+        $q->query( $args );
 
-	function get_list( $wp_query ) {
-		$list = new P2P_List( $wp_query->posts, $this->item_type );
+        return $q->_p2p_sql;
+    }
 
-		$list->current_page = max( 1, $wp_query->get('paged') );
-		$list->total_pages = $wp_query->max_num_pages;
+    public function get_list($wp_query)
+    {
+        $list = new P2P_List( $wp_query->posts, $this->item_type );
 
-		return $list;
-	}
+        $list->current_page = max( 1, $wp_query->get('paged') );
+        $list->total_pages = $wp_query->max_num_pages;
 
-	function is_indeterminate( $side ) {
-		$common = array_intersect(
-			$this->query_vars['post_type'],
-			$side->query_vars['post_type']
-		);
+        return $list;
+    }
 
-		return !empty( $common );
-	}
+    public function is_indeterminate($side)
+    {
+        $common = array_intersect(
+            $this->query_vars['post_type'],
+            $side->query_vars['post_type']
+        );
 
-	protected function recognize( $arg ) {
-		if ( is_object( $arg ) && !isset( $arg->post_type ) )
-			return false;
+        return !empty( $common );
+    }
 
-		$post = get_post( $arg );
+    protected function recognize($arg)
+    {
+        if ( is_object( $arg ) && !isset( $arg->post_type ) )
+            return false;
 
-		if ( !is_object( $post ) )
-			return false;
+        $post = get_post( $arg );
 
-		if ( !$this->recognize_post_type( $post->post_type ) )
-			return false;
+        if ( !is_object( $post ) )
+            return false;
 
-		return $post;
-	}
+        if ( !$this->recognize_post_type( $post->post_type ) )
+            return false;
 
-	public function recognize_post_type( $post_type ) {
-		if ( !post_type_exists( $post_type ) )
-			return false;
+        return $post;
+    }
 
-		return in_array( $post_type, $this->query_vars['post_type'] );
-	}
+    public function recognize_post_type($post_type)
+    {
+        if ( !post_type_exists( $post_type ) )
+            return false;
+
+        return in_array( $post_type, $this->query_vars['post_type'] );
+    }
 }
-
-

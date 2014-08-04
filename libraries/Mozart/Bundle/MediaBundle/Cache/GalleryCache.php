@@ -88,7 +88,7 @@ class GalleryCache extends FragmentCache
      * Set up post context and generate gallery output.
      *
      * @param string $name
-     * @param array $args
+     * @param array  $args
      *
      * @return string
      */

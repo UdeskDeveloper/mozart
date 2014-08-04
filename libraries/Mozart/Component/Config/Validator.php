@@ -5,11 +5,10 @@
 
 namespace Mozart\Component\Config;
 
-
 use Mozart\Component\Support\Str;
 
-class Validator {
-
+class Validator
+{
     /**
      * @var array
      */
@@ -26,16 +25,18 @@ class Validator {
     /**
      * @param ConfigFactory $builder
      */
-    public function init( ConfigFactory $builder )
+    public function init(ConfigFactory $builder)
     {
         $this->builder = $builder;
     }
 
-    public function getErrors() {
+    public function getErrors()
+    {
         return $this->errors;
     }
 
-    public function getWarnings() {
+    public function getWarnings()
+    {
         return $this->warnings;
     }
     /**
@@ -48,7 +49,7 @@ class Validator {
      *
      * @return array $plugin_options
      */
-    public function _validate_values( $plugin_options, $options, $sections )
+    public function _validate_values($plugin_options, $options, $sections)
     {
         foreach ($sections as $k => $section) {
             if (!isset( $section['fields'] )) {
@@ -192,5 +193,4 @@ class Validator {
         return $plugin_options;
     }
 
-
-} 
+}

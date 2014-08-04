@@ -10,7 +10,7 @@ class URL
      *
      *
      */
-    function __construct( $parent, $field, $value, $current )
+    public function __construct($parent, $field, $value, $current)
     {
         $this->parent = $parent;
         $this->field = $field;
@@ -30,7 +30,7 @@ class URL
      *
      *
      */
-    function validate()
+    public function validate()
     {
         if (filter_var( $this->value, FILTER_VALIDATE_URL ) == false) {
             $this->value = ( isset( $this->current ) ) ? $this->current : '';

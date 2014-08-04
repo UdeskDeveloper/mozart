@@ -10,7 +10,7 @@ class CSS
      *
      *
      */
-    function __construct( $parent, $field, $value, $current )
+    public function __construct($parent, $field, $value, $current)
     {
         $this ->parent = $parent;
         $this->field = $field;
@@ -26,7 +26,7 @@ class CSS
      *
      *
      */
-    function validate()
+    public function validate()
     {
         // Strip all html
         $data = $this->value;

@@ -10,7 +10,7 @@ class StrReplace
      *
      *
      */
-    function __construct( $parent, $field, $value, $current )
+    public function __construct($parent, $field, $value, $current)
     {
         $this->parent = $parent;
         $this->field = $field;
@@ -26,7 +26,7 @@ class StrReplace
      *
      *
      */
-    function validate()
+    public function validate()
     {
         $this->value = str_replace( $this->field['str']['search'], $this->field['str']['replacement'], $this->value );
     }

@@ -21,11 +21,11 @@ class WordpressMetaType extends TextType
     const NAME = 'wordpressmeta';
 
     /**
-     * @param mixed $value
-     * @param AbstractPlatform $platform
+     * @param  mixed            $value
+     * @param  AbstractPlatform $platform
      * @return mixed
      */
-    public function convertToPHPValue( $value, AbstractPlatform $platform )
+    public function convertToPHPValue($value, AbstractPlatform $platform)
     {
         if ($this->isSerialized( $value )) {
             return @unserialize( $value );
@@ -35,11 +35,11 @@ class WordpressMetaType extends TextType
     }
 
     /**
-     * @param mixed $value
-     * @param AbstractPlatform $platform
+     * @param  mixed            $value
+     * @param  AbstractPlatform $platform
      * @return mixed|string
      */
-    public function convertToDatabaseValue( $value, AbstractPlatform $platform )
+    public function convertToDatabaseValue($value, AbstractPlatform $platform)
     {
         if (is_array( $value ) || is_object( $value )) {
             return serialize( $value );
@@ -65,7 +65,7 @@ class WordpressMetaType extends TextType
      * @param  mixed $data Value to check to see if was serialized.
      * @return bool  False if not serialized and true if it was.
      */
-    private function isSerialized( $data )
+    private function isSerialized($data)
     {
         // if it isn't a string, it isn't serialized
         if (!is_string( $data )) {
@@ -94,11 +94,11 @@ class WordpressMetaType extends TextType
                 }
             case 'a' :
             case 'O' :
-                return (bool)preg_match( "/^{$token}:[0-9]+:/s", $data );
+                return (bool) preg_match( "/^{$token}:[0-9]+:/s", $data );
             case 'b' :
             case 'i' :
             case 'd' :
-                return (bool)preg_match( "/^{$token}:[0-9.E-]+;\$/", $data );
+                return (bool) preg_match( "/^{$token}:[0-9.E-]+;\$/", $data );
         }
 
         return false;

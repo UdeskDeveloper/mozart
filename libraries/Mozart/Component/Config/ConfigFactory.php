@@ -122,7 +122,6 @@ class ConfigFactory
 
         $this->getImporter()->init( $this );
 
-
         return $this;
     }
 
@@ -133,7 +132,6 @@ class ConfigFactory
     {
         return $this->container->get( 'mozart.config.customizer' );
     }
-
 
     /**
      * @return array
@@ -408,7 +406,7 @@ class ConfigFactory
      * This is used to return the default value if default_show is set
      *
      * @param string $opt_name The option name to return
-     * @param mixed $default (null)  The value to return if default not set
+     * @param mixed  $default  (null)  The value to return if default not set
      *
      * @return mixed $default
      */
@@ -423,11 +421,11 @@ class ConfigFactory
             $this->options_defaults
         ) ? $this->options_defaults[$opt_name] : $default;
 
-
         return $default;
     }
 
-    public function get($opt_name, $default = null) {
+    public function get($opt_name, $default = null)
+    {
         return $this->getOption($opt_name, $default);
     }
 
@@ -435,7 +433,7 @@ class ConfigFactory
      * This is used to return and option value from the options array
      *
      * @param string $opt_name The option name to return
-     * @param mixed $default (null) The value to return if option not set
+     * @param mixed  $default  (null) The value to return if option not set
      *
      * @return mixed
      */
@@ -452,14 +450,15 @@ class ConfigFactory
         return $this->options[$opt_name];
     }
 
-    public function set( $opt_name, $value = '') {
+    public function set($opt_name, $value = '')
+    {
         $this->setOption($opt_name, $value);
     }
     /**
      * This is used to set an arbitrary option in the options array
      *
      * @param string $opt_name The name of the option being added
-     * @param mixed $value The value of the option being added
+     * @param mixed  $value    The value of the option being added
      *
      * @return void
      */
@@ -560,8 +559,8 @@ class ConfigFactory
 
     /**
      * Get Wordpress specific data from the DB and return in a usable array
-     * @param  bool $type
-     * @param  array $params
+     * @param  bool         $type
+     * @param  array        $params
      * @return array|string
      */
     public function get_wordpress_data($type = false, $params = array())
@@ -593,14 +592,14 @@ class ConfigFactory
                     case "categories":
                     case "category":
                         $cats = get_categories( $params );
-                        foreach ((array)$cats as $cat) {
+                        foreach ((array) $cats as $cat) {
                             $data[$cat->term_id] = $cat->name;
                         }
                         break;
                     case "menus":
                     case "menu":
                         $menus = wp_get_nav_menus( $params );
-                        foreach ((array)$menus as $item) {
+                        foreach ((array) $menus as $item) {
                             $data[$item->term_id] = $item->name;
                         }
                         break;
@@ -610,7 +609,7 @@ class ConfigFactory
                             $params['posts_per_page'] = 20;
                         }
                         $pages = get_pages( $params );
-                        foreach ((array)$pages as $page) {
+                        foreach ((array) $pages as $page) {
                             $data[$page->ID] = $page->post_title;
                         }
                         break;
@@ -620,21 +619,21 @@ class ConfigFactory
                         unset( $params['taxonomies'] );
 
                         $terms = get_terms( $taxonomies, $params ); // this will get nothing
-                        foreach ((array)$terms as $term) {
+                        foreach ((array) $terms as $term) {
                             $data[$term->term_id] = $term->name;
                         }
                         break;
                     case "taxonomy":
                     case "taxonomies":
                         $taxonomies = get_taxonomies( $params );
-                        foreach ((array)$taxonomies as $key => $taxonomy) {
+                        foreach ((array) $taxonomies as $key => $taxonomy) {
                             $data[$key] = $taxonomy;
                         }
                         break;
                     case "posts":
                     case "post":
                         $posts = get_posts( $params );
-                        foreach ((array)$posts as $post) {
+                        foreach ((array) $posts as $post) {
                             $data[$post->ID] = $post->post_title;
                         }
                         break;
@@ -665,7 +664,7 @@ class ConfigFactory
                     case "tags":
                     case "tag": // NOT WORKING!
                         $tags = get_tags( $params );
-                        foreach ((array)$tags as $tag) {
+                        foreach ((array) $tags as $tag) {
                             $data[$tag->term_id] = $tag->name;
                         }
                         break;
@@ -730,7 +729,7 @@ class ConfigFactory
      * This is used to echo and option value from the options array
      *
      * @param string $opt_name The name of the option being shown
-     * @param mixed $default The value to show if $opt_name isn't set
+     * @param mixed  $default  The value to show if $opt_name isn't set
      *
      * @return void
      */
@@ -1097,7 +1096,6 @@ class ConfigFactory
                 true
             );
         }
-
 
         if ($this->isFieldInUseByType(
             $this->getFieldManager()->getFields(),
@@ -1738,7 +1736,6 @@ class ConfigFactory
         return $th;
     }
 
-
     /**
      * Register Option for use
      *
@@ -1838,7 +1835,6 @@ class ConfigFactory
                     if (!$display) {
                         continue;
                     }
-
 
                     if (isset( $field['permissions'] )) {
 
@@ -2050,7 +2046,7 @@ class ConfigFactory
      * @param $title
      * @param $page
      * @param string $section
-     * @param array $args
+     * @param array  $args
      */
     private function addSettingsField($id, $title, $page, $section = 'default', $args = array())
     {
@@ -2060,7 +2056,6 @@ class ConfigFactory
             'args'  => $args
         );
     }
-
 
     /**
      *
@@ -2187,7 +2182,7 @@ class ConfigFactory
         // Section reset to defaults
         if (!empty( $plugin_options['defaults-section'] )) {
             if (isset( $plugin_options['redux-section'] )) {
-                foreach ((array)$this->getSectionManager()->getSection(
+                foreach ((array) $this->getSectionManager()->getSection(
                     $plugin_options['redux-section']
                 )['fields'] as $field) {
                     if (isset( $this->options_defaults[$field['id']] )) {
@@ -2240,7 +2235,6 @@ class ConfigFactory
             );
         }
 
-
         if (!empty( $plugin_options['compiler'] )) {
             unset( $plugin_options['compiler'] );
 
@@ -2273,13 +2267,12 @@ class ConfigFactory
         return $plugin_options;
     }
 
-
     /**
      * Return Section Menu HTML
      * @param $k
      * @param $section
-     * @param string $suffix
-     * @param array $sections
+     * @param  string $suffix
+     * @param  array  $sections
      * @return string
      */
     public function section_menu($k, $section, $suffix = "", $sections = array())
@@ -2478,7 +2471,6 @@ class ConfigFactory
             $mainContent .= $this->getDebugger()->render();
         }
 
-
         $context = array(
             'nonce'          => wp_create_nonce( 'redux_ajax_nonce' ),
             'page_nonce'     => wp_create_nonce( "{$this->params['opt_name']}_group-options" ),
@@ -2511,7 +2503,7 @@ class ConfigFactory
             return $return;
         }
 
-        foreach ((array)$this->settingsSections[$page] as $section) {
+        foreach ((array) $this->settingsSections[$page] as $section) {
             if ($section['title']) {
                 $return .= "<h3>{$section['title']}</h3>\n";
             }
@@ -2545,7 +2537,7 @@ class ConfigFactory
             return $return;
         }
 
-        foreach ((array)$this->settingsFields[$page][$section] as $field) {
+        foreach ((array) $this->settingsFields[$page][$section] as $field) {
             $return .= '<tr>';
             if (!empty( $field['args']['label_for'] )) {
                 $return .= '<th scope="row"><label for="' . esc_attr(
@@ -2559,6 +2551,7 @@ class ConfigFactory
             $return .= '</td>';
             $return .= '</tr>';
         }
+
         return $return;
     }
 
@@ -2703,7 +2696,6 @@ class ConfigFactory
         return $return;
     }
 
-
     /**
      * converts an array into a html data string
      *
@@ -2725,10 +2717,9 @@ class ConfigFactory
         return $data_string;
     }
 
-
     /**
      * @param $fields
-     * @param array $field
+     * @param  array $field
      * @return bool
      */
     public function isFieldInUseByType($fields, $field = array())

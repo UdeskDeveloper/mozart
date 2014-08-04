@@ -1,45 +1,48 @@
 <?php
 namespace Mozart\Component\Post\Connection;
 
-class IndeterminateDirectedConnectionType extends DirectedConnectionType {
+class IndeterminateDirectedConnectionType extends DirectedConnectionType
+{
+    protected function recognize($arg, $unused = null)
+    {
+        foreach ( array( 'current', 'opposite' ) as $side ) {
+            $item = $this->get( $side, 'side' )->item_recognize( $arg );
+            if ( $item )
+                return $item;
+        }
 
-	protected function recognize( $arg, $unused = null ) {
-		foreach ( array( 'current', 'opposite' ) as $side ) {
-			$item = $this->get( $side, 'side' )->item_recognize( $arg );
-			if ( $item )
-				return $item;
-		}
+        return false;
+    }
 
-		return false;
-	}
+    public function get_final_qv($q, $unused = null)
+    {
+        $side = $this->get( 'current', 'side' );
 
-	public function get_final_qv( $q, $unused = null ) {
-		$side = $this->get( 'current', 'side' );
+        // the sides are of the same type, so just use one for translating
+        $q = $side->translate_qv( $q );
 
-		// the sides are of the same type, so just use one for translating
-		$q = $side->translate_qv( $q );
+        $args = $side->get_base_qv( $q );
 
-		$args = $side->get_base_qv( $q );
+        $other_qv = $this->get( 'opposite', 'side' )->get_base_qv( $q );
 
-		$other_qv = $this->get( 'opposite', 'side' )->get_base_qv( $q );
+        // need to be inclusive
+        if ( isset( $other_qv['post_type'] ) ) {
+            $args['post_type'] = array_unique( array_merge(
+                (array) $args['post_type'],
+                (array) $other_qv['post_type']
+            ) );
+        }
 
-		// need to be inclusive
-		if ( isset( $other_qv['post_type'] ) ) {
-			$args['post_type'] = array_unique( array_merge(
-				(array) $args['post_type'],
-				(array) $other_qv['post_type']
-			) );
-		}
+        return $args;
+    }
 
-		return $args;
-	}
+    protected function get_non_connectable($item, $extra_qv)
+    {
+        $to_exclude = parent::get_non_connectable( $item, $extra_qv );
 
-	protected function get_non_connectable( $item, $extra_qv ) {
-		$to_exclude = parent::get_non_connectable( $item, $extra_qv );
+        if ( !$this->self_connections )
+            $to_exclude[] = $item->get_id();
 
-		if ( !$this->self_connections )
-			$to_exclude[] = $item->get_id();
-
-		return $to_exclude;
-	}
+        return $to_exclude;
+    }
 }

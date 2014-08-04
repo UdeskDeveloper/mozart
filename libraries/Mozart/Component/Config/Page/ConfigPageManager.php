@@ -5,13 +5,13 @@
 
 namespace Mozart\Component\Config\Page;
 
-
-class ConfigPageManager {
+class ConfigPageManager
+{
     private $pages;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->pages = array();
     }
-
 
 }

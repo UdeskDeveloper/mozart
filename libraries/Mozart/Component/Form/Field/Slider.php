@@ -86,12 +86,11 @@ class Slider extends Field
         }
     }
 
-
     /**
      * @param $var
      * @return float|int
      */
-    private function cleanVal( $var )
+    private function cleanVal($var)
     {
         if (is_float( $var )) {
             $cleanVar = floatval( $var );
@@ -106,7 +105,7 @@ class Slider extends Field
      * @param $val
      * @return float|int
      */
-    private function cleanDefault( $val )
+    private function cleanDefault($val)
     {
         if (empty( $val ) && !empty( $this->field['default'] ) && $this->cleanVal( $this->field['min'] ) >= 1) {
             $val = $this->cleanVal( $this->field['default'] );
@@ -134,7 +133,7 @@ class Slider extends Field
      * @param $val
      * @return mixed
      */
-    private function cleanDefaultArray( $val )
+    private function cleanDefaultArray($val)
     {
         $one = $this->value[1];
         $two = $this->value[2];

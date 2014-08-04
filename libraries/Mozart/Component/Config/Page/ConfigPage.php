@@ -5,7 +5,6 @@
 
 namespace Mozart\Component\Config\Page;
 
-
-class ConfigPage implements ConfigPageInterface {
-
-} 
+class ConfigPage implements ConfigPageInterface
+{
+}

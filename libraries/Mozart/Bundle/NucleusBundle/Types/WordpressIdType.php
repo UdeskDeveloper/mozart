@@ -22,8 +22,8 @@ class WordpressIdType extends BigIntType
     const NAME = 'wordpressid';
 
     /**
-     * @param mixed $value
-     * @param AbstractPlatform $platform
+     * @param  mixed            $value
+     * @param  AbstractPlatform $platform
      * @return mixed|null
      */
     public function convertToPHPValue($value, AbstractPlatform $platform)
@@ -36,8 +36,8 @@ class WordpressIdType extends BigIntType
     }
 
     /**
-     * @param mixed $value
-     * @param AbstractPlatform $platform
+     * @param  mixed            $value
+     * @param  AbstractPlatform $platform
      * @return int|mixed
      */
     public function convertToDatabaseValue($value, AbstractPlatform $platform)

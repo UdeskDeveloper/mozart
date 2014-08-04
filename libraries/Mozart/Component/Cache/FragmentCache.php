@@ -40,8 +40,8 @@ abstract class FragmentCache
      * Wrapper to retrieve data through TLC Transient.
      *
      * @param string $name
-     * @param array $args
-     * @param mixed $salt
+     * @param array  $args
+     * @param mixed  $salt
      *
      * @return mixed
      */
@@ -83,7 +83,7 @@ abstract class FragmentCache
      * Wraps callback to correctly set execution flag.
      *
      * @param string $name
-     * @param array $args
+     * @param array  $args
      *
      * @return string
      */
@@ -101,7 +101,7 @@ abstract class FragmentCache
      * Used to generate data to be cached.
      *
      * @param string $name
-     * @param array $args
+     * @param array  $args
      *
      * @return string
      */
@@ -116,7 +116,6 @@ abstract class FragmentCache
      */
     public function get_comment($name)
     {
-
         return '<!-- ' . esc_html( $name ) . ' ' . esc_html( $this->type ) . ' cached on ' . date_i18n(
             DATE_RSS
         ) . ' -->';

@@ -32,7 +32,6 @@ class LinkColor extends Field
         }
     }
 
-
     /**
      * Field Render Function.
      * Takes the vars and outputs the HTML for the field in the settings

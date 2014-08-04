@@ -28,8 +28,8 @@ abstract class Field implements FieldInterface
 
     /**
      * @param ConfigFactory $builder
-     * @param array $field
-     * @param string $value
+     * @param array         $field
+     * @param string        $value
      */
     public function __construct( ConfigFactory $builder, $field = array(), $value = '' )
     {
@@ -43,7 +43,7 @@ abstract class Field implements FieldInterface
     /**
      *
      */
-    protected function initialize(){
-
+    protected function initialize()
+    {
     }
 }

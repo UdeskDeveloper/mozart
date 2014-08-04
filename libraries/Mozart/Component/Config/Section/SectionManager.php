@@ -21,9 +21,9 @@ class SectionManager
 
     /**
      * @param ConfigSectionInterface $section
-     * @param null $alias
+     * @param null                   $alias
      */
-    public function addSection( ConfigSectionInterface $section, $alias = null )
+    public function addSection(ConfigSectionInterface $section, $alias = null)
     {
         if (null === $alias || '' === $alias) {
             $alias = $section->getAlias();
@@ -32,7 +32,8 @@ class SectionManager
         $this->sections[$alias] = $section->getConfiguration();
     }
 
-    public function updateSection($alias, $data = array()) {
+    public function updateSection($alias, $data = array())
+    {
         foreach ($data as $dataKey => $dataValue) {
             if (is_array($dataValue)) {
                 array_merge($this->sections[$alias][$dataKey], $dataValue);
@@ -53,7 +54,7 @@ class SectionManager
      *
      * @return mixed
      */
-    public function getSection( $alias )
+    public function getSection($alias)
     {
         if (array_key_exists( $alias, $this->sections )) {
             return $this->sections[$alias];

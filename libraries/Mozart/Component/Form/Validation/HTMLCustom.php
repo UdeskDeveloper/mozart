@@ -10,7 +10,7 @@ class HTMLCustom
      *
      *
      */
-    function __construct( $parent, $field, $value, $current )
+    public function __construct($parent, $field, $value, $current)
     {
         $this->parent = $parent;
         $this->field = $field;
@@ -26,7 +26,7 @@ class HTMLCustom
      *
      *
      */
-    function validate()
+    public function validate()
     {
         $this->value = wp_kses( $this->value, $this->field['allowed_html'] );
     }

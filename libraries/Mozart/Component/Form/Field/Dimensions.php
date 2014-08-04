@@ -2,7 +2,6 @@
 namespace Mozart\Component\Form\Field;
 
 use Mozart\Component\Form\Field;
-use Mozart\Component\Config\Utils;
 
 class Dimensions extends Field
 {

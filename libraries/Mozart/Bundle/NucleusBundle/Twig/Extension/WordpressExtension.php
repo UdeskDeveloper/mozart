@@ -58,14 +58,14 @@ class WordpressExtension extends \Twig_Extension
     protected $commentManager;
 
     /**
-     * @param BlogManager $blogManager
-     * @param OptionManager $optionManager
-     * @param PostManager $postManager
-     * @param PostMetaManager $postMetaManager
+     * @param BlogManager       $blogManager
+     * @param OptionManager     $optionManager
+     * @param PostManager       $postManager
+     * @param PostMetaManager   $postMetaManager
      * @param AttachmentManager $attachmentManager
-     * @param TermManager $termManager
-     * @param UserMetaManager $userMetaManager
-     * @param CommentManager $commentManager
+     * @param TermManager       $termManager
+     * @param UserMetaManager   $userMetaManager
+     * @param CommentManager    $commentManager
      */
     public function __construct(
         BlogManager $blogManager,
@@ -294,7 +294,7 @@ class WordpressExtension extends \Twig_Extension
      * or 'false'.
      *
      * @param string $pee The text which has to be formatted.
-     * @param bool $br Optional. If set, this will convert all remaining line-breaks after paragraphing. Default true.
+     * @param bool   $br  Optional. If set, this will convert all remaining line-breaks after paragraphing. Default true.
      *
      * @return string Text which has been converted into correct paragraph tags.
      */
@@ -563,11 +563,11 @@ class WordpressExtension extends \Twig_Extension
      * @access private
      * @since  2.9.0
      *
-     * @param string $text Text to check. First character is assumed to be $opening
-     * @param array $stack Array used as stack of opened tag elements
+     * @param string $text              Text to check. First character is assumed to be $opening
+     * @param array  $stack             Array used as stack of opened tag elements
      * @param string $disabled_elements Tags to match against formatted as regexp sub-expression
-     * @param string $opening Tag opening character, assumed to be 1 character long
-     * @param string $opening Tag closing  character
+     * @param string $opening           Tag opening character, assumed to be 1 character long
+     * @param string $opening           Tag closing  character
      *
      * @return object
      */

@@ -34,9 +34,9 @@ class OptionTemplateExtension extends \Twig_Extension
     protected $optionManager;
 
     /**
-     * @param ConfigFactory $configFactory
+     * @param ConfigFactory          $configFactory
      * @param OptionManagerInterface $optionManager
-     * @param string[] $sectionOrder The order in which sections will be rendered.
+     * @param string[]               $sectionOrder  The order in which sections will be rendered.
      */
     public function __construct(
         ConfigFactory $configFactory,
@@ -101,7 +101,8 @@ class OptionTemplateExtension extends \Twig_Extension
         return $finalSectionOrder;
     }
 
-    public function getConfig($name) {
+    public function getConfig($name)
+    {
         return $this->configFactory->getOption($name);
     }
 

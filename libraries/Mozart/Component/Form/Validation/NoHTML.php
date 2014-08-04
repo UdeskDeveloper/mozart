@@ -10,7 +10,7 @@ class NoHTML
      *
      *
      */
-    function __construct( $parent, $field, $value, $current )
+    public function __construct($parent, $field, $value, $current)
     {
         $this->parent = $parent;
         $this->field = $field;
@@ -30,7 +30,7 @@ class NoHTML
      *
      *
      */
-    function validate()
+    public function validate()
     {
         $newvalue = strip_tags( $this->value );
 

@@ -5,10 +5,8 @@
 
 namespace Mozart\Component\Config;
 
-
 use Mozart\Component\Support\Str;
 use Symfony\Component\Debug\Exception\ClassNotFoundException;
-use Symfony\Component\Debug\Exception\FatalErrorException;
 
 /**
  * Class FieldManager
@@ -61,12 +59,12 @@ class FieldManager
      */
     private $builder;
 
-    public function addHiddenField( $field_id, $data )
+    public function addHiddenField($field_id, $data)
     {
         $this->hidden_perm_fields[$field_id] = $data;
     }
 
-    public function addCompilerField( $fieldId )
+    public function addCompilerField($fieldId)
     {
         $this->compiler_fields[$fieldId] = 1;
     }
@@ -74,7 +72,7 @@ class FieldManager
     /**
      * @param ConfigFactory $builder
      */
-    public function init( ConfigFactory $builder )
+    public function init(ConfigFactory $builder)
     {
         $this->builder = $builder;
     }
@@ -105,7 +103,7 @@ class FieldManager
     /**
      * @param array $field
      */
-    public function addField( $field )
+    public function addField($field)
     {
         // Detect what field types are being used
         if (!isset( $this->fields[$field['type']][$field['id']] )) {
@@ -115,7 +113,7 @@ class FieldManager
         }
     }
 
-    public function enqueueOutput( $field )
+    public function enqueueOutput($field)
     {
         if (!isset( $field['type'] ) || $field['type'] == "callback") {
             return;
@@ -147,7 +145,7 @@ class FieldManager
         }
     }
 
-    public function enqueueScripts( $field )
+    public function enqueueScripts($field)
     {
         if (!isset( $field['type'] ) || $field['type'] == 'callback') {
             return;
@@ -172,7 +170,7 @@ class FieldManager
         unset( $theField );
     }
 
-    public function localizeFieldData( $field, $localizeData )
+    public function localizeFieldData($field, $localizeData)
     {
         if (!isset( $field['type'] ) || $field['type'] == 'callback') {
             return $localizeData;
@@ -197,7 +195,7 @@ class FieldManager
         return $localizeData;
     }
 
-    public function addLocalizeData( $localizeData )
+    public function addLocalizeData($localizeData)
     {
 
         $localizeData['required'] = $this->getRequired();
@@ -227,7 +225,7 @@ class FieldManager
      * @param $fieldType
      * @return bool|string
      */
-    public function getFieldClass( $fieldType )
+    public function getFieldClass($fieldType)
     {
         $fieldClass = "Mozart\\Component\\Form\\Field\\" . ucfirst( Str::camel( $fieldType ) );
 
@@ -246,13 +244,13 @@ class FieldManager
      * Field HTML OUTPUT.
      * Gets option from options array, then calls the specific field type class - allows extending by other devs
      *
-     * @param array $field
+     * @param array  $field
      * @param string $v
      *
      * @return mixed|string
      * @throws \Symfony\Component\Debug\Exception\ClassNotFoundException
      */
-    public function fieldInput( $field, $v = null )
+    public function fieldInput($field, $v = null)
     {
         $output = '';
         if (isset( $field['callback'] ) && function_exists( $field['callback'] )) {
@@ -348,7 +346,7 @@ class FieldManager
      *
      * @return array $params
      */
-    public function checkDependencies( $field )
+    public function checkDependencies($field)
     {
         if (!empty( $field['required'] )) {
 
@@ -462,7 +460,7 @@ class FieldManager
      *
      * @return array
      */
-    public function getFold( $field )
+    public function getFold($field)
     {
         if (!is_array( $field['required'] )) {
 
@@ -531,7 +529,7 @@ class FieldManager
      * @param $field
      * @param $data
      */
-    public function checkRequiredDependencies( $field, $data )
+    public function checkRequiredDependencies($field, $data)
     {
         //required field must not be hidden. otherwise hide this one by default
 
@@ -570,7 +568,7 @@ class FieldManager
      *
      * @return bool
      */
-    public function canOutputCSS( $field )
+    public function canOutputCSS($field)
     {
         $return = true;
 
@@ -611,4 +609,4 @@ class FieldManager
         return $return;
     }
 
-} 
+}

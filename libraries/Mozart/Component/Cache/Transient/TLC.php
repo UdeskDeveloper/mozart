@@ -75,7 +75,7 @@ class TLC
 
     private function has_update_lock()
     {
-        return (bool)$this->get_update_lock();
+        return (bool) $this->get_update_lock();
     }
 
     private function get_update_lock()
@@ -173,14 +173,14 @@ class TLC
 
     public function expires_in($seconds)
     {
-        $this->expiration = (int)$seconds;
+        $this->expiration = (int) $seconds;
 
         return $this;
     }
 
     public function extend_on_fail($seconds)
     {
-        $this->extend_on_fail = (int)$seconds;
+        $this->extend_on_fail = (int) $seconds;
 
         return $this;
     }

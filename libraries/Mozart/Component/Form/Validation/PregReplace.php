@@ -10,7 +10,7 @@ class PregReplace
      *
      *
      */
-    function __construct( $parent, $field, $value, $current )
+    public function __construct($parent, $field, $value, $current)
     {
         $this->parent = $parent;
         $this->field = $field;
@@ -26,7 +26,7 @@ class PregReplace
      *
      *
      */
-    function validate()
+    public function validate()
     {
         $this->value = preg_replace(
             $this->field['preg']['pattern'],

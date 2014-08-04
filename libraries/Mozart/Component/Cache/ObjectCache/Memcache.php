@@ -8,20 +8,22 @@ namespace Mozart\Component\Cache\ObjectCache;
 include __DIR__ . '/functions.php';
 include __DIR__ . '/WP_Object_Cache.php';
 
-class Memcache extends \WP_Object_Cache  {
-    var $global_groups = array();
+class Memcache extends \WP_Object_Cache
+{
+    public $global_groups = array();
 
-    var $no_mc_groups = array();
+    public $no_mc_groups = array();
 
-    var $cache = array();
-    var $mc = array();
-    var $stats = array();
-    var $group_ops = array();
+    public $cache = array();
+    public $mc = array();
+    public $stats = array();
+    public $group_ops = array();
 
-    var $cache_enabled = true;
-    var $default_expiration = 0;
+    public $cache_enabled = true;
+    public $default_expiration = 0;
 
-    function add($id, $data, $group = 'default', $expire = 0) {
+    public function add($id, $data, $group = 'default', $expire = 0)
+    {
         $key = $this->key($id, $group);
 
         if ( is_object( $data ) )
@@ -29,6 +31,7 @@ class Memcache extends \WP_Object_Cache  {
 
         if ( in_array($group, $this->no_mc_groups) ) {
             $this->cache[$key] = $data;
+
             return true;
         } elseif ( isset($this->cache[$key]) && $this->cache[$key] !== false ) {
             return false;
@@ -38,7 +41,7 @@ class Memcache extends \WP_Object_Cache  {
         $expire = ($expire == 0) ? $this->default_expiration : $expire;
         $result = $mc->add($key, $data, false, $expire);
 
-        if ( false !== $result ) {
+        if (false !== $result) {
             @ ++$this->stats['add'];
             $this->group_ops[$group][] = "add $id";
             $this->cache[$key] = $data;
@@ -47,7 +50,8 @@ class Memcache extends \WP_Object_Cache  {
         return $result;
     }
 
-    function add_global_groups($groups) {
+    public function add_global_groups($groups)
+    {
         if ( ! is_array($groups) )
             $groups = (array) $groups;
 
@@ -55,7 +59,8 @@ class Memcache extends \WP_Object_Cache  {
         $this->global_groups = array_unique($this->global_groups);
     }
 
-    function add_non_persistent_groups($groups) {
+    public function add_non_persistent_groups($groups)
+    {
         if ( ! is_array($groups) )
             $groups = (array) $groups;
 
@@ -63,31 +68,37 @@ class Memcache extends \WP_Object_Cache  {
         $this->no_mc_groups = array_unique($this->no_mc_groups);
     }
 
-    function incr($id, $n = 1, $group = 'default' ) {
+    public function incr($id, $n = 1, $group = 'default')
+    {
         $key = $this->key($id, $group);
         $mc =& $this->get_mc($group);
         $this->cache[ $key ] = $mc->increment( $key, $n );
+
         return $this->cache[ $key ];
     }
 
-    function decr($id, $n = 1, $group = 'default' ) {
+    public function decr($id, $n = 1, $group = 'default')
+    {
         $key = $this->key($id, $group);
         $mc =& $this->get_mc($group);
         $this->cache[ $key ] = $mc->decrement( $key, $n );
+
         return $this->cache[ $key ];
     }
 
-    function close() {
-
+    public function close()
+    {
         foreach ( $this->mc as $bucket => $mc )
             $mc->close();
     }
 
-    function delete($id, $group = 'default') {
+    public function delete($id, $group = 'default')
+    {
         $key = $this->key($id, $group);
 
         if ( in_array($group, $this->no_mc_groups) ) {
             unset($this->cache[$key]);
+
             return true;
         }
 
@@ -104,7 +115,8 @@ class Memcache extends \WP_Object_Cache  {
         return $result;
     }
 
-    function flush() {
+    public function flush()
+    {
         // Don't flush if multi-blog.
         if ( function_exists('is_site_admin') || defined('CUSTOM_USER_TABLE') && defined('CUSTOM_USER_META_TABLE') )
             return true;
@@ -112,10 +124,12 @@ class Memcache extends \WP_Object_Cache  {
         $ret = true;
         foreach ( array_keys($this->mc) as $group )
             $ret &= $this->mc[$group]->flush();
+
         return $ret;
     }
 
-    function get($id, $group = 'default', $force = false) {
+    public function get($id, $group = 'default', $force = false)
+    {
         $key = $this->key($id, $group);
         $mc =& $this->get_mc($group);
 
@@ -124,7 +138,7 @@ class Memcache extends \WP_Object_Cache  {
                 $value = clone $this->cache[$key];
             else
                 $value = $this->cache[$key];
-        } else if ( in_array($group, $this->no_mc_groups) ) {
+        } elseif ( in_array($group, $this->no_mc_groups) ) {
             $this->cache[$key] = $value = false;
         } else {
             $value = $mc->get($key);
@@ -136,7 +150,7 @@ class Memcache extends \WP_Object_Cache  {
         @ ++$this->stats['get'];
         $this->group_ops[$group][] = "get $id";
 
-        if ( 'checkthedatabaseplease' === $value ) {
+        if ('checkthedatabaseplease' === $value) {
             unset( $this->cache[$key] );
             $value = false;
         }
@@ -144,14 +158,15 @@ class Memcache extends \WP_Object_Cache  {
         return $value;
     }
 
-    function get_multi( $groups ) {
+    public function get_multi($groups)
+    {
         /*
         format: $get['group-name'] = array( 'key1', 'key2' );
         */
         $return = array();
-        foreach ( $groups as $group => $ids ) {
+        foreach ($groups as $group => $ids) {
             $mc =& $this->get_mc($group);
-            foreach ( $ids as $id ) {
+            foreach ($ids as $id) {
                 $key = $this->key($id, $group);
                 if ( isset($this->cache[$key]) ) {
                     if ( is_object( $this->cache[$key] ) )
@@ -159,14 +174,14 @@ class Memcache extends \WP_Object_Cache  {
                     else
                         $return[$key] = $this->cache[$key];
                     continue;
-                } else if ( in_array($group, $this->no_mc_groups) ) {
+                } elseif ( in_array($group, $this->no_mc_groups) ) {
                     $return[$key] = false;
                     continue;
                 } else {
                     $return[$key] = $mc->get($key);
                 }
             }
-            if ( $to_get ) {
+            if ($to_get) {
                 $vals = $mc->get_multi( $to_get );
                 $return = array_merge( $return, $vals );
             }
@@ -174,10 +189,12 @@ class Memcache extends \WP_Object_Cache  {
         @ ++$this->stats['get_multi'];
         $this->group_ops[$group][] = "get_multi $id";
         $this->cache = array_merge( $this->cache, $return );
+
         return $return;
     }
 
-    function key($key, $group) {
+    public function key($key, $group)
+    {
         if ( empty($group) )
             $group = 'default';
 
@@ -189,7 +206,8 @@ class Memcache extends \WP_Object_Cache  {
         return preg_replace('/\s+/', '', WP_CACHE_KEY_SALT . "$prefix$group:$key");
     }
 
-    function replace($id, $data, $group = 'default', $expire = 0) {
+    public function replace($id, $data, $group = 'default', $expire = 0)
+    {
         $key = $this->key($id, $group);
         $expire = ($expire == 0) ? $this->default_expiration : $expire;
         $mc =& $this->get_mc($group);
@@ -200,10 +218,12 @@ class Memcache extends \WP_Object_Cache  {
         $result = $mc->replace($key, $data, false, $expire);
         if ( false !== $result )
             $this->cache[$key] = $data;
+
         return $result;
     }
 
-    function set($id, $data, $group = 'default', $expire = 0) {
+    public function set($id, $data, $group = 'default', $expire = 0)
+    {
         $key = $this->key($id, $group);
         if ( isset($this->cache[$key]) && ('checkthedatabaseplease' === $this->cache[$key]) )
             return false;
@@ -223,7 +243,8 @@ class Memcache extends \WP_Object_Cache  {
         return $result;
     }
 
-    function colorize_debug_line($line) {
+    public function colorize_debug_line($line)
+    {
         $colors = array(
             'get' => 'green',
             'set' => 'purple',
@@ -237,15 +258,16 @@ class Memcache extends \WP_Object_Cache  {
         return $cmd2 . substr($line, strlen($cmd)) . "\n";
     }
 
-    function stats() {
+    public function stats()
+    {
         echo "<p>\n";
-        foreach ( $this->stats as $stat => $n ) {
+        foreach ($this->stats as $stat => $n) {
             echo "<strong>$stat</strong> $n";
             echo "<br/>\n";
         }
         echo "</p>\n";
         echo "<h3>Memcached:</h3>";
-        foreach ( $this->group_ops as $group => $ops ) {
+        foreach ($this->group_ops as $group => $ops) {
             if ( !isset($_GET['debug_queries']) && 500 < count($ops) ) {
                 $ops = array_slice( $ops, 0, 500 );
                 echo "<big>Too many to show! <a href='" . add_query_arg( 'debug_queries', 'true' ) . "'>Show them anyway</a>.</big>\n";
@@ -253,7 +275,7 @@ class Memcache extends \WP_Object_Cache  {
             echo "<h4>$group commands</h4>";
             echo "<pre>\n";
             $lines = array();
-            foreach ( $ops as $op ) {
+            foreach ($ops as $op) {
                 $lines[] = $this->colorize_debug_line($op);
             }
             print_r($lines);
@@ -270,11 +292,13 @@ class Memcache extends \WP_Object_Cache  {
         return $this->mc['default'];
     }
 
-    function failure_callback($host, $port) {
+    public function failure_callback($host, $port)
+    {
         //error_log("Connection failure for $host:$port\n", 3, '/tmp/memcached.txt');
     }
 
-    function WP_Object_Cache() {
+    public function WP_Object_Cache()
+    {
         global $memcached_servers;
 
         if ( isset($memcached_servers) )
@@ -286,9 +310,9 @@ class Memcache extends \WP_Object_Cache  {
         if ( is_int( key($buckets) ) )
             $buckets = array('default' => $buckets);
 
-        foreach ( $buckets as $bucket => $servers) {
+        foreach ($buckets as $bucket => $servers) {
             $this->mc[$bucket] = new Memcache();
-            foreach ( $servers as $server  ) {
+            foreach ($servers as $server) {
                 list ( $node, $port ) = explode(':', $server);
                 if ( !$port )
                     $port = ini_get('memcache.default_port');
