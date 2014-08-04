@@ -12,8 +12,8 @@ namespace Mozart\Component\Support;
  *
  * @ingroup utility
  */
-class OpCodeCache {
-
+class OpCodeCache
+{
   /**
    * Invalidates a PHP file from a possibly active opcode cache.
    *
@@ -23,7 +23,8 @@ class OpCodeCache {
    * @param string $pathname
    *   The absolute pathname of the PHP file to invalidate.
    */
-  public static function invalidate($pathname) {
+  public static function invalidate($pathname)
+  {
     clearstatcache(TRUE, $pathname);
 
     if (extension_loaded('Zend OPcache')) {

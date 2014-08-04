@@ -12,8 +12,8 @@ namespace Mozart\Component\Support;
  *
  * @ingroup utility
  */
-class String {
-
+class String
+{
   /**
    * Encodes special characters in a plain-text string for display as HTML.
    *
@@ -30,7 +30,8 @@ class String {
    *
    * @see drupal_validate_utf8()
    */
-  public static function checkPlain($text) {
+  public static function checkPlain($text)
+  {
     return htmlspecialchars($text, ENT_QUOTES, 'UTF-8');
   }
 
@@ -47,7 +48,8 @@ class String {
    * @return string
    *   The input $text, with all HTML entities decoded once.
    */
-  public static function decodeEntities($text) {
+  public static function decodeEntities($text)
+  {
     return html_entity_decode($text, ENT_QUOTES, 'UTF-8');
   }
 
@@ -92,7 +94,8 @@ class String {
    *
    * @see t()
    */
-  public static function format($string, array $args = array()) {
+  public static function format($string, array $args = array())
+  {
     // Transform arguments before inserting them.
     foreach ($args as $key => $value) {
       switch ($key[0]) {
@@ -111,6 +114,7 @@ class String {
           // Pass-through.
       }
     }
+
     return strtr($string, $args);
   }
 
@@ -125,7 +129,8 @@ class String {
    * @return string
    *   The formatted text (html).
    */
-  public static function placeholder($text) {
+  public static function placeholder($text)
+  {
     return '<em class="placeholder">' . static::checkPlain($text) . '</em>';
   }
 

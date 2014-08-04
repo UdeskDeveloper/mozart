@@ -12,8 +12,8 @@ namespace Mozart\Component\Support;
  *
  * @ingroup utility
  */
-class Html {
-
+class Html
+{
   /**
    * Normalizes an HTML snippet.
    *
@@ -26,8 +26,10 @@ class Html {
    * @return string
    *   The normalized HTML string.
    */
-  public static function normalize($html) {
+  public static function normalize($html)
+  {
     $document = static::load($html);
+
     return static::serialize($document);
   }
 
@@ -47,7 +49,8 @@ class Html {
    * @return \DOMDocument
    *   A \DOMDocument that represents the loaded (X)HTML snippet.
    */
-  public static function load($html) {
+  public static function load($html)
+  {
     $document = <<<EOD
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -81,7 +84,8 @@ EOD;
    * @return string
    *   A valid (X)HTML snippet, as a string.
    */
-  public static function serialize(\DOMDocument $document) {
+  public static function serialize(\DOMDocument $document)
+  {
     $body_node = $document->getElementsByTagName('body')->item(0);
     $html = '';
 
@@ -94,6 +98,7 @@ EOD;
     foreach ($body_node->childNodes as $node) {
       $html .= $document->saveXML($node);
     }
+
     return $html;
   }
 
@@ -116,7 +121,8 @@ EOD;
    *   (optional) A string to use as a comment end marker to escape the CDATA
    *   declaration. Defaults to an empty string.
    */
-  public static function escapeCdataElement(\DOMNode $node, $comment_start = '//', $comment_end = '') {
+  public static function escapeCdataElement(\DOMNode $node, $comment_start = '//', $comment_end = '')
+  {
     foreach ($node->childNodes as $child_node) {
       if ($child_node instanceof \DOMCdataSection) {
         $embed_prefix = "\n<!--{$comment_start}--><![CDATA[{$comment_start} ><!--{$comment_end}\n";

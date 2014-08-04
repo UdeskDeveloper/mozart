@@ -12,9 +12,9 @@ namespace Mozart\Component\Support;
  *
  * @ingroup utility
  */
-class Timer {
-
-  static protected $timers = array();
+class Timer
+{
+  protected static $timers = array();
 
   /**
    * Starts the timer with the specified name.
@@ -25,7 +25,8 @@ class Timer {
    * @param $name
    *   The name of the timer.
    */
-  static public function start($name) {
+  public static function start($name)
+  {
     static::$timers[$name]['start'] = microtime(TRUE);
     static::$timers[$name]['count'] = isset(static::$timers[$name]['count']) ? ++static::$timers[$name]['count'] : 1;
   }
@@ -39,7 +40,8 @@ class Timer {
    * @return int
    *   The current timer value in ms.
    */
-  static public function read($name) {
+  public static function read($name)
+  {
     if (isset(static::$timers[$name]['start'])) {
       $stop = microtime(TRUE);
       $diff = round(($stop - static::$timers[$name]['start']) * 1000, 2);
@@ -47,8 +49,10 @@ class Timer {
       if (isset(static::$timers[$name]['time'])) {
         $diff += static::$timers[$name]['time'];
       }
+
       return $diff;
     }
+
     return static::$timers[$name]['time'];
   }
 
@@ -62,14 +66,14 @@ class Timer {
    *   A timer array. The array contains the number of times the timer has been
    *   started and stopped (count) and the accumulated timer value in ms (time).
    */
-  static public function stop($name) {
+  public static function stop($name)
+  {
     if (isset(static::$timers[$name]['start'])) {
       $stop = microtime(TRUE);
       $diff = round(($stop - static::$timers[$name]['start']) * 1000, 2);
       if (isset(static::$timers[$name]['time'])) {
         static::$timers[$name]['time'] += $diff;
-      }
-      else {
+      } else {
         static::$timers[$name]['time'] = $diff;
       }
       unset(static::$timers[$name]['start']);

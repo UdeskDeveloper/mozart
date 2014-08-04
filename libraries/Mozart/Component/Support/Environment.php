@@ -10,8 +10,8 @@ namespace Mozart\Component\Support;
 /**
  * Provides PHP environment helper methods.
  */
-class Environment {
-
+class Environment
+{
   /**
    * Compares the memory required for an operation to the available memory.
    *
@@ -29,7 +29,8 @@ class Environment {
    *   TRUE if there is sufficient memory to allow the operation, or FALSE
    *   otherwise.
    */
-  public static function checkMemoryLimit($required, $memory_limit = NULL) {
+  public static function checkMemoryLimit($required, $memory_limit = NULL)
+  {
     if (!isset($memory_limit)) {
       $memory_limit = ini_get('memory_limit');
     }

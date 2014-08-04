@@ -11,8 +11,8 @@ namespace Mozart\Component\Support;
  *
  * @ingroup utility
  */
-class Number {
-
+class Number
+{
   /**
    * Verifies that a number is a multiple of a given step.
    *
@@ -34,7 +34,8 @@ class Number {
    *
    * @see http://opensource.apple.com/source/WebCore/WebCore-1298/html/NumberInputType.cpp
    */
-  public static function validStep($value, $step, $offset = 0.0) {
+  public static function validStep($value, $step, $offset = 0.0)
+  {
     $double_value = (double) abs($value - $offset);
 
     // The fractional part of a double has 53 bits. The greatest number that
@@ -54,7 +55,7 @@ class Number {
     // can't be represented with single precision floats are acceptable. The
     // fractional part of a float has 24 bits. That means remainders smaller than
     // $step * 2^-24 are acceptable.
-    $computed_acceptable_error = (double)($step / pow(2.0, 24));
+    $computed_acceptable_error = (double) ($step / pow(2.0, 24));
 
     return $computed_acceptable_error >= $remainder || $remainder >= ($step - $computed_acceptable_error);
   }
@@ -80,7 +81,8 @@ class Number {
    *
    * @see \Mozart\Component\Support\Number::alphadecimalToInt
    */
-  public static function intToAlphadecimal($i = 0) {
+  public static function intToAlphadecimal($i = 0)
+  {
     $num = base_convert((int) $i, 10, 36);
     $length = strlen($num);
 
@@ -98,7 +100,8 @@ class Number {
    *
    * @see \Mozart\Component\Support\Number::intToAlphadecimal
    */
-  public static function alphadecimalToInt($string = '00') {
+  public static function alphadecimalToInt($string = '00')
+  {
     return (int) base_convert(substr($string, 1), 36, 10);
   }
 

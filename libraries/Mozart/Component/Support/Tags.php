@@ -12,8 +12,8 @@ namespace Mozart\Component\Support;
  *
  * @ingroup utility
  */
-class Tags {
-
+class Tags
+{
   /**
    * Explodes a string of tags into an array.
    *
@@ -23,7 +23,8 @@ class Tags {
    * @return array
    *   An array of tags.
    */
-  public static function explode($tags) {
+  public static function explode($tags)
+  {
     // This regexp allows the following types of user input:
     // this, "somecompany, llc", "and ""this"" w,o.rks", foo bar
     $regexp = '%(?:^|,\ *)("(?>[^"]*)(?>""[^"]* )*"|(?: [^",]*))%x';
@@ -53,10 +54,12 @@ class Tags {
    * @return string
    *   The encoded string.
    */
-  public static function encode($tag) {
+  public static function encode($tag)
+  {
     if (strpos($tag, ',') !== FALSE || strpos($tag, '"') !== FALSE) {
       return '"' . str_replace('"', '""', $tag) . '"';
     }
+
     return $tag;
   }
 
@@ -69,11 +72,13 @@ class Tags {
    * @return string
    *   The imploded string.
    */
-  public static function implode($tags) {
+  public static function implode($tags)
+  {
     $encoded_tags = array();
     foreach ($tags as $tag) {
       $encoded_tags[] = self::encode($tag);
     }
+
     return implode(', ', $encoded_tags);
   }
 

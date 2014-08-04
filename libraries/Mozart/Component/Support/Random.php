@@ -12,8 +12,8 @@ namespace Mozart\Component\Support;
  *
  * @ingroup utility
  */
-class Random {
-
+class Random
+{
   /**
    * The maximum number of times name() and string() can loop.
    *
@@ -58,7 +58,8 @@ class Random {
    *
    * @see \Mozart\Component\Support\Random::name()
    */
-  public function string($length = 8, $unique = FALSE, $validator = NULL) {
+  public function string($length = 8, $unique = FALSE, $validator = NULL)
+  {
     $counter = 0;
 
     // Continue to loop if $unique is TRUE and the generated string is not
@@ -112,7 +113,8 @@ class Random {
    *
    * @see \Mozart\Component\Support\Random::string()
    */
-  public function name($length = 8, $unique = FALSE) {
+  public function name($length = 8, $unique = FALSE)
+  {
     $values = array_merge(range(65, 90), range(97, 122), range(48, 57));
     $max = count($values) - 1;
     $counter = 0;
@@ -145,13 +147,15 @@ class Random {
    *   The generated object, with the specified number of random keys. Each key
    *   has a random string value.
    */
-  public function object($size = 4) {
+  public function object($size = 4)
+  {
     $object = new \stdClass();
     for ($i = 0; $i < $size; $i++) {
       $random_key = $this->name();
       $random_value = $this->string();
       $object->{$random_key} = $random_value;
     }
+
     return $object;
   }
 

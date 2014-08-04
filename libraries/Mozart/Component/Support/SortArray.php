@@ -12,8 +12,8 @@ namespace Mozart\Component\Support;
  *
  * @ingroup utility
  */
-class SortArray {
-
+class SortArray
+{
   /**
    * Sorts a structured array by the 'weight' element.
    *
@@ -32,7 +32,8 @@ class SortArray {
    * @return int
    *   The comparison result for uasort().
    */
-  public static function sortByWeightElement(array $a, array $b) {
+  public static function sortByWeightElement(array $a, array $b)
+  {
     return static::sortByKeyInt($a, $b, 'weight');
   }
 
@@ -50,7 +51,8 @@ class SortArray {
    * @return int
    *   The comparison result for uasort().
    */
-  public static function sortByWeightProperty($a, $b) {
+  public static function sortByWeightProperty($a, $b)
+  {
     return static::sortByKeyInt($a, $b, '#weight');
   }
 
@@ -68,7 +70,8 @@ class SortArray {
    * @return int
    *   The comparison result for uasort().
    */
-  public static function sortByTitleElement($a, $b) {
+  public static function sortByTitleElement($a, $b)
+  {
     return static::sortByKeyString($a, $b, 'title');
   }
 
@@ -88,7 +91,8 @@ class SortArray {
    * @return int
    *   The comparison result for uasort().
    */
-   public static function sortByTitleProperty($a, $b) {
+   public static function sortByTitleProperty($a, $b)
+   {
      return static::sortByKeyString($a, $b, '#title');
    }
 
@@ -107,7 +111,8 @@ class SortArray {
    * @return int
    *   The comparison result for uasort().
    */
-  public static function sortByWeightAndTitleKey($a, $b, $weight_key = 'weight', $title_key = 'title') {
+  public static function sortByWeightAndTitleKey($a, $b, $weight_key = 'weight', $title_key = 'title')
+  {
     $a = (array) $a;
     $b = (array) $b;
 
@@ -133,7 +138,8 @@ class SortArray {
    * @return int
    *   The comparison result for uasort().
    */
-  public static function sortByKeyString($a, $b, $key) {
+  public static function sortByKeyString($a, $b, $key)
+  {
     $a_title = (is_array($a) && isset($a[$key])) ? $a[$key] : '';
     $b_title = (is_array($b) && isset($b[$key])) ? $b[$key] : '';
 
@@ -153,7 +159,8 @@ class SortArray {
    * @return int
    *   The comparison result for uasort().
    */
-  public static function sortByKeyInt($a, $b, $key) {
+  public static function sortByKeyInt($a, $b, $key)
+  {
     $a_weight = (is_array($a) && isset($a[$key])) ? $a[$key] : 0;
     $b_weight = (is_array($b) && isset($b[$key])) ? $b[$key] : 0;
 

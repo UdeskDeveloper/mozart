@@ -12,8 +12,8 @@ namespace Mozart\Component\Support;
  *
  * @ingroup utility
  */
-class Unicode {
-
+class Unicode
+{
   /**
    * Matches Unicode characters that are word boundaries.
    *
@@ -111,7 +111,8 @@ EOD;
    *   - \Mozart\Component\Support\Unicode::STATUS_ERROR
    *     An error occurred. No unicode support.
    */
-  public static function getStatus() {
+  public static function getStatus()
+  {
     return static::$status;
   }
 
@@ -129,7 +130,8 @@ EOD;
    * @param int $status
    *   The new status of multibyte support.
    */
-  public static function setStatus($status) {
+  public static function setStatus($status)
+  {
     if (!in_array($status, array(static::STATUS_SINGLEBYTE, static::STATUS_MULTIBYTE, static::STATUS_ERROR))) {
       throw new \InvalidArgumentException('Invalid status value for unicode support.');
     }
@@ -147,28 +149,34 @@ EOD;
    *   A string identifier of a failed multibyte extension check, if any.
    *   Otherwise, an empty string.
    */
-  public static function check() {
+  public static function check()
+  {
     // Check for mbstring extension.
     if (!function_exists('mb_strlen')) {
       static::$status = static::STATUS_SINGLEBYTE;
+
       return 'mb_strlen';
     }
 
     // Check mbstring configuration.
     if (ini_get('mbstring.func_overload') != 0) {
       static::$status = static::STATUS_ERROR;
+
       return 'mbstring.func_overload';
     }
     if (ini_get('mbstring.encoding_translation') != 0) {
       static::$status = static::STATUS_ERROR;
+
       return 'mbstring.encoding_translation';
     }
     if (ini_get('mbstring.http_input') != 'pass') {
       static::$status = static::STATUS_ERROR;
+
       return 'mbstring.http_input';
     }
     if (ini_get('mbstring.http_output') != 'pass') {
       static::$status = static::STATUS_ERROR;
+
       return 'mbstring.http_output';
     }
 
@@ -176,6 +184,7 @@ EOD;
     mb_internal_encoding('utf-8');
     mb_language('uni');
     static::$status = static::STATUS_MULTIBYTE;
+
     return '';
   }
 
@@ -192,14 +201,13 @@ EOD;
    * @return string|bool
    *   Converted data or FALSE.
    */
-  public static function convertToUtf8($data, $encoding) {
+  public static function convertToUtf8($data, $encoding)
+  {
     if (function_exists('iconv')) {
       return @iconv($encoding, 'utf-8', $data);
-    }
-    elseif (function_exists('mb_convert_encoding')) {
+    } elseif (function_exists('mb_convert_encoding')) {
       return @mb_convert_encoding($data, 'utf-8', $encoding);
-    }
-    elseif (function_exists('recode_string')) {
+    } elseif (function_exists('recode_string')) {
       return @recode_string($encoding . '..utf-8', $data);
     }
     // Cannot convert.
@@ -225,7 +233,8 @@ EOD;
    * @return string
    *   The truncated string.
    */
-  public static function truncateBytes($string, $len) {
+  public static function truncateBytes($string, $len)
+  {
     if (strlen($string) <= $len) {
       return $string;
     }
@@ -249,11 +258,11 @@ EOD;
    * @return int
    *   The length of the string.
    */
-  public static function strlen($text) {
+  public static function strlen($text)
+  {
     if (static::getStatus() == static::STATUS_MULTIBYTE) {
       return mb_strlen($text);
-    }
-    else {
+    } else {
       // Do not count UTF-8 continuation bytes.
       return strlen(preg_replace("/[\x80-\xBF]/", '', $text));
     }
@@ -268,15 +277,16 @@ EOD;
    * @return string
    *   The string in uppercase.
    */
-  public static function strtoupper($text) {
+  public static function strtoupper($text)
+  {
     if (static::getStatus() == static::STATUS_MULTIBYTE) {
       return mb_strtoupper($text);
-    }
-    else {
+    } else {
       // Use C-locale for ASCII-only uppercase.
       $text = strtoupper($text);
       // Case flip Latin-1 accented letters.
       $text = preg_replace_callback('/\xC3[\xA0-\xB6\xB8-\xBE]/', '\Mozart\Component\Support\Unicode::caseFlip', $text);
+
       return $text;
     }
   }
@@ -290,15 +300,16 @@ EOD;
    * @return string
    *   The string in lowercase.
    */
-  public static function strtolower($text) {
+  public static function strtolower($text)
+  {
     if (static::getStatus() == static::STATUS_MULTIBYTE) {
       return mb_strtolower($text);
-    }
-    else {
+    } else {
       // Use C-locale for ASCII-only lowercase.
       $text = strtolower($text);
       // Case flip Latin-1 accented letters.
       $text = preg_replace_callback('/\xC3[\x80-\x96\x98-\x9E]/', '\Mozart\Component\Support\Unicode::caseFlip', $text);
+
       return $text;
     }
   }
@@ -312,7 +323,8 @@ EOD;
    * @return string
    *   The string with the first character as uppercase.
    */
-  public static function ucfirst($text) {
+  public static function ucfirst($text)
+  {
     return static::strtoupper(static::substr($text, 0, 1)) . static::substr($text, 1);
   }
 
@@ -327,7 +339,8 @@ EOD;
    *
    * @ingroup php_wrappers
    */
-  public static function lcfirst($text) {
+  public static function lcfirst($text)
+  {
     // Note: no mbstring equivalent!
     return static::strtolower(static::substr($text, 0, 1)) . static::substr($text, 1);
   }
@@ -343,9 +356,11 @@ EOD;
    *
    * @ingroup php_wrappers
    */
-  public static function ucwords($text) {
+  public static function ucwords($text)
+  {
     $regex = '/(^|[' . static::PREG_CLASS_WORD_BOUNDARY . '])([^' . static::PREG_CLASS_WORD_BOUNDARY . '])/u';
-    return preg_replace_callback($regex, function(array $matches) {
+
+    return preg_replace_callback($regex, function (array $matches) {
       return $matches[1] . Unicode::strtoupper($matches[2]);
     }, $text);
   }
@@ -367,11 +382,11 @@ EOD;
    * @return string
    *   The shortened string.
    */
-  public static function substr($text, $start, $length = NULL) {
+  public static function substr($text, $start, $length = NULL)
+  {
     if (static::getStatus() == static::STATUS_MULTIBYTE) {
       return $length === NULL ? mb_substr($text, $start) : mb_substr($text, $start, $length);
-    }
-    else {
+    } else {
       $strlen = strlen($text);
       // Find the starting byte offset.
       $bytes = 0;
@@ -386,8 +401,7 @@ EOD;
             $chars++;
           }
         }
-      }
-      elseif ($start < 0) {
+      } elseif ($start < 0) {
         // Count all the continuation bytes from the end until we have found
         // abs($start) characters.
         $start = abs($start);
@@ -405,8 +419,7 @@ EOD;
       // Find the ending byte offset.
       if ($length === NULL) {
         $iend = $strlen;
-      }
-      elseif ($length > 0) {
+      } elseif ($length > 0) {
         // Count all the continuation bytes from the starting index until we have
         // found $length characters or reached the end of the string, then
         // backtrace one byte.
@@ -427,8 +440,7 @@ EOD;
         if ($last_real && $chars >= $length) {
           $iend--;
         }
-      }
-      elseif ($length < 0) {
+      } elseif ($length < 0) {
         // Count all the continuation bytes from the end until we have found
         // abs($start) characters, then backtrace one byte.
         $length = abs($length);
@@ -444,8 +456,7 @@ EOD;
         if ($iend > 0) {
           $iend--;
         }
-      }
-      else {
+      } else {
         // $length == 0, return an empty string.
         return '';
       }
@@ -488,7 +499,8 @@ EOD;
    * @return string
    *   The truncated string.
    */
-  public static function truncate($string, $max_length, $wordsafe = FALSE, $add_ellipsis = FALSE, $min_wordsafe_length = 1) {
+  public static function truncate($string, $max_length, $wordsafe = FALSE, $add_ellipsis = FALSE, $min_wordsafe_length = 1)
+  {
     $ellipsis = '';
     $max_length = max($max_length, 0);
     $min_wordsafe_length = max($min_wordsafe_length, 0);
@@ -518,12 +530,10 @@ EOD;
       $found = preg_match('/^(.{' . $min_wordsafe_length . ',' . $max_length . '})[' . Unicode::PREG_CLASS_WORD_BOUNDARY . ']/u', $string, $matches);
       if ($found) {
         $string = $matches[1];
-      }
-      else {
+      } else {
         $string = static::substr($string, 0, $max_length);
       }
-    }
-    else {
+    } else {
       $string = static::substr($string, 0, $max_length);
     }
 
@@ -558,7 +568,8 @@ EOD;
    * @return string
    *   The mime-encoded header.
    */
-  public static function mimeHeaderEncode($string) {
+  public static function mimeHeaderEncode($string)
+  {
     if (preg_match('/[^\x20-\x7E]/', $string)) {
       $chunk_size = 47; // floor((75 - strlen("=?UTF-8?B??=")) * 0.75);
       $len = strlen($string);
@@ -570,8 +581,10 @@ EOD;
         $string = substr($string, $c);
         $len -= $c;
       }
+
       return trim($output);
     }
+
     return $string;
   }
 
@@ -584,12 +597,14 @@ EOD;
    * @return string
    *   The mime-decoded header.
    */
-  public static function mimeHeaderDecode($header) {
+  public static function mimeHeaderDecode($header)
+  {
     $callback = function ($matches) {
       $data = ($matches[2] == 'B') ? base64_decode($matches[3]) : str_replace('_', ' ', quoted_printable_decode($matches[3]));
       if (strtolower($matches[1]) != 'utf-8') {
         $data = static::convertToUtf8($data, $matches[1]);
       }
+
       return $data;
     };
     // First step: encoded chunks followed by other encoded chunks (need to collapse whitespace)
@@ -607,7 +622,8 @@ EOD;
    * @return string
    *   The flipped text.
    */
-  public static function caseFlip($matches) {
+  public static function caseFlip($matches)
+  {
     return $matches[0][0] . chr(ord($matches[0][1]) ^ 32);
   }
 
@@ -635,7 +651,8 @@ EOD;
    * @return bool
    *   TRUE if the text is valid UTF-8, FALSE if not.
    */
-  public static function validateUtf8($text) {
+  public static function validateUtf8($text)
+  {
     if (strlen($text) == 0) {
       return TRUE;
     }

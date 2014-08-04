@@ -10,8 +10,8 @@ namespace Mozart\Component\Support;
 /**
  * Provides helper methods for byte conversions.
  */
-class Bytes {
-
+class Bytes
+{
   /**
    * The number of bytes in a kilobyte.
    *
@@ -29,7 +29,8 @@ class Bytes {
    * @return int
    *   An integer representation of the size in bytes.
    */
-  public static function toInt($size) {
+  public static function toInt($size)
+  {
     // Remove the non-unit characters from the size.
     $unit = preg_replace('/[^bkmgtpezy]/i', '', $size);
     // Remove the non-numeric characters from the size.
@@ -38,8 +39,7 @@ class Bytes {
       // Find the position of the unit in the ordered string which is the power
       // of magnitude to multiply a kilobyte by.
       return round($size * pow(self::KILOBYTE, stripos('bkmgtpezy', $unit[0])));
-    }
-    else {
+    } else {
       return round($size);
     }
   }

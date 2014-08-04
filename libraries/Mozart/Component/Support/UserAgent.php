@@ -12,8 +12,8 @@ namespace Mozart\Component\Support;
  *
  * @ingroup utility
  */
-class UserAgent {
-
+class UserAgent
+{
   /**
    * Identifies user agent language from the Accept-language HTTP header.
    *
@@ -41,7 +41,8 @@ class UserAgent {
    *   The selected language code or FALSE if no valid language can be
    *   identified.
    */
-  public static function getBestMatchingLangcode($http_accept_language, $langcodes, $mappings = array()) {
+  public static function getBestMatchingLangcode($http_accept_language, $langcodes, $mappings = array())
+  {
     // The Accept-Language header contains information about the language
     // preferences configured in the user's user agent / operating system.
     // RFC 2616 (section 14.4) defines the Accept-Language header as follows:
@@ -93,8 +94,7 @@ class UserAgent {
       // split on the first occurrence of it.
       if (strlen($langcode) > 7 && (substr($langcode, 0, 7) == 'zh-hant' || substr($langcode, 0, 7) == 'zh-hans')) {
         $generic_tag = substr($langcode, 0, 7);
-      }
-      else {
+      } else {
         $generic_tag = strtok($langcode, '-');
       }
       if (!empty($generic_tag) && !isset($ua_langcodes[$generic_tag])) {
@@ -127,8 +127,7 @@ class UserAgent {
           $qvalue = $ua_langcodes[$prefix];
           break;
         }
-      }
-      while ($prefix = substr($prefix, 0, strrpos($prefix, '-')));
+      } while ($prefix = substr($prefix, 0, strrpos($prefix, '-')));
 
       // Find the best match.
       if ($qvalue > $max_qvalue) {

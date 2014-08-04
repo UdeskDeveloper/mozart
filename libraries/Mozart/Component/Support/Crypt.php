@@ -12,8 +12,8 @@ namespace Mozart\Component\Support;
  *
  * @ingroup utility
  */
-class Crypt {
-
+class Crypt
+{
   /**
    * Returns a string of highly randomized bytes (over the full 8-bit range).
    *
@@ -28,7 +28,8 @@ class Crypt {
    * @return string
    *   A randomly generated string.
    */
-  public static function randomBytes($count) {
+  public static function randomBytes($count)
+  {
     // $random_state does not use drupal_static as it stores random bytes.
     static $random_state, $bytes;
 
@@ -80,6 +81,7 @@ class Crypt {
     }
     $output = substr($bytes, 0, $count);
     $bytes = substr($bytes, $count);
+
     return $output;
   }
 
@@ -95,7 +97,8 @@ class Crypt {
    *   A base-64 encoded sha-256 hmac, with + replaced with -, / with _ and
    *   any = padding characters removed.
    */
-  public static function hmacBase64($data, $key) {
+  public static function hmacBase64($data, $key)
+  {
     // $data and $key being strings here is necessary to avoid empty string
     // results of the hash function if they are not scalar values. As this
     // function is used in security-critical contexts like token validation it
@@ -119,7 +122,8 @@ class Crypt {
    *   A base-64 encoded sha-256 hash, with + replaced with -, / with _ and
    *   any = padding characters removed.
    */
-  public static function hashBase64($data) {
+  public static function hashBase64($data)
+  {
     $hash = base64_encode(hash('sha256', $data, TRUE));
     // Modify the hash so it's safe to use in URLs.
     return strtr($hash, array('+' => '-', '/' => '_', '=' => ''));
@@ -136,7 +140,8 @@ class Crypt {
    *
    * @see \Mozart\Component\Support\Crypt::randomBytes()
    */
-  public static function randomBytesBase64($count = 32) {
+  public static function randomBytesBase64($count = 32)
+  {
     return strtr(base64_encode(static::randomBytes($count)), array('+' => '-', '/' => '_', '=' => ''));
   }
 

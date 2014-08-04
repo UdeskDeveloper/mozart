@@ -12,8 +12,8 @@ namespace Mozart\Component\Support;
  *
  * @ingroup utility
  */
-class NestedArray {
-
+class NestedArray
+{
   /**
    * Retrieves a value from a nested array with variable depth.
    *
@@ -76,14 +76,15 @@ class NestedArray {
     foreach ($parents as $parent) {
       if (is_array($ref) && array_key_exists($parent, $ref)) {
         $ref = &$ref[$parent];
-      }
-      else {
+      } else {
         $key_exists = FALSE;
         $null = NULL;
+
         return $null;
       }
     }
     $key_exists = TRUE;
+
     return $ref;
   }
 
@@ -149,7 +150,8 @@ class NestedArray {
    * @see NestedArray::unsetValue()
    * @see NestedArray::getValue()
    */
-  public static function setValue(array &$array, array $parents, $value, $force = FALSE) {
+  public static function setValue(array &$array, array $parents, $value, $force = FALSE)
+  {
     $ref = &$array;
     foreach ($parents as $parent) {
       // PHP auto-creates container arrays and NULL entries without error if $ref
@@ -221,14 +223,14 @@ class NestedArray {
    * @see NestedArray::setValue()
    * @see NestedArray::getValue()
    */
-  public static function unsetValue(array &$array, array $parents, &$key_existed = NULL) {
+  public static function unsetValue(array &$array, array $parents, &$key_existed = NULL)
+  {
     $unset_key = array_pop($parents);
     $ref = &self::getValue($array, $parents, $key_existed);
     if ($key_existed && is_array($ref) && array_key_exists($unset_key, $ref)) {
       $key_existed = TRUE;
       unset($ref[$unset_key]);
-    }
-    else {
+    } else {
       $key_existed = FALSE;
     }
   }
@@ -261,11 +263,13 @@ class NestedArray {
    *
    * @see NestedArray::getValue()
    */
-  public static function keyExists(array $array, array $parents) {
+  public static function keyExists(array $array, array $parents)
+  {
     // Although this function is similar to PHP's array_key_exists(), its
     // arguments should be consistent with getValue().
     $key_exists = NULL;
     self::getValue($array, $parents, $key_exists);
+
     return $key_exists;
   }
 
@@ -300,7 +304,8 @@ class NestedArray {
    *
    * @see NestedArray::mergeDeepArray()
    */
-  public static function mergeDeep() {
+  public static function mergeDeep()
+  {
     return self::mergeDeepArray(func_get_args());
   }
 
@@ -321,7 +326,8 @@ class NestedArray {
    *
    * @see NestedArray::mergeDeep()
    */
-  public static function mergeDeepArray(array $arrays, $preserve_integer_keys = FALSE) {
+  public static function mergeDeepArray(array $arrays, $preserve_integer_keys = FALSE)
+  {
     $result = array();
     foreach ($arrays as $array) {
       foreach ($array as $key => $value) {
@@ -341,6 +347,7 @@ class NestedArray {
         }
       }
     }
+
     return $result;
   }
 

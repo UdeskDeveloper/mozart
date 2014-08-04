@@ -12,8 +12,8 @@ namespace Mozart\Component\Support;
  *
  * @ingroup utility
  */
-class Image {
-
+class Image
+{
   /**
    * Scales image dimensions while maintaining aspect ratio.
    *
@@ -38,7 +38,8 @@ class Image {
    *
    * @see image_scale()
    */
-  public static function scaleDimensions(array &$dimensions, $width = NULL, $height = NULL, $upscale = FALSE) {
+  public static function scaleDimensions(array &$dimensions, $width = NULL, $height = NULL, $upscale = FALSE)
+  {
     $aspect = $dimensions['height'] / $dimensions['width'];
 
     // Calculate one of the dimensions from the other target dimension,
@@ -48,8 +49,7 @@ class Image {
     // calculated to be bigger than its target.
     if (($width && !$height) || ($width && $height && $aspect < $height / $width)) {
       $height = (int) round($width * $aspect);
-    }
-    else {
+    } else {
       $width = (int) round($height / $aspect);
     }
 
@@ -60,6 +60,7 @@ class Image {
 
     $dimensions['width'] = $width;
     $dimensions['height'] = $height;
+
     return TRUE;
   }
 

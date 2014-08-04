@@ -12,8 +12,8 @@ namespace Mozart\Component\Support;
  *
  * @ingroup utility
  */
-class Variable {
-
+class Variable
+{
   /**
    * Drupal-friendly var_export().
    *
@@ -25,12 +25,12 @@ class Variable {
    * @return string
    *   The variable exported in a way compatible to Drupal's coding standards.
    */
-  public static function export($var, $prefix = '') {
+  public static function export($var, $prefix = '')
+  {
     if (is_array($var)) {
       if (empty($var)) {
         $output = 'array()';
-      }
-      else {
+      } else {
         $output = "array(\n";
         // Don't export keys if the array is non associative.
         $export_keys = array_values($var) != $var;
@@ -39,30 +39,25 @@ class Variable {
         }
         $output .= ')';
       }
-    }
-    elseif (is_bool($var)) {
+    } elseif (is_bool($var)) {
       $output = $var ? 'TRUE' : 'FALSE';
-    }
-    elseif (is_string($var)) {
+    } elseif (is_string($var)) {
       if (strpos($var, "\n") !== FALSE || strpos($var, "'") !== FALSE) {
         // If the string contains a line break or a single quote, use the
         // double quote export mode. Encode backslash and double quotes and
         // transform some common control characters.
         $var = str_replace(array('\\', '"', "\n", "\r", "\t"), array('\\\\', '\"', '\n', '\r', '\t'), $var);
         $output = '"' . $var . '"';
-      }
-      else {
+      } else {
         $output = "'" . $var . "'";
       }
-    }
-    elseif (is_object($var) && get_class($var) === 'stdClass') {
+    } elseif (is_object($var) && get_class($var) === 'stdClass') {
       // var_export() will export stdClass objects using an undefined
       // magic method __set_state() leaving the export broken. This
       // workaround avoids this by casting the object as an array for
       // export and casting it back to an object when evaluated.
       $output = '(object) ' . static::export((array) $var, $prefix);
-    }
-    else {
+    } else {
       $output = var_export($var, TRUE);
     }
 

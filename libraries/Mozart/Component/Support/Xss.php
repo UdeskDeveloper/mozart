@@ -12,8 +12,8 @@ namespace Mozart\Component\Support;
  *
  * @ingroup utility
  */
-class Xss {
-
+class Xss
+{
   /**
    * Indicates that XSS filtering must be applied in whitelist mode: only
    * specified HTML tags are allowed.
@@ -66,7 +66,8 @@ class Xss {
    *
    * @ingroup sanitization
    */
-  public static function filter($string, $html_tags = array('a', 'em', 'strong', 'cite', 'blockquote', 'code', 'ul', 'ol', 'li', 'dl', 'dt', 'dd'), $mode = Xss::FILTER_MODE_WHITELIST) {
+  public static function filter($string, $html_tags = array('a', 'em', 'strong', 'cite', 'blockquote', 'code', 'ul', 'ol', 'li', 'dl', 'dt', 'dd'), $mode = Xss::FILTER_MODE_WHITELIST)
+  {
     // Only operate on valid UTF-8 strings. This is necessary to prevent cross
     // site scripting issues on Internet Explorer 6.
     if (!Unicode::validateUtf8($string)) {
@@ -90,6 +91,7 @@ class Xss {
     $splitter = function ($matches) use ($html_tags, $mode) {
       return static::split($matches[1], $html_tags, $mode);
     };
+
     return preg_replace_callback('%
       (
       <(?=[^a-zA-Z!/])  # a lone <
@@ -119,7 +121,8 @@ class Xss {
    * @return string
    *   The filtered string.
    */
-  public static function filterAdmin($string) {
+  public static function filterAdmin($string)
+  {
     return static::filter($string, static::$adminTags);
   }
 
@@ -139,12 +142,12 @@ class Xss {
    *   If the element isn't allowed, an empty string. Otherwise, the cleaned up
    *   version of the HTML element.
    */
-  protected static function split($string, $html_tags, $split_mode) {
+  protected static function split($string, $html_tags, $split_mode)
+  {
     if (substr($string, 0, 1) != '<') {
       // We matched a lone ">" character.
       return '&gt;';
-    }
-    elseif (strlen($string) == 1) {
+    } elseif (strlen($string) == 1) {
       // We matched a lone "<" character.
       return '&lt;';
     }
@@ -201,7 +204,8 @@ class Xss {
    * @return string
    *   Cleaned up version of the HTML attributes.
    */
-  protected static function attributes($attributes) {
+  protected static function attributes($attributes)
+  {
     $attributes_array = array();
     $mode = 0;
     $attribute_name = '';
@@ -297,6 +301,7 @@ class Xss {
     if ($mode == 1 && !$skip) {
       $attributes_array[] = $attribute_name;
     }
+
     return $attributes_array;
   }
 
