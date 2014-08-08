@@ -68,7 +68,7 @@ function p2p_register_connection_type($args)
  */
 function p2p_type($p2p_type)
 {
-    return P2P_Connection_Type_Factory::get_instance( $p2p_type );
+    return ConnectionTypeFactory::get_instance( $p2p_type );
 }
 
 /**
@@ -149,7 +149,11 @@ function p2p_get_connections($p2p_type, $args = array())
     return $r;
 }
 
-/** @internal */
+/** @internal
+ * @param $p2p_type
+ * @param array $args
+ * @return array|mixed
+ */
 function _p2p_get_connections($p2p_type, $args = array())
 {
     global $wpdb;
@@ -165,7 +169,7 @@ function _p2p_get_connections($p2p_type, $args = array())
             return array();
         }
 
-        $value = scbUtil::array_to_sql( _p2p_normalize( $args[$key] ) );
+        $value = \scbUtil::array_to_sql( _p2p_normalize( $args[$key] ) );
 
         $where .= " AND p2p_$key IN ($value)";
     }
@@ -295,7 +299,7 @@ function p2p_delete_connection($p2p_id)
 
     do_action( 'p2p_delete_connections', $p2p_ids );
 
-    $where = "WHERE p2p_id IN (" . implode( ',', $p2p_ids ) . ")";
+    $where = sprintf( "WHERE p2p_id IN (%s)", implode( ',', $p2p_ids ) );
 
     $count = $wpdb->query( "DELETE FROM $wpdb->p2p $where" );
     $wpdb->query( "DELETE FROM $wpdb->p2pmeta $where" );

@@ -44,7 +44,7 @@ class QueryUser
         $clauses = $p2p_q->alter_clauses( $clauses, "$wpdb->users.ID" );
 
         if (0 !== strpos( $clauses['orderby'], 'ORDER BY ' )) {
-            $clauses['orderby'] = 'ORDER BY ' . $clauses['orderby'];
+            $clauses['orderby'] = sprintf( 'ORDER BY %s', $clauses['orderby'] );
         }
 
         foreach ($map as $clause => $key) {
