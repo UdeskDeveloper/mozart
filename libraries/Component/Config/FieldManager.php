@@ -227,7 +227,7 @@ class FieldManager
      */
     public function getFieldClass($fieldType)
     {
-        $fieldClass = "Mozart\\Component\\Form\\Field\\" . ucfirst( Str::camel( $fieldType ) );
+        $fieldClass = "Mozart\\Forms\\Component\\Field\\Type\\" . ucfirst( Str::camel( $fieldType ) );
 
         if (false === class_exists( $fieldClass )) {
             if (false === class_exists( $fieldClass . 'Field' )) {

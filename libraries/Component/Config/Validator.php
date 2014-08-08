@@ -106,7 +106,7 @@ class Validator
                 }
 
                 if (isset( $field['validate'] )) {
-                    $validateClass = 'Mozart\\Component\\Form\\Validation\\' . Str::camel( $field['validate'] );
+                    $validateClass = 'Mozart\\Forms\\Component\\Validation\\Type\\' . Str::camel( $field['validate'] );
 
                     if (class_exists( $validateClass )) {
 

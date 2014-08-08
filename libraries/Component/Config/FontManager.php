@@ -5,7 +5,7 @@
 
 namespace Mozart\Component\Config;
 
-use Mozart\Component\Form\Field\Typography;
+use Mozart\Forms\Field\Typography;
 
 class FontManager
 {

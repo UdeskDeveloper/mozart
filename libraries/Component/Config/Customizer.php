@@ -562,7 +562,7 @@ class Customizer
                     continue;
                 }
 
-                $fieldClass = "Mozart\\Component\\Form\\Field\\" . ucfirst( Str::camel( $field['type'] ) );
+                $fieldClass = "Mozart\\Forms\\Component\\Field\\Type\\" . ucfirst( Str::camel( $field['type'] ) );
 
                 if (false === class_exists( $fieldClass )) {
                     if (false === class_exists( $fieldClass . 'Field' )) {

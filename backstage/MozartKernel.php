@@ -7,7 +7,6 @@ use Mozart\Bundle\AjaxBundle\MozartAjaxBundle;
 use Mozart\Bundle\BlogBundle\MozartBlogBundle;
 use Mozart\Bundle\CacheBundle\MozartCacheBundle;
 use Mozart\Bundle\CommentBundle\MozartCommentBundle;
-use Mozart\Bundle\FieldBundle\MozartFieldBundle;
 use Mozart\Bundle\MediaBundle\MozartMediaBundle;
 use Mozart\Bundle\MenuBundle\MozartMenuBundle;
 use Mozart\Bundle\NucleusBundle\MozartNucleusBundle;
@@ -69,7 +68,6 @@ class MozartKernel extends Kernel
             new MozartBlogBundle(),
             new MozartCacheBundle(),
             new MozartCommentBundle(),
-            new MozartFieldBundle(),
             new MozartMediaBundle(),
             new MozartMenuBundle(),
             new MozartConfigBundle(),
