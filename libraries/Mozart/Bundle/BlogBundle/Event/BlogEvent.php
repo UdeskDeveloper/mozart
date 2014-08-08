@@ -10,8 +10,9 @@ use Symfony\Component\EventDispatcher\Event;
  *
  * @package Mozart\Bundle\BlogBundle\Event
  */
-class SwitchBlogEvent extends Event
+class BlogEvent extends Event
 {
+    const TYPE_SWITCH_BLOG = 'wordpress.blog.switch_blog';
     /**
      * @var \Mozart\Bundle\BlogBundle\Model\Blog
      */

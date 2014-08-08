@@ -2,7 +2,7 @@
 
 namespace Mozart\Bundle\BlogBundle\EventListener;
 
-use  Mozart\Bundle\BlogBundle\Event\SwitchBlogEvent;
+use  Mozart\Bundle\BlogBundle\Event\BlogEvent;
 use  Mozart\Bundle\PostBundle\Model\AttachmentManager;
 use  Mozart\Bundle\CommentBundle\Model\CommentManager;
 use  Mozart\Bundle\ConfigBundle\Model\OptionManager;
@@ -10,7 +10,7 @@ use  Mozart\Bundle\PostBundle\Model\PostManager;
 use  Mozart\Bundle\PostBundle\Model\PostMetaManager;
 use  Mozart\Bundle\TaxonomyBundle\Model\TermManager;
 use  Mozart\Bundle\NucleusBundle\Twig\Extension\WordpressExtension;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use  Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Class SwitchBlogListener
@@ -33,18 +33,18 @@ class SwitchBlogListener
     }
 
     /**
-     * @param SwitchBlogEvent $event
+     * @param BlogEvent $event
      */
-    public function onSwitchBlog(SwitchBlogEvent $event)
+    public function onSwitchBlog(BlogEvent $event)
     {
         $this->updateModelManagerServices( $event );
         $this->updateWordpressTwigExtension( $event );
     }
 
     /**
-     * @param SwitchBlogEvent $event
+     * @param BlogEvent $event
      */
-    private function updateModelManagerServices(SwitchBlogEvent $event)
+    private function updateModelManagerServices(BlogEvent $event)
     {
         $em = $event->getBlog()->getEntityManager();
 
@@ -57,9 +57,9 @@ class SwitchBlogListener
     }
 
     /**
-     * @param SwitchBlogEvent $event
+     * @param BlogEvent $event
      */
-    private function updateWordpressTwigExtension(SwitchBlogEvent $event)
+    private function updateWordpressTwigExtension(BlogEvent $event)
     {
         /** @var $extension WordpressExtension */
         $extension = $this->container->get( 'mozart.twig.wordpress' );

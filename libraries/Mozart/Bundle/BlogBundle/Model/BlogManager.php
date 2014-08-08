@@ -6,10 +6,8 @@ use \Redis;
 use \Memcache;
 use \Memcached;
 use Doctrine\DBAL\DBALException;
-use  Mozart\Bundle\NucleusBundle\Doctrine\WordpressEntityManager;
 use Mozart\Bundle\NucleusBundle\Model\AbstractManager;
-use  Mozart\Bundle\BlogBundle\Event\SwitchBlogEvent;
-use  Mozart\Bundle\BlogBundle\WordpressEvents;
+use  Mozart\Bundle\BlogBundle\Event\BlogEvent;
 use Symfony\Component\DependencyInjection\Container;
 
 /**
@@ -37,7 +35,7 @@ class BlogManager extends AbstractManager implements BlogManagerInterface
     }
 
     /**
-     * @param  integer                    $id
+     * @param  integer $id
      * @throws \Doctrine\ORM\ORMException
      * @return Blog
      */
@@ -99,9 +97,9 @@ class BlogManager extends AbstractManager implements BlogManagerInterface
     {
         $this->currentBlogId = $currentBlogId;
 
-        $event = new SwitchBlogEvent( $this->getCurrentBlog() );
+        $event = new BlogEvent( $this->getCurrentBlog() );
         $dispatcher = $this->container->get( 'event_dispatcher' );
-        $dispatcher->dispatch( WordpressEvents::SWITCH_BLOG, $event );
+        $dispatcher->dispatch( BlogEvent::TYPE_SWITCH_BLOG, $event );
     }
 
     /**
@@ -116,10 +114,10 @@ class BlogManager extends AbstractManager implements BlogManagerInterface
      * Loads a configured object manager metadata, query or result cache driver.
      *
      * @param string $cacheName
+     * @param $blogId
      *
      * @return \Doctrine\Common\Cache\Cache
      *
-     * @throws \InvalidArgumentException In case of unknown driver type.
      */
     protected function getCacheImpl($cacheName, $blogId)
     {
@@ -145,7 +143,7 @@ class BlogManager extends AbstractManager implements BlogManagerInterface
                 );
         }
 
-        $namespace = 'sf2_kayue_wordpress_bundle_blog_' . $blogId . '_' . md5(
+        $namespace = 'mozart_bundle_blog_' . $blogId . '_' . md5(
                 $this->container->getParameter( 'kernel.root_dir' ) . $this->container->getParameter(
                     'kernel.environment'
                 )
