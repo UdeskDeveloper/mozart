@@ -11,7 +11,7 @@ if (!function_exists( 'array_add' )) {
      * @param  mixed  $value
      * @return array
      */
-    public function array_add($array, $key, $value)
+    function array_add($array, $key, $value)
     {
         if (is_null( array_get( $array, $key ) )) {
             array_set( $array, $key, $value );
@@ -29,7 +29,7 @@ if (!function_exists( 'array_build' )) {
      * @param  \Closure $callback
      * @return array
      */
-    public function array_build($array, Closure $callback)
+    function array_build($array, Closure $callback)
     {
         $results = array();
 
@@ -50,7 +50,7 @@ if (!function_exists( 'array_divide' )) {
      * @param  array $array
      * @return array
      */
-    public function array_divide($array)
+    function array_divide($array)
     {
         return array( array_keys( $array ), array_values( $array ) );
     }
@@ -64,7 +64,7 @@ if (!function_exists( 'array_dot' )) {
      * @param  string $prepend
      * @return array
      */
-    public function array_dot($array, $prepend = '')
+    function array_dot($array, $prepend = '')
     {
         $results = array();
 
@@ -88,7 +88,7 @@ if (!function_exists( 'array_except' )) {
      * @param  array $keys
      * @return array
      */
-    public function array_except($array, $keys)
+    function array_except($array, $keys)
     {
         return array_diff_key( $array, array_flip( (array) $keys ) );
     }
@@ -102,7 +102,7 @@ if (!function_exists( 'array_fetch' )) {
      * @param  string $key
      * @return array
      */
-    public function array_fetch($array, $key)
+    function array_fetch($array, $key)
     {
         foreach (explode( '.', $key ) as $segment) {
             $results = array();
@@ -129,7 +129,7 @@ if (!function_exists( 'array_first' )) {
      * @param  mixed   $default
      * @return mixed
      */
-    public function array_first($array, $callback, $default = null)
+    function array_first($array, $callback, $default = null)
     {
         foreach ($array as $key => $value) {
             if (call_user_func( $callback, $key, $value )) {
@@ -150,7 +150,7 @@ if (!function_exists( 'array_last' )) {
      * @param  mixed   $default
      * @return mixed
      */
-    public function array_last($array, $callback, $default = null)
+    function array_last($array, $callback, $default = null)
     {
         return array_first( array_reverse( $array ), $callback, $default );
     }
@@ -163,7 +163,7 @@ if (!function_exists( 'array_flatten' )) {
      * @param  array $array
      * @return array
      */
-    public function array_flatten($array)
+    function array_flatten($array)
     {
         $return = array();
 
@@ -186,7 +186,7 @@ if (!function_exists( 'array_forget' )) {
      * @param  array|string $keys
      * @return void
      */
-    public function array_forget(&$array, $keys)
+    function array_forget(&$array, $keys)
     {
         foreach ((array) $keys as $key) {
             $parts = explode( '.', $key );
@@ -213,7 +213,7 @@ if (!function_exists( 'array_get' )) {
      * @param  mixed  $default
      * @return mixed
      */
-    public function array_get($array, $key, $default = null)
+    function array_get($array, $key, $default = null)
     {
         if (is_null( $key )) {
             return $array;
@@ -243,7 +243,7 @@ if (!function_exists( 'array_only' )) {
      * @param  array $keys
      * @return array
      */
-    public function array_only($array, $keys)
+    function array_only($array, $keys)
     {
         return array_intersect_key( $array, array_flip( (array) $keys ) );
     }
@@ -258,7 +258,7 @@ if (!function_exists( 'array_pluck' )) {
      * @param  string $key
      * @return array
      */
-    public function array_pluck($array, $value, $key = null)
+    function array_pluck($array, $value, $key = null)
     {
         $results = array();
 
@@ -290,7 +290,7 @@ if (!function_exists( 'array_pull' )) {
      * @param  mixed  $default
      * @return mixed
      */
-    public function array_pull(&$array, $key, $default = null)
+    function array_pull(&$array, $key, $default = null)
     {
         $value = array_get( $array, $key, $default );
 
@@ -311,7 +311,7 @@ if (!function_exists( 'array_set' )) {
      * @param  mixed  $value
      * @return array
      */
-    public function array_set(&$array, $key, $value)
+    function array_set(&$array, $key, $value)
     {
         if (is_null( $key )) {
             return $array = $value;
@@ -346,7 +346,7 @@ if (!function_exists( 'array_sort' )) {
      * @param  \Closure $callback
      * @return array
      */
-    public function array_sort($array, Closure $callback)
+    function array_sort($array, Closure $callback)
     {
         return Mozart\Component\Support\Collection::make( $array )->sortBy( $callback )->all();
     }
@@ -360,7 +360,7 @@ if (!function_exists( 'array_where' )) {
      * @param  \Closure $callback
      * @return array
      */
-    public function array_where($array, Closure $callback)
+    function array_where($array, Closure $callback)
     {
         $filtered = array();
 
@@ -383,7 +383,7 @@ if (!function_exists( 'in_array_recursive' )) {
      * @return bool
      */
 
-    public function in_array_recursive($needle, $haystack, $strict = false)
+    function in_array_recursive($needle, $haystack, $strict = false)
     {
         foreach ($haystack as $item) {
             if (( $strict ? $item === $needle : $item == $needle ) ||
@@ -404,7 +404,7 @@ if (!function_exists( 'camel_case' )) {
      * @param  string $value
      * @return string
      */
-    public function camel_case($value)
+    function camel_case($value)
     {
         return Str::camel( $value );
     }
@@ -417,7 +417,7 @@ if (!function_exists( 'class_basename' )) {
      * @param  string|object $class
      * @return string
      */
-    public function class_basename($class)
+    function class_basename($class)
     {
         $class = is_object( $class ) ? get_class( $class ) : $class;
 
@@ -432,7 +432,7 @@ if (!function_exists( 'class_uses_recursive' )) {
      * @param  string $class
      * @return array
      */
-    public function class_uses_recursive($class)
+    function class_uses_recursive($class)
     {
         $results = [ ];
 
@@ -453,7 +453,7 @@ if (!function_exists( 'data_get' )) {
      * @param  mixed  $default
      * @return mixed
      */
-    public function data_get($target, $key, $default = null)
+    function data_get($target, $key, $default = null)
     {
         if (is_null( $key )) {
             return $target;
@@ -488,7 +488,7 @@ if (!function_exists( 'dd' )) {
      * @param  dynamic  mixed
      * @return void
      */
-    public function dd()
+    function dd()
     {
         array_map(
             function ($x) {
@@ -507,7 +507,7 @@ if (!function_exists( 'e' )) {
      * @param  string $value
      * @return string
      */
-    public function e($value)
+    function e($value)
     {
         return htmlentities( $value, ENT_QUOTES, 'UTF-8', false );
     }
@@ -521,7 +521,7 @@ if (!function_exists( 'ends_with' )) {
      * @param  string|array $needle
      * @return bool
      */
-    public function ends_with($haystack, $needle)
+    function ends_with($haystack, $needle)
     {
         return Str::endsWith( $haystack, $needle );
     }
@@ -534,7 +534,7 @@ if (!function_exists( 'head' )) {
      * @param  array $array
      * @return mixed
      */
-    public function head($array)
+    function head($array)
     {
         return reset( $array );
     }
@@ -548,7 +548,7 @@ if (!function_exists( 'last' )) {
      * @param  array $array
      * @return mixed
      */
-    public function last($array)
+    function last($array)
     {
         return end( $array );
     }
@@ -563,7 +563,7 @@ if (!function_exists( 'object_get' )) {
      * @param  mixed  $default
      * @return mixed
      */
-    public function object_get($object, $key, $default = null)
+    function object_get($object, $key, $default = null)
     {
         if (is_null( $key ) || trim( $key ) == '') {
             return $object;
@@ -590,7 +590,7 @@ if (!function_exists( 'preg_replace_sub' )) {
      * @param  string $subject
      * @return string
      */
-    public function preg_replace_sub($pattern, &$replacements, $subject)
+    function preg_replace_sub($pattern, &$replacements, $subject)
     {
         return preg_replace_callback(
             $pattern,
@@ -611,7 +611,7 @@ if (!function_exists( 'snake_case' )) {
      * @param  string $delimiter
      * @return string
      */
-    public function snake_case($value, $delimiter = '_')
+    function snake_case($value, $delimiter = '_')
     {
         return Str::snake( $value, $delimiter );
     }
@@ -625,7 +625,7 @@ if (!function_exists( 'starts_with' )) {
      * @param  string|array $needle
      * @return bool
      */
-    public function starts_with($haystack, $needle)
+    function starts_with($haystack, $needle)
     {
         return Str::startsWith( $haystack, $needle );
     }
@@ -639,7 +639,7 @@ if (!function_exists( 'str_contains' )) {
      * @param  string|array $needle
      * @return bool
      */
-    public function str_contains($haystack, $needle)
+    function str_contains($haystack, $needle)
     {
         return Str::contains( $haystack, $needle );
     }
@@ -653,7 +653,7 @@ if (!function_exists( 'str_finish' )) {
      * @param  string $cap
      * @return string
      */
-    public function str_finish($value, $cap)
+    function str_finish($value, $cap)
     {
         return Str::finish( $value, $cap );
     }
@@ -667,7 +667,7 @@ if (!function_exists( 'str_is' )) {
      * @param  string $value
      * @return bool
      */
-    public function str_is($pattern, $value)
+    function str_is($pattern, $value)
     {
         return Str::is( $pattern, $value );
     }
@@ -682,7 +682,7 @@ if (!function_exists( 'str_limit' )) {
      * @param  string $end
      * @return string
      */
-    public function str_limit($value, $limit = 100, $end = '...')
+    function str_limit($value, $limit = 100, $end = '...')
     {
         return Str::limit( $value, $limit, $end );
     }
@@ -696,7 +696,7 @@ if (!function_exists( 'str_plural' )) {
      * @param  int    $count
      * @return string
      */
-    public function str_plural($value, $count = 2)
+    function str_plural($value, $count = 2)
     {
         return Str::plural( $value, $count );
     }
@@ -711,7 +711,7 @@ if (!function_exists( 'str_random' )) {
      *
      * @throws \RuntimeException
      */
-    public function str_random($length = 16)
+    function str_random($length = 16)
     {
         return Str::random( $length );
     }
@@ -726,7 +726,7 @@ if (!function_exists( 'str_replace_array' )) {
      * @param  string $subject
      * @return string
      */
-    public function str_replace_array($search, array $replace, $subject)
+    function str_replace_array($search, array $replace, $subject)
     {
         foreach ($replace as $value) {
             $subject = preg_replace( '/' . $search . '/', $value, $subject, 1 );
@@ -743,7 +743,7 @@ if (!function_exists( 'str_singular' )) {
      * @param  string $value
      * @return string
      */
-    public function str_singular($value)
+    function str_singular($value)
     {
         return Str::singular( $value );
     }
@@ -756,7 +756,7 @@ if (!function_exists( 'studly_case' )) {
      * @param  string $value
      * @return string
      */
-    public function studly_case($value)
+    function studly_case($value)
     {
         return Str::studly( $value );
     }
@@ -769,7 +769,7 @@ if (!function_exists( 'trait_uses_recursive' )) {
      * @param  $trait
      * @return array
      */
-    public function trait_uses_recursive($trait)
+    function trait_uses_recursive($trait)
     {
         $traits = class_uses( $trait );
 
@@ -788,7 +788,7 @@ if (!function_exists( 'value' )) {
      * @param  mixed $value
      * @return mixed
      */
-    public function value($value)
+    function value($value)
     {
         return $value instanceof Closure ? $value() : $value;
     }
@@ -801,7 +801,7 @@ if (!function_exists( 'with' )) {
      * @param  mixed $object
      * @return mixed
      */
-    public function with($object)
+    function with($object)
     {
         return $object;
     }
