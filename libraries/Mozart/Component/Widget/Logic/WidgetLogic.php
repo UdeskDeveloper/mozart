@@ -16,7 +16,6 @@ class WidgetLogic
 
     public function __construct()
     {
-        load_plugin_textdomain( 'mozart-widget-logic', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
 
         $this->loadPoints = array(
             'plugins_loaded' => __( 'when plugin starts (default)', 'mozart-widget-logic' ),
@@ -28,24 +27,33 @@ class WidgetLogic
         if (( !$this->options = get_option( 'widget_logic' ) ) || !is_array( $this->options )) {
             $this->options = array();
         }
+    }
+
+    public function initialize()
+    {
+        load_plugin_textdomain(
+            'mozart-widget-logic',
+            false,
+            WP_PLUGIN_DIR . '/mozart/translations/widget/logic'
+        );
 
         if (is_admin()) {
             // widget changes submitted by ajax method
             add_filter(
                 'widget_update_callback',
-                array($this, 'ajax_update_callback'),
+                array( $this, 'ajax_update_callback' ),
                 10,
                 3
             );
             // before any HTML output save widget changes and add controls to each widget on the widget admin page
             add_action(
                 'sidebar_admin_setup',
-                array($this, 'expand_control')
+                array( $this, 'expand_control' )
             );
             // add Widget Logic specific options on the widget admin page
             add_action(
                 'sidebar_admin_page',
-                array($this, 'options_control')
+                array( $this, 'options_control' )
             );
         } else {
             if (isset( $this->options['options-load_point'] ) &&
@@ -54,14 +62,14 @@ class WidgetLogic
             ) {
                 add_action(
                     $this->options['options-load_point'],
-                    array($this, 'sidebars_widgets_filter_add')
+                    array( $this, 'sidebars_widgets_filter_add' )
                 );
             } else {
                 $this->sidebars_widgets_filter_add();
             }
 
             if (isset( $this->options['options-filter'] ) && $this->options['options-filter'] == 'checked') {
-                add_filter( 'dynamic_sidebar_params', array($this, 'widget_display_callback'), 10 );
+                add_filter( 'dynamic_sidebar_params', array( $this, 'widget_display_callback' ), 10 );
             } // redirect the widget callback so the output can be buffered and filtered
         }
     }
@@ -73,7 +81,7 @@ class WidgetLogic
     {
         add_filter(
             'sidebars_widgets',
-            array($this, 'filter_sidebars_widgets'),
+            array( $this, 'filter_sidebars_widgets' ),
             10
         );
     }
@@ -148,14 +156,14 @@ class WidgetLogic
                 wp_register_widget_control( $id, $widget['name'], 'empty_control' );
             }
             $wp_registered_widget_controls[$id]['callback_wl_redirect'] = $wp_registered_widget_controls[$id]['callback'];
-            $wp_registered_widget_controls[$id]['callback'] = 'extra_control';
+            $wp_registered_widget_controls[$id]['callback'] = array( $this, 'extra_control' );
             array_push( $wp_registered_widget_controls[$id]['params'], $id );
         }
 
 
         // UPDATE WIDGET LOGIC WIDGET OPTIONS (via accessibility mode?)
         if ('post' == strtolower( $_SERVER['REQUEST_METHOD'] )) {
-            foreach ((array) $_POST['widget-id'] as $widget_number => $widget_id) {
+            foreach ((array)$_POST['widget-id'] as $widget_number => $widget_id) {
                 if (isset( $_POST[$widget_id . '-widget_logic'] )) {
                     $this->options[$widget_id] = trim( $_POST[$widget_id . '-widget_logic'] );
                 }
@@ -164,7 +172,7 @@ class WidgetLogic
             // clean up empty options (in PHP5 use array_intersect_key)
             $regd_plus_new = array_merge(
                 array_keys( $wp_registered_widgets ),
-                array_values( (array) $_POST['widget-id'] ),
+                array_values( (array)$_POST['widget-id'] ),
                 array(
                     'options-filter',
                     'options-wp_reset_query',
@@ -265,7 +273,10 @@ class WidgetLogic
             </form>
             <form method="POST" enctype="multipart/form-data" style="float:left; width:45%">
                 <a class="submit button" href="?wl-options-export"
-                   title="<?php _e( 'Save all WL options to a plain text config file', 'mozart-widget-logic' ); ?>"><?php _e(
+                   title="<?php _e(
+                       'Save all WL options to a plain text config file',
+                       'mozart-widget-logic'
+                   ); ?>"><?php _e(
                         'Export options',
                         'mozart-widget-logic'
                     ); ?></a>
@@ -276,7 +287,12 @@ class WidgetLogic
                         'button',
                         'wl-options-import',
                         false,
-                        array( 'title' => __( 'Load all WL options from a plain text config file', 'mozart-widget-logic' ) )
+                        array(
+                            'title' => __(
+                                'Load all WL options from a plain text config file',
+                                'mozart-widget-logic'
+                            )
+                        )
                     ); ?>
                     <input type="file" name="wl-options-import-file" id="wl-options-import-file"
                            title="<?php _e( 'Select file for importing', 'mozart-widget-logic' ); ?>"/></p>
