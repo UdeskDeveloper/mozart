@@ -1,73 +1,76 @@
 {
-    "name": "rhetina/mozart",
-    "description": "The framework that brings the awesomeness of Symfony into Wordpress",
-    "type": "wordpress-framework",
-    "authors": [
-        {
-            "name": "Alexandru Furculita",
-            "email": "alex@rhetina.com"
-        }
-    ],
-    "autoload": {
-        "psr-4": {
-            "ACF\\": "libraries/ACF/",
-            "Mozart\\": "libraries/Mozart/",
-            "Rhetina\\": "libraries/Rhetina/"
-        },
-        "files": [
-            "libraries/ACF/acf.php",
-            "libraries/Mozart/Mozart.php",
-	        "libraries/Mozart/Component/Support/helpers.php"
-        ]
-    },
-    "require": {
-        "php": ">=5.3.3",
+	"name"       : "rhetina/mozart",
+	"description": "The framework that brings the awesomeness of Symfony into Wordpress",
+	"type"       : "wordpress-framework",
+	"authors"    : [
+		{
+			"name" : "Alexandru Furculita",
+			"email": "alex@rhetina.com"
+		}
+	],
+	"autoload"   : {
+		"psr-4": {
+			"ACF\\"    : "libraries/ACF/",
+			"Mozart\\" : "libraries/Mozart/",
+			"Rhetina\\": "libraries/Rhetina/"
+		},
+		"files": [
+			"libraries/ACF/acf.php",
+			"libraries/Mozart/Mozart.php",
+			"libraries/Mozart/Component/Support/helpers.php"
+		]
+	},
+	"require"    : {
+		"php": ">=5.3.3",
 
-        "twig/twig": "~1.12",
-        "twig/extensions": "~1.0",
+		"twig/twig"      : "~1.12",
+		"twig/extensions": "~1.0",
 
-        "symfony/symfony": "~2.4",
-        "symfony/monolog-bundle": "~2.4",
+		"symfony/symfony"       : "~2.5",
+		"symfony/monolog-bundle": "~2.4",
 
-        "sensio/framework-extra-bundle": "~3.0",
+		"sensio/framework-extra-bundle": "~3.0",
 
-        "doctrine/orm": "~2.2,>=2.2.3",
-        "doctrine/doctrine-bundle": "~1.2",
+		"doctrine/orm"                       : "~2.2,>=2.2.3",
+		"doctrine/doctrine-bundle"           : "~1.3@dev",
+		"doctrine/doctrine-cache-bundle"     : "~1.0",
+		"doctrine/migrations"                : "dev-master",
+		"doctrine/doctrine-migrations-bundle": "dev-master",
 
-        "mopa/bootstrap-bundle": "3.*@dev",
-        "liip/theme-bundle": "dev-master",
+		"mopa/bootstrap-bundle": "3.*@dev",
+		"liip/theme-bundle"    : "dev-master",
 
-        "knplabs/knp-markdown-bundle": "~1.3",
-        "garetjax/phpbrowscap": "~2.0",
+		"knplabs/knp-markdown-bundle": "~1.3",
+		"garetjax/phpbrowscap"       : "~2.0",
 
-	    "nesbot/carbon": "~1.0",
-	    "patchwork/utf8": "1.1.*",
+		"nesbot/carbon" : "~1.0",
+		"patchwork/utf8": "1.1.*",
 
-	    "sabberworm/php-css-parser": "*",
+		"sabberworm/php-css-parser": "*",
 
-	    "jms/debugging-bundle": "dev-master",
-	    "jms/di-extra-bundle": "dev-master"
-    },
-    "require-dev": {
-        "sensio/generator-bundle": "~2.3"
-    },
-    "config": {
-        "autoloader-suffix": "Mozart",
-        "bin-dir": "binaries",
-        "vendor-dir": "vendor"
-    },
-    "scripts": {
-        "post-install-cmd": [
-            "Rhetina\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::buildBootstrap",
-            "Rhetina\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::clearCache",
-            "Rhetina\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installAssets",
-            "Rhetina\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::removeSymfonyStandardFiles"
-        ],
-        "post-update-cmd": [
-            "Rhetina\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::buildBootstrap",
-            "Rhetina\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::clearCache",
-            "Rhetina\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installAssets",
-            "Rhetina\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::removeSymfonyStandardFiles"
-        ]
-    }
+		"jms/debugging-bundle": "dev-master",
+		"jms/di-extra-bundle" : "dev-master"
+	},
+	"require-dev": {
+		"sensio/generator-bundle": "~2.3"
+	},
+	"config"     : {
+		"autoloader-suffix": "Mozart",
+		"bin-dir"          : "binaries",
+		"vendor-dir"       : "vendor"
+	},
+	"scripts"    : {
+		"post-install-cmd": [
+			"Rhetina\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::buildBootstrap",
+			"Rhetina\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::clearCache",
+			"Rhetina\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installAssets",
+			"Rhetina\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::removeSymfonyStandardFiles"
+		],
+		"post-update-cmd" : [
+			"Rhetina\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::buildBootstrap",
+			"Rhetina\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::clearCache",
+			"Rhetina\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installAssets",
+			"Rhetina\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::removeSymfonyStandardFiles"
+		]
+	}
 }
