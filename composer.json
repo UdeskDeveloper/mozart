@@ -10,14 +10,11 @@
 	],
 	"autoload"   : {
 		"psr-4": {
-			"ACF\\"    : "libraries/ACF/",
-			"Mozart\\" : "libraries/Mozart/",
-			"Rhetina\\": "libraries/Rhetina/"
+			"Mozart\\" : "libraries/"
 		},
 		"files": [
-			"libraries/ACF/acf.php",
-			"libraries/Mozart/Mozart.php",
-			"libraries/Mozart/Component/Support/helpers.php"
+			"libraries/Mozart.php",
+			"libraries/Component/Support/helpers.php"
 		]
 	},
 	"require"    : {
