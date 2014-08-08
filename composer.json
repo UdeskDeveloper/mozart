@@ -2,6 +2,7 @@
 	"name"       : "rhetina/mozart",
 	"description": "The framework that brings the awesomeness of Symfony into Wordpress",
 	"type"       : "wordpress-framework",
+	"license"    : "GPLv3",
 	"authors"    : [
 		{
 			"name" : "Alexandru Furculita",
