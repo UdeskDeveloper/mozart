@@ -21,9 +21,9 @@ if (defined( 'WP_DEBUG' ) && false === WP_DEBUG && extension_loaded( 'apc' )) {
     $apcLoader->register( true );
 }
 
-if (true === $debug) {
-    Symfony\Component\Debug\Debug::enable( 1 );
-}
+//if (true === $debug) {
+//    Symfony\Component\Debug\Debug::enable(  );
+//}
 
 require_once __DIR__ . '/MozartKernel.php';
 //require_once __DIR__.'/MozartCache.php';
