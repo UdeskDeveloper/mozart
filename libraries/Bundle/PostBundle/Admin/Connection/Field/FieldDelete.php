@@ -1,6 +1,7 @@
 <?php
+namespace Mozart\Bundle\PostBundle\Admin\Connection\Field;
 
-class P2P_Field_Delete implements P2P_Field
+class FieldDelete implements FieldInterface
 {
     public function get_title()
     {

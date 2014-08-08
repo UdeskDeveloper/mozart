@@ -1,6 +1,7 @@
 <?php
+namespace Mozart\Bundle\PostBundle\Admin\Connection\Field;
 
-class P2P_Field_Generic implements P2P_Field
+class FieldGeneric implements FieldInterface
 {
     protected $key;
     protected $data;

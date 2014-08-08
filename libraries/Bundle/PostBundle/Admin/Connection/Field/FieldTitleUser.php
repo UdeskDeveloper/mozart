@@ -1,6 +1,7 @@
 <?php
+namespace Mozart\Bundle\PostBundle\Admin\Connection\Field;
 
-class P2P_Field_Title_User extends P2P_Field_Title
+class FieldTitleUser extends FieldTitle
 {
     public function get_data($user)
     {

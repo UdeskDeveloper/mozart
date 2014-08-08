@@ -1,7 +1,7 @@
 <?php
 namespace Mozart\Component\Post\Connection;
 
-interface DirectionStrategy
+interface DirectionStrategyInterface
 {
     public function get_arrow();
     public function choose_direction( $direction );

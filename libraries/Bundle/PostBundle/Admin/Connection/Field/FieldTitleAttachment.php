@@ -1,6 +1,7 @@
 <?php
+namespace Mozart\Bundle\PostBundle\Admin\Connection\Field;
 
-class P2P_Field_Title_Attachment extends P2P_Field_Title
+class FieldTitleAttachment extends FieldTitle
 {
     public function get_data($item)
     {

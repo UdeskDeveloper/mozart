@@ -5,7 +5,6 @@
 
 namespace Mozart\Component\Config;
 
-use Mozart\Component\Debug\SystemInfo;
 use Mozart\Component\Config\Section\SectionManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -2482,7 +2481,6 @@ class ConfigFactory
             'sectionsOutput' => $sectionsOutput,
             'mainContent'    => $mainContent,
             'systemInfo'     => ''
-//            'systemInfo' => SystemInfo::get()
         );
 
         echo $this->container->get( 'templating' )->render( 'MozartConfigBundle:Option:page.html.twig', $context );

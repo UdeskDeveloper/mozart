@@ -1,6 +1,10 @@
 <?php
+namespace Mozart\Bundle\PostBundle\Admin\Connection;
 
-class P2P_Tools_Page extends scbAdminPage
+use Mozart\Component\Post\Connection\ConnectionType\ConnectionTypeFactory;
+use Mozart\Component\Post\Connection\Storage;
+
+class ToolsPage extends \scbAdminPage
 {
     public function setup()
     {
@@ -20,12 +24,12 @@ class P2P_Tools_Page extends scbAdminPage
 
         $current_ver = get_option( 'p2p_storage' );
 
-        if ( $current_ver == P2P_Storage::$version )
+        if ( $current_ver == Storage::$version )
             return;
 
-        P2P_Storage::install();
+        Storage::install();
 
-        update_option( 'p2p_storage', P2P_Storage::$version );
+        update_option( 'p2p_storage', Storage::$version );
     }
 
     public function form_handler()
@@ -119,7 +123,7 @@ class P2P_Tools_Page extends scbAdminPage
 
         $counts = scb_list_fold( $counts, 'p2p_type', 'count' );
 
-        foreach ( P2P_Connection_Type_Factory::get_all_instances() as $p2p_type => $ctype ) {
+        foreach ( ConnectionTypeFactory::get_all_instances() as $p2p_type => $ctype ) {
             if ( !isset( $counts[ $p2p_type ] ) )
                 $counts[ $p2p_type ] = 0;
         }
@@ -133,7 +137,7 @@ class P2P_Tools_Page extends scbAdminPage
     {
         $data = array(
             'old_p2p_type' => $p2p_type,
-            'options' => array_keys( P2P_Connection_Type_Factory::get_all_instances() ),
+            'options' => array_keys( ConnectionTypeFactory::get_all_instances() ),
             'button_text' => __( 'Go', P2P_TEXTDOMAIN )
         );
 

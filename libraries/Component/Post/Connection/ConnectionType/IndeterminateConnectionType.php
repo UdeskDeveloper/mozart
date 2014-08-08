@@ -1,7 +1,9 @@
 <?php
 namespace Mozart\Component\Post\Connection\ConnectionType;
 
-class IndeterminateConnectionType implements DirectionStrategy
+use Mozart\Component\Post\Connection\DirectionStrategyInterface;
+
+class IndeterminateConnectionType implements DirectionStrategyInterface
 {
     public function get_arrow()
     {
