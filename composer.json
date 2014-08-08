@@ -58,19 +58,5 @@
 		"autoloader-suffix": "Mozart",
 		"bin-dir"          : "binaries",
 		"vendor-dir"       : "vendor"
-	},
-	"scripts"    : {
-		"post-install-cmd": [
-			"Rhetina\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::buildBootstrap",
-			"Rhetina\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::clearCache",
-			"Rhetina\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installAssets",
-			"Rhetina\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::removeSymfonyStandardFiles"
-		],
-		"post-update-cmd" : [
-			"Rhetina\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::buildBootstrap",
-			"Rhetina\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::clearCache",
-			"Rhetina\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installAssets",
-			"Rhetina\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::removeSymfonyStandardFiles"
-		]
 	}
 }
