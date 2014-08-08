@@ -1,6 +1,5 @@
 <?php
 use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
-use Knp\Bundle\MarkdownBundle\KnpMarkdownBundle;
 use Liip\ThemeBundle\LiipThemeBundle;
 use Mopa\Bundle\BootstrapBundle\MopaBootstrapBundle;
 use Mozart\Bundle\AjaxBundle\MozartAjaxBundle;
@@ -59,7 +58,6 @@ class MozartKernel extends Kernel
             new DoctrineBundle(),
             new SensioFrameworkExtraBundle(),
             new LiipThemeBundle(),
-            new KnpMarkdownBundle(),
             new JMS\DiExtraBundle\JMSDiExtraBundle($this),
             new JMS\AopBundle\JMSAopBundle(),
             // load core modules

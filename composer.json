@@ -37,13 +37,10 @@
 		"mopa/bootstrap-bundle": "3.*@dev",
 		"liip/theme-bundle"    : "dev-master",
 
-		"knplabs/knp-markdown-bundle": "~1.3",
 		"garetjax/phpbrowscap"       : "~2.0",
 
 		"nesbot/carbon" : "~1.0",
 		"patchwork/utf8": "1.1.*",
-
-		"sabberworm/php-css-parser": "*",
 
 		"jms/debugging-bundle": "dev-master",
 		"jms/di-extra-bundle" : "dev-master"
