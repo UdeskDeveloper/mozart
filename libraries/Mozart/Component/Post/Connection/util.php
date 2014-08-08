@@ -1,5 +1,4 @@
 <?php
-namespace Mozart\Component\Post\Connection;
 
 /** @internal */
 function p2p_list_cluster($items, $callback)

@@ -1,7 +1,7 @@
 <?php
-namespace Mozart\Component\Post\Connection;
+namespace Mozart\Component\Post\Connection\Query;
 
-class query-user
+class QueryUser
 {
     public static function init()
     {
@@ -12,9 +12,9 @@ class query-user
     {
         global $wpdb;
 
-        $r = P2P_Query::create_from_qv( $query->query_vars, 'user' );
+        $r = Query::create_from_qv( $query->query_vars, 'user' );
 
-        if ( is_wp_error( $r ) ) {
+        if (is_wp_error( $r )) {
             $query->_p2p_error = $r;
 
             $query->query_where = " AND 1=0";
@@ -22,29 +22,33 @@ class query-user
             return;
         }
 
-        if ( null === $r )
+        if (null === $r) {
             return;
+        }
 
         list( $p2p_q, $query->query_vars ) = $r;
 
         $map = array(
-            'fields' => 'query_fields',
-            'join' => 'query_from',
-            'where' => 'query_where',
+            'fields'  => 'query_fields',
+            'join'    => 'query_from',
+            'where'   => 'query_where',
             'orderby' => 'query_orderby',
         );
 
         $clauses = array();
 
-        foreach ( $map as $clause => $key )
+        foreach ($map as $clause => $key) {
             $clauses[$clause] = $query->$key;
+        }
 
         $clauses = $p2p_q->alter_clauses( $clauses, "$wpdb->users.ID" );
 
-        if ( 0 !== strpos( $clauses['orderby'], 'ORDER BY ' ) )
+        if (0 !== strpos( $clauses['orderby'], 'ORDER BY ' )) {
             $clauses['orderby'] = 'ORDER BY ' . $clauses['orderby'];
+        }
 
-        foreach ( $map as $clause => $key )
-            $query->$key = $clauses[ $clause ];
+        foreach ($map as $clause => $key) {
+            $query->$key = $clauses[$clause];
+        }
     }
 }

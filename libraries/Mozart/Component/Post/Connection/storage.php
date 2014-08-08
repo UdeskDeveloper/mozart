@@ -1,10 +1,12 @@
 <?php
 namespace Mozart\Component\Post\Connection;
 
+use Mozart\Component\Post\Connection\ConnectionType\ConnectionTypeFactory;
+
 /**
  * Handles various db-related tasks
  */
-class storage
+class Storage
 {
     static $version = 4;
 
@@ -53,7 +55,7 @@ class storage
     {
         $object_type = str_replace( 'deleted_', '', current_filter() );
 
-        foreach ( P2P_Connection_Type_Factory::get_all_instances() as $p2p_type => $ctype ) {
+        foreach ( ConnectionTypeFactory::get_all_instances() as $p2p_type => $ctype ) {
             foreach ( array( 'from', 'to' ) as $direction ) {
                 if ( $object_type == $ctype->side[ $direction ]->get_object_type() ) {
                     p2p_delete_connections( $p2p_type, array(

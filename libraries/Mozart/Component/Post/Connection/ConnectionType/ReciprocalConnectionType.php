@@ -1,7 +1,7 @@
 <?php
-namespace Mozart\Component\Post\Connection;
+namespace Mozart\Component\Post\Connection\ConnectionType;
 
-class reciprocal-connection-type extends P2P_Indeterminate_Connection_Type
+class ReciprocalConnectionType extends IndeterminateConnectionType
 {
     public function choose_direction($direction)
     {
@@ -10,10 +10,11 @@ class reciprocal-connection-type extends P2P_Indeterminate_Connection_Type
 
     public function directions_for_admin($direction, $show_ui)
     {
-        if ( $show_ui )
+        if ($show_ui) {
             $directions = array( 'any' );
-        else
+        } else {
             $directions = array();
+        }
 
         return $directions;
     }

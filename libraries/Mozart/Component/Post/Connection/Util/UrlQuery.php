@@ -1,7 +1,7 @@
 <?php
 namespace Mozart\Component\Post\Connection;
 
-class url-query
+class UrlQuery
 {
     public static function get_custom_qv()
     {

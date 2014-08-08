@@ -1,7 +1,7 @@
 <?php
-namespace Mozart\Component\Post\Connection;
+namespace Mozart\Component\Post\Connection\Side;
 
-class side-attachment extends P2P_Side_Post
+class SideAttachment extends SidePost
 {
     protected $item_type = 'P2P_Item_Attachment';
 

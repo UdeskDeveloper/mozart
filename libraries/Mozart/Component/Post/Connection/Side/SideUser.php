@@ -1,7 +1,7 @@
 <?php
-namespace Mozart\Component\Post\Connection;
+namespace Mozart\Component\Post\Connection\Side;
 
-class side-user extends P2P_Side
+class SideUser extends Side
 {
     protected $item_type = 'P2P_Item_User';
 

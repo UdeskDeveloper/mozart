@@ -1,5 +1,5 @@
 <?php
-namespace Mozart\Component\Post\Connection;
+namespace Mozart\Component\Post\Connection\ConnectionType;
 
 class IndeterminateDirectedConnectionType extends DirectedConnectionType
 {

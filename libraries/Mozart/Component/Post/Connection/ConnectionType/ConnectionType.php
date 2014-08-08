@@ -1,6 +1,6 @@
 <?php
 
-namespace Mozart\Component\Post\Connection;
+namespace Mozart\Component\Post\Connection\ConnectionType;
 
 class ConnectionType
 {
@@ -23,7 +23,7 @@ class ConnectionType
 
         $labels = array();
         foreach (array( 'from', 'to' ) as $key) {
-            $labels[$key] = (array) _p2p_pluck( $args, $key . '_labels' );
+            $labels[$key] = (array)_p2p_pluck( $args, $key . '_labels' );
         }
 
         $this->labels = $labels;
@@ -266,7 +266,7 @@ class ConnectionType
             return true;
         }
 
-        foreach ((array) $post_types as $post_type) {
+        foreach ((array)$post_types as $post_type) {
             if ($side->recognize_post_type( $post_type )) {
                 return true;
             }
@@ -340,7 +340,7 @@ class ConnectionType
             return false;
         }
 
-        $order = (int) p2p_get_meta( $p2p_id, $key, true );
+        $order = (int)p2p_get_meta( $p2p_id, $key, true );
 
         $adjacent = $directed->get_connected(
             $to,
@@ -420,9 +420,9 @@ class ConnectionType
      *
      * Populates each of the outer querie's $post objects with a 'connected' property, containing a list of connected posts
      *
-     * @param object|array $items     WP_Query instance or list of post objects
-     * @param string|array $extra_qv  Additional query vars for the inner query.
-     * @param string       $prop_name The name of the property used to store the list of connected items on each post object.
+     * @param object|array $items WP_Query instance or list of post objects
+     * @param string|array $extra_qv Additional query vars for the inner query.
+     * @param string $prop_name The name of the property used to store the list of connected items on each post object.
      */
     public function each_connected($items, $extra_qv = array(), $prop_name = 'connected')
     {

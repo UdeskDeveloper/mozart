@@ -1,5 +1,7 @@
 <?php
-namespace Mozart\Component\Post\Connection;
+namespace Mozart\Component\Post\Connection\ConnectionType;
+
+use Mozart\Component\Post\Connection\DirectionStrategy;
 
 class DeterminateConnectionType implements DirectionStrategy
 {

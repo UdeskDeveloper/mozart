@@ -1,9 +1,12 @@
 <?php
-namespace Mozart\Component\Post\Connection;
+namespace Mozart\Component\Post\Connection\Side;
 
-class side-post extends P2P_Side
+use Mozart\Component\Post\Connection\Exception\Exception;
+use Mozart\Component\Post\Connection\ItemList\ItemList;
+
+class SidePost extends Side
 {
-    protected $item_type = 'P2P_Item_Post';
+    protected $item_type = 'ItemPost';
 
     public function __construct($query_vars)
     {
@@ -27,7 +30,7 @@ class side-post extends P2P_Side
         $ptype_object = get_post_type_object( $ptype );
 
         if (!$ptype_object) {
-            throw new P2P_Exception( "Can't find $ptype." );
+            throw new Exception( "Can't find $ptype." );
         }
 
         return $ptype_object;
@@ -35,17 +38,22 @@ class side-post extends P2P_Side
 
     public function get_base_qv($q)
     {
-        if ( isset( $q['post_type'] ) && 'any' != $q['post_type'] ) {
-            $common = array_intersect( $this->query_vars['post_type'], (array) $q['post_type'] );
+        if (isset( $q['post_type'] ) && 'any' != $q['post_type']) {
+            $common = array_intersect( $this->query_vars['post_type'], (array)$q['post_type'] );
 
-            if ( !$common )
+            if (!$common) {
                 unset( $q['post_type'] );
+            }
         }
 
-        return array_merge( $this->query_vars, $q, array(
-            'suppress_filters' => false,
-            'ignore_sticky_posts' => true,
-        ) );
+        return array_merge(
+            $this->query_vars,
+            $q,
+            array(
+                'suppress_filters'    => false,
+                'ignore_sticky_posts' => true,
+            )
+        );
     }
 
     public function get_desc()
@@ -69,9 +77,9 @@ class side-post extends P2P_Side
     {
         try {
             $labels = $this->get_ptype()->labels;
-        } catch ( P2P_Exception $e ) {
+        } catch ( Exception $e ) {
             trigger_error( $e->getMessage(), E_USER_WARNING );
-            $labels = new stdClass;
+            $labels = new \stdClass;
         }
 
         return $labels;
@@ -81,7 +89,7 @@ class side-post extends P2P_Side
     {
         try {
             return current_user_can( $this->get_ptype()->cap->edit_posts );
-        } catch ( P2P_Exception $e ) {
+        } catch ( Exception $e ) {
             trigger_error( $e->getMessage(), E_USER_WARNING );
 
             return false;
@@ -90,11 +98,13 @@ class side-post extends P2P_Side
 
     public function can_create_item()
     {
-        if ( count( $this->query_vars['post_type'] ) > 1 )
+        if (count( $this->query_vars['post_type'] ) > 1) {
             return false;
+        }
 
-        if ( count( $this->query_vars ) > 1 )
+        if (count( $this->query_vars ) > 1) {
             return false;
+        }
 
         return true;
     }
@@ -102,28 +112,30 @@ class side-post extends P2P_Side
     public function translate_qv($qv)
     {
         $map = array(
-            'include' => 'post__in',
-            'exclude' => 'post__not_in',
-            'search' => 's',
-            'page' => 'paged',
+            'include'  => 'post__in',
+            'exclude'  => 'post__not_in',
+            'search'   => 's',
+            'page'     => 'paged',
             'per_page' => 'posts_per_page'
         );
 
-        foreach ( $map as $old => $new )
-            if ( isset( $qv["p2p:$old"] ) )
+        foreach ($map as $old => $new) {
+            if (isset( $qv["p2p:$old"] )) {
                 $qv[$new] = _p2p_pluck( $qv, "p2p:$old" );
+            }
+        }
 
         return $qv;
     }
 
     public function do_query($args)
     {
-        return new WP_Query( $args );
+        return new \WP_Query( $args );
     }
 
     public function capture_query($args)
     {
-        $q = new WP_Query;
+        $q = new \WP_Query;
         $q->_p2p_capture = true;
 
         $q->query( $args );
@@ -131,11 +143,11 @@ class side-post extends P2P_Side
         return $q->_p2p_sql;
     }
 
-    public function get_list($wp_query)
+    public function get_list(\WP_Query $wp_query)
     {
-        $list = new P2P_List( $wp_query->posts, $this->item_type );
+        $list = new ItemList( $wp_query->posts, $this->item_type );
 
-        $list->current_page = max( 1, $wp_query->get('paged') );
+        $list->current_page = max( 1, $wp_query->get( 'paged' ) );
         $list->total_pages = $wp_query->max_num_pages;
 
         return $list;
@@ -153,24 +165,28 @@ class side-post extends P2P_Side
 
     protected function recognize($arg)
     {
-        if ( is_object( $arg ) && !isset( $arg->post_type ) )
+        if (is_object( $arg ) && !isset( $arg->post_type )) {
             return false;
+        }
 
         $post = get_post( $arg );
 
-        if ( !is_object( $post ) )
+        if (!is_object( $post )) {
             return false;
+        }
 
-        if ( !$this->recognize_post_type( $post->post_type ) )
+        if (!$this->recognize_post_type( $post->post_type )) {
             return false;
+        }
 
         return $post;
     }
 
     public function recognize_post_type($post_type)
     {
-        if ( !post_type_exists( $post_type ) )
+        if (!post_type_exists( $post_type )) {
             return false;
+        }
 
         return in_array( $post_type, $this->query_vars['post_type'] );
     }

@@ -1,10 +1,10 @@
 <?php
-namespace Mozart\Component\Post\Connection;
+namespace Mozart\Component\Post\Connection\Item;
 
 /**
  * A uniform wrapper for various types of WP objects, i.e. posts or users.
  */
-abstract class item
+abstract class Item implements ItemInterface
 {
     protected $item;
 
@@ -39,5 +39,6 @@ abstract class item
     }
 
     abstract public function get_permalink();
+
     abstract public function get_title();
 }

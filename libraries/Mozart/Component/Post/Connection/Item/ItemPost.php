@@ -1,7 +1,7 @@
 <?php
-namespace Mozart\Component\Post\Connection;
+namespace Mozart\Component\Post\Connection\Item;
 
-class item-post extends P2P_Item
+class ItemPost extends Item
 {
     public function get_title()
     {
