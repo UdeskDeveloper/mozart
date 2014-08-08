@@ -19,30 +19,5 @@ class MozartUserBundle extends Bundle
 
     public function boot()
     {
-        // Filters
-        add_filter( 'site_url', array( $this, 'changeLoginUrl' ) );
-        add_filter( 'logout_url', array( $this, 'changeLogoutUrl' ) );
-    }
-
-    /**
-     * @param $url
-     *
-     * @return mixed
-     */
-    public function changeLoginUrl($url)
-    {
-        if (strpos( $url, 'wp-login.php' ) !== false) {
-            $url = str_replace( 'wp-login.php', 'my-account', $url );
-        }
-
-        return $url;
-    }
-
-    /**
-     * @return string|void
-     */
-    public function changeLogoutUrl()
-    {
-        return home_url( 'logout' );
     }
 }
