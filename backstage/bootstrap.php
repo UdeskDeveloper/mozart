@@ -41,6 +41,8 @@ $kernel->boot();
 
 Mozart::setContainer( $kernel->getContainer() );
 
+do_action('mozart.init');
+
 add_action(
     'wp_loader',
     function () use ( $kernel ) {
