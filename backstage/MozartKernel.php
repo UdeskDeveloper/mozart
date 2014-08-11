@@ -58,8 +58,6 @@ class MozartKernel extends Kernel
             new DoctrineBundle(),
             new SensioFrameworkExtraBundle(),
             new LiipThemeBundle(),
-            new JMS\DiExtraBundle\JMSDiExtraBundle($this),
-            new JMS\AopBundle\JMSAopBundle(),
             // load core modules
             new MozartNucleusBundle(),
             new MozartAjaxBundle(),
@@ -84,7 +82,6 @@ class MozartKernel extends Kernel
         if (in_array( $this->getEnvironment(), array( 'dev', 'test' ) )) {
             $bundles[] = new WebProfilerBundle();
             $bundles[] = new SensioGeneratorBundle();
-            $bundles[] = new JMS\DebuggingBundle\JMSDebuggingBundle($this);
         }
 
         return $bundles;
@@ -160,15 +157,6 @@ class MozartKernel extends Kernel
     public function getName()
     {
         return 'mozart';
-    }
-
-    protected function getContainerBaseClass()
-    {
-        if (in_array($this->getEnvironment(), array('dev', 'test'))) {
-            return '\JMS\DebuggingBundle\DependencyInjection\TraceableContainer';
-        }
-
-        return parent::getContainerBaseClass();
     }
 
     protected function getContainerClass()
