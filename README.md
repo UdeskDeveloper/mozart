@@ -15,4 +15,4 @@ Author [Furculita Alexandru @afurculita](http://twitter.com/afurculita)
 
 Copyright © 2014 [Rhetina Studios @rhetina_studios](http://twitter.com/rhetina_studios)
 
-Licensed under the GPLv3 license.
+Licensed under the GPL-3.0+ license.
