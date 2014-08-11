@@ -126,13 +126,13 @@ class WidgetLogic
         // IMPORT ALL OPTIONS
         if (isset( $_POST['wl-options-import'] )) {
             if ($_FILES['wl-options-import-file']['tmp_name']) {
-                $import = split( "\n", file_get_contents( $_FILES['wl-options-import-file']['tmp_name'], false ) );
+                $import = preg_split( "\n", file_get_contents( $_FILES['wl-options-import-file']['tmp_name'], false ) );
                 if (array_shift( $import ) == "[START=WIDGET LOGIC OPTIONS]" && array_pop(
                         $import
                     ) == "[STOP=WIDGET LOGIC OPTIONS]"
                 ) {
                     foreach ($import as $import_option) {
-                        list( $key, $value ) = split( "\t", $import_option );
+                        list( $key, $value ) = preg_split( "\t", $import_option );
                         $this->options[$key] = json_decode( $value );
                     }
                     $this->options['msg'] = __( 'Success! Options file imported', 'mozart-widget-logic' );
