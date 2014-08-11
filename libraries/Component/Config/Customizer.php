@@ -2,6 +2,7 @@
 
 namespace Mozart\Component\Config;
 
+use Mozart\Component\Support\Str;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 class Customizer
