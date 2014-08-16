@@ -3,13 +3,10 @@
  * Copyright 2014 Alexandru Furculita <alex@rhetina.com>
  */
 
-namespace Mozart\Component\Post;
+namespace Mozart\Component\Post\Type;
 
-    /**
-     * Class PostTypeManager
-     *
-     * @package Mozart\Bundle\PostBundle
-     */
+use Mozart\Component\Post\Type\Extension\PostTypeExtensionInterface;
+
 /**
  * Class PostTypeManager
  *

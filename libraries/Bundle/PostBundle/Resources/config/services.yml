@@ -1,6 +1,6 @@
 services:
     mozart.post.post_type_manager:
-        class: Mozart\Component\Post\PostTypeManager
+        class: Mozart\Component\Post\Type\PostTypeManager
 
     mozart.post.manager:
         class: Mozart\Bundle\PostBundle\Model\PostManager

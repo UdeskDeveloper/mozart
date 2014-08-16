@@ -3,17 +3,18 @@
  * Copyright 2014 Alexandru Furculita <alex@rhetina.com>
  */
 
-namespace Mozart\Component\Post;
+namespace Mozart\Component\Post\Type;
 
 use Mozart\Component\Support\Str;
 use Symfony\Component\DependencyInjection\Container;
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
  * Class PostType
  *
  * @package Mozart\Bundle\PostBundle
  */
-class PostType implements PostTypeInterface
+class AbstractPostType implements PostTypeInterface
 {
     private static $reservedKeys = array(
         'post',
@@ -424,5 +425,15 @@ class PostType implements PostTypeInterface
         );
 
         return $strings;
+    }
+
+    /**
+     * Sets the default options for this type.
+     *
+     * @param OptionsResolverInterface $resolver The resolver for the options.
+     */
+    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    {
+        // TODO: Implement setDefaultOptions() method.
     }
 }

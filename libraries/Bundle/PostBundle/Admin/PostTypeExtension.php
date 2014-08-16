@@ -5,8 +5,8 @@
 
 namespace Mozart\Bundle\PostBundle\Admin;
 
-use Mozart\Component\Post\PostType;
-use Mozart\Component\Post\PostTypeExtensionInterface;
+use Mozart\Component\Post\Type\Extension\PostTypeExtensionInterface;
+use Mozart\Component\Post\Type\PostTypeInterface;
 
 /**
  * Class PostTypeExtension
@@ -16,7 +16,7 @@ use Mozart\Component\Post\PostTypeExtensionInterface;
 abstract class PostTypeExtension implements PostTypeExtensionInterface
 {
     /**
-     * @var PostType $postType
+     * @var PostTypeInterface $postType
      */
     protected $postType;
 
@@ -25,7 +25,7 @@ abstract class PostTypeExtension implements PostTypeExtensionInterface
         return $this->postType->getKey();
     }
 
-    public function load(PostType $postType)
+    public function load(PostTypeInterface $postType)
     {
         $this->postType = $postType;
 
