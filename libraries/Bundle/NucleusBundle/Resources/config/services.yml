@@ -74,8 +74,3 @@ services:
             - %database_table_prefix%
         tags:
             - {name: doctrine.event_subscriber}
-
-    mozart.nucleus.option.section:
-        class: Mozart\Bundle\NucleusBundle\Option\Section\MozartSection
-        tags:
-            - {name: mozart.config.section, alias: mozart}
