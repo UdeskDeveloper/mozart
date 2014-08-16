@@ -6,6 +6,7 @@
 namespace Mozart\Bundle\ConfigBundle;
 
 use Mozart\Bundle\ConfigBundle\Controller\OptionController;
+use Mozart\Bundle\ConfigBundle\DependencyInjection\Compiler\ConfigPageFieldGroupsCompilerPass;
 use Mozart\Bundle\ConfigBundle\DependencyInjection\Compiler\ConfigPagesCompilerPass;
 use Mozart\Bundle\ConfigBundle\DependencyInjection\Compiler\ConfigSectionsCompilerPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -26,6 +27,7 @@ class MozartConfigBundle extends Bundle
         parent::build( $container );
         $container->addCompilerPass( new ConfigSectionsCompilerPass() );
         $container->addCompilerPass( new ConfigPagesCompilerPass() );
+        $container->addCompilerPass( new ConfigPageFieldGroupsCompilerPass() );
     }
 
     /**
@@ -34,6 +36,8 @@ class MozartConfigBundle extends Bundle
     public function boot()
     {
         add_action( 'init', array( $this->getController(), 'initOptionManager' ) );
+        add_action( 'init', array( $this->container->get( 'mozart.config.page.manager' ), 'registerPages' ), 11 );
+        add_action( 'init', array( $this->container->get( 'mozart.config.page.fieldgroup.manager' ), 'registerFieldGroups' ), 12 );
     }
 
     /**

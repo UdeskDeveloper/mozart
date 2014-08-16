@@ -1,3 +1,4 @@
+
 services:
     mozart.config.importer:
         class: Mozart\Component\Config\Importer
@@ -36,3 +37,9 @@ services:
             - []
         tags:
             - { name: twig.extension }
+
+    mozart.config.page.manager:
+        class: Mozart\Component\Config\Page\BaseConfigPageManager
+
+    mozart.config.page.fieldgroup.manager:
+        class: Mozart\Component\Config\Page\BaseFieldGroupManager
