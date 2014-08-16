@@ -1,4 +1,7 @@
 services:
+    mozart.template.loader:
+        class: Mozart\Bundle\ThemeBundle\Loader\TemplateLoader
+
     mozart.theme.sidebar.primary:
         class: Mozart\Bundle\ThemeBundle\Sidebar\PrimarySidebar
         tags:
