@@ -23,6 +23,7 @@ use Symfony\Bundle\MonologBundle\MonologBundle;
 use Symfony\Bundle\SecurityBundle\SecurityBundle;
 use Symfony\Bundle\TwigBundle\TwigBundle;
 use Symfony\Bundle\WebProfilerBundle\WebProfilerBundle;
+use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -90,6 +91,7 @@ class MozartKernel extends Kernel
     public function boot()
     {
         $this->bootWordpress();
+        $this->loadThemeBundles();
 
         parent::boot();
 
@@ -105,7 +107,15 @@ class MozartKernel extends Kernel
         $this->container->set( 'request_stack', $requestStack );
     }
 
-    public function bootWordpress()
+    protected function loadThemeBundles()
+    {
+        if (false === file_exists( get_template_directory() . '/backstage/bootstrap.php' )) {
+            throw new FileNotFoundException( '/backstage/bootstrap.php was not found in your theme' );
+        }
+        include get_template_directory() . '/backstage/bootstrap.php';
+    }
+
+    protected function bootWordpress()
     {
         if (false === defined( 'ABSPATH' )) {
 
@@ -161,6 +171,6 @@ class MozartKernel extends Kernel
 
     protected function getContainerClass()
     {
-        return 'MozartOrchestra' . ( $this->debug ? 'NSAied' : '' );
+        return 'Mozart' . ( $this->debug ? 'Naked' : '' ) . 'Orchestra';
     }
 }
