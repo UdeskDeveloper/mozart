@@ -10,14 +10,13 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class MozartMediaBundle extends Bundle
 {
-    public function boot()
-    {
-        parent::boot();
-    }
 
     public function build(ContainerBuilder $container)
     {
-        parent::build($container);
+        parent::build( $container );
     }
 
+    public function boot()
+    {
+    }
 }
