@@ -76,4 +76,20 @@ abstract class FieldGroup implements FieldGroupInterface
     {
         $this->configPage = $configPage;
     }
+
+    /**
+     * @return array
+     */
+    public function getLocation()
+    {
+        return array(
+            array(
+                array(
+                    'param'    => $this->configPage->getType(),
+                    'operator' => '==',
+                    'value'    => $this->configPage->getKey(),
+                ),
+            ),
+        );
+    }
 }

@@ -31,10 +31,6 @@ class Widget extends \WP_Widget implements WidgetInterface, ContainerAwareInterf
             $this->getName(),
             $this->getOptions()
         );
-
-        if ( count( $this->getFieldGroup() ) > 0 ) {
-            register_field_group( $this->getFieldGroup() );
-        }
     }
 
     /**
@@ -52,7 +48,7 @@ class Widget extends \WP_Widget implements WidgetInterface, ContainerAwareInterf
      */
     public function getAlias()
     {
-        $className     = get_class( $this );
+        $className = get_class( $this );
         $classBaseName = substr( strrchr( $className, '\\' ), 1 );
 
         return Str::snake( $classBaseName ) . '_mozart';
@@ -75,7 +71,7 @@ class Widget extends \WP_Widget implements WidgetInterface, ContainerAwareInterf
     public function getOptions()
     {
         return array(
-            'classname'   => $this->getAlias(),
+            'classname' => $this->getAlias(),
             'description' => str_replace( ' | mozart', '', $this->getName() )
         );
     }

@@ -110,7 +110,8 @@ class MozartKernel extends Kernel
     protected function loadThemeBundles()
     {
         if (false === file_exists( get_template_directory() . '/backstage/bootstrap.php' )) {
-            throw new FileNotFoundException( '/backstage/bootstrap.php was not found in your theme' );
+            return;
+//            throw new FileNotFoundException( '/backstage/bootstrap.php was not found in your theme' );
         }
         include get_template_directory() . '/backstage/bootstrap.php';
     }

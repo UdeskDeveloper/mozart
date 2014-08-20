@@ -22,4 +22,6 @@ interface ConfigPageInterface
     public function toRedirect();
 
     public function getShortName();
+
+    public function getType();
 }

@@ -19,4 +19,6 @@ interface FieldGroupInterface
      * @return ConfigPageInterface
      */
     public function getConfigPage();
+
+    public function getLocation();
 }

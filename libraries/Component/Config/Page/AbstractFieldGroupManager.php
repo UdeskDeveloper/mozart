@@ -35,4 +35,4 @@ class AbstractFieldGroupManager
     {
         return $this->fieldGroups;
     }
-} 
+}
