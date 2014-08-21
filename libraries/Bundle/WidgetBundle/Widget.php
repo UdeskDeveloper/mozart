@@ -16,14 +16,12 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class Widget extends \WP_Widget implements WidgetInterface, ContainerAwareInterface
 {
+    const NAME_SPACE = 'mozart';
     /**
      * @var ContainerInterface
      */
     protected $container;
 
-    /**
-     *
-     */
     public function __construct()
     {
         parent::__construct(
@@ -34,16 +32,6 @@ class Widget extends \WP_Widget implements WidgetInterface, ContainerAwareInterf
     }
 
     /**
-     * Return the options array of the field group created with ACF
-     *
-     * @return array
-     */
-    public function getFieldGroup()
-    {
-        return array();
-    }
-
-    /**
      * @return string
      */
     public function getAlias()
@@ -51,7 +39,7 @@ class Widget extends \WP_Widget implements WidgetInterface, ContainerAwareInterf
         $className = get_class( $this );
         $classBaseName = substr( strrchr( $className, '\\' ), 1 );
 
-        return Str::snake( $classBaseName ) . '_mozart';
+        return Str::snake( $classBaseName ) . '_' . static::NAME_SPACE;
     }
 
     /**
@@ -60,9 +48,9 @@ class Widget extends \WP_Widget implements WidgetInterface, ContainerAwareInterf
     public function getName()
     {
         $alias = $this->getAlias();
-        $alias = str_replace( '_mozart', ' | mozart', $alias );
+        $alias = str_replace( '_' . static::NAME_SPACE, ' | ' . static::NAME_SPACE, $alias );
 
-        return Str::studly( $alias );
+        return ucwords( str_replace( array( '-', '_' ), ' ', $alias ) );
     }
 
     /**
@@ -72,7 +60,7 @@ class Widget extends \WP_Widget implements WidgetInterface, ContainerAwareInterf
     {
         return array(
             'classname' => $this->getAlias(),
-            'description' => str_replace( ' | mozart', '', $this->getName() )
+            'description' => str_replace( ' | ' . static::NAME_SPACE, '', $this->getName() )
         );
     }
 

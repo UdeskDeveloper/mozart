@@ -36,6 +36,8 @@ class Sidebar implements SidebarInterface
         return array(
             'name'          => $this->getName(),
             'id'            => $this->getKey(),
+            'description' => '',
+            'class' => '',
             'before_widget' => '<div id="%1$s" class="widget %2$s">',
             'after_widget'  => '</div>',
             'before_title'  => '<h2>',

@@ -33,14 +33,14 @@ class MozartWidgetBundle extends Bundle
      */
     public function boot()
     {
-        add_action( 'mozart.init', array( $this, 'onMozartInit' ) );
+        add_action(
+            'mozart.init',
+            function ($bundle) use ($this) {
+                $bundle->container->get( 'mozart.widget.logic' )->initialize();
+            }
+        );
         add_action( 'widgets_init', array( $this, 'registerSidebars' ), 0 );
         add_action( 'widgets_init', array( $this, 'registerWidgets' ), 0 );
-    }
-
-    public function onMozartInit()
-    {
-        $this->container->get( 'mozart.widget.logic' )->initialize();
     }
 
     public function registerSidebars()
@@ -54,7 +54,7 @@ class MozartWidgetBundle extends Bundle
 
         add_theme_support( 'widgets' );
 
-        $sidebars = $this->container->get( 'mozart.widget.sidebar_manager' )->getSidebars();
+        $sidebars = $this->getSidebarManager()->getSidebars();
 
         foreach ($sidebars as $sidebar) {
 
@@ -62,6 +62,14 @@ class MozartWidgetBundle extends Bundle
 
             do_action( 'register_sidebar', $sidebar->getConfiguration() );
         }
+    }
+
+    /**
+     * @return SidebarManager
+     */
+    protected function getSidebarManager()
+    {
+        return $this->container->get( 'mozart.widget.sidebar_manager' );
     }
 
     /**
