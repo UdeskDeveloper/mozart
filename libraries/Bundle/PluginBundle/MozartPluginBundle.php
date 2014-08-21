@@ -25,37 +25,5 @@ class MozartPluginBundle extends Bundle
     public function boot()
     {
         add_action( 'init', array( $this->container->get( 'mozart.plugin.manager' ), 'init' ) );
-        add_action(
-            'deactivated_plugin',
-            function ($bundle) use (&$this) {
-                add_action(
-                    'wp_loader',
-                    array( $bundle, 'clearCache' ),
-                    1000
-                );
-            },
-            10,
-            2
-        );
-        add_action( 'activated_plugin',
-            function ($bundle) use (&$this) {
-                add_action(
-                    'wp_loader',
-                    array( $bundle, 'clearCache' ),
-                    1000
-                );
-            }, 10, 2 );
     }
-
-    public function clearCache($plugin, $network_activation)
-    {
-        $filesystem = new Filesystem();
-
-        if ($filesystem->exists( $this->container->getParameter( 'kernel.cache_dir' ) )) {
-            $filesystem->remove( $this->container->getParameter( 'kernel.cache_dir' ) );
-        }
-
-        flush_rewrite_rules();
-    }
-
 }

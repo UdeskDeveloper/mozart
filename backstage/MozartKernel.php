@@ -24,6 +24,7 @@ use Symfony\Bundle\SecurityBundle\SecurityBundle;
 use Symfony\Bundle\TwigBundle\TwigBundle;
 use Symfony\Bundle\WebProfilerBundle\WebProfilerBundle;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -88,9 +89,22 @@ class MozartKernel extends Kernel
         return $bundles;
     }
 
+    public function clearCache()
+    {
+
+        $filesystem = new Filesystem();
+
+        if ($filesystem->exists( $this->container->getParameter( 'kernel.cache_dir' ) )) {
+            $filesystem->remove( $this->container->getParameter( 'kernel.cache_dir' ) );
+        }
+
+        flush_rewrite_rules();
+    }
+
     public function boot()
     {
         $this->bootWordpress();
+
         $this->loadThemeBundles();
 
         parent::boot();
@@ -136,6 +150,11 @@ class MozartKernel extends Kernel
                 require_once ABSPATH . 'wp-admin/includes/file.php';
             }
         }
+
+        add_action( 'deactivate_plugin', array( $this, 'clearCache' ), 10, 2 );
+        add_action( 'activate_plugin', array( $this, 'clearCache' ), 10, 2 );
+        add_action( "after_switch_theme", array( $this, 'clearCache' ), 10, 2 );
+        add_action( "switch_theme", array( $this, 'clearCache' ), 10, 2 );
     }
 
     /**

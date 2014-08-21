@@ -34,13 +34,14 @@ class MozartWidgetBundle extends Bundle
     public function boot()
     {
         add_action(
-            'mozart.init',
-            function ($bundle) use ($this) {
-                $bundle->container->get( 'mozart.widget.logic' )->initialize();
-            }
+            'mozart.init', array($this, 'onApplicationInit')
         );
         add_action( 'widgets_init', array( $this, 'registerSidebars' ), 0 );
         add_action( 'widgets_init', array( $this, 'registerWidgets' ), 0 );
+    }
+
+    public function onApplicationInit() {
+        $this->container->get( 'mozart.widget.logic' )->initialize();
     }
 
     public function registerSidebars()
