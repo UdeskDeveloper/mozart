@@ -24,6 +24,9 @@ abstract class ConfigPage implements ConfigPageInterface
     protected function getClassBaseName()
     {
         $className = get_class( $this );
+        $className = str_replace('SettingsPage', '', $className);
+        $className = str_replace('ConfigPage', '', $className);
+
         return substr( strrchr( $className, '\\' ), 1 );
     }
 

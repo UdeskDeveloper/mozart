@@ -89,7 +89,7 @@ class WordpressExtension extends \Twig_Extension
 
     public function reloadManagers(ContainerInterface $container)
     {
-        $this->optionManager = $container->get( 'mozart.config.manager' );
+        $this->optionManager = $container->get( 'config.manager' );
         $this->postManager = $container->get( 'mozart.post.manager' );
         $this->postMetaManager = $container->get( 'mozart.post.meta.manager' );
         $this->attachmentManager = $container->get( 'mozart.post.attachment_manager' );

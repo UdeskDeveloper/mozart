@@ -2,6 +2,7 @@
 use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
 use Liip\ThemeBundle\LiipThemeBundle;
 use Mopa\Bundle\BootstrapBundle\MopaBootstrapBundle;
+use Mozart\Bundle\AdminBundle\MozartAdminBundle;
 use Mozart\Bundle\AjaxBundle\MozartAjaxBundle;
 use Mozart\Bundle\BlogBundle\MozartBlogBundle;
 use Mozart\Bundle\CacheBundle\MozartCacheBundle;
@@ -62,6 +63,7 @@ class MozartKernel extends Kernel
             new LiipThemeBundle(),
             // load core modules
             new MozartNucleusBundle(),
+            new MozartAdminBundle(),
             new MozartAjaxBundle(),
             new MozartBlogBundle(),
             new MozartCacheBundle(),

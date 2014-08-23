@@ -20,7 +20,6 @@ class Random
    * This prevents infinite loops if the length of the random value is very
    * small.
    *
-   * @see \Drupal\Tests\Component\Utility\RandomTest
    */
   const MAXIMUM_TRIES = 100;
 

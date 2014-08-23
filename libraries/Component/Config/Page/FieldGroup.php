@@ -29,6 +29,8 @@ abstract class FieldGroup implements FieldGroupInterface
     protected function getClassBaseName()
     {
         $className = get_class( $this );
+        $className = str_replace( 'FieldGroup', '', $className );
+
         return substr( strrchr( $className, '\\' ), 1 );
     }
 

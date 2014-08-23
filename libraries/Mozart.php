@@ -51,7 +51,7 @@ class Mozart
      * accessor method below. If it is listed below, those methods are preferred
      * as they can return useful type hints.
      *
-     * @param string $id              The ID of the service to retrieve.
+     * @param string $id The ID of the service to retrieve.
      * @param int    $invalidBehavior The behavior when the service does not exist
      *
      * @return mixed The specified service.
@@ -92,43 +92,41 @@ class Mozart
      * returned.  Doing so may lead to inconsistencies as the request object is
      * volatile and may change at various times, such as during a subrequest.
      *
-     * @return \Symfony\Component\HttpFoundation\Request
-     *                                                   The currently active request object.
+     * @return \Symfony\Component\HttpFoundation\Request The currently active request object.
      */
     public static function request()
     {
-        return static::$container->get('request');
+        return static::$container->get( 'request' );
     }
 
     /**
      * Indicates if there is a currently active request object.
      *
-     * @return bool
-     *              TRUE if there is a currently active request object, FALSE otherwise.
+     * @return bool TRUE if there is a currently active request object, FALSE otherwise.
      */
     public static function hasRequest()
     {
-        return static::$container && static::$container->has('request') && static::$container->initialized('request') && static::$container->isScopeActive('request');
+        return static::$container && static::$container->has( 'request' ) && static::$container->initialized(
+            'request'
+        ) && static::$container->isScopeActive( 'request' );
     }
 
     /**
      * Retrieves a configuration object.
      *
      * This is the main entry point to the configuration API. Calling
-     * @code \Drupal::config('book.admin') @endcode will return a configuration
+     * @code \Mozart::config('book.admin') @endcode will return a configuration
      * object in which the book module can store its administrative settings.
      *
-     * @param string $name
-     *                     The name of the configuration object to retrieve. The name corresponds to
-     *                     a configuration file. For @code \Drupal::config('book.admin') @endcode, the config
+     * @param string $name The name of the configuration object to retrieve. The name corresponds to
+     *                     a configuration file. For @code \Mozart::config('book.admin') @endcode, the config
      *                     object returned will contain the contents of book.admin configuration file.
      *
-     * @return \Drupal\Core\Config\Config
-     *                                    A configuration object.
+     * @return mixed
      */
     public static function config($name)
     {
-        return static::$container->get('config.factory')->get($name);
+        return static::$container->get( 'config.factory' )->get( $name );
     }
 
     /**
@@ -138,27 +136,30 @@ class Mozart
      * factory. For example, changing the language, or turning all overrides on
      * or off.
      *
-     * @return \Drupal\Core\Config\ConfigFactoryInterface
-     *                                                    The configuration factory service.
+     * @return \Mozart\Component\Config\ConfigFactoryInterface The configuration factory service.
      */
     public static function configFactory()
     {
-        return static::$container->get('config.factory');
+        return static::$container->get( 'config.factory' );
     }
 
     /**
      * Returns a channel logger object.
      *
-     * @param string $channel
-     *                        The name of the channel. Can be any string, but the general practice is
+     * @param string $channel The name of the channel. Can be any string, but the general practice is
      *                        to use the name of the subsystem calling this.
      *
-     * @return \Drupal\Core\Logger\LoggerChannelInterface
+     * @return \Mozart\Component\Logger\LoggerChannelInterface
      *                                                    The logger for this channel.
      */
     public static function logger($channel)
     {
-        return static::$container->get('logger.factory')->get($channel);
+        return static::$container->get( 'logger.factory' )->get( $channel );
+    }
+
+    public static function dispatch($eventName, $event = null)
+    {
+        return static::$container->get( 'event_dispatcher' )->dispatch( $eventName, $event );
     }
 
     /**
@@ -177,7 +178,7 @@ class Mozart
     }
 
     /**
-     * @param  array            $bundles
+     * @param  array $bundles
      * @return array|mixed|void
      */
     public static function registerAdditionalBundles(array $bundles)
@@ -193,7 +194,7 @@ class Mozart
      *
      * @return mixed
      */
-    public static function render( $view, array $context = array() )
+    public static function render($view, array $context = array())
     {
         $view = apply_filters( 'mozart_view', $view, $context );
         $context = apply_filters( 'mozart_context', $context );
@@ -205,7 +206,7 @@ class Mozart
      * @param       $view
      * @param array $context
      */
-    public static function renderView( $view, array $context = array() )
+    public static function renderView($view, array $context = array())
     {
         echo static::render( $view, $context );
     }
