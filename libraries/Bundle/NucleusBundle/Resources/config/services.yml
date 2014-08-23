@@ -22,7 +22,7 @@ services:
         class: Mozart\Bundle\NucleusBundle\Twig\Extension\WordpressExtension
         arguments:
             - @mozart.blog.manager
-            - @config.manager
+            - @mozart.config.manager
             - @mozart.post.manager
             - @mozart.post.meta.manager
             - @mozart.post.attachment_manager

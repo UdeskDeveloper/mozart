@@ -1,22 +1,39 @@
-services:
-    config.storage:
-        class: Mozart\Component\Config\Storage\DatabaseStorage
 
+services:
+    mozart.config.importer:
+        class: Mozart\Component\Config\Importer
+    mozart.config.debugger:
+        class: Mozart\Component\Config\Debugger
+    mozart.config.fontmanager:
+        class: Mozart\Component\Config\FontManager
+    mozart.config.fieldmanager:
+        class: Mozart\Component\Config\FieldManager
+    mozart.config.validator:
+        class: Mozart\Component\Config\Validator
     config.factory:
         class: Mozart\Component\Config\ConfigFactory
         arguments:
-            - @config.storage
-
-    config.manager:
+            - @service_container
+    mozart.config.manager:
         class: Mozart\Bundle\ConfigBundle\Model\OptionManager
         arguments:
             - @service_container
-
+    mozart.config.sectionmanager:
+        class: Mozart\Component\Config\Section\SectionManager
+    mozart.config.controller:
+        class: Mozart\Bundle\ConfigBundle\Controller\OptionController
+        arguments:
+            - @config.factory
+            - %mozart.config%
+    mozart.config.customizer:
+        class: Mozart\Component\Config\Customizer
+        arguments:
+            - @request_stack
     mozart.config.twig.extension:
         class: Mozart\Bundle\ConfigBundle\Twig\Extension\OptionTemplateExtension
         arguments:
             - @config.factory
-            - @config.manager
+            - @mozart.config.manager
             - []
         tags:
             - { name: twig.extension }

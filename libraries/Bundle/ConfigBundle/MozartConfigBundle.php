@@ -35,7 +35,16 @@ class MozartConfigBundle extends Bundle
      */
     public function boot()
     {
+        add_action( 'init', array( $this->getController(), 'initOptionManager' ) );
         add_action( 'init', array( $this->container->get( 'mozart.config.page.manager' ), 'registerPages' ), 11 );
         add_action( 'init', array( $this->container->get( 'mozart.config.page.fieldgroup.manager' ), 'registerFieldGroups' ), 12 );
+    }
+
+    /**
+     * @return OptionController
+     */
+    private function getController()
+    {
+        return $this->container->get( 'mozart.config.controller' );
     }
 }

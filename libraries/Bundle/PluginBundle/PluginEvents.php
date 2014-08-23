@@ -5,13 +5,9 @@
 
 namespace Mozart\Bundle\PluginBundle;
 
-final class PluginEvents
+class PluginEvents
 {
-    const BEFORE_ACTIVATION = 'activate_plugin';
-    const AFTER_ACTIVATION = 'activated_plugin';
-
-    const BEFORE_DEACTIVATION = 'deactivate_plugin';
-    const AFTER_DEACTIVATION = 'deactivated_plugin';
-
-    const UNINSTALL = 'wordpress.plugin_uninstall';
+    const PLUGIN_ACTIVATION = 'wordpress.plugin_activation';
+    const PLUGIN_DEACTIVATION = 'wordpress.plugin_deactivation';
+    const PLUGIN_UNINSTALL = 'wordpress.plugin_uninstall';
 }

@@ -14,7 +14,7 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
  *
  * @package Mozart\Bundle\PostBundle
  */
-abstract class AbstractPostType implements PostTypeInterface
+class AbstractPostType implements PostTypeInterface
 {
     private static $reservedKeys = array(
         'post',
@@ -68,8 +68,7 @@ abstract class AbstractPostType implements PostTypeInterface
      */
     public function getKey()
     {
-        $className = get_class( $this );
-        $className = str_replace( 'PostType', '', $className );
+        $className     = get_class( $this );
         $classBaseName = substr( strrchr( $className, '\\' ), 1 );
 
         return Container::underscore( $classBaseName );
@@ -91,7 +90,7 @@ abstract class AbstractPostType implements PostTypeInterface
      */
     public function getPluralName()
     {
-        return translate( Str::plural( $this->getName() ) );
+        return translate( Str::plural($this->getName()) );
     }
 
     /**
@@ -225,7 +224,7 @@ abstract class AbstractPostType implements PostTypeInterface
 
         // Singular base for meta capabilities, plural base for primitive capabilities.
         $singular_base = $capability_type[0];
-        $plural_base = $capability_type[1];
+        $plural_base   = $capability_type[1];
 
         return array(
             // Meta capabilities
@@ -419,7 +418,7 @@ abstract class AbstractPostType implements PostTypeInterface
      */
     public function changeMediaViewStrings($strings)
     {
-        $strings['insertIntoPost'] = sprintf( __( 'Insert into %s', 'woocommerce' ), $this->getName() );
+        $strings['insertIntoPost']     = sprintf( __( 'Insert into %s', 'woocommerce' ), $this->getName() );
         $strings['uploadedToThisPost'] = sprintf(
             __( 'Uploaded to this %s', 'woocommerce' ),
             $this->getName()

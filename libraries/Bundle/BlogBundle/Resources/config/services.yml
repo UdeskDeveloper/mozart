@@ -5,7 +5,7 @@ services:
             - @service_container
 
     mozart.blog.event_listener.switch_blog:
-        class: Mozart\Bundle\BlogBundle\Event\SwitchBlogEventListener
+        class: Mozart\Bundle\BlogBundle\EventListener\SwitchBlogListener
         arguments:
             - @service_container
         tags:
