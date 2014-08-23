@@ -7,3 +7,12 @@ services:
 
     mozart.widget.logic:
         class: Mozart\Component\Widget\Logic\WidgetLogic
+
+    mozart.widget.event_subscriber:
+        class: Mozart\Bundle\WidgetBundle\Event\WidgetEventSubscriber
+        arguments:
+            - @mozart.widget.logic
+            - @mozart.widget.sidebar_manager
+            - @mozart.widget.widget_manager
+        tags:
+            - { name: kernel.event_subscriber }

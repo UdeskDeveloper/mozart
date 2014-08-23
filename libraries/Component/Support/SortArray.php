@@ -38,25 +38,6 @@ class SortArray
   }
 
   /**
-   * Sorts a structured array by '#weight' property.
-   *
-   * Callback for uasort() within \Drupal\Core\Render\Element::children().
-   *
-   * @param array $a
-   *   First item for comparison. The compared items should be associative
-   *   arrays that optionally include a '#weight' key.
-   * @param array $b
-   *   Second item for comparison.
-   *
-   * @return int
-   *   The comparison result for uasort().
-   */
-  public static function sortByWeightProperty($a, $b)
-  {
-    return static::sortByKeyInt($a, $b, '#weight');
-  }
-
-  /**
    * Sorts a structured array by 'title' key (no # prefix).
    *
    * Callback for uasort() within system_admin_index().
