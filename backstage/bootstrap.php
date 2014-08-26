@@ -1,7 +1,5 @@
 <?php
 
-use Mozart\Bundle\NucleusBundle\MozartEvents;
-
 $environment = 'prod';
 $debug = false;
 
@@ -42,7 +40,7 @@ $kernel->boot();
 Mozart::setContainer( $kernel->getContainer() );
 
 do_action( 'mozart.init' );
-$kernel->getContainer()->get( 'event_dispatcher' )->dispatch( MozartEvents::INIT );
+$kernel->getContainer()->get( 'event_dispatcher' )->dispatch( Mozart\Bundle\NucleusBundle\MozartEvents::INIT );
 
 add_action(
     'wp_loader',
