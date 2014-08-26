@@ -33,6 +33,23 @@ class MozartMenuBundle extends Bundle
             0
         );
 
+		/**
+         * @see add_menu_classes
+         */
+        add_filter(
+            MenuEvents::FILTER,
+            function ($menu) {
+                $event = new MenuEvent();
+                $event->setMenu( $menu );
+                /** @var MenuEvent $event */
+                $event = \Mozart::dispatch( MenuEvents::FILTER, $event );
+
+                return $event->getMenu();
+            },
+            10,
+            1
+        );
+		
         add_filter(
             'admin_print_scripts',
             function () {
