@@ -18,5 +18,5 @@ add_action(
     function () {
         require_once __DIR__ . '/backstage/bootstrap.php';
     },
-    11
+    0
 );
