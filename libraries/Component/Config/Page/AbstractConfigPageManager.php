@@ -29,7 +29,15 @@ abstract class AbstractConfigPageManager
      * @param ConfigPageInterface $configPage
      */
     public function registerPage(ConfigPageInterface $configPage)
-    {}
+    {
+        if ($configPage->getMenuPosition()) {
+            $this->pages[$configPage->getMenuPosition()][$configPage->getKey()] = $configPage;
+        } else {
+            $this->pages[] = array(
+                $configPage->getKey() => $configPage
+            );
+        }
+	}
 
     public function registerPages(){}
 

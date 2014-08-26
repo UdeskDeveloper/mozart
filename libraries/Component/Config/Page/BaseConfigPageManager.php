@@ -8,11 +8,6 @@ namespace Mozart\Component\Config\Page;
 
 class BaseConfigPageManager extends AbstractConfigPageManager
 {
-    public function registerPage(ConfigPageInterface $configPage)
-    {
-        $this->pages[$configPage->getKey()] = $configPage;
-    }
-
     protected function lazyPreparePage(ConfigPageInterface $configPage)
     {
         return array(
@@ -31,36 +26,41 @@ class BaseConfigPageManager extends AbstractConfigPageManager
     {
         include_once ABSPATH . 'wp-admin/includes/plugin.php';
 
-        foreach ($this->getPages() as $key => $page) {
-            $page = $this->lazyPreparePage( $page );
+        $pages = $this->getPages();
+        ksort( $pages );
 
-            if (empty( $page['parent'] )) {
+        foreach ($pages as $position => $positionnedPages) {
+            foreach ($positionnedPages as $page) {
+				$page = $this->lazyPreparePage( $page );
 
-                // add page
-                add_menu_page(
-                    $page['name'],
-                    $page['shortname'],
-                    $page['user_role'],
-                    $page['key'],
-                    array( $this, 'displayPageCode' ),
-                    $page['icon'],
-                    $page['position']
-                );
+				if (empty( $page['parent'] )) {
 
-            } else {
+					// add page
+					add_menu_page(
+						$page['name'],
+						$page['shortname'],
+						$page['user_role'],
+						$page['key'],
+						array( $this, 'displayPageCode' ),
+						$page['icon'],
+						$page['position']
+					);
 
-                // add page
-                add_submenu_page(
-                    $page['parent'],
-                    $page['name'],
-                    $page['shortname'],
-                    $page['user_role'],
-                    $page['key'],
-                    array( $this, 'displayPageCode' )
-                );
+				} else {
 
-            }
-        }
+					// add page
+					add_submenu_page(
+						$page['parent'],
+						$page['name'],
+						$page['shortname'],
+						$page['user_role'],
+						$page['key'],
+						array( $this, 'displayPageCode' )
+					);
+
+				}
+			}
+		}
     }
 
     public function displayPageCode()
