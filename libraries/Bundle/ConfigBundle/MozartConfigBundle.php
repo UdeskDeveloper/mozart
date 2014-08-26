@@ -5,10 +5,8 @@
 
 namespace Mozart\Bundle\ConfigBundle;
 
-use Mozart\Bundle\ConfigBundle\Controller\OptionController;
 use Mozart\Bundle\ConfigBundle\DependencyInjection\Compiler\ConfigPageFieldGroupsCompilerPass;
 use Mozart\Bundle\ConfigBundle\DependencyInjection\Compiler\ConfigPagesCompilerPass;
-use Mozart\Bundle\ConfigBundle\DependencyInjection\Compiler\ConfigSectionsCompilerPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
@@ -25,7 +23,6 @@ class MozartConfigBundle extends Bundle
     public function build(ContainerBuilder $container)
     {
         parent::build( $container );
-        $container->addCompilerPass( new ConfigSectionsCompilerPass() );
         $container->addCompilerPass( new ConfigPagesCompilerPass() );
         $container->addCompilerPass( new ConfigPageFieldGroupsCompilerPass() );
     }
