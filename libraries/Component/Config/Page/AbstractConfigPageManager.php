@@ -37,18 +37,9 @@ abstract class AbstractConfigPageManager
                 $configPage->getKey() => $configPage
             );
         }
-	}
+    }
 
     public function registerPages(){}
-
-    /**
-     * @param $key
-     * @return mixed
-     */
-    public function getPage($key)
-    {
-        return $this->pages[$key];
-    }
 
     /**
      * @return array

@@ -16,7 +16,7 @@ Version: 1.0.0
 add_action(
     'plugins_loaded',
     function () {
-        require_once __DIR__ . '/backstage/bootstrap.php';
+        require __DIR__ . '/backstage/bootstrap.php';
     },
-    0
+    11
 );
