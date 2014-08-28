@@ -5,7 +5,6 @@
 
 namespace Mozart\Bundle\AdminBundle;
 
-
 use Mozart\Component\Admin\AdminEvents;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
