@@ -103,7 +103,7 @@ class OptionTemplateExtension extends \Twig_Extension
 
     public function getConfig($name)
     {
-        return $this->configFactory->getOption($name);
+        return $this->configFactory->get($name);
     }
 
     /**
