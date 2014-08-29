@@ -31,13 +31,6 @@ class MozartWidgetBundle extends Bundle
 
     public function boot()
     {
-        add_action(
-            WidgetEvents::INIT,
-            function () {
-                \Mozart::dispatch( WidgetEvents::INIT );
-            },
-            0
-        );
     }
 
 }
