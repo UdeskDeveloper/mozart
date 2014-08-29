@@ -1,0 +1,5 @@
+services:
+    mozart.ajax.event_listener:
+        class: Mozart\Bundle\AjaxBundle\EventListener\AjaxEventListener
+        tags:
+            - { name: kernel.event_listener, event: mozart.init, method: onApplicationInit }
