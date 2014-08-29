@@ -5,34 +5,29 @@
 
 namespace Mozart\Component\Config\Page;
 
-class AbstractFieldGroupManager
+abstract class AbstractFieldGroupManager
 {
-    protected $fieldGroups;
+	protected $fieldGroups;
 
-    public function __construct()
-    {
+	public function __construct()
+	{
+		$this->fieldGroups = array();
+	}
 
-        $this->fieldGroups = array();
-    }
+	abstract public function registerFieldGroup(FieldGroupInterface $fieldGroup);
 
-    public function registerFieldGroup(FieldGroupInterface $fieldGroup)
-    {
-    }
+	abstract public function registerFieldGroups();
 
-    public function registerFieldGroups()
-    {
-    }
+	public function getFieldGroup($key)
+	{
+		return $this->fieldGroups[$key];
+	}
 
-    public function getFieldGroup($key)
-    {
-        return $this->fieldGroups[$key];
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getFieldGroups()
-    {
-        return $this->fieldGroups;
-    }
+	/**
+	 * @return mixed
+	 */
+	public function getFieldGroups()
+	{
+		return $this->fieldGroups;
+	}
 }

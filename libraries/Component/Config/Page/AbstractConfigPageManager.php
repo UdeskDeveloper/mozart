@@ -39,7 +39,7 @@ abstract class AbstractConfigPageManager
         }
     }
 
-    public function registerPages(){}
+    abstract public function registerPages();
 
     /**
      * @return array

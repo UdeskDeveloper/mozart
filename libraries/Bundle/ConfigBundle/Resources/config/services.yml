@@ -26,3 +26,11 @@ services:
 
     mozart.config.page.fieldgroup.manager:
         class: Mozart\Component\Config\Page\BaseFieldGroupManager
+
+    mozart.config.event_listener:
+        class: Mozart\Bundle\ConfigBundle\EventListener\ConfigEventListener
+        arguments:
+            - @mozart.config.page.manager
+            - @mozart.config.page.fieldgroup.manager
+        tags:
+            - { name: kernel.event_listener, event: mozart.init, method: onApplicationInit }
