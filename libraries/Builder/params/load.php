@@ -16,4 +16,16 @@ require_once vc_path_dir( 'PARAMS_DIR', '/google_fonts/google_fonts.php' );
 require_once vc_path_dir( 'PARAMS_DIR', '/column_offset/column_offset.php' );
 
 global $vc_params_list;
-$vc_params_list = array( 'textarea_html', 'colorpicker', 'loop', 'vc_link', 'options', 'sorted_list', 'css_editor', 'font_container', 'google_fonts', 'tab_id', 'href');
+$vc_params_list = array(
+	'textarea_html',
+	'colorpicker',
+	'loop',
+	'vc_link',
+	'options',
+	'sorted_list',
+	'css_editor',
+	'font_container',
+	'google_fonts',
+	'tab_id',
+	'href'
+);
