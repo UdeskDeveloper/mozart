@@ -13,10 +13,5 @@ Version: 1.0.0
 /*
  * let's prepare our headphones and start listening to Mozart
  */
-add_action(
-    'plugins_loaded',
-    function () {
-        require __DIR__ . '/backstage/bootstrap.php';
-    },
-    11
-);
+
+require __DIR__ . '/backstage/bootstrap.php';
