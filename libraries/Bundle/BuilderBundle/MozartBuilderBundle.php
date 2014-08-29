@@ -10,11 +10,4 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class MozartBuilderBundle extends Bundle
 {
-    public function build(ContainerBuilder $container)
-    {
-    }
-
-    public function boot()
-    {
-    }
 }
