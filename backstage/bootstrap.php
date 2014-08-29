@@ -39,12 +39,21 @@ $kernel->boot();
 
 Mozart::setContainer( $kernel->getContainer() );
 
+Mozart::dispatch( Mozart\Bundle\NucleusBundle\MozartEvents::BOOT );
+
 add_action(
 	'plugins_loaded',
 	function () {
 		Mozart::dispatch( Mozart\Bundle\NucleusBundle\MozartEvents::INIT );
 	},
 	9
+);
+add_action(
+	'init',
+	function () {
+		Mozart::dispatch( 'init' );
+	},
+	0
 );
 
 add_action(
