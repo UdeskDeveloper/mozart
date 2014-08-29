@@ -1,0 +1,5 @@
+services:
+    mozart.admin.eventlistener:
+        class: Mozart\Bundle\AdminBundle\EventListener\AdminEventListener
+        tags:
+            - { name: kernel.event_listener, event: mozart.init, method: onApplicationInit }
