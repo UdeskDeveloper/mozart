@@ -33,4 +33,4 @@ services:
             - @mozart.config.page.manager
             - @mozart.config.page.fieldgroup.manager
         tags:
-            - { name: kernel.event_listener, event: mozart.init, method: onApplicationInit }
+            - { name: kernel.event_listener, event: init, method: onApplicationInit }
