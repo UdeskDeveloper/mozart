@@ -26,7 +26,7 @@ class TaxonomyManager
     }
 
     /**
-     * @return array
+     * @return TaxonomyInterface[]
      */
     public function getTaxonomies()
     {
@@ -40,4 +40,11 @@ class TaxonomyManager
     {
         $this->taxonomies[$taxonomy->getName()] = $taxonomy;
     }
+
+	public function onWordpressInit()
+	{
+		foreach ($this->getTaxonomies() as $name => $taxonomy) {
+			register_taxonomy( $name, $taxonomy->getObjectTypes(), $taxonomy->getArguments() );
+		}
+	}
 }

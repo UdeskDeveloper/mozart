@@ -1,6 +1,8 @@
 services:
     mozart.taxonomy.taxonomy_manager:
         class: Mozart\Bundle\TaxonomyBundle\TaxonomyManager
+        tags:
+            - { name: kernel.event_listener, event: init, method: onWordpressInit }
 
     mozart.taxonomy.term.manager:
         class: Mozart\Bundle\TaxonomyBundle\Model\TermManager
