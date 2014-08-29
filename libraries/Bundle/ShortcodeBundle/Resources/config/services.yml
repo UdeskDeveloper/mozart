@@ -1,6 +1,8 @@
 services:
     mozart.shortcode.shortcode_chain:
         class: Mozart\Bundle\ShortcodeBundle\ShortcodeChain
+        tags:
+            - { name: kernel.event_listener, event: init, method: onWordpressInit }
 
     mozart.shortcode.shortcode.caption:
         class: Mozart\Bundle\ShortcodeBundle\Shortcode\CaptionShortcode
