@@ -1,0 +1,16 @@
+.cq-parallaxcontainer{
+	width: 100%;
+	height: 100%;
+	max-width: 100%;
+	position: relative;
+	height: auto;
+	margin: 0 auto;
+}
+.cq-parallaxcontainer section.cq-parallaxsection h4{
+	padding: 0;
+	margin: 0 0 8px 0;
+}
+section.cq-parallaxsection {
+	width: 100%;
+	margin: 0 auto;
+}

@@ -5,6 +5,7 @@
 
 namespace Mozart\Bundle\NucleusBundle;
 
-final class MozartEvents {
-    const INIT = 'mozart.init';
+final class MozartEvents
+{
+	const INIT = 'mozart.init';
 } 
