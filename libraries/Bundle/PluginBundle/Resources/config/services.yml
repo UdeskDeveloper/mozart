@@ -1,3 +1,5 @@
 services:
-    mozart.plugin.manager:
-        class: Mozart\Bundle\PluginBundle\PluginManager
+    mozart.plugin.event_subscriber:
+        class: Mozart\Bundle\PluginBundle\Event\PluginEventSubscriber
+        tags:
+            - { name: kernel.event_subscriber }
