@@ -16,3 +16,10 @@ services:
         class: Mozart\Bundle\PostBundle\Model\AttachmentManager
         arguments:
             - @service_container
+
+    mozart.post.event_listener:
+        class: Mozart\Bundle\PostBundle\EventListener\PostEventListener
+        arguments:
+            - @mozart.post.post_type_manager
+        tags:
+            - { name: kernel.event_listener, event: init, method: onWordpressInit }

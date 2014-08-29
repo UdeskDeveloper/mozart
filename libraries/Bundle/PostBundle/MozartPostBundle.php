@@ -34,32 +34,5 @@ class MozartPostBundle extends Bundle
      */
     public function boot()
     {
-        add_action( 'init', array( $this, 'registerPostTypes' ), 0 );
-    }
-
-    /**
-     *
-     */
-    public function registerPostTypes()
-    {
-        if ( false === $this->container->has( 'mozart.post.post_type_manager' ) ) {
-            return;
-        }
-
-        $postTypes = $this->container->get( 'mozart.post.post_type_manager' )
-            ->getPostTypes();
-
-        foreach ($postTypes as $key => $postType) {
-            register_post_type( $key, $postType->getConfiguration() );
-
-            if ( is_admin() && false !== ( $extensions = $this->container->get(
-                    'mozart.post.post_type_manager'
-                )->getExtensions( $key ) )
-            ) {
-                foreach ($extensions as $extension) {
-                    $extension->load( $postType );
-                }
-            }
-        }
     }
 }
