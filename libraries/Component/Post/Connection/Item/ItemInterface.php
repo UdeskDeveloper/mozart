@@ -5,7 +5,6 @@
 
 namespace Mozart\Component\Post\Connection\Item;
 
-
-interface ItemInterface {
-
-} 
+interface ItemInterface
+{
+}

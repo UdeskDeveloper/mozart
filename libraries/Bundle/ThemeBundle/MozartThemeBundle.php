@@ -2,8 +2,6 @@
 
 namespace Mozart\Bundle\ThemeBundle;
 
-use Mozart\Bundle\ThemeBundle\Exception\BadMethodCallException;
-use Mozart\Bundle\ThemeBundle\Exception\FileNotFoundException;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;

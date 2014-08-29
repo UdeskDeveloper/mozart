@@ -44,9 +44,9 @@ class WidgetFieldGroup extends FieldGroup
     /**
      * @param WidgetInterface $widget
      */
-    public function setWidget( WidgetInterface $widget)
+    public function setWidget(WidgetInterface $widget)
     {
         $this->widget = $widget;
     }
 
-} 
+}

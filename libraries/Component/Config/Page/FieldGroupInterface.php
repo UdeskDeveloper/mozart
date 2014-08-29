@@ -5,7 +5,6 @@
 
 namespace Mozart\Component\Config\Page;
 
-
 interface FieldGroupInterface
 {
 

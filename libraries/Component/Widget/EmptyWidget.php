@@ -7,6 +7,6 @@ namespace Mozart\Component\Widget;
 
 use Mozart\Bundle\WidgetBundle\Widget;
 
-class EmptyWidget extends Widget {
-
-} 
+class EmptyWidget extends Widget
+{
+}

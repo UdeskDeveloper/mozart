@@ -5,7 +5,6 @@
 
 namespace Mozart\Component\Config\Page;
 
-
 class BaseConfigPageManager extends AbstractConfigPageManager
 {
     protected function lazyPreparePage(ConfigPageInterface $configPage)
@@ -31,40 +30,40 @@ class BaseConfigPageManager extends AbstractConfigPageManager
 
         foreach ($pages as $position => $positionnedPages) {
             foreach ($positionnedPages as $page) {
-				$page = $this->lazyPreparePage( $page );
+                $page = $this->lazyPreparePage( $page );
 
-				if (empty( $page['parent'] )) {
+                if (empty( $page['parent'] )) {
 
-					// add page
-					add_menu_page(
-						$page['name'],
-						$page['shortname'],
-						$page['user_role'],
-						$page['key'],
-						array( $this, 'displayPageCode' ),
-						$page['icon'],
-						$page['position']
-					);
+                    // add page
+                    add_menu_page(
+                        $page['name'],
+                        $page['shortname'],
+                        $page['user_role'],
+                        $page['key'],
+                        array( $this, 'displayPageCode' ),
+                        $page['icon'],
+                        $page['position']
+                    );
 
-				} else {
+                } else {
 
-					// add page
-					add_submenu_page(
-						$page['parent'],
-						$page['name'],
-						$page['shortname'],
-						$page['user_role'],
-						$page['key'],
-						array( $this, 'displayPageCode' )
-					);
+                    // add page
+                    add_submenu_page(
+                        $page['parent'],
+                        $page['name'],
+                        $page['shortname'],
+                        $page['user_role'],
+                        $page['key'],
+                        array( $this, 'displayPageCode' )
+                    );
 
-				}
-			}
-		}
+                }
+            }
+        }
     }
 
     public function displayPageCode()
     {
         echo 'Please install Mozart Forms to render this page\'s fields';
     }
-} 
+}

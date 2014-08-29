@@ -60,5 +60,3 @@ $data['content']    = <<<CONTENT
 CONTENT;
 
 vc_add_default_templates( $data );
-
-

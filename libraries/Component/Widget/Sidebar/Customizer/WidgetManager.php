@@ -5,9 +5,6 @@
 
 namespace Mozart\Component\Widget\Sidebar\Customizer;
 
-
-use Mozart\Component\Widget\Sidebar\SidebarCustomizer;
-
 /**
  * Extends the widgets section to add the custom sidebars UI elements.
  *
@@ -33,4 +30,4 @@ class WidgetManager
     {
         include CSB_VIEWS_DIR . 'widgets.php';
     }
-} 
+}

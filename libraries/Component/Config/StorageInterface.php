@@ -5,9 +5,8 @@
 
 namespace Mozart\Component\Config;
 
-
-interface StorageInterface {
-
+interface StorageInterface
+{
     public function get($name);
 
     public function getAll();

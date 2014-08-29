@@ -54,19 +54,19 @@ class NestedArray
      * @endcode
      *
      * @param array $array
-     *   The array from which to get the value.
+     *                          The array from which to get the value.
      * @param array $parents
-     *   An array of parent keys of the value, starting with the outermost key.
+     *                          An array of parent keys of the value, starting with the outermost key.
      * @param bool  $key_exists
-     *   (optional) If given, an already defined variable that is altered by
-     *   reference.
+     *                          (optional) If given, an already defined variable that is altered by
+     *                          reference.
      *
      * @return mixed
-     *   The requested nested value. Possibly NULL if the value is NULL or not all
-     *   nested parent keys exist. $key_exists is altered by reference and is a
-     *   Boolean that indicates whether all nested parent keys exist (TRUE) or not
-     *   (FALSE). This allows to distinguish between the two possibilities when
-     *   NULL is returned.
+     *               The requested nested value. Possibly NULL if the value is NULL or not all
+     *               nested parent keys exist. $key_exists is altered by reference and is a
+     *               Boolean that indicates whether all nested parent keys exist (TRUE) or not
+     *               (FALSE). This allows to distinguish between the two possibilities when
+     *               NULL is returned.
      *
      * @see NestedArray::setValue()
      * @see NestedArray::unsetValue()
@@ -137,16 +137,16 @@ class NestedArray
      * @endcode
      *
      * @param array $array
-     *   A reference to the array to modify.
+     *                       A reference to the array to modify.
      * @param array $parents
-     *   An array of parent keys, starting with the outermost key.
+     *                       An array of parent keys, starting with the outermost key.
      * @param mixed $value
-     *   The value to set.
+     *                       The value to set.
      * @param bool  $force
-     *   (optional) If TRUE, the value is forced into the structure even if it
-     *   requires the deletion of an already existing non-array parent value. If
-     *   FALSE, PHP throws an error if trying to add into a value that is not an
-     *   array. Defaults to FALSE.
+     *                       (optional) If TRUE, the value is forced into the structure even if it
+     *                       requires the deletion of an already existing non-array parent value. If
+     *                       FALSE, PHP throws an error if trying to add into a value that is not an
+     *                       array. Defaults to FALSE.
      *
      * @see NestedArray::unsetValue()
      * @see NestedArray::getValue()
@@ -213,13 +213,13 @@ class NestedArray
      * @endcode
      *
      * @param array $array
-     *   A reference to the array to modify.
+     *                           A reference to the array to modify.
      * @param array $parents
-     *   An array of parent keys, starting with the outermost key and including
-     *   the key to be unset.
+     *                           An array of parent keys, starting with the outermost key and including
+     *                           the key to be unset.
      * @param bool  $key_existed
-     *   (optional) If given, an already defined variable that is altered by
-     *   reference.
+     *                           (optional) If given, an already defined variable that is altered by
+     *                           reference.
      *
      * @see NestedArray::setValue()
      * @see NestedArray::getValue()
@@ -255,12 +255,12 @@ class NestedArray
      * @endcode
      *
      * @param array $array
-     *   The array with the value to check for.
+     *                       The array with the value to check for.
      * @param array $parents
-     *   An array of parent keys of the value, starting with the outermost key.
+     *                       An array of parent keys of the value, starting with the outermost key.
      *
      * @return bool
-     *   TRUE if all the parent keys exist, FALSE otherwise.
+     *              TRUE if all the parent keys exist, FALSE otherwise.
      *
      * @see NestedArray::getValue()
      */
@@ -297,11 +297,11 @@ class NestedArray
      *   Arrays to merge.
      *
      * @param bool $preserve_integer_keys
-     *   (optional) If given, integer keys will be preserved and merged instead of
-     *   appended.
+     *                                    (optional) If given, integer keys will be preserved and merged instead of
+     *                                    appended.
      *
      * @return array
-     *   The merged array.
+     *               The merged array.
      *
      * @see NestedArray::mergeDeepArray()
      */

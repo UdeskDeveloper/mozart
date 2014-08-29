@@ -35,7 +35,7 @@ class BlogManager extends AbstractManager implements BlogManagerInterface
     }
 
     /**
-     * @param  integer $id
+     * @param  integer                    $id
      * @throws \Doctrine\ORM\ORMException
      * @return Blog
      */

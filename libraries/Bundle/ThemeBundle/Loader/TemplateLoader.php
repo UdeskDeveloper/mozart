@@ -5,7 +5,6 @@
 
 namespace Mozart\Bundle\ThemeBundle\Loader;
 
-
 class TemplateLoader
 {
     public function __construct()
@@ -53,4 +52,4 @@ class TemplateLoader
         }
         exit;
     }
-} 
+}

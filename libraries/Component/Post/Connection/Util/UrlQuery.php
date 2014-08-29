@@ -1,5 +1,5 @@
 <?php
-namespace Mozart\Component\Post\Connection;
+namespace Mozart\Component\Post\Connection\Util;
 
 class UrlQuery
 {

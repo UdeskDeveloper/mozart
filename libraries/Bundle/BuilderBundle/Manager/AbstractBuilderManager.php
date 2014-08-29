@@ -5,7 +5,6 @@
 
 namespace Mozart\Bundle\BuilderBundle\Manager;
 
-
-abstract class AbstractBuilderManager implements BuilderManagerInterface {
-
-} 
+abstract class AbstractBuilderManager implements BuilderManagerInterface
+{
+}

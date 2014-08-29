@@ -39,7 +39,7 @@ class SidePost extends Side
     public function get_base_qv($q)
     {
         if (isset( $q['post_type'] ) && 'any' != $q['post_type']) {
-            $common = array_intersect( $this->query_vars['post_type'], (array)$q['post_type'] );
+            $common = array_intersect( $this->query_vars['post_type'], (array) $q['post_type'] );
 
             if (!$common) {
                 unset( $q['post_type'] );

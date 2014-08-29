@@ -14,4 +14,4 @@ class MozartAdminBundle extends Bundle
 
     }
 
-} 
+}

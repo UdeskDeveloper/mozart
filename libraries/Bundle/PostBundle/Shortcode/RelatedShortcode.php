@@ -5,7 +5,6 @@
 
 namespace Mozart\Bundle\PostBundle\Shortcode;
 
-
 use Mozart\Bundle\ShortcodeBundle\ShortcodeInterface;
 use Mozart\Component\Post\Connection\ItemList\ItemListRenderer;
 

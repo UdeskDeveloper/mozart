@@ -5,7 +5,6 @@
 
 namespace Mozart\Component\Menu\Walker;
 
-
 class CleanNavMenuWalker extends \Walker_Nav_Menu
 {
 
@@ -22,7 +21,8 @@ class CleanNavMenuWalker extends \Walker_Nav_Menu
      * @param array  $args   An array of arguments. @see wp_nav_menu()
      * @param int    $id     Current item ID.
      */
-    function start_el( &$output, $item, $depth = 0, $args = array(), $id = 0 ) {
+    public function start_el( &$output, $item, $depth = 0, $args = array(), $id = 0 )
+    {
         $indent = ( $depth ) ? str_repeat( "\t", $depth ) : '';
 
         /**
@@ -68,7 +68,7 @@ class CleanNavMenuWalker extends \Walker_Nav_Menu
         $atts = apply_filters( 'nav_menu_link_attributes', $atts, $item, $args );
 
         $attributes = '';
-        foreach ( $atts as $attr => $value ) {
+        foreach ($atts as $attr => $value) {
             if ( ! empty( $value ) ) {
                 $value = ( 'href' === $attr ) ? esc_url( $value ) : esc_attr( $value );
                 $attributes .= ' ' . $attr . '="' . $value . '"';
@@ -101,4 +101,4 @@ class CleanNavMenuWalker extends \Walker_Nav_Menu
         $output .= apply_filters( 'walker_nav_menu_start_el', $item_output, $item, $depth, $args );
     }
 
-} 
+}

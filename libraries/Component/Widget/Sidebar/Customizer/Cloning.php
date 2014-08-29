@@ -12,8 +12,8 @@ namespace Mozart\Component\Widget\Sidebar\Customizer;
  * Class Cloning
  * @package Mozart\Component\Widget\Sidebar\Customizer
  */
-class Cloning {
-
+class Cloning
+{
     /**
      * Buffer that holds data of a widget group.
      * @see update_linked_widgets() // populate the property
@@ -29,7 +29,8 @@ class Cloning {
      *
      * @since  2.0
      */
-    private function __construct() {
+    private function __construct()
+    {
         if ( is_admin() ) {
             // in_widget_form: Add our button inside each widget.
             add_action(
@@ -65,7 +66,8 @@ class Cloning {
      * @param  array $instance The widget instance data.
      * @return array Sanitized CSB cloning data.
      */
-    protected function get_widget_data( $instance ) {
+    protected function get_widget_data($instance)
+    {
         $data = array();
 
         if ( isset( $instance['csb_clone'] ) ) {
@@ -101,16 +103,17 @@ class Cloning {
      *
      * @since  2.0
      */
-    protected function new_group_id() {
+    protected function new_group_id()
+    {
         global $wp_registered_widgets;
         static $Used_ids = null;
         $group_id = 1;
 
-        if ( null === $Used_ids ) {
+        if (null === $Used_ids) {
             $Used_ids = array();
 
             // Loop though all widgets to fetch used IDs.
-            foreach ( $wp_registered_widgets as $id => $data ) {
+            foreach ($wp_registered_widgets as $id => $data) {
                 $widget = reset( $data['callback'] );
                 if ( is_object( $widget ) && method_exists( $widget, 'get_settings' ) ) {
                     $settings = $widget->get_settings();
@@ -118,7 +121,7 @@ class Cloning {
 
                 // Check the database settings of the widget to find group IDs.
                 if ( is_array( $settings ) ) {
-                    foreach ( $settings as $instance ) {
+                    foreach ($settings as $instance) {
                         if ( ! empty( $instance['csb_clone']['group'] ) ) {
                             $group = $instance['csb_clone']['group'];
                             if ( ! in_array( $group, $Used_ids ) ) {
@@ -145,18 +148,20 @@ class Cloning {
      *
      * @since  2.0
      */
-    protected function settings_for_group( $settings, $group ) {
+    protected function settings_for_group($settings, $group)
+    {
         if ( is_numeric( $group ) && $group > 0 ) {
-            foreach ( $settings as $data ) {
+            foreach ($settings as $data) {
                 $item_group = @$data['csb_clone']['group'];
                 $item_status = @$data['csb_clone']['state'];
 
-                if ( $group == $item_group && 'ok' == $item_status ) {
+                if ($group == $item_group && 'ok' == $item_status) {
                     return $data;
                 }
             }
         }
         function_exists( 'wp_debug' ) &&  wp_debug( 'class-custom-sidebars-cloning.php:162', 'FAILED' );
+
         return false;
     }
 
@@ -165,7 +170,8 @@ class Cloning {
      *
      * @since  2.0
      */
-    public function admin_widget_button( $widget, $return, $instance ) {
+    public function admin_widget_button($widget, $return, $instance)
+    {
         $data = $this->get_widget_data( $instance );
         $is_linked = ($data['group'] != 0);
 
@@ -183,7 +189,7 @@ class Cloning {
             <?php if ( ! isset( $_POST[ 'csb-clone-button' ] ) ) : ?>
                 <a href="#" class="button csb-clone-button"><?php _e( 'Clone', CSB_LANG ); ?></a>
             <?php else : ?>
-                <script>jQuery(function() { jQuery('.csb-clone-<?php echo esc_js( $widget->id ); ?>').closest('.widget').trigger('csb:update'); }); </script>
+                <script>jQuery(function () { jQuery('.csb-clone-<?php echo esc_js( $widget->id ); ?>').closest('.widget').trigger('csb:update'); }); </script>
             <?php endif; ?>
 
         </div>
@@ -210,7 +216,8 @@ class Cloning {
      *
      * @since  2.0
      */
-    public function update_widget_group( $widget, $return, $instance ) {
+    public function update_widget_group($widget, $return, $instance)
+    {
         if ( ! empty( $this->group_data ) ) {
             $widget->save_settings( $this->group_data );
         }
@@ -220,19 +227,20 @@ class Cloning {
      * Apply cloning logic when user saves the widget.
      *
      * @since  2.0
-     * @param  array $new_instance New settings for this instance as input by the user.
-     * @param  array $old_instance Old settings for this instance.
-     * @param  WP_Widget $widget   The current widget instance.
-     * @return array Modified settings.
+     * @param  array     $new_instance New settings for this instance as input by the user.
+     * @param  array     $old_instance Old settings for this instance.
+     * @param  WP_Widget $widget       The current widget instance.
+     * @return array     Modified settings.
      */
-    public function admin_widget_update( $instance, $new_instance, $old_instance, $widget ) {
+    public function admin_widget_update($instance, $new_instance, $old_instance, $widget)
+    {
         $data = $this->get_widget_data( $_POST );
 
         $instance['csb_clone'] = $data;
         $settings = $widget->get_settings();
         $my_id = $widget->number;
 
-        switch ( @$instance['csb_clone']['state'] ) {
+        switch (@$instance['csb_clone']['state']) {
             case 'empty':
                 return $this->populate_widget( $my_id, $settings, $instance, $widget );
                 break;
@@ -243,6 +251,7 @@ class Cloning {
 
             default:
                 $instance['csb_clone']['state'] = 'ok';
+
                 return $instance;
         }
     }
@@ -251,7 +260,8 @@ class Cloning {
      * This function returns the $instance data of a new clone. The data is
      * populated with the values of the widget-group.
      */
-    protected function populate_widget( $id, $settings, $instance, $widget ) {
+    protected function populate_widget($id, $settings, $instance, $widget)
+    {
         $instance['csb_clone']['state'] = 'ok';
 
         if ( ! isset( $instance['csb_clone']['group'] ) ) {
@@ -273,18 +283,20 @@ class Cloning {
 
         // Success, fetch the config from group!
         $instance = $group_data;
+
         return $instance;
     }
 
     /**
      * Update ALL widgets in the same group as the specified widget.
      */
-    protected function update_linked_widgets( $id, $settings, $instance, $widget ) {
+    protected function update_linked_widgets($id, $settings, $instance, $widget)
+    {
         $instance['csb_clone']['state'] = 'ok';
         $group_data = $instance;
         $my_group = @$group_data['csb_clone']['group'];
 
-        foreach ( $settings as $key => $the_inst ) {
+        foreach ($settings as $key => $the_inst) {
             if ( ! isset( $the_inst['csb_clone']['group'] ) ) {
                 // Widget does not have any cloning information.
                 continue;
@@ -296,7 +308,7 @@ class Cloning {
                 continue;
             }
 
-            if ( $group != $my_group ) {
+            if ($group != $my_group) {
                 // This widget does not belong to the current group.
                 continue;
             }
@@ -310,4 +322,4 @@ class Cloning {
 
         return $instance;
     }
-} 
+}

@@ -103,7 +103,7 @@ class DirectedConnectionType
     /**
      * Get a list of posts connected to other posts connected to a post.
      *
-     * @param mixed $item An object, an object id or an array of such.
+     * @param mixed $item     An object, an object id or an array of such.
      * @param array $extra_qv Additional query variables to use.
      *
      * @return bool|object False on failure; A WP_Query instance on success.
@@ -126,7 +126,7 @@ class DirectedConnectionType
     /**
      * Get a list of items that are connected to a given item.
      *
-     * @param mixed $item An object, an object id or an array of such.
+     * @param mixed $item     An object, an object id or an array of such.
      * @param array $extra_qv Additional query variables to use.
      *
      * @return object
@@ -255,7 +255,7 @@ class DirectedConnectionType
         // Store additional default values
         foreach ($this->fields as $key => $args) {
             // (array) null == array()
-            foreach ((array)$this->get_default( $args, $p2p_id ) as $default_value) {
+            foreach ((array) $this->get_default( $args, $p2p_id ) as $default_value) {
                 p2p_add_meta( $p2p_id, $key, $default_value );
             }
         }

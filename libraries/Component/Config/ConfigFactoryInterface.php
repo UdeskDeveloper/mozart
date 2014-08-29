@@ -5,7 +5,6 @@
 
 namespace Mozart\Component\Config;
 
-
-interface ConfigFactoryInterface {
-
-} 
+interface ConfigFactoryInterface
+{
+}

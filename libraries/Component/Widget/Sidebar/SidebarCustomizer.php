@@ -5,7 +5,6 @@
 
 namespace Mozart\Component\Widget\Sidebar;
 
-
 class SidebarCustomizer
 {
     /**
@@ -13,20 +12,20 @@ class SidebarCustomizer
      * distinguish theme sidebars from custom sidebars.
      * @var  string
      */
-    static protected $sidebar_prefix = 'cs-';
+    protected static $sidebar_prefix = 'cs-';
 
     /**
      * Capability required to use *any* of the plugin features. If user does not
      * have this capability then he will not see any change on admin dashboard.
      * @var  string
      */
-    static protected $cap_required = 'edit_theme_options';
+    protected static $cap_required = 'edit_theme_options';
 
     /**
      * URL to the documentation/info page of the pro plugin
      * @var  string
      */
-    static public $pro_url = 'http://premium.wpmudev.org/project/custom-sidebars-pro/';
+    public static $pro_url = 'http://premium.wpmudev.org/project/custom-sidebars-pro/';
 
     /**
      * Flag that specifies if the page is loaded in accessibility mode.
@@ -34,7 +33,7 @@ class SidebarCustomizer
      * @var   bool
      * @since 2.0.9
      */
-    static protected $accessibility_mode = false;
+    protected static $accessibility_mode = false;
 
     /**
      * Private, since it is a singleton.
@@ -79,8 +78,8 @@ class SidebarCustomizer
                 sprintf(
                     __(
                         '<strong>Accessibility mode is not supported by the
-						%1$s plugin.</strong><br /><a href="%2$s">Click here</a>
-						to disable accessibility mode and use the %1$s plugin!',
+                        %1$s plugin.</strong><br /><a href="%2$s">Click here</a>
+                        to disable accessibility mode and use the %1$s plugin!',
                         CSB_LANG
                     ),
                     'Custom Sidebars Pro',
@@ -204,7 +203,7 @@ class SidebarCustomizer
      * @param  mixed $val2 Optional, Second value that maybe is an array.
      * @return array
      */
-    static public function get_array($val1, $val2 = array())
+    public static function get_array($val1, $val2 = array())
     {
         if (is_array( $val1 )) {
             return $val1;
@@ -223,7 +222,7 @@ class SidebarCustomizer
      *
      * Option-Key: 'cs_modifiable' (1)
      */
-    static public function get_options($key = null)
+    public static function get_options($key = null)
     {
         static $Options = null;
         $need_update = false;
@@ -309,9 +308,9 @@ class SidebarCustomizer
      *
      * Option-Key: 'cs_modifiable' (1)
      * @since  2.0
-     * @param  array $value The options array.
+     * @param array $value The options array.
      */
-    static public function set_options($value)
+    public static function set_options($value)
     {
         // Permission check.
         if (!current_user_can( self::$cap_required )) {
@@ -328,9 +327,9 @@ class SidebarCustomizer
      * @param  array $data This array will be validated and returned.
      * @return array
      */
-    static public function validate_options($data = null)
+    public static function validate_options($data = null)
     {
-        $data = ( is_object( $data ) ? (array)$data : $data );
+        $data = ( is_object( $data ) ? (array) $data : $data );
         if (!is_array( $data )) {
             return array();
         }
@@ -350,7 +349,7 @@ class SidebarCustomizer
      *
      * Option-Key: 'cs_sidebars' (3)
      */
-    static public function get_custom_sidebars()
+    public static function get_custom_sidebars()
     {
         $sidebars = get_option( 'cs_sidebars', array() );
         if (!is_array( $sidebars )) {
@@ -373,7 +372,7 @@ class SidebarCustomizer
      * Option-Key: 'cs_sidebars' (3)
      * @since  2.0
      */
-    static public function set_custom_sidebars($value)
+    public static function set_custom_sidebars($value)
     {
         // Permission check.
         if (!current_user_can( self::$cap_required )) {
@@ -390,7 +389,7 @@ class SidebarCustomizer
      * Option-Key: 'sidebars_widgets' (4)
      * @since  2.0
      */
-    static public function get_sidebar_widgets()
+    public static function get_sidebar_widgets()
     {
         return get_option( 'sidebars_widgets', array() );
     }
@@ -402,7 +401,7 @@ class SidebarCustomizer
      *
      * Option-Key: 'sidebars_widgets' (4)
      */
-    static public function refresh_sidebar_widgets()
+    public static function refresh_sidebar_widgets()
     {
         // Contains an array of all sidebars and widgets inside each sidebar.
         $widgetized_sidebars = self::get_sidebar_widgets();
@@ -446,12 +445,13 @@ class SidebarCustomizer
      * Meta-Key: '_cs_replacements' (2)
      * @since  2.0
      */
-    static public function get_post_meta($post_id)
+    public static function get_post_meta($post_id)
     {
         $data = get_post_meta( $post_id, '_cs_replacements', true );
         if (!is_array( $data )) {
             $data = array();
         }
+
         return $data;
     }
 
@@ -460,10 +460,10 @@ class SidebarCustomizer
      *
      * Meta-Key: '_cs_replacements' (2)
      * @since  2.0
-     * @param int $post_id
-     * @param array $data When array is empty the meta data will be deleted.
+     * @param int   $post_id
+     * @param array $data    When array is empty the meta data will be deleted.
      */
-    static public function set_post_meta($post_id, $data)
+    public static function set_post_meta($post_id, $data)
     {
         if (!empty( $data )) {
             update_post_meta( $post_id, '_cs_replacements', $data );
@@ -479,7 +479,7 @@ class SidebarCustomizer
      *
      * @param string $type [all|cust|theme] What kind of sidebars to return.
      */
-    static public function get_sidebars($type = 'theme')
+    public static function get_sidebars($type = 'theme')
     {
         global $wp_registered_sidebars;
         $allsidebars = $wp_registered_sidebars;
@@ -522,10 +522,10 @@ class SidebarCustomizer
      * Returns the sidebar with the specified ID.
      * Sidebar can be both a custom sidebar or theme sidebar.
      *
-     * @param string $id Sidebar-ID.
+     * @param string $id   Sidebar-ID.
      * @param string $type [all|cust|theme] What kind of sidebars to check.
      */
-    static public function get_sidebar($id, $type = 'all')
+    public static function get_sidebar($id, $type = 'all')
     {
         if (empty( $id )) {
             return false;
@@ -544,7 +544,7 @@ class SidebarCustomizer
     /**
      * Get sidebar replacement information for a single post.
      */
-    static public function get_replacements($postid)
+    public static function get_replacements($postid)
     {
         $replacements = self::get_post_meta( $postid );
         if (!is_array( $replacements )) {
@@ -552,6 +552,7 @@ class SidebarCustomizer
         } else {
             $replacements = $replacements;
         }
+
         return $replacements;
     }
 
@@ -560,10 +561,10 @@ class SidebarCustomizer
      *
      * @since  2.0
      * @param  object|string $posttype The posttype to validate. Either the
-     *                posttype name or the full posttype object.
+     *                                 posttype name or the full posttype object.
      * @return bool
      */
-    static public function supported_post_type($posttype)
+    public static function supported_post_type($posttype)
     {
         $Ignored_types = null;
         $Response = array();
@@ -604,9 +605,9 @@ class SidebarCustomizer
      *
      * @uses   self::supported_post_type()
      * @param  string $type [names|objects] Defines details of return data.
-     * @return array List of posttype names or objects, depending on the param.
+     * @return array  List of posttype names or objects, depending on the param.
      */
-    static public function get_post_types($type = 'names')
+    public static function get_post_types($type = 'names')
     {
         $Valid = array();
 
@@ -634,7 +635,7 @@ class SidebarCustomizer
      * @since  2.0
      * @return array List of categories, including empty ones.
      */
-    static public function get_all_categories()
+    public static function get_all_categories()
     {
         $args = array(
             'hide_empty' => 0,
@@ -650,7 +651,7 @@ class SidebarCustomizer
      *
      * @uses  self::cmp_cat_level()
      */
-    static public function get_sorted_categories($post_id = null)
+    public static function get_sorted_categories($post_id = null)
     {
         static $Sorted = array();
 
@@ -661,6 +662,7 @@ class SidebarCustomizer
             $Sorted[$post_id] = get_the_category( $post_id );
             @usort( $Sorted[$post_id], array( self, 'cmp_cat_level' ) );
         }
+
         return $Sorted[$post_id];
     }
 
@@ -669,7 +671,7 @@ class SidebarCustomizer
      *
      * @uses  self::get_category_level()
      */
-    static public function cmp_cat_level($cat1, $cat2)
+    public static function cmp_cat_level($cat1, $cat2)
     {
         $l1 = self::get_category_level( $cat1->cat_ID );
         $l2 = self::get_category_level( $cat2->cat_ID );
@@ -683,13 +685,14 @@ class SidebarCustomizer
     /**
      * Helper function used to sort categories.
      */
-    static public function get_category_level($catid)
+    public static function get_category_level($catid)
     {
         if ($catid == 0) {
             return 0;
         }
 
         $cat = get_category( $catid );
+
         return 1 + self::get_category_level( $cat->category_parent );
     }
 
@@ -707,7 +710,7 @@ class SidebarCustomizer
      *
      * @since  1.0.0
      */
-    static protected function json_response($obj)
+    protected static function json_response($obj)
     {
         // Flush any output that was made prior to this function call
         while (0 < ob_get_level()) {
@@ -715,7 +718,7 @@ class SidebarCustomizer
         }
 
         header( 'Content-Type: application/json' );
-        echo json_encode( (object)$obj );
+        echo json_encode( (object) $obj );
         die();
     }
 
@@ -724,7 +727,7 @@ class SidebarCustomizer
      *
      * @since  2.0
      */
-    static protected function plain_response($data)
+    protected static function plain_response($data)
     {
         // Flush any output that was made prior to this function call
         while (0 < ob_get_level()) {
@@ -740,14 +743,15 @@ class SidebarCustomizer
      * Sets the response object to ERR state with the specified message/reason.
      *
      * @since  2.0
-     * @param  object $req Initial response object.
+     * @param  object $req     Initial response object.
      * @param  string $message Error message or reason; already translated.
      * @return object Updated response object.
      */
-    static protected function req_err($req, $message)
+    protected static function req_err($req, $message)
     {
         $req->status = 'ERR';
         $req->message = $message;
+
         return $req;
     }
 
@@ -814,4 +818,4 @@ class SidebarCustomizer
         );
         __( 'Pro Version Features', CSB_LANG );
     }
-} 
+}

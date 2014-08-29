@@ -5,7 +5,6 @@
 
 namespace Mozart\Component\Config\Page;
 
-
 /**
  * Class ConfigPageManager
  * @package Mozart\Component\Config\Page

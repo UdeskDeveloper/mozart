@@ -5,7 +5,6 @@
 
 namespace Mozart\Bundle\AdminBundle\Screen;
 
-
-class AdminScreenDecorator implements ScreenDecoratorInterface {
-
-} 
+class AdminScreenDecorator implements ScreenDecoratorInterface
+{
+}

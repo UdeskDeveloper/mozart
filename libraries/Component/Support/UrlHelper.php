@@ -36,13 +36,13 @@ class UrlHelper
      *   http_build_query() directly.
      *
      * @param array  $query
-     *   The query parameter array to be processed.
+     *                       The query parameter array to be processed.
      * @param string $parent
-     *   Internal use only. Used to build the $query array key for nested items.
+     *                       Internal use only. Used to build the $query array key for nested items.
      *
      * @return string
-     *   A rawurlencoded string which can be used as or appended to the URL query
-     *   string.
+     *                A rawurlencoded string which can be used as or appended to the URL query
+     *                string.
      *
      * @ingroup php_wrappers
      */
@@ -72,12 +72,12 @@ class UrlHelper
      * Filters a URL query parameter array to remove unwanted elements.
      *
      * @param array  $query
-     *   An array to be processed.
+     *                        An array to be processed.
      * @param array  $exclude
-     *   (optional) A list of $query array keys to remove. Use "parent[child]" to
-     *   exclude nested items.
+     *                        (optional) A list of $query array keys to remove. Use "parent[child]" to
+     *                        exclude nested items.
      * @param string $parent
-     *   Internal use only. Used to build the $query array key for nested items.
+     *                        Internal use only. Used to build the $query array key for nested items.
      *
      * @return
      *   An array containing query parameters.
@@ -121,14 +121,14 @@ class UrlHelper
      * groups the scheme, authority, and path together into the path component.
      *
      * @param string $url
-     *   The internal path or external URL string to parse.
+     *                    The internal path or external URL string to parse.
      *
      * @return array
-     *   An associative array containing:
-     *   - path: The path component of $url. If $url is an external URL, this
-     *     includes the scheme, authority, and path.
-     *   - query: An array of query parameters from $url, if they exist.
-     *   - fragment: The fragment component from $url, if it exists.
+     *               An associative array containing:
+     *               - path: The path component of $url. If $url is an external URL, this
+     *               includes the scheme, authority, and path.
+     *               - query: An array of query parameters from $url, if they exist.
+     *               - fragment: The fragment component from $url, if it exists.
      *
      * @see l()
      * @see url()
@@ -183,10 +183,10 @@ class UrlHelper
      * For aesthetic reasons slashes are not escaped.
      *
      * @param string $path
-     *   The path to encode.
+     *                     The path to encode.
      *
      * @return string
-     *   The encoded path.
+     *                The encoded path.
      */
     public static function encodePath($path)
     {
@@ -199,11 +199,11 @@ class UrlHelper
      * If a path cannot be assessed by the menu handler, then we must treat it as potentially insecure.
      *
      * @param string $path
-     *   The internal path or external URL being linked to, such as "node/34" or
-     *   "http://example.com/foo".
+     *                     The internal path or external URL being linked to, such as "node/34" or
+     *                     "http://example.com/foo".
      *
      * @return bool
-     *   TRUE or FALSE, where TRUE indicates an external path.
+     *              TRUE or FALSE, where TRUE indicates an external path.
      */
     public static function isExternal($path)
     {
@@ -221,9 +221,9 @@ class UrlHelper
      * Determines if an external URL points to this installation.
      *
      * @param string $url
-     *   A string containing an external URL, such as "http://example.com/foo".
+     *                         A string containing an external URL, such as "http://example.com/foo".
      * @param string $base_url
-     *   The base URL string to check against, such as "http://example.com/"
+     *                         The base URL string to check against, such as "http://example.com/"
      *
      * @return
      *   TRUE if the URL has the same domain and base path.
@@ -247,10 +247,10 @@ class UrlHelper
      * Processes an HTML attribute value and strips dangerous protocols from URLs.
      *
      * @param string $string
-     *   The string with the attribute value.
+     *                       The string with the attribute value.
      *
      * @return string
-     *   Cleaned up and HTML-escaped version of $string.
+     *                Cleaned up and HTML-escaped version of $string.
      */
     public static function filterBadProtocol($string)
     {
@@ -265,7 +265,7 @@ class UrlHelper
      * Sets the allowed protocols.
      *
      * @param array $protocols
-     *   An array of protocols, for example http, https and irc.
+     *                         An array of protocols, for example http, https and irc.
      */
     public static function setAllowedProtocols(array $protocols = array())
     {
@@ -284,13 +284,13 @@ class UrlHelper
      * \Mozart\Component\Support\String::checkPlain() separately.
      *
      * @param string $uri
-     *   A plain-text URI that might contain dangerous protocols.
+     *                    A plain-text URI that might contain dangerous protocols.
      *
      * @return string
-     *   A plain-text URI stripped of dangerous protocols. As with all plain-text
-     *   strings, this return value must not be output to an HTML page without
-     *   being sanitized first. However, it can be passed to functions
-     *   expecting plain-text strings.
+     *                A plain-text URI stripped of dangerous protocols. As with all plain-text
+     *                strings, this return value must not be output to an HTML page without
+     *                being sanitized first. However, it can be passed to functions
+     *                expecting plain-text strings.
      */
     public static function stripDangerousProtocols($uri)
     {
@@ -328,17 +328,17 @@ class UrlHelper
      * Valid values per RFC 3986.
      *
      * @param string $url
-     *   The URL to verify.
+     *                         The URL to verify.
      * @param bool   $absolute
-     *   Whether the URL is absolute (beginning with a scheme such as "http:").
+     *                         Whether the URL is absolute (beginning with a scheme such as "http:").
      *
      * @return bool
-     *   TRUE if the URL is in a valid format, FALSE otherwise.
+     *              TRUE if the URL is in a valid format, FALSE otherwise.
      */
     public static function isValid($url, $absolute = false)
     {
         if ($absolute) {
-            return (bool)preg_match(
+            return (bool) preg_match(
                 "
         /^                                                      # Start at the beginning of the text
         (?:ftp|https?|feed):\/\/                                # Look for ftp, http, https or feed schemes
@@ -358,7 +358,7 @@ class UrlHelper
                 $url
             );
         } else {
-            return (bool)preg_match( "/^(?:[\w#!:\.\?\+=&@$'~*,;\/\(\)\[\]\-]|%[0-9a-f]{2})+$/i", $url );
+            return (bool) preg_match( "/^(?:[\w#!:\.\?\+=&@$'~*,;\/\(\)\[\]\-]|%[0-9a-f]{2})+$/i", $url );
         }
     }
 

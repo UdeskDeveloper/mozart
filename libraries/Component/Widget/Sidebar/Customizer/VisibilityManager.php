@@ -5,9 +5,6 @@
 
 namespace Mozart\Component\Widget\Sidebar\Customizer;
 
-
-use Mozart\Component\Widget\Sidebar\SidebarCustomizer;
-
 /**
  * Adds visibility options to all widgets: Hide or show widgets only when
  * specific conditions are met.
@@ -15,13 +12,15 @@ use Mozart\Component\Widget\Sidebar\SidebarCustomizer;
  * Class VisibilityManager
  * @package Mozart\Component\Widget\Sidebar\Customizer
  */
-class VisibilityManager {
+class VisibilityManager
+{
     /**
      * Constructor is private -> singleton.
      *
      * @since  2.0
      */
-    private function __construct() {
+    private function __construct()
+    {
         if ( is_admin() ) {
             // in_widget_form: Add our button inside each widget.
             add_action(
@@ -55,11 +54,12 @@ class VisibilityManager {
      * @param  array $instance The widget instance data.
      * @return array Sanitized CSB visibility data.
      */
-    protected function get_widget_data( $instance ) {
+    protected function get_widget_data($instance)
+    {
         static $Condition_keys = null;
         $data = array();
 
-        if ( null === $Condition_keys ) {
+        if (null === $Condition_keys) {
             $tax_list = get_taxonomies( array( 'public' => true ), 'objects' );
             $type_list = CustomSidebars::get_post_types( 'objects' );
             $Condition_keys = array(
@@ -70,10 +70,10 @@ class VisibilityManager {
                 'membership' => array(),
                 'prosite' => array(),
             );
-            foreach ( $type_list as $type_item ) {
+            foreach ($type_list as $type_item) {
                 $Condition_keys[ 'pt-' . $type_item->name ] = array();
             }
-            foreach ( $tax_list as $tax_item ) {
+            foreach ($tax_list as $tax_item) {
                 $Condition_keys[ 'tax-' . $tax_item->name ] = array();
             }
         }
@@ -94,7 +94,7 @@ class VisibilityManager {
         $data['conditions'] = array();
 
         $data['always'] = true;
-        foreach ( $Condition_keys as $key => $def_value ) {
+        foreach ($Condition_keys as $key => $def_value) {
             $val = $def_value;
             if ( isset( $conditions[ $key ] ) && ! empty( $conditions[ $key ] ) ) {
                 $data['always'] = false;
@@ -111,7 +111,8 @@ class VisibilityManager {
      *
      * @since  2.0
      */
-    public function admin_widget_button( $widget, $return, $instance ) {
+    public function admin_widget_button($widget, $return, $instance)
+    {
         $is_visible = ('1' == @$_POST['csb_visible'] ? 1 : 0);
         $tax_list = get_taxonomies( array( 'public' => true ), 'objects' );
         $type_list = CustomSidebars::get_post_types( 'objects' );
@@ -131,7 +132,7 @@ class VisibilityManager {
         );
 
         // Remove taxonomies without values.
-        foreach ( $tax_list as $index => $tax_item ) {
+        foreach ($tax_list as $index => $tax_item) {
             $tags = get_terms( $tax_item->name, array( 'hide_empty' => false ) );
             if ( empty( $tags ) ) {
                 unset( $tax_list[ $index ] );
@@ -154,7 +155,7 @@ class VisibilityManager {
             <?php if ( ! isset( $_POST[ 'csb-visibility-button' ] ) ) : ?>
                 <a href="#" class="button csb-visibility-button"><span class="dashicons dashicons-visibility"></span> <?php _e( 'Visibility', CSB_LANG ); ?></a>
             <?php else : ?>
-                <script>jQuery(function() { jQuery('.csb-visibility-<?php echo esc_js( $widget->id ); ?>').closest('.widget').trigger('csb:update'); }); </script>
+                <script>jQuery(function () { jQuery('.csb-visibility-<?php echo esc_js( $widget->id ); ?>').closest('.widget').trigger('csb:update'); }); </script>
             <?php endif; ?>
 
             <div class="csb-visibility-inner" <?php if ( ! $is_visible ) : ?>style="display:none"<?php endif; ?>>
@@ -225,7 +226,7 @@ class VisibilityManager {
                                 <?php $is_selected = in_array( $level['id'], $cond['membership'] ); ?>
                                 <option <?php selected( $is_selected ); ?> value="<?php echo esc_attr( $level['id'] ); ?>">
                                     <?php echo esc_html( $level['level_title'] ); ?>
-                                    <?php if ( ! $level['level_active'] ) { _e( '(inactive)', CSB_LANG ); } ?>
+                                    <?php if (! $level['level_active']) { _e( '(inactive)', CSB_LANG ); } ?>
                                 </option>
                             <?php endforeach; ?>
                         </select>
@@ -309,7 +310,7 @@ class VisibilityManager {
 
                 <?php /* SPECIFIC TAXONOMY */ ?>
                 <?php
-                foreach ( $tax_list as $tax_item ) {
+                foreach ($tax_list as $tax_item) {
                     $row_id = 'tax-' . $tax_item->name;
                     $tags = get_terms( $tax_item->name, array( 'hide_empty' => false ) );
                     ?>
@@ -344,7 +345,8 @@ class VisibilityManager {
      * @since  2.0
      * @return bool|array
      */
-    public function get_membership_levels() {
+    public function get_membership_levels()
+    {
         $Result = null;
 
         if (
@@ -357,9 +359,9 @@ class VisibilityManager {
             $Result = $wpdb->get_results(
                 sprintf(
                     'SELECT
-						id, level_title, level_active
-					FROM %s
-					ORDER BY id',
+                        id, level_title, level_active
+                    FROM %s
+                    ORDER BY id',
                     MEMBERSHIP_TABLE_LEVELS
                 ), ARRAY_A
             );
@@ -378,7 +380,8 @@ class VisibilityManager {
      * @param  array $old_instance Old settings for this instance.
      * @return array Modified settings.
      */
-    public function admin_widget_update( $instance, $new_instance, $old_instance ) {
+    public function admin_widget_update($instance, $new_instance, $old_instance)
+    {
         $data = $this->get_widget_data( $_POST );
 
         $instance['csb_visibility'] = $data;
@@ -395,19 +398,20 @@ class VisibilityManager {
      * @param  array $widget_areas An array of widget areas and their widgets.
      * @return array The modified $widget_area array.
      */
-    public function sidebars_widgets( $widget_areas ) {
+    public function sidebars_widgets($widget_areas)
+    {
         static $Settings = array();
 
-        foreach ( $widget_areas as $widget_area => $widgets ) {
+        foreach ($widget_areas as $widget_area => $widgets) {
             if ( empty( $widgets ) ) {
                 continue;
             }
 
-            if ( 'wp_inactive_widgets' == $widget_area ) {
+            if ('wp_inactive_widgets' == $widget_area) {
                 continue;
             }
 
-            foreach ( $widgets as $position => $widget_id ) {
+            foreach ($widgets as $position => $widget_id) {
                 // Find the conditions for this widget.
                 if ( preg_match( '/^(.+?)-(\d+)$/', $widget_id, $matches ) ) {
                     $id_base = $matches[1];
@@ -438,7 +442,8 @@ class VisibilityManager {
         return $widget_areas;
     }
 
-    public function maybe_display_widget( $instance ) {
+    public function maybe_display_widget($instance)
+    {
         global $post, $wp_query;
         static $Type_list = null;
         static $Tax_list = null;
@@ -454,11 +459,11 @@ class VisibilityManager {
         $cond = $instance['csb_visibility']['conditions'];
         $action = 'hide' != $instance['csb_visibility']['action'] ? 'show' : 'hide';
 
-        if ( $instance['csb_visibility']['always'] ) {
+        if ($instance['csb_visibility']['always']) {
             return ( 'hide' == $action ? false : true );
         }
 
-        if ( null === $Type_list ) {
+        if (null === $Type_list) {
             $Tax_list = get_taxonomies( array( 'public' => true ), 'objects' );
             $Type_list = get_post_types( array( 'public' => true ), 'objects' );
         }
@@ -475,13 +480,13 @@ class VisibilityManager {
             } else {
                 global $current_user;
                 $has_role = false;
-                foreach ( $current_user->roles as $user_role ) {
+                foreach ($current_user->roles as $user_role) {
                     if ( in_array( $user_role, $cond['roles'] ) ) {
                         $has_role = true;
                         break;
                     }
                 }
-                if ( ! $has_role ) {
+                if (! $has_role) {
                     $condition_true = false;
                 }
             }
@@ -496,13 +501,13 @@ class VisibilityManager {
                     $factory = new Membership_Factory();
                     $user = $factory->get_member( get_current_user_id() );
                     $has_level = false;
-                    foreach ( $cond['membership'] as $level ) {
+                    foreach ($cond['membership'] as $level) {
                         if ( $user->on_level( $level ) ) {
                             $has_level = true;
                             break;
                         }
                     }
-                    if ( ! $has_level ) {
+                    if (! $has_level) {
                         $condition_true = false;
                     }
                 }
@@ -517,12 +522,12 @@ class VisibilityManager {
         // Filter for SPECIAL PAGES.
         if ( $condition_true && ! empty( $cond['pagetypes'] ) && is_array( $cond['pagetypes'] ) ) {
             $is_type = false;
-            foreach ( $cond['pagetypes'] as $type ) {
-                if ( $is_type ) {
+            foreach ($cond['pagetypes'] as $type) {
+                if ($is_type) {
                     break;
                 }
 
-                switch ( $type ) {
+                switch ($type) {
                     case 'e404':
                         $is_type = $is_type || is_404();
                         break;
@@ -559,7 +564,7 @@ class VisibilityManager {
                         break;
                 }
             }
-            if ( ! $is_type ) {
+            if (! $is_type) {
                 $condition_true = false;
             }
         }
@@ -579,7 +584,7 @@ class VisibilityManager {
             }
         }
 
-        if ( $condition_true ) {
+        if ($condition_true) {
             // TAXONOMY condition.
             $tax_query = @$wp_query->tax_query->queries;
             if ( is_array( $tax_query ) ) {
@@ -590,8 +595,8 @@ class VisibilityManager {
                 $tax_terms = false;
             }
 
-            foreach ( $Tax_list as $tax_item ) {
-                if ( ! $condition_true ) {
+            foreach ($Tax_list as $tax_item) {
+                if (! $condition_true) {
                     break;
                 }
 
@@ -599,9 +604,9 @@ class VisibilityManager {
                 if ( isset( $cond[ $tax_key ] ) && ! empty( $cond[ $tax_key ] ) ) {
                     $has_term = false;
 
-                    if ( $tax_type && $tax_type == $tax_item->name ) {
+                    if ($tax_type && $tax_type == $tax_item->name) {
                         // Check if we did filter for the specific taxonomy.
-                        foreach ( $tax_terms as $slug ) {
+                        foreach ($tax_terms as $slug) {
                             $term_data = get_term_by( 'slug', $slug, $tax_type );
                             if ( in_array( $term_data->term_id, $cond[ $tax_key ] ) ) {
                                 $has_term = true;
@@ -609,14 +614,14 @@ class VisibilityManager {
                         }
                     } else {
                         // Check if current post has the specific taxonomy.
-                        foreach ( $cond[ $tax_key ] as $term ) {
+                        foreach ($cond[ $tax_key ] as $term) {
                             if ( has_term( $term, $tax_item->name ) ) {
                                 $has_term = true;
                                 break;
                             }
                         }
                     }
-                    if ( ! $has_term ) {
+                    if (! $has_term) {
                         $condition_true = false;
                     }
                 }
@@ -629,4 +634,4 @@ class VisibilityManager {
 
         return $show_widget;
     }
-} 
+}

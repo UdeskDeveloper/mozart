@@ -5,6 +5,6 @@
 
 namespace Mozart\Component\Menu;
 
-interface MenuManagerInterface {
-
-} 
+interface MenuManagerInterface
+{
+}

@@ -5,7 +5,6 @@
 
 namespace Mozart\Component\Config\Page;
 
-
-class BaseFieldGroupManager extends AbstractFieldGroupManager {
-
-} 
+class BaseFieldGroupManager extends AbstractFieldGroupManager
+{
+}

@@ -13,15 +13,16 @@ use Mozart\Component\Widget\Sidebar\SidebarCustomizer;
  * Class Exporter
  * @package Mozart\Component\Widget\Sidebar\Customizer
  */
-class Exporter extends SidebarCustomizer {
-
+class Exporter extends SidebarCustomizer
+{
     // Holds the contents of the import-file during preview/import.
-    static private $import_data = null;
+    private static $import_data = null;
 
     // Used after preview. This holds only the items that were selected for import.
     private $selected_data = null;
 
-    public function __construct() {
+    public function __construct()
+    {
         if ( is_admin() ) {
             add_action(
                 'cs_widget_header',
@@ -39,7 +40,8 @@ class Exporter extends SidebarCustomizer {
      * Called by action 'cs_widget_header'. Output the export/import button in
      * the widget header.
      */
-    public function widget_header() {
+    public function widget_header()
+    {
         ?>
         <a href="#" class="cs-action btn-export"><?php _e( 'Import / Export Sidebars', CSB_LANG ); ?></a>
     <?php
@@ -51,7 +53,8 @@ class Exporter extends SidebarCustomizer {
      *
      * @since  2.0
      */
-    public function handle_ajax( $ajax_action ) {
+    public function handle_ajax($ajax_action)
+    {
         $req = (object) array(
             'status' => 'ERR',
         );
@@ -59,7 +62,7 @@ class Exporter extends SidebarCustomizer {
         $handle_it = false;
         $view_file = '';
 
-        switch ( $ajax_action ) {
+        switch ($ajax_action) {
             case 'export':
             case 'import':
             case 'preview-import':
@@ -70,7 +73,7 @@ class Exporter extends SidebarCustomizer {
         }
 
         // The ajax request was not meant for us...
-        if ( ! $handle_it ) {
+        if (! $handle_it) {
             return false;
         }
 
@@ -80,14 +83,14 @@ class Exporter extends SidebarCustomizer {
                 __( 'You do not have permission for this', CSB_LANG )
             );
         } else {
-            switch ( $ajax_action ) {
+            switch ($ajax_action) {
                 case 'export':
                     $this->download_export_file();
                     break;
 
                 case 'preview-import':
                     $req = $this->read_import_file( $req );
-                    if ( 'OK' == $req->status ) {
+                    if ('OK' == $req->status) {
                         ob_start();
                         include CSB_VIEWS_DIR . 'import.php';
                         $req->html = ob_get_clean();
@@ -101,7 +104,7 @@ class Exporter extends SidebarCustomizer {
         }
 
         // Make the ajax response either as JSON or plain text.
-        if ( $is_json ) {
+        if ($is_json) {
             self::json_response( $req );
         } else {
             ob_start();
@@ -112,7 +115,6 @@ class Exporter extends SidebarCustomizer {
         }
     }
 
-
     /*============================*\
     ================================
     ==                            ==
@@ -121,13 +123,13 @@ class Exporter extends SidebarCustomizer {
     ================================
     \*============================*/
 
-
     /**
      * Collects the plugin details for export.
      *
      * @since  2.0
      */
-    private function get_export_data() {
+    private function get_export_data()
+    {
         global $wp_registered_widgets, $wp_version;
 
         $theme = wp_get_theme();
@@ -167,10 +169,10 @@ class Exporter extends SidebarCustomizer {
          */
         $data['widgets'] = array();
         foreach ( self::get_sidebar_widgets() as $sidebar => $widgets ) {
-            if ( 'wp_inactive_widgets' === $sidebar ) { continue; }
+            if ('wp_inactive_widgets' === $sidebar) { continue; }
             if ( is_array( $widgets ) ) {
                 $data['widgets'][ $sidebar ] = array();
-                foreach ( $widgets as $widget_id ) {
+                foreach ($widgets as $widget_id) {
                     if ( isset( $wp_registered_widgets[$widget_id] ) ) {
                         $item = @$wp_registered_widgets[$widget_id];
                         $cb = $item['callback'];
@@ -213,6 +215,7 @@ class Exporter extends SidebarCustomizer {
                 $data['widgets'][ $sidebar ] = $widgets;
             }
         }
+
         return $data;
     }
 
@@ -221,7 +224,8 @@ class Exporter extends SidebarCustomizer {
      *
      * @since  2.0
      */
-    private function download_export_file() {
+    private function download_export_file()
+    {
         $data = $this->get_export_data();
         $filename = 'sidebars.' . date( 'Y-m-d.H-i-s' ) . '.json';
         header( 'Content-type: application/json' );
@@ -231,7 +235,6 @@ class Exporter extends SidebarCustomizer {
         die();
     }
 
-
     /*=============================*\
     =================================
     ==                             ==
@@ -239,7 +242,6 @@ class Exporter extends SidebarCustomizer {
     ==                             ==
     =================================
     \*=============================*/
-
 
     /**
      * Checks if a valid export-file was uploaded and stores the file contents
@@ -250,9 +252,10 @@ class Exporter extends SidebarCustomizer {
      * @param  object $req Initial response object for JSON response.
      * @return object Updated response object.
      */
-    private function read_import_file( $req ) {
+    private function read_import_file($req)
+    {
         if ( is_array( $_FILES['data'] ) ) {
-            switch ( $_FILES['data']['error'] ) {
+            switch ($_FILES['data']['error']) {
                 case UPLOAD_ERR_OK:
                     // This is the expeted status!
                     break;
@@ -318,7 +321,8 @@ class Exporter extends SidebarCustomizer {
      * @param  object $req Initial response object for JSON response.
      * @return object Updated response object.
      */
-    private function prepare_import_data( $req ) {
+    private function prepare_import_data($req)
+    {
         $data = json_decode( base64_decode( @$_POST['import_data'] ), true );
 
         if (
@@ -346,14 +350,14 @@ class Exporter extends SidebarCustomizer {
             if ( ! isset( $_POST['import_widgets'] ) ) {
                 unset( $this->selected_data['widgets'] );
             } else {
-                foreach ( $this->selected_data['widgets'] as $id => $widgets ) {
+                foreach ($this->selected_data['widgets'] as $id => $widgets) {
                     $key = 'import_sb_' . $id;
                     if ( ! isset( $_POST[ $key ] ) ) {
                         unset( $this->selected_data['widgets'][ $id ] );
                     }
                 }
             }
-            foreach ( $this->selected_data['sidebars'] as $id => $sidebar ) {
+            foreach ($this->selected_data['sidebars'] as $id => $sidebar) {
                 $key = 'import_sb_' . $sidebar['id'];
                 if ( ! isset( $_POST[ $key ] ) ) {
                     unset( $this->selected_data['sidebars'][ $id ] );
@@ -382,7 +386,8 @@ class Exporter extends SidebarCustomizer {
      *
      * @since  2.0
      */
-    private function prepare_data() {
+    private function prepare_data()
+    {
         global $wp_registered_widgets;
         $theme_sidebars = self::get_sidebars();
         $valid_categories = array();
@@ -392,7 +397,7 @@ class Exporter extends SidebarCustomizer {
         // =====
         // Normalize the sidebar list (change numeric index to sidebar-id).
         $sidebars_remapped = array();
-        foreach ( self::$import_data['sidebars'] as $sidebar ) {
+        foreach (self::$import_data['sidebars'] as $sidebar) {
             $sidebars_remapped[ $sidebar['id'] ] = $sidebar;
         }
         self::$import_data['sidebars'] = $sidebars_remapped;
@@ -406,7 +411,7 @@ class Exporter extends SidebarCustomizer {
 
         // =====
         // Check for theme-sidebars that do not exist.
-        foreach ( self::$import_data['options']['modifiable'] as $id => $sb_id ) {
+        foreach (self::$import_data['options']['modifiable'] as $id => $sb_id) {
             if ( ! isset( $theme_sidebars[ $sb_id ] ) ) {
                 if ( ! isset( self::$import_data['ignore']['sidebars'] ) ) {
                     self::$import_data['ignore']['sidebars'] = array();
@@ -419,7 +424,7 @@ class Exporter extends SidebarCustomizer {
         // =====
         // Remove invalid sidebars from the default replacement options.
         foreach ( array( 'post_type_single', 'post_type_archive', 'category_single', 'category_archive' ) as $key ) {
-            foreach ( self::$import_data['options'][ $key ] as $id => $list ) {
+            foreach (self::$import_data['options'][ $key ] as $id => $list) {
                 $list = $this->_remove_sidebar_from_list( $list, $valid_sidebars );
                 self::$import_data['options'][ $key ][ $id ] = $list;
             }
@@ -435,7 +440,7 @@ class Exporter extends SidebarCustomizer {
         foreach ( get_categories( array( 'hide_empty' => 0 ) ) as $cat ) {
             $valid_categories[ $cat->term_id ] = $cat;
         }
-        foreach ( self::$import_data['categories'] as $infos ) {
+        foreach (self::$import_data['categories'] as $infos) {
             $id = $infos['term_id'];
             if (
                 empty( $valid_categories[ $id ] ) ||
@@ -455,7 +460,7 @@ class Exporter extends SidebarCustomizer {
 
         // =====
         // Remove missing widgets from import data.
-        foreach ( $wp_registered_widgets as $widget ) {
+        foreach ($wp_registered_widgets as $widget) {
             if ( is_array( $widget['callback'] ) ) {
                 $classname = get_class( $widget['callback'][0] );
             } else {
@@ -463,13 +468,13 @@ class Exporter extends SidebarCustomizer {
             }
             $valid_widgets[ $classname ] = true;
         }
-        foreach ( self::$import_data['widgets'] as $sb_id => $sidebar ) {
+        foreach (self::$import_data['widgets'] as $sb_id => $sidebar) {
             if ( ! is_array( $sidebar ) ) { continue; }
-            foreach ( $sidebar as $id => $widget_instance ) {
+            foreach ($sidebar as $id => $widget_instance) {
                 $version = $widget_instance['version'];
                 $instance_class = $widget_instance['classname'];
                 $exists = (true === @$valid_widgets[ $instance_class ]);
-                if ( ! $exists ) {
+                if (! $exists) {
                     if ( ! isset( self::$import_data['ignore']['widgets'] ) ) {
                         self::$import_data['ignore']['widgets'] = array();
                     }
@@ -486,14 +491,16 @@ class Exporter extends SidebarCustomizer {
      *
      * @since  2.0
      */
-    private function _remove_sidebar_from_list( $list, $valid_list ) {
-        foreach ( $list as $id => $value ) {
+    private function _remove_sidebar_from_list($list, $valid_list)
+    {
+        foreach ($list as $id => $value) {
             if ( ! in_array( $value, $valid_list ) ) {
                 unset( $list[ $id ] );
-            } else if ( ! in_array( $id, $valid_list ) ) {
+            } elseif ( ! in_array( $id, $valid_list ) ) {
                 unset( $list[ $id ] );
             }
         }
+
         return $list;
     }
 
@@ -502,10 +509,10 @@ class Exporter extends SidebarCustomizer {
      *
      * @since  2.0
      */
-    static public function get_import_data() {
+    public static function get_import_data()
+    {
         return self::$import_data;
     }
-
 
     /*============================*\
     ================================
@@ -524,7 +531,8 @@ class Exporter extends SidebarCustomizer {
      * @param  object $req Initial response object for JSON response.
      * @return object Updated response object.
      */
-    private function do_import( $req ) {
+    private function do_import($req)
+    {
         $data = $this->selected_data;
         $msg = array();
 
@@ -534,7 +542,7 @@ class Exporter extends SidebarCustomizer {
         $sidebars = self::get_custom_sidebars();
         $sidebar_count = 0;
         // First replace existing sidebars.
-        foreach ( $sidebars as $idx => $sidebar ) {
+        foreach ($sidebars as $idx => $sidebar) {
             $sb_id = $sidebar['id'];
             if ( isset( $data['sidebars'][ $sb_id ] ) ) {
                 $new_sidebar = $data['sidebars'][ $sb_id ];
@@ -552,7 +560,7 @@ class Exporter extends SidebarCustomizer {
             }
         }
         // Second add new sidebars.
-        foreach ( $data['sidebars'] as $sb_id => $new_sidebar ) {
+        foreach ($data['sidebars'] as $sb_id => $new_sidebar) {
             $sidebars[] = array(
                 'name' => @$new_sidebar['name'],
                 'id' => $sb_id,
@@ -564,14 +572,13 @@ class Exporter extends SidebarCustomizer {
             );
             $sidebar_count += 1;
         }
-        if ( $sidebar_count > 0 ) {
+        if ($sidebar_count > 0) {
             self::set_custom_sidebars( $sidebars );
             $msg[] = sprintf(
                 __( 'Imported %d custom sidebar(s)!', CSB_LANG ),
                 $sidebar_count
             );
         }
-
 
         // =====================================================================
         // Import plugin settings
@@ -580,7 +587,6 @@ class Exporter extends SidebarCustomizer {
             $msg[] = __( 'Plugin options were imported!', CSB_LANG );
         }
 
-
         // =====================================================================
         // Import widgets
         $widget_count = 0;
@@ -588,7 +594,7 @@ class Exporter extends SidebarCustomizer {
         $widget_list = array();
         $orig_POST = $_POST;
         // First replace existing sidebars.
-        foreach ( $data['widgets'] as $sb_id => $sidebar ) {
+        foreach ($data['widgets'] as $sb_id => $sidebar) {
             // --- 1. Remove all widgets from the sidebar
 
             // @see wp-admin/includes/ajax-actions.php : function wp_ajax_save_widget()
@@ -601,7 +607,7 @@ class Exporter extends SidebarCustomizer {
             if ( ! is_array( $old_widgets ) ) {
                 $old_widgets = array();
             }
-            foreach ( $old_widgets as $widget_id ) {
+            foreach ($old_widgets as $widget_id) {
                 $id_base = preg_replace( '/-[0-9]+$/', '', $widget_id );
                 $_POST = array(
                     'sidebar' => $sb_id,
@@ -614,7 +620,7 @@ class Exporter extends SidebarCustomizer {
 
             // --- 2. Import the new widgets to the sidebar
 
-            foreach ( $sidebar as $class => $widget ) {
+            foreach ($sidebar as $class => $widget) {
                 $widget_base = $widget['id_base'];
                 $widget_name = $this->_add_new_widget( $widget_base, $widget['settings'] );
 
@@ -625,7 +631,7 @@ class Exporter extends SidebarCustomizer {
             }
         }
         $_POST = $orig_POST;
-        if ( $widget_count > 0 ) {
+        if ($widget_count > 0) {
             wp_set_sidebars_widgets( $def_sidebars );
             $msg[] = sprintf(
                 __( 'Imported %d widget(s)!', CSB_LANG ),
@@ -647,12 +653,13 @@ class Exporter extends SidebarCustomizer {
      *
      * @since  2.0
      */
-    private function _refresh_widget_settings( $id_base ) {
+    private function _refresh_widget_settings($id_base)
+    {
         global $wp_registered_widget_updates;
 
         foreach ( (array) $wp_registered_widget_updates as $name => $control ) {
 
-            if ( $name == $id_base ) {
+            if ($name == $id_base) {
                 if ( ! is_callable( $control['callback'] ) ) {
                     continue;
                 }
@@ -675,13 +682,14 @@ class Exporter extends SidebarCustomizer {
      *
      * @since  2.0
      */
-    private function _add_new_widget( $id_base, $instance ) {
+    private function _add_new_widget($id_base, $instance)
+    {
         global $wp_registered_widget_updates;
         $widget_name = false;
 
         foreach ( (array) $wp_registered_widget_updates as $name => $control ) {
 
-            if ( $name == $id_base ) {
+            if ($name == $id_base) {
                 if ( ! is_callable( $control['callback'] ) ) {
                     continue;
                 }
@@ -698,13 +706,13 @@ class Exporter extends SidebarCustomizer {
 
                 // Find out what the next free number is.
                 $new_number = 0;
-                foreach ( $all_instances as $number => $data ) {
+                foreach ($all_instances as $number => $data) {
                     $new_number = $number > $new_number ? $number : $new_number;
                 }
                 $new_number += 1;
                 $widget_name = $id_base . '-' . $new_number;
 
-                foreach ( $instance as $key => $value ) {
+                foreach ($instance as $key => $value) {
                     $_POST[ $key ] = $value;
                 }
 
@@ -723,7 +731,7 @@ class Exporter extends SidebarCustomizer {
                  * @param WP_Widget $this         The current widget instance.
                  */
                 $instance = apply_filters( 'widget_update_callback', $instance, $instance, array(), $obj );
-                if ( false !== $instance ) {
+                if (false !== $instance) {
                     $all_instances[ $new_number ] = $instance;
                 }
 
@@ -735,4 +743,4 @@ class Exporter extends SidebarCustomizer {
 
         return $widget_name;
     }
-} 
+}

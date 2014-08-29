@@ -163,7 +163,7 @@ class WidgetLogic
 
         // UPDATE WIDGET LOGIC WIDGET OPTIONS (via accessibility mode?)
         if ('post' == strtolower( $_SERVER['REQUEST_METHOD'] )) {
-            foreach ((array)$_POST['widget-id'] as $widget_number => $widget_id) {
+            foreach ((array) $_POST['widget-id'] as $widget_number => $widget_id) {
                 if (isset( $_POST[$widget_id . '-widget_logic'] )) {
                     $this->options[$widget_id] = trim( $_POST[$widget_id . '-widget_logic'] );
                 }
@@ -172,7 +172,7 @@ class WidgetLogic
             // clean up empty options (in PHP5 use array_intersect_key)
             $regd_plus_new = array_merge(
                 array_keys( $wp_registered_widgets ),
-                array_values( (array)$_POST['widget-id'] ),
+                array_values( (array) $_POST['widget-id'] ),
                 array(
                     'options-filter',
                     'options-wp_reset_query',

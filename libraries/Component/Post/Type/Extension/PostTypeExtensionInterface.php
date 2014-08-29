@@ -12,7 +12,7 @@ interface PostTypeExtensionInterface
     public function getKey();
 
     /**
-     * @param PostTypeInterface $postType
+     * @param  PostTypeInterface $postType
      * @return mixed
      */
     public function load( PostTypeInterface $postType );

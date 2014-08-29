@@ -5,7 +5,6 @@
 
 namespace Mozart\Component\Menu\Walker;
 
-
 class BootstrapNavMenuWalker extends \Walker_Nav_Menu
 {
 
@@ -13,7 +12,7 @@ class BootstrapNavMenuWalker extends \Walker_Nav_Menu
      * @see Walker::start_lvl()
      *
      * @param string $output Passed by reference. Used to append additional content.
-     * @param int $depth Depth of page. Used for padding.
+     * @param int    $depth  Depth of page. Used for padding.
      */
     public function start_lvl(&$output, $depth = 0, $args = array())
     {
@@ -24,10 +23,10 @@ class BootstrapNavMenuWalker extends \Walker_Nav_Menu
     /**
      * @see Walker::start_el()
      *
-     * @param string $output Passed by reference. Used to append additional content.
-     * @param object $item Menu item data object.
-     * @param int $depth Depth of menu item. Used for padding.
-     * @param int $current_page Menu item ID.
+     * @param string $output       Passed by reference. Used to append additional content.
+     * @param object $item         Menu item data object.
+     * @param int    $depth        Depth of menu item. Used for padding.
+     * @param int    $current_page Menu item ID.
      * @param object $args
      */
     public function start_el(&$output, $item, $depth = 0, $args = array(), $id = 0)
@@ -59,7 +58,7 @@ class BootstrapNavMenuWalker extends \Walker_Nav_Menu
 
                         $class_names = $value = '';
 
-                        $classes = empty( $item->classes ) ? array() : (array)$item->classes;
+                        $classes = empty( $item->classes ) ? array() : (array) $item->classes;
                         $classes[] = 'menu-item-' . $item->ID;
 
                         $class_names = join(
@@ -148,13 +147,13 @@ class BootstrapNavMenuWalker extends \Walker_Nav_Menu
      *
      * This method shouldn't be called directly, use the walk() method instead.
      *
-     * @param object $element Data object
-     * @param array $children_elements List of elements to continue traversing.
-     * @param int $max_depth Max depth to traverse.
-     * @param int $depth Depth of current element.
-     * @param array $args
-     * @param string $output Passed by reference. Used to append additional content.
-     * @return null Null on failure with no changes to parameters.
+     * @param  object $element           Data object
+     * @param  array  $children_elements List of elements to continue traversing.
+     * @param  int    $max_depth         Max depth to traverse.
+     * @param  int    $depth             Depth of current element.
+     * @param  array  $args
+     * @param  string $output            Passed by reference. Used to append additional content.
+     * @return null   Null on failure with no changes to parameters.
      */
     public function display_element($element, &$children_elements, $max_depth, $depth, $args, &$output)
     {

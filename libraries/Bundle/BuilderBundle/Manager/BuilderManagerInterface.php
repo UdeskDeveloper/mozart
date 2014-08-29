@@ -5,7 +5,6 @@
 
 namespace Mozart\Bundle\BuilderBundle\Manager;
 
-
-interface BuilderManagerInterface {
-
-} 
+interface BuilderManagerInterface
+{
+}

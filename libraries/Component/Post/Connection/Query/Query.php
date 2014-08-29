@@ -100,14 +100,14 @@ class Query
         }
 
         if (isset( $q['connected_direction'] )) {
-            $directions = (array)$q['connected_direction'];
+            $directions = (array) $q['connected_direction'];
         } else {
             $directions = array();
         }
 
         $item = isset( $q['connected_items'] ) ? $q['connected_items'] : 'any';
 
-        $ctypes = (array)$q['connected_type'];
+        $ctypes = (array) $q['connected_type'];
 
         $p2p_types = self::expand_ctypes( $item, $directions, $object_type, $ctypes );
 
@@ -177,8 +177,7 @@ class Query
         $where_parts = array();
 
         foreach ($this->ctypes as $directed) {
-            if (null === $directed) // used by migration script
-            {
+            if (null === $directed) { // used by migration script
                 continue;
             }
 

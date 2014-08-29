@@ -34,43 +34,48 @@ http://arqex.com/
 */
 
 if ( ! class_exists( 'CustomSidebars' ) ) {
-	// used for more readable i18n functions: __( 'text', CSB_LANG );
-	define( 'CSB_LANG', 'custom-sidebars' );
+    // used for more readable i18n functions: __( 'text', CSB_LANG );
+    define( 'CSB_LANG', 'custom-sidebars' );
 
-	$plugin_dir = dirname( __FILE__ );
-	$plugin_dir_rel = dirname( plugin_basename( __FILE__ ) );
-	$plugin_url = plugin_dir_url( __FILE__ );
-	define( 'CSB_LANG_DIR', $plugin_dir_rel . '/lang/' );
-	define( 'CSB_VIEWS_DIR', $plugin_dir . '/views/' );
-	define( 'CSB_INC_DIR', $plugin_dir . '/inc/' );
-	define( 'CSB_JS_URL', $plugin_url . 'js/' );
-	define( 'CSB_CSS_URL', $plugin_url . 'css/' );
+    $plugin_dir = dirname( __FILE__ );
+    $plugin_dir_rel = dirname( plugin_basename( __FILE__ ) );
+    $plugin_url = plugin_dir_url( __FILE__ );
+    define( 'CSB_LANG_DIR', $plugin_dir_rel . '/lang/' );
+    define( 'CSB_VIEWS_DIR', $plugin_dir . '/views/' );
+    define( 'CSB_INC_DIR', $plugin_dir . '/inc/' );
+    define( 'CSB_JS_URL', $plugin_url . 'js/' );
+    define( 'CSB_CSS_URL', $plugin_url . 'css/' );
 
-	// Load the actual core.
-	require_once 'inc/class-custom-sidebars.php';
+    // Load the actual core.
+    require_once 'inc/class-custom-sidebars.php';
 }
 
 // Include function library
 if ( file_exists( CSB_INC_DIR . 'external/wpmu-lib/core.php' ) ) {
-	require_once CSB_INC_DIR . 'external/wpmu-lib/core.php';
+    require_once CSB_INC_DIR . 'external/wpmu-lib/core.php';
 }
 
 // Initialize the plugin
 add_action( 'set_current_user', array( 'CustomSidebars', 'instance' ) );
 
 if ( ! class_exists( 'CustomSidebarsEmptyPlugin' ) ) {
-	class CustomSidebarsEmptyPlugin extends WP_Widget {
-		public function CustomSidebarsEmptyPlugin() {
-			parent::WP_Widget( false, $name = 'CustomSidebarsEmptyPlugin' );
-		}
-		public function form( $instance ) {
-			//Nothing, just a dummy plugin to display nothing
-		}
-		public function update( $new_instance, $old_instance ) {
-			//Nothing, just a dummy plugin to display nothing
-		}
-		public function widget( $args, $instance ) {
-			echo '';
-		}
-	} //end class
+    class CustomSidebarsEmptyPlugin extends WP_Widget
+    {
+        public function CustomSidebarsEmptyPlugin()
+        {
+            parent::WP_Widget( false, $name = 'CustomSidebarsEmptyPlugin' );
+        }
+        public function form($instance)
+        {
+            //Nothing, just a dummy plugin to display nothing
+        }
+        public function update($new_instance, $old_instance)
+        {
+            //Nothing, just a dummy plugin to display nothing
+        }
+        public function widget($args, $instance)
+        {
+            echo '';
+        }
+    } //end class
 } //end if class exists

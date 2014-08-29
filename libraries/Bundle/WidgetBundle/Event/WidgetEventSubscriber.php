@@ -71,13 +71,13 @@ class WidgetEventSubscriber implements EventSubscriberInterface
     {
         $this->widgetLogic->initialize();
 
-	    add_action(
-		    WidgetEvents::INIT,
-		    function () {
-			    \Mozart::dispatch( WidgetEvents::INIT );
-		    },
-		    0
-	    );
+        add_action(
+            WidgetEvents::INIT,
+            function () {
+                \Mozart::dispatch( WidgetEvents::INIT );
+            },
+            0
+        );
     }
 
     public function registerSidebars()

@@ -5,8 +5,7 @@
 
 namespace Mozart\Component\Widget;
 
-
 final class WidgetEvents
 {
     const INIT = 'widgets_init';
-} 
+}

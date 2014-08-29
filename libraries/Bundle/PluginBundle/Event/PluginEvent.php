@@ -44,4 +44,4 @@ class PluginEvent extends Event
         $this->networkDeactivating = $networkDeactivating;
     }
 
-} 
+}

@@ -9,13 +9,13 @@ use Mozart\Component\Ajax\Ajax;
 
 class AjaxEventListener
 {
-	public function onApplicationInit()
-	{
-		add_action(
-			'wp_head',
-			function () {
-				Ajax::installScript( 'Mozart' );
-			}
-		);
-	}
-} 
+    public function onApplicationInit()
+    {
+        add_action(
+            'wp_head',
+            function () {
+                Ajax::installScript( 'Mozart' );
+            }
+        );
+    }
+}

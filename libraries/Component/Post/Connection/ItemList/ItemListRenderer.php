@@ -66,7 +66,7 @@ class ItemListRenderer
 
     /**
      * @param $list
-     * @param array $args
+     * @param  array  $args
      * @return string
      */
     public static function render($list, $args = array())

@@ -6,7 +6,6 @@
 namespace Mozart\Bundle\WidgetBundle;
 
 use Mozart\Bundle\WidgetBundle\DependencyInjection\Compiler\SidebarsCompilerPass;
-use Mozart\Component\Widget\WidgetEvents;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 use Mozart\Bundle\WidgetBundle\DependencyInjection\Compiler\WidgetsCompilerPass;

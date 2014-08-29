@@ -85,7 +85,7 @@ function p2p_connection_exists($p2p_type, $args = array())
 
     $r = p2p_get_connections( $p2p_type, $args );
 
-    return (bool)$r;
+    return (bool) $r;
 }
 
 /**
@@ -295,7 +295,7 @@ function p2p_delete_connection($p2p_id)
         return 0;
     }
 
-    $p2p_ids = array_map( 'absint', (array)$p2p_id );
+    $p2p_ids = array_map( 'absint', (array) $p2p_id );
 
     do_action( 'p2p_delete_connections', $p2p_ids );
 

@@ -5,7 +5,6 @@
 
 namespace Mozart\Component\Menu;
 
-
 final class MenuEvents
 {
     const ORDER = 'menu_order';
@@ -13,4 +12,4 @@ final class MenuEvents
      * This is the final filter that a menu is going through
      */
     const FILTER = 'add_menu_classes';
-} 
+}

@@ -5,17 +5,14 @@
 
 namespace Mozart\Component\Widget\Sidebar\Customizer;
 
-
-use Mozart\Component\Widget\Sidebar\SidebarCustomizer;
-
 /**
  * This class actually replaces sidebars on the frontend.
  *
  * Class Replacer
  * @package Mozart\Component\Widget\Sidebar\Customizer
  */
-class Replacer {
-
+class Replacer
+{
     private $original_post_id = 0;
 
     /**
@@ -23,7 +20,8 @@ class Replacer {
      *
      * @since  2.0
      */
-    private function __construct() {
+    private function __construct()
+    {
         add_action(
             'widgets_init',
             array( $this, 'register_custom_sidebars')
@@ -46,10 +44,11 @@ class Replacer {
     /**
      * Tell WordPress about the custom sidebars.
      */
-    public function register_custom_sidebars() {
+    public function register_custom_sidebars()
+    {
         $sb = self::get_custom_sidebars();
 
-        foreach ( $sb as $sidebar ) {
+        foreach ($sb as $sidebar) {
             /**
              * i18n support for custom sidebars.
              */
@@ -77,7 +76,8 @@ class Replacer {
     /**
      * Stores the original post id before any plugin (buddypress) can modify this data, to show the proper sidebar.
      */
-    public function store_original_post_id() {
+    public function store_original_post_id()
+    {
         global $post;
 
         if ( isset( $post->ID ) ) {
@@ -94,7 +94,8 @@ class Replacer {
      * replacing all widgets inside the theme sidebars with the widgets of the
      * custom defined sidebars.
      */
-    public function replace_sidebars() {
+    public function replace_sidebars()
+    {
         global $_wp_sidebars_widgets,
                $wp_registered_sidebars,
                $wp_registered_widgets;
@@ -119,7 +120,7 @@ class Replacer {
 
         $replacements = $this->determine_replacements( $defaults );
 
-        foreach ( $replacements as $sb_id => $replace_info ) {
+        foreach ($replacements as $sb_id => $replace_info) {
             if ( ! is_array( $replace_info ) || count( $replace_info ) < 3 ) {
                 continue;
             }
@@ -127,7 +128,7 @@ class Replacer {
             list( $replacement, $replacement_type, $extra_index ) = $replace_info;
             $check = $this->is_valid_replacement( $sb_id, $replacement, $replacement_type, $extra_index );
 
-            if ( $check ) {
+            if ($check) {
                 if ( sizeof( $original_widgets[$replacement] ) == 0 ) {
                     // No widgets on custom sidebar, show nothing.
                     $wp_registered_widgets['csemptywidget'] = $this->get_empty_widget();
@@ -158,10 +159,11 @@ class Replacer {
      * Here we find out if some sidebars should be replaced, and if it is
      * replaced we determine which custom sidebar to use.
      *
-     * @param   array $options Plugin options with the replacement rules.
-     * @return  array List of the replaced sidebars.
+     * @param  array $options Plugin options with the replacement rules.
+     * @return array List of the replaced sidebars.
      */
-    public function determine_replacements( $options ) {
+    public function determine_replacements($options)
+    {
         global $post,
                $sidebar_category;
 
@@ -170,7 +172,7 @@ class Replacer {
         $replacements = array();
         $branch = 0; // Debugging information
 
-        foreach ( $sidebars as $sb ) {
+        foreach ($sidebars as $sb) {
             $replacements[ $sb ] = false;
         }
 
@@ -185,7 +187,7 @@ class Replacer {
 
             // 1.1 Check if replacements are defined in the post metadata.
             $reps = self::get_post_meta( $this->original_post_id );
-            foreach ( $sidebars as $sb_id ) {
+            foreach ($sidebars as $sb_id) {
                 if ( is_array( $reps ) && ! empty( $reps[$sb_id] ) ) {
                     $replacements[$sb_id] = array(
                         $reps[$sb_id],
@@ -197,10 +199,10 @@ class Replacer {
             }
 
             // 1.2 Try to use the parents metadata.
-            if ( $post->post_parent != 0 && $replacements_todo > 0 ) {
+            if ($post->post_parent != 0 && $replacements_todo > 0) {
                 $reps = self::get_post_meta( $post->post_parent );
-                foreach ( $sidebars as $sb_id ) {
-                    if ( $replacements[$sb_id] ) { continue; }
+                foreach ($sidebars as $sb_id) {
+                    if ($replacements[$sb_id]) { continue; }
                     if (
                         is_array( $reps )
                         && ! empty( $reps[$sb_id] )
@@ -216,13 +218,13 @@ class Replacer {
             }
 
             // 1.3 If no metadata set then use the category settings.
-            if ( $replacements_todo > 0 ) {
+            if ($replacements_todo > 0) {
                 $categories = self::get_sorted_categories();
                 $ind = sizeof( $categories ) -1;
-                while ( $replacements_todo > 0 && $ind >= 0 ) {
+                while ($replacements_todo > 0 && $ind >= 0) {
                     $cat_id = $categories[$ind]->cat_ID;
-                    foreach ( $sidebars as $sb_id ) {
-                        if ( $replacements[$sb_id] ) { continue; }
+                    foreach ($sidebars as $sb_id) {
+                        if ($replacements[$sb_id]) { continue; }
                         if ( ! empty( $options['category_single'][$cat_id][$sb_id] ) ) {
                             $replacements[$sb_id] = array(
                                 $options['category_single'][$cat_id][$sb_id],
@@ -237,9 +239,9 @@ class Replacer {
             }
 
             // 1.4 Look for post-type level replacements.
-            if ( $replacements_todo > 0 ) {
-                foreach ( $sidebars as $sb_id ) {
-                    if ( $replacements[$sb_id] ) { continue; }
+            if ($replacements_todo > 0) {
+                foreach ($sidebars as $sb_id) {
+                    if ($replacements[$sb_id]) { continue; }
                     if (
                         isset( $options['post_type_single'][$post_type] )
                         && ! empty( $options['post_type_single'][$post_type][$sb_id] )
@@ -262,9 +264,9 @@ class Replacer {
                 // 2.1 Start at current category and travel up all parents
                 $category_object = get_queried_object();
                 $current_category = $category_object->term_id;
-                while ( $current_category != 0 && $replacements_todo > 0 ) {
-                    foreach ( $sidebars as $sb_id ) {
-                        if ( $replacements[$sb_id] ) { continue; }
+                while ($current_category != 0 && $replacements_todo > 0) {
+                    foreach ($sidebars as $sb_id) {
+                        if ($replacements[$sb_id]) { continue; }
                         if ( ! empty( $options['category_archive'][$current_category][$sb_id] ) ) {
                             $replacements[$sb_id] = array(
                                 $options['category_archive'][$current_category][$sb_id],
@@ -275,7 +277,7 @@ class Replacer {
                         }
                     }
                     $current_category = $category_object->category_parent;
-                    if ( $current_category != 0 ) {
+                    if ($current_category != 0) {
                         $category_object = get_category( $current_category );
                     }
                 }
@@ -287,7 +289,7 @@ class Replacer {
                 if ( is_search() ) {
                     $branch = 3;
 
-                    foreach ( $sidebars as $sb_id ) {
+                    foreach ($sidebars as $sb_id) {
                         if ( ! empty( $options['search'][$sb_id] ) ) {
                             $replacements[$sb_id] = array(
                                 $options['search'][$sb_id],
@@ -307,7 +309,7 @@ class Replacer {
                             return $options;
                         }
 
-                        foreach ( $sidebars as $sb_id ) {
+                        foreach ($sidebars as $sb_id) {
                             if (
                                 isset( $options['post_type_archive'][$post_type] )
                                 && ! empty( $options['post_type_archive'][$post_type][$sb_id] )
@@ -333,7 +335,7 @@ class Replacer {
 
                             // 5.1 Check if replacements are defined in the post metadata.
                             $reps = self::get_post_meta( $this->original_post_id );
-                            foreach ( $sidebars as $sb_id ) {
+                            foreach ($sidebars as $sb_id) {
                                 if ( is_array( $reps ) && ! empty( $reps[$sb_id] ) ) {
                                     $replacements[$sb_id] = array(
                                         $reps[$sb_id],
@@ -345,10 +347,10 @@ class Replacer {
                             }
 
                             // 5.2 Try to use the parents metadata.
-                            if ( $post->post_parent != 0 && $replacements_todo > 0 ) {
+                            if ($post->post_parent != 0 && $replacements_todo > 0) {
                                 $reps = self::get_post_meta( $post->post_parent );
-                                foreach ( $sidebars as $sb_id ) {
-                                    if ( $replacements[$sb_id] ) { continue; }
+                                foreach ($sidebars as $sb_id) {
+                                    if ($replacements[$sb_id]) { continue; }
                                     if ( is_array( $reps )
                                         && ! empty( $reps[$sb_id] )
                                     ) {
@@ -363,9 +365,9 @@ class Replacer {
                             }
 
                             // 5.3 Look for post-type level replacements.
-                            if ( $replacements_todo > 0 ) {
-                                foreach ( $sidebars as $sb_id ) {
-                                    if ( $replacements[$sb_id] ) { continue; }
+                            if ($replacements_todo > 0) {
+                                foreach ($sidebars as $sb_id) {
+                                    if ($replacements[$sb_id]) { continue; }
                                     if ( isset( $options['post_type_single'][$post_type] )
                                         && ! empty( $options['post_type_single'][$post_type][$sb_id] )
                                     ) {
@@ -384,7 +386,7 @@ class Replacer {
                             if ( is_home() ) {
                                 $branch = 6;
 
-                                foreach ( $sidebars as $sb_id ) {
+                                foreach ($sidebars as $sb_id) {
                                     if ( ! empty( $options['blog'][$sb_id] ) ) {
                                         $replacements[$sb_id] = array(
                                             $options['blog'][$sb_id],
@@ -399,7 +401,7 @@ class Replacer {
                                 if ( is_tag() ) {
                                     $branch = 7;
 
-                                    foreach ( $sidebars as $sb_id ) {
+                                    foreach ($sidebars as $sb_id) {
                                         if ( ! empty( $options['tags'][$sb_id] ) ) {
                                             $replacements[$sb_id] = array(
                                                 $options['tags'][$sb_id],
@@ -414,7 +416,7 @@ class Replacer {
                                     if ( is_author() ) {
                                         $branch = 8;
 
-                                        foreach ( $sidebars as $sb_id ) {
+                                        foreach ($sidebars as $sb_id) {
                                             if ( ! empty( $options['authors'][$sb_id] ) ) {
                                                 $replacements[$sb_id] = array(
                                                     $options['authors'][$sb_id],
@@ -429,7 +431,7 @@ class Replacer {
                                         if ( is_date() ) {
                                             $branch = 9;
 
-                                            foreach ( $sidebars as $sb_id ) {
+                                            foreach ($sidebars as $sb_id) {
                                                 if ( ! empty( $options['date'][$sb_id] ) ) {
                                                     $replacements[$sb_id] = array(
                                                         $options['date'][$sb_id],
@@ -452,22 +454,21 @@ class Replacer {
         return $replacements;
     }
 
-
-
     /**
      * Makes sure that the replacement sidebar exists.
      * If the custom sidebar does not exist then the WordPress/Post options are
      * updated to remove the invalid option.
      *
      * @since  1.0.0
-     * @param  string $sb_id The original sidebar (the one that is replaced).
-     * @param  string $replacement ID of the custom sidebar that should be used.
-     * @param  string $method Info where the replacement setting is saved.
+     * @param  string     $sb_id       The original sidebar (the one that is replaced).
+     * @param  string     $replacement ID of the custom sidebar that should be used.
+     * @param  string     $method      Info where the replacement setting is saved.
      * @param  int|string $extra_index Depends on $method - can be either one:
-     *                empty/post-type/category-ID
+     *                                 empty/post-type/category-ID
      * @return bool
      */
-    public function is_valid_replacement( $sb_id, $replacement, $method, $extra_index ) {
+    public function is_valid_replacement($sb_id, $replacement, $method, $extra_index)
+    {
         global $wp_registered_sidebars;
         $options = self::get_options();
 
@@ -480,7 +481,7 @@ class Replacer {
          * The replacement sidebar was not registered. Something's wrong, so we
          * update the options and not try to replace this sidebar again.
          */
-        if ( $method == 'particular' ) {
+        if ($method == 'particular') {
             // Invalid replacement was found in post-meta data.
             $sidebars = self::get_post_meta( $this->original_post_id );
             if ( $sidebars && isset( $sidebars[$sb_id] ) ) {
@@ -519,8 +520,10 @@ class Replacer {
      *
      * @since  1.0.0
      */
-    public function get_empty_widget() {
+    public function get_empty_widget()
+    {
         $widget = new CustomSidebarsEmptyPlugin();
+
         return array(
             'name'        => 'CS Empty Widget',
             'id'          => 'csemptywidget',
@@ -537,7 +540,8 @@ class Replacer {
      * @since  1.2
      * @return bool
      */
-    public function has_wrapper_code( $sidebar ) {
+    public function has_wrapper_code($sidebar)
+    {
         return (
             strlen( trim( $sidebar['before_widget'] ) )
             OR strlen( trim( $sidebar['after_widget'] ) )
@@ -551,11 +555,13 @@ class Replacer {
      *
      * @since  1.2
      */
-    public function clean_wrapper_code( $sidebar ) {
+    public function clean_wrapper_code($sidebar)
+    {
         $sidebar['before_widget'] = stripslashes( $sidebar['before_widget'] );
         $sidebar['after_widget'] = stripslashes( $sidebar['after_widget'] );
         $sidebar['before_title'] = stripslashes( $sidebar['before_title'] );
         $sidebar['after_title'] = stripslashes( $sidebar['after_title'] );
+
         return $sidebar;
     }
-} 
+}

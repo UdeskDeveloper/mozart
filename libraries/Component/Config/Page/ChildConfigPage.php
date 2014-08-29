@@ -26,4 +26,4 @@ class ChildConfigPage extends ConfigPage
     {
         $this->parentConfigPage = $parentConfigPage;
     }
-} 
+}

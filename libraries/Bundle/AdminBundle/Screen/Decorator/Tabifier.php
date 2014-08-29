@@ -7,6 +7,6 @@ namespace Mozart\Bundle\AdminBundle\Screen\Decorator;
 
 use Mozart\Bundle\AdminBundle\Screen\AdminScreenDecorator;
 
-class Tabifier extends AdminScreenDecorator {
-
-} 
+class Tabifier extends AdminScreenDecorator
+{
+}

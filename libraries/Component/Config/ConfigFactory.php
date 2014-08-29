@@ -5,7 +5,6 @@
 
 namespace Mozart\Component\Config;
 
-
 class ConfigFactory implements ConfigFactoryInterface
 {
     /**
@@ -38,4 +37,4 @@ class ConfigFactory implements ConfigFactoryInterface
     {
         return $this->storage;
     }
-} 
+}

@@ -8,12 +8,13 @@ namespace Mozart\Bundle\BuilderBundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
-class MozartBuilderBundle extends Bundle {
-	public function build(ContainerBuilder $container)
-	{
-	}
+class MozartBuilderBundle extends Bundle
+{
+    public function build(ContainerBuilder $container)
+    {
+    }
 
-	public function boot()
-	{
-	}
+    public function boot()
+    {
+    }
 }

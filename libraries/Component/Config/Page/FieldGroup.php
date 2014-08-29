@@ -5,7 +5,6 @@
 
 namespace Mozart\Component\Config\Page;
 
-
 use Mozart\Component\Support\Str;
 
 abstract class FieldGroup implements FieldGroupInterface

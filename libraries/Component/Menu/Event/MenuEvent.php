@@ -10,7 +10,7 @@ use Symfony\Component\EventDispatcher\Event;
 class MenuEvent extends Event
 {
     private $adminMenuOrder = array();
-	private $menu;
+    private $menu;
 
     /**
      * @return array
@@ -27,8 +27,8 @@ class MenuEvent extends Event
     {
         $this->adminMenuOrder = $adminMenuOrder;
     }
-	
-	 /**
+
+     /**
      * @return mixed
      */
     public function getMenu()
@@ -43,4 +43,4 @@ class MenuEvent extends Event
     {
         $this->menu = $menu;
     }
-} 
+}

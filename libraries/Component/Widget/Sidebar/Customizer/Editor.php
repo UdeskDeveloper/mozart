@@ -41,7 +41,7 @@ class Editor
      */
     public function handle_ajax($action)
     {
-        $req = (object)array(
+        $req = (object) array(
             'status' => 'ERR',
         );
         $is_json = true;
@@ -131,8 +131,8 @@ class Editor
      * the existing sidebar is updated.
      *
      * @since  2.0
-     * @param  object $req Initial response object.
-     * @param  array $data Sidebar data to save (typically this is $_POST).
+     * @param  object $req  Initial response object.
+     * @param  array  $data Sidebar data to save (typically this is $_POST).
      * @return object Updated response object.
      */
     private function save_item($req, $data)
@@ -297,7 +297,7 @@ class Editor
         }
         $options['modifiable'] = array_values( $options['modifiable'] );
         self::set_options( $options );
-        $req->replaceable = (object)$options['modifiable'];
+        $req->replaceable = (object) $options['modifiable'];
 
         return $req;
     }
@@ -379,6 +379,7 @@ class Editor
         $req->posttypes = $posttypes;
         $req->categories = $categories;
         $req->archives = $archives;
+
         return $req;
     }
 
@@ -495,6 +496,7 @@ class Editor
             esc_html( $req->sidebar['name'] )
         );
         self::set_options( $options );
+
         return $req;
     }
 
@@ -566,7 +568,6 @@ class Editor
         include CSB_VIEWS_DIR . 'metabox.php';
     }
 
-
     public function store_replacements($post_id)
     {
         global $action;
@@ -613,4 +614,4 @@ class Editor
 
         self::set_post_meta( $post_id, $data );
     }
-} 
+}
