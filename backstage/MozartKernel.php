@@ -2,15 +2,18 @@
 use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
 use Liip\ThemeBundle\LiipThemeBundle;
 use Mopa\Bundle\BootstrapBundle\MopaBootstrapBundle;
+use Mozart\Bundle\ActionBundle\MozartActionBundle;
 use Mozart\Bundle\AdminBundle\MozartAdminBundle;
 use Mozart\Bundle\AjaxBundle\MozartAjaxBundle;
 use Mozart\Bundle\BlogBundle\MozartBlogBundle;
+use Mozart\Bundle\BuilderBundle\MozartBuilderBundle;
 use Mozart\Bundle\CacheBundle\MozartCacheBundle;
 use Mozart\Bundle\CommentBundle\MozartCommentBundle;
 use Mozart\Bundle\MediaBundle\MozartMediaBundle;
 use Mozart\Bundle\MenuBundle\MozartMenuBundle;
 use Mozart\Bundle\NucleusBundle\MozartNucleusBundle;
 use Mozart\Bundle\ConfigBundle\MozartConfigBundle;
+use Mozart\Bundle\PluginBundle\MozartPluginBundle;
 use Mozart\Bundle\PostBundle\MozartPostBundle;
 use Mozart\Bundle\ShortcodeBundle\MozartShortcodeBundle;
 use Mozart\Bundle\TaxonomyBundle\MozartTaxonomyBundle;
@@ -63,14 +66,17 @@ class MozartKernel extends Kernel
             new LiipThemeBundle(),
             // load core modules
             new MozartNucleusBundle(),
+	        new MozartActionBundle(),
             new MozartAdminBundle(),
             new MozartAjaxBundle(),
             new MozartBlogBundle(),
+	        new MozartBuilderBundle(),
             new MozartCacheBundle(),
             new MozartCommentBundle(),
+	        new MozartConfigBundle(),
             new MozartMediaBundle(),
             new MozartMenuBundle(),
-            new MozartConfigBundle(),
+	        new MozartPluginBundle(),
             new MozartPostBundle(),
             new MozartShortcodeBundle(),
             new MozartTaxonomyBundle(),
