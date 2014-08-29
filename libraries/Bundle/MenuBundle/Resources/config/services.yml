@@ -1,0 +1,5 @@
+services:
+    mozart.menu.event_listener:
+        class: Mozart\Bundle\MenuBundle\EventListener\MenuEventListener
+        tags:
+            - { name: kernel.event_listener, event: mozart.boot, method: onKernelBoot }
