@@ -5,6 +5,17 @@
  * @package WPBakeryVisualComposer
  * @since   4.2
  */
+if ( ! function_exists( 'vc_manager' ) ) {
+	/**
+	 * Visual Composer manager.
+	 *
+	 * @return Mozart\Bundle\BuilderBundle\Manager\VisualComposerManager
+	 */
+	function vc_manager() {
+		return Mozart::service('builder.manager');
+	}
+}
+
 if ( ! function_exists( 'visual_composer' ) ) {
 	/**
 	 * Visual Composer instance.
