@@ -1,0 +1,5 @@
+services:
+    builder.manager:
+        class: Mozart\Bundle\BuilderBundle\Manager\VisualComposerManager
+        tags:
+            - { name: kernel.event_subscriber }
