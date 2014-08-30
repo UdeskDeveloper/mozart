@@ -14,7 +14,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * @package Mozart\Bundle\WidgetBundle
  */
-class Widget extends \WP_Widget implements WidgetInterface, ContainerAwareInterface
+abstract class Widget extends \WP_Widget implements WidgetInterface, ContainerAwareInterface
 {
     const NAME_SPACE = 'mozart';
     /**
@@ -63,6 +63,10 @@ class Widget extends \WP_Widget implements WidgetInterface, ContainerAwareInterf
             'description' => str_replace( ' | ' . static::NAME_SPACE, '', $this->getName() )
         );
     }
+
+	public function getConfiguration( $widgetId ) {
+		return get_fields('widget_' . $widgetId );
+	}
 
     /**
      * @param array $args
