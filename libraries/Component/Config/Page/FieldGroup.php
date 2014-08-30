@@ -7,7 +7,7 @@ namespace Mozart\Component\Config\Page;
 
 use Mozart\Component\Support\Str;
 
-abstract class FieldGroup implements FieldGroupInterface
+class FieldGroup implements FieldGroupInterface
 {
     const DOMAIN = 'Mozart';
 
@@ -32,6 +32,8 @@ abstract class FieldGroup implements FieldGroupInterface
 
         return substr( strrchr( $className, '\\' ), 1 );
     }
+
+
 
     /**
      * @inheritdoc
@@ -93,4 +95,16 @@ abstract class FieldGroup implements FieldGroupInterface
             ),
         );
     }
+
+	public function getDisplayOptions()
+	{
+		return array(
+			'menu_order'            => 0,
+			'position'              => 'normal',
+			'style'                 => 'default',
+			'label_placement'       => 'left',
+			'instruction_placement' => 'label',
+			'hide_on_screen'        => ''
+		);
+	}
 }
