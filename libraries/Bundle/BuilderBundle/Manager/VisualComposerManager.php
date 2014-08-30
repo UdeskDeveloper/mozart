@@ -112,7 +112,7 @@ class VisualComposerManager extends AbstractBuilderManager implements EventSubsc
 				'HELPERS_DIR'     => __DIR__ . '/../../../Builder/helpers',
 				'SHORTCODES_DIR'  => __DIR__ . '/../../../Builder/classes/shortcodes',
 				'SETTINGS_DIR'    => __DIR__ . '/../../../Builder/classes/settings',
-				'TEMPLATES_DIR'   => __DIR__ . '/../../../Builder/templates',
+				'TEMPLATES_DIR'   => __DIR__ . '/../Resources/views',
 				'EDITORS_DIR'     => __DIR__ . '/../../../Builder/classes/editors',
 				'PARAMS_DIR'      => __DIR__ . '/../../../Builder/params',
 				'UPDATERS_DIR'    => __DIR__ . '/../../../Builder/classes/updaters',
