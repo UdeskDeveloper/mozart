@@ -27,7 +27,6 @@ use Symfony\Bundle\MonologBundle\MonologBundle;
 use Symfony\Bundle\SecurityBundle\SecurityBundle;
 use Symfony\Bundle\TwigBundle\TwigBundle;
 use Symfony\Bundle\WebProfilerBundle\WebProfilerBundle;
-use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\Request;
@@ -41,164 +40,184 @@ use Symfony\Component\Config\Loader\LoaderInterface;
 class MozartKernel extends Kernel
 {
 
+	/**
+	 * @param string $environment
+	 * @param bool   $debug
+	 */
+	public function __construct($environment, $debug)
+	{
+		parent::__construct( $environment, $debug );
 
-    /**
-     * @param string $environment
-     * @param bool $debug
-     */
-    public function __construct($environment, $debug)
-    {
-        parent::__construct( $environment, $debug );
-    }
+		add_action(
+			'plugins_loaded',
+			function () {
+				Mozart::dispatch( Mozart\Bundle\NucleusBundle\MozartEvents::INIT );
+			},
+			9
+		);
+		add_action(
+			'init',
+			function () {
+				Mozart::dispatch( 'init' );
+			},
+			0
+		);
 
-    /**
-     * @return array|mixed|void
-     */
-    public function registerBundles()
-    {
-        $bundles = array(
-            new FrameworkBundle(),
-            new SecurityBundle(),
-            new TwigBundle(),
-            new MonologBundle(),
-            new DoctrineBundle(),
-            new SensioFrameworkExtraBundle(),
-            new LiipThemeBundle(),
-            // load core modules
-            new MozartNucleusBundle(),
-	        new MozartActionBundle(),
-            new MozartAdminBundle(),
-            new MozartAjaxBundle(),
-            new MozartBlogBundle(),
-	        new MozartBuilderBundle(),
-            new MozartCacheBundle(),
-            new MozartCommentBundle(),
-	        new MozartConfigBundle(),
-            new MozartMediaBundle(),
-            new MozartMenuBundle(),
-	        new MozartPluginBundle(),
-            new MozartPostBundle(),
-            new MozartShortcodeBundle(),
-            new MozartTaxonomyBundle(),
-            new MozartThemeBundle(),
-            new MozartUserBundle(),
-            new MozartWidgetBundle(),
-            // load UI components
-            new MopaBootstrapBundle()
-        );
+		add_action(
+			'wp_loader',
+			array( $this, 'shutdown' ),
+			999
+		);
 
-        $bundles = \Mozart::registerAdditionalBundles( $bundles );
+	}
 
-        if (in_array( $this->getEnvironment(), array( 'dev', 'test' ) )) {
-            $bundles[] = new WebProfilerBundle();
-            $bundles[] = new SensioGeneratorBundle();
-        }
+	/**
+	 * @return array|mixed|void
+	 */
+	public function registerBundles()
+	{
+		$bundles = array(
+			new FrameworkBundle(),
+			new SecurityBundle(),
+			new TwigBundle(),
+			new MonologBundle(),
+			new DoctrineBundle(),
+			new SensioFrameworkExtraBundle(),
+			new LiipThemeBundle(),
+			// load core modules
+			new MozartNucleusBundle(),
+			new MozartActionBundle(),
+			new MozartAdminBundle(),
+			new MozartAjaxBundle(),
+			new MozartBlogBundle(),
+//			new MozartBuilderBundle(),
+			new MozartCacheBundle(),
+			new MozartCommentBundle(),
+			new MozartConfigBundle(),
+			new MozartMediaBundle(),
+			new MozartMenuBundle(),
+			new MozartPluginBundle(),
+			new MozartPostBundle(),
+			new MozartShortcodeBundle(),
+			new MozartTaxonomyBundle(),
+			new MozartThemeBundle(),
+			new MozartUserBundle(),
+			new MozartWidgetBundle(),
+			// load UI components
+			new MopaBootstrapBundle()
+		);
 
-        return $bundles;
-    }
+		$bundles = \Mozart::registerAdditionalBundles( $bundles );
 
-    public function clearCache()
-    {
+		if (in_array( $this->getEnvironment(), array( 'dev', 'test' ) )) {
+			$bundles[] = new WebProfilerBundle();
+			$bundles[] = new SensioGeneratorBundle();
+		}
 
-        $filesystem = new Filesystem();
+		return $bundles;
+	}
 
-        if ($filesystem->exists( $this->container->getParameter( 'kernel.cache_dir' ) )) {
-            $filesystem->remove( $this->container->getParameter( 'kernel.cache_dir' ) );
-        }
+	public function boot()
+	{
+		$this->bootWordpress();
+		$this->loadThemeBundles();
 
-        flush_rewrite_rules();
-    }
+		parent::boot();
 
-    public function boot()
-    {
-        $this->bootWordpress();
+		$request = Request::createFromGlobals();
 
-        $this->loadThemeBundles();
+		$requestStack = new RequestStack();
+		$requestStack->push( $request );
 
-        parent::boot();
+		$this->container->enterScope( 'request' );
+		$this->container->set( 'request', $request, 'request' );
 
-        $request = Request::createFromGlobals();
+		$request->setSession( $this->container->get( 'session' ) );
+		$this->container->set( 'request_stack', $requestStack );
+	}
 
-        $requestStack = new RequestStack();
-        $requestStack->push( $request );
+	/**
+	 * @param LoaderInterface $loader
+	 */
+	public function registerContainerConfiguration(LoaderInterface $loader)
+	{
+		$loader->load( __DIR__ . '/config/config_' . $this->getEnvironment() . '.yml' );
+	}
 
-        $this->container->enterScope( 'request' );
-        $this->container->set( 'request', $request, 'request' );
+	/**
+	 * @return string
+	 */
+	public function getCacheDir()
+	{
+		return WP_CONTENT_DIR . '/Mozart/Cache/' . $this->environment;
+	}
 
-        $request->setSession( $this->container->get( 'session' ) );
-        $this->container->set( 'request_stack', $requestStack );
-    }
+	/**
+	 * @return string
+	 */
+	public function getLogDir()
+	{
+		return WP_CONTENT_DIR . '/Mozart/Logs';
+	}
 
-    protected function loadThemeBundles()
-    {
-        if (false === file_exists( get_template_directory() . '/backstage/bootstrap.php' )) {
-            return;
+	/**
+	 * @return string
+	 */
+	public function getName()
+	{
+		return 'mozart';
+	}
+
+	protected function getContainerClass()
+	{
+		return 'Mozart' . ( $this->debug ? 'Naked' : '' ) . 'Orchestra';
+	}
+
+	protected function bootWordpress()
+	{
+		if (false === defined( 'ABSPATH' )) {
+
+			define( 'WP_USE_THEMES', false );
+
+			// let's find wp-load.php
+			$finder = new Finder();
+
+			$finder->files()
+				->name( 'wp-load.php' )
+				->ignoreUnreadableDirs()
+				->depth( '== 6' )
+				->in( __DIR__ . '/../../../../../../../../' );
+
+			foreach ($finder as $file) {
+				require_once $file->getRealpath();
+				require_once ABSPATH . 'wp-admin/includes/file.php';
+			}
+		}
+
+		add_action( 'deactivate_plugin', array( $this, 'clearCache' ), 10, 2 );
+		add_action( 'activate_plugin', array( $this, 'clearCache' ), 10, 2 );
+		add_action( "after_switch_theme", array( $this, 'clearCache' ), 10, 2 );
+		add_action( "switch_theme", array( $this, 'clearCache' ), 10, 2 );
+	}
+
+	protected function loadThemeBundles()
+	{
+		if (false === file_exists( get_template_directory() . '/backstage/bootstrap.php' )) {
+			return;
 //            throw new FileNotFoundException( '/backstage/bootstrap.php was not found in your theme' );
-        }
-        include get_template_directory() . '/backstage/bootstrap.php';
-    }
+		}
+		include get_template_directory() . '/backstage/bootstrap.php';
+	}
 
-    protected function bootWordpress()
-    {
-        if (false === defined( 'ABSPATH' )) {
+	public function clearCache()
+	{
 
-            define( 'WP_USE_THEMES', false );
+		$filesystem = new Filesystem();
 
-            // let's find wp-load.php
-            $finder = new Finder();
+		if ($filesystem->exists( $this->container->getParameter( 'kernel.cache_dir' ) )) {
+			$filesystem->remove( $this->container->getParameter( 'kernel.cache_dir' ) );
+		}
 
-            $finder->files()
-                ->name( 'wp-load.php' )
-                ->ignoreUnreadableDirs()
-                ->depth( '== 6' )
-                ->in( __DIR__ . '/../../../../../../../../' );
-
-            foreach ($finder as $file) {
-                require_once $file->getRealpath();
-                require_once ABSPATH . 'wp-admin/includes/file.php';
-            }
-        }
-
-        add_action( 'deactivate_plugin', array( $this, 'clearCache' ), 10, 2 );
-        add_action( 'activate_plugin', array( $this, 'clearCache' ), 10, 2 );
-        add_action( "after_switch_theme", array( $this, 'clearCache' ), 10, 2 );
-        add_action( "switch_theme", array( $this, 'clearCache' ), 10, 2 );
-    }
-
-    /**
-     * @param LoaderInterface $loader
-     */
-    public function registerContainerConfiguration(LoaderInterface $loader)
-    {
-        $loader->load( __DIR__ . '/config/config_' . $this->getEnvironment() . '.yml' );
-    }
-
-    /**
-     * @return string
-     */
-    public function getCacheDir()
-    {
-        return WP_CONTENT_DIR . '/Mozart/Cache/' . $this->environment;
-    }
-
-    /**
-     * @return string
-     */
-    public function getLogDir()
-    {
-        return WP_CONTENT_DIR . '/Mozart/Logs';
-    }
-
-    /**
-     * @return string
-     */
-    public function getName()
-    {
-        return 'mozart';
-    }
-
-    protected function getContainerClass()
-    {
-        return 'Mozart' . ( $this->debug ? 'Naked' : '' ) . 'Orchestra';
-    }
+		flush_rewrite_rules();
+	}
 }

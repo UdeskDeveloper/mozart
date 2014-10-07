@@ -19,8 +19,6 @@ abstract class ConfigPage implements ConfigPageInterface
      */
     protected $key;
 
-    protected $type = 'options_page';
-
     protected function getClassBaseName()
     {
         $className = get_class( $this );
@@ -103,14 +101,6 @@ abstract class ConfigPage implements ConfigPageInterface
      */
     public function getType()
     {
-        return $this->type;
-    }
-
-    /**
-     * @param mixed $type
-     */
-    public function setType($type)
-    {
-        $this->type = $type;
+        return 'options_page';
     }
 }

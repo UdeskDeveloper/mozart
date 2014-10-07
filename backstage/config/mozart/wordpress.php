@@ -7,77 +7,77 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
 require_once ABSPATH . 'wp-admin/includes/file.php';
 
 $wordressInfos = array(
-    'home'       => array(
-        'dir' => get_home_path(),
-        'uri' => get_home_url()
-    ),
-    'site'       => array(
-        'uri' => get_site_url()
-    ),
-    'plugin'     => array(
-        'dir' => WP_PLUGIN_DIR,
-        'uri' => plugins_url()
-    ),
-    'theme'      => array(
-        'name'   => (string)wp_get_theme(),
-        'active' => get_template(),
-        'dir'    => get_template_directory(),
-        'uri'    => get_template_directory_uri()
-    ),
-    'stylesheet' => array(
-        'dir' => get_stylesheet_directory(),
-        'uri' => get_stylesheet_directory_uri()
-    ),
-    'content'    => array(
-        'dir' => WP_CONTENT_DIR,
-        'uri' => content_url()
-    ),
-    'upload'     => wp_upload_dir(),
-    'includes'   => array(
-        'dir' => WPINC,
-        'uri' => includes_url()
-    ),
-    'key'        => array(
-        'auth'        => AUTH_KEY,
-        'secure_auth' => SECURE_AUTH_KEY,
-        'logged_in'   => LOGGED_IN_KEY,
-        'nonce'       => NONCE_KEY
-    ),
-    'salt'       => array(
-        'auth'        => AUTH_SALT,
-        'secure_auth' => SECURE_AUTH_SALT,
-        'logged_in'   => LOGGED_IN_SALT,
-        'nonce'       => NONCE_SALT
-    ),
-    'cookie'     => array(
-        'path'         => COOKIEPATH,
-        'domain'       => COOKIE_DOMAIN,
-        'site_path'    => SITECOOKIEPATH,
-        'admin_path'   => ADMIN_COOKIE_PATH,
-        'plugins_path' => PLUGINS_COOKIE_PATH,
-        'hash'         => COOKIEHASH,
-        'user'         => USER_COOKIE,
-        'pass'         => PASS_COOKIE,
-        'auth'         => AUTH_COOKIE,
-        'secure_auth'  => SECURE_AUTH_COOKIE,
-        'logged_in'    => LOGGED_IN_COOKIE,
-        'test'         => TEST_COOKIE
-    ),
-    'env'        => array(
-        'memory_limit'     => WP_MEMORY_LIMIT,
-        'max_memory_limit' => WP_MAX_MEMORY_LIMIT,
-        'debug'            => WP_DEBUG,
-        'debug_display'    => WP_DEBUG_DISPLAY,
-        'debug_log'        => WP_DEBUG_LOG,
-        'debug_queries'    => defined( 'SAVEQUERIES' ) ? SAVEQUERIES : WP_DEBUG,
-        'cache'            => WP_CACHE,
-        'media_trash'      => MEDIA_TRASH,
-        'shortinit'        => SHORTINIT
-    ),
-    'ssl'        => array(
-        'force_admin' => FORCE_SSL_ADMIN,
-        'force_login' => FORCE_SSL_LOGIN
-    )
+	'home'       => array(
+		'dir' => get_home_path(),
+		'uri' => get_home_url()
+	),
+	'site'       => array(
+		'uri' => get_site_url()
+	),
+	'plugin'     => array(
+		'dir' => WP_PLUGIN_DIR,
+		'uri' => plugins_url()
+	),
+	'theme'      => array(
+		'name'   => (string)wp_get_theme(),
+		'active' => get_template(),
+		'dir'    => get_template_directory(),
+		'uri'    => get_template_directory_uri()
+	),
+	'stylesheet' => array(
+		'dir' => get_stylesheet_directory(),
+		'uri' => get_stylesheet_directory_uri()
+	),
+	'content'    => array(
+		'dir' => WP_CONTENT_DIR,
+		'uri' => content_url()
+	),
+	'upload'     => wp_upload_dir(),
+	'includes'   => array(
+		'dir' => WPINC,
+		'uri' => includes_url()
+	),
+	'key'        => array(
+		'auth'        => AUTH_KEY,
+		'secure_auth' => SECURE_AUTH_KEY,
+		'logged_in'   => LOGGED_IN_KEY,
+		'nonce'       => NONCE_KEY
+	),
+	'salt'       => array(
+		'auth'        => AUTH_SALT,
+		'secure_auth' => SECURE_AUTH_SALT,
+		'logged_in'   => LOGGED_IN_SALT,
+		'nonce'       => NONCE_SALT
+	),
+	'cookie'     => array(
+		'path'         => COOKIEPATH,
+		'domain'       => COOKIE_DOMAIN,
+		'site_path'    => SITECOOKIEPATH,
+		'admin_path'   => ADMIN_COOKIE_PATH,
+		'plugins_path' => PLUGINS_COOKIE_PATH,
+		'hash'         => COOKIEHASH,
+		'user'         => USER_COOKIE,
+		'pass'         => PASS_COOKIE,
+		'auth'         => AUTH_COOKIE,
+		'secure_auth'  => SECURE_AUTH_COOKIE,
+		'logged_in'    => LOGGED_IN_COOKIE,
+		'test'         => TEST_COOKIE
+	),
+	'env'        => array(
+		'memory_limit'     => WP_MEMORY_LIMIT,
+		'max_memory_limit' => WP_MAX_MEMORY_LIMIT,
+		'debug'            => WP_DEBUG,
+		'debug_display'    => WP_DEBUG_DISPLAY,
+		'debug_log'        => WP_DEBUG_LOG,
+		'debug_queries'    => defined( 'SAVEQUERIES' ) ? SAVEQUERIES : WP_DEBUG,
+		'cache'            => WP_CACHE,
+		'media_trash'      => MEDIA_TRASH,
+		'shortinit'        => SHORTINIT
+	),
+	'ssl'        => array(
+		'force_admin' => defined( 'FORCE_SSL_ADMIN' ) ? FORCE_SSL_ADMIN : false,
+		'force_login' => defined( 'FORCE_SSL_LOGIN' ) ? FORCE_SSL_LOGIN : false
+	)
 );
 /*
  * Sometimes the keys and salts contains more than one "%"
@@ -89,15 +89,15 @@ $wordressInfos = array(
 $parameterBag = new ParameterBag();
 
 foreach ($wordressInfos as $root => $values) {
-    if (is_array( $values )) {
-        foreach ($values as $name => $value) {
-            $value = $parameterBag->escapeValue( $value );
-            $container->setParameter( "wp.$root.$name", $value );
-            $container->setParameter( "wordpress.$root.$name", $value );
-        }
-    } else {
-        $value = $parameterBag->escapeValue( $values );
-        $container->setParameter( "wp.$root", $value );
-        $container->setParameter( "wordpress.$root", $value );
-    }
+	if (is_array( $values )) {
+		foreach ($values as $name => $value) {
+			$value = $parameterBag->escapeValue( $value );
+			$container->setParameter( "wp.$root.$name", $value );
+			$container->setParameter( "wordpress.$root.$name", $value );
+		}
+	} else {
+		$value = $parameterBag->escapeValue( $values );
+		$container->setParameter( "wp.$root", $value );
+		$container->setParameter( "wordpress.$root", $value );
+	}
 }
