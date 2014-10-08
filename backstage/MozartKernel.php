@@ -1,45 +1,7 @@
 <?php
-use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
-use Liip\ThemeBundle\LiipThemeBundle;
-use Mopa\Bundle\BootstrapBundle\MopaBootstrapBundle;
-use Mozart\Bundle\ActionBundle\MozartActionBundle;
-use Mozart\Bundle\AdminBundle\MozartAdminBundle;
-use Mozart\Bundle\AjaxBundle\MozartAjaxBundle;
-use Mozart\Bundle\BlogBundle\MozartBlogBundle;
-use Mozart\Bundle\BuilderBundle\MozartBuilderBundle;
-use Mozart\Bundle\CacheBundle\MozartCacheBundle;
-use Mozart\Bundle\CommentBundle\MozartCommentBundle;
-use Mozart\Bundle\MediaBundle\MozartMediaBundle;
-use Mozart\Bundle\MenuBundle\MozartMenuBundle;
-use Mozart\Bundle\NucleusBundle\MozartNucleusBundle;
-use Mozart\Bundle\ConfigBundle\MozartConfigBundle;
-use Mozart\Bundle\PluginBundle\MozartPluginBundle;
-use Mozart\Bundle\PostBundle\MozartPostBundle;
-use Mozart\Bundle\ShortcodeBundle\MozartShortcodeBundle;
-use Mozart\Bundle\TaxonomyBundle\MozartTaxonomyBundle;
-use Mozart\Bundle\ThemeBundle\MozartThemeBundle;
-use Mozart\Bundle\UserBundle\MozartUserBundle;
-use Mozart\Bundle\WidgetBundle\MozartWidgetBundle;
-use Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle;
-use Sensio\Bundle\GeneratorBundle\SensioGeneratorBundle;
-use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
-use Symfony\Bundle\MonologBundle\MonologBundle;
-use Symfony\Bundle\SecurityBundle\SecurityBundle;
-use Symfony\Bundle\TwigBundle\TwigBundle;
-use Symfony\Bundle\WebProfilerBundle\WebProfilerBundle;
-use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Finder\Finder;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpKernel\Kernel;
-use Symfony\Component\Config\Loader\LoaderInterface;
 
-/**
- * Class MozartKernel
- */
-class MozartKernel extends Kernel
+class MozartKernel extends Symfony\Component\HttpKernel\Kernel
 {
-
 	/**
 	 * @param string $environment
 	 * @param bool   $debug
@@ -77,41 +39,46 @@ class MozartKernel extends Kernel
 	public function registerBundles()
 	{
 		$bundles = array(
-			new FrameworkBundle(),
-			new SecurityBundle(),
-			new TwigBundle(),
-			new MonologBundle(),
-			new DoctrineBundle(),
-			new SensioFrameworkExtraBundle(),
-			new LiipThemeBundle(),
+			new Symfony\Bundle\FrameworkBundle\FrameworkBundle(),
+			new Symfony\Bundle\SecurityBundle\SecurityBundle(),
+			new Symfony\Bundle\TwigBundle\TwigBundle(),
+			new Symfony\Bundle\MonologBundle\MonologBundle(),
+			new Doctrine\Bundle\DoctrineBundle\DoctrineBundle(),
+			new Doctrine\Bundle\DoctrineCacheBundle\DoctrineCacheBundle(),
+			new Doctrine\Bundle\FixturesBundle\DoctrineFixturesBundle(),
+			new Doctrine\Bundle\MigrationsBundle\DoctrineMigrationsBundle(),
+			new Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
+			new Liip\ThemeBundle\LiipThemeBundle(),
 			// load core modules
-			new MozartNucleusBundle(),
-			new MozartActionBundle(),
-			new MozartAdminBundle(),
-			new MozartAjaxBundle(),
-			new MozartBlogBundle(),
-//			new MozartBuilderBundle(),
-			new MozartCacheBundle(),
-			new MozartCommentBundle(),
-			new MozartConfigBundle(),
-			new MozartMediaBundle(),
-			new MozartMenuBundle(),
-			new MozartPluginBundle(),
-			new MozartPostBundle(),
-			new MozartShortcodeBundle(),
-			new MozartTaxonomyBundle(),
-			new MozartThemeBundle(),
-			new MozartUserBundle(),
-			new MozartWidgetBundle(),
+			new Mozart\Bundle\NucleusBundle\MozartNucleusBundle(),
+			new Mozart\Bundle\ActionBundle\MozartActionBundle(),
+			new Mozart\Bundle\AdminBundle\MozartAdminBundle(),
+			new Mozart\Bundle\AjaxBundle\MozartAjaxBundle(),
+			new Mozart\Bundle\BlogBundle\MozartBlogBundle(),
+			new Mozart\Bundle\BuilderBundle\MozartBuilderBundle(),
+			new Mozart\Bundle\CacheBundle\MozartCacheBundle(),
+			new Mozart\Bundle\CommentBundle\MozartCommentBundle(),
+			new Mozart\Bundle\ConfigBundle\MozartConfigBundle(),
+			new Mozart\Bundle\MediaBundle\MozartMediaBundle(),
+			new Mozart\Bundle\MenuBundle\MozartMenuBundle(),
+			new Mozart\Bundle\PluginBundle\MozartPluginBundle(),
+			new Mozart\Bundle\PostBundle\MozartPostBundle(),
+			new Mozart\Bundle\ShortcodeBundle\MozartShortcodeBundle(),
+			new Mozart\Bundle\TaxonomyBundle\MozartTaxonomyBundle(),
+			new Mozart\Bundle\ThemeBundle\MozartThemeBundle(),
+			new Mozart\Bundle\UserBundle\MozartUserBundle(),
+			new Mozart\Bundle\WidgetBundle\MozartWidgetBundle(),
 			// load UI components
-			new MopaBootstrapBundle()
+			new Mopa\Bundle\BootstrapBundle\MopaBootstrapBundle()
 		);
 
 		$bundles = \Mozart::registerAdditionalBundles( $bundles );
 
 		if (in_array( $this->getEnvironment(), array( 'dev', 'test' ) )) {
-			$bundles[] = new WebProfilerBundle();
-			$bundles[] = new SensioGeneratorBundle();
+			$bundles[] = new Symfony\Bundle\DebugBundle\DebugBundle();
+			$bundles[] = new Symfony\Bundle\WebProfilerBundle\WebProfilerBundle();
+			$bundles[] = new Sensio\Bundle\DistributionBundle\SensioDistributionBundle();
+			$bundles[] = new Sensio\Bundle\GeneratorBundle\SensioGeneratorBundle();
 		}
 
 		return $bundles;
@@ -124,9 +91,9 @@ class MozartKernel extends Kernel
 
 		parent::boot();
 
-		$request = Request::createFromGlobals();
+		$request = Symfony\Component\HttpFoundation\Request::createFromGlobals();
 
-		$requestStack = new RequestStack();
+		$requestStack = new Symfony\Component\HttpFoundation\RequestStack();
 		$requestStack->push( $request );
 
 		$this->container->enterScope( 'request' );
@@ -137,9 +104,9 @@ class MozartKernel extends Kernel
 	}
 
 	/**
-	 * @param LoaderInterface $loader
+	 * @param \Symfony\Component\Config\Loader\LoaderInterface $loader
 	 */
-	public function registerContainerConfiguration(LoaderInterface $loader)
+	public function registerContainerConfiguration(Symfony\Component\Config\Loader\LoaderInterface $loader)
 	{
 		$loader->load( __DIR__ . '/config/config_' . $this->getEnvironment() . '.yml' );
 	}
@@ -180,7 +147,7 @@ class MozartKernel extends Kernel
 			define( 'WP_USE_THEMES', false );
 
 			// let's find wp-load.php
-			$finder = new Finder();
+			$finder = new Symfony\Component\Finder\Finder();
 
 			$finder->files()
 				->name( 'wp-load.php' )
@@ -202,17 +169,17 @@ class MozartKernel extends Kernel
 
 	protected function loadThemeBundles()
 	{
-		if (false === file_exists( get_template_directory() . '/backstage/bootstrap.php' )) {
+		$theme = new Mozart\Bridge\WordPress\Theme( $GLOBALS['wp_theme_directories'] );
+		if (false === file_exists( $theme->getTemplateDirectoryPath() . '/backstage/bootstrap.php' )) {
 			return;
 //            throw new FileNotFoundException( '/backstage/bootstrap.php was not found in your theme' );
 		}
-		include get_template_directory() . '/backstage/bootstrap.php';
+		include $theme->getTemplateDirectoryPath() . '/backstage/bootstrap.php';
 	}
 
 	public function clearCache()
 	{
-
-		$filesystem = new Filesystem();
+		$filesystem = new Symfony\Component\Filesystem\Filesystem();
 
 		if ($filesystem->exists( $this->container->getParameter( 'kernel.cache_dir' ) )) {
 			$filesystem->remove( $this->container->getParameter( 'kernel.cache_dir' ) );
