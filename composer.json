@@ -24,14 +24,13 @@
     "twig/twig": "~1.12",
     "twig/extensions": "~1.0",
 
-    "symfony/symfony": "~2.5",
+    "symfony/symfony": "2.6.x-dev",
 	"symfony/assetic-bundle": "~2.3",
 	"symfony/swiftmailer-bundle": "~2.3",
     "symfony/monolog-bundle": "~2.4",
 
     "sensio/distribution-bundle": "~3.0",
     "sensio/framework-extra-bundle": "~3.0",
-    "sensio/generator-bundle": "~2.3",
 
     "jms/security-extra-bundle": "~1.5",
     "jms/di-extra-bundle": "~1.4",
@@ -51,11 +50,29 @@
     "nesbot/carbon": "~1.0",
     "patchwork/utf8": "~1.1"
   },
+  "require-dev": {
+    "sensio/generator-bundle": "~2.3"
+  },
+  "scripts": {
+    "post-install-cmd": [
+      "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::buildBootstrap",
+      "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::clearCache",
+      "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installAssets"
+    ],
+    "post-update-cmd": [
+      "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::buildBootstrap",
+      "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::clearCache",
+      "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installAssets"
+    ]
+  },
   "config": {
     "autoloader-suffix": "Mozart",
     "bin-dir": "binaries",
     "vendor-dir": "vendor"
   },
-  "symfony-app-dir": "backstage",
-  "symfony-web-dir": "public"
+  "extra": {
+    "symfony-app-dir": "backstage",
+    "symfony-web-dir": "public",
+    "symfony-assets-install": "relative"
+  }
 }
