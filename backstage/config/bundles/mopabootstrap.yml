@@ -1,0 +1,18 @@
+mopa_bootstrap:
+    form:
+        show_legend: true # default is true
+        show_child_legend: true # default is true
+        error_type: inline # or block (default is inline)
+    # menu: ~
+        # template: MyBundles:Menu:template.html.twig
+
+
+# The default path patterns used by LiiThemeBundle
+#            app_resource:
+#                '%app_path%/themes/%current_theme%/%template%'
+#                '%app_path%/views/%template%'
+#            bundle_resource:
+#                '%bundle_path%/Resources/themes/%current_theme%/%template%'
+#            bundle_resource_dir:
+#                '%dir%/themes/%current_theme%/%bundle_name%/%template%'
+#                '%dir%/%bundle_name%/%override_path%'

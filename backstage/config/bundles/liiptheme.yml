@@ -1,0 +1,15 @@
+liip_theme:
+    load_controllers: false
+    themes: ['web', 'tablet', 'phone']
+    active_theme: 'web'
+    path_patterns:
+            app_resource:
+                - %wp.theme.dir%/views/themes/%%current_theme%%/%%template%%
+                - %wp.theme.dir%/views/%%template%%
+            bundle_resource:
+                - %%bundle_path%%/Resources/views/themes/%%current_theme%%/%%template%%
+                - %%bundle_path%%/Resources/views/%%template%%
+            bundle_resource_dir:
+                - %wp.theme.dir%/views/themes/%%current_theme%%/%%bundle_name%%/%%template%%
+                - %wp.theme.dir%/views/%%bundle_name%%/%%override_path%%
+                - %wp.theme.dir%/views/%%bundle_name%%/%%template%%
