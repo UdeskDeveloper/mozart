@@ -37,7 +37,7 @@ class Theme
      */
     public function __construct(array $themeDirectories, array $options = array())
 	{
-		$this->$themeDirectories = $themeDirectories;
+		$this->themeDirectories = $themeDirectories;
 		$this->options = $options;
 	}
 
